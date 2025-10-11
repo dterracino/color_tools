@@ -1,0 +1,211 @@
+{
+    "count": 52,
+    "next": null,
+    "previous": "https://filamentcolors.xyz/api/swatch/?alt_color_parent=&alt_color_parent__icontains=&color_name=&color_name__icontains=&color_parent=&color_parent__icontains=&filament_type__parent_type__name=&filament_type__parent_type__name__icontains=PLA&id=&id__in=&manufacturer=68&manufacturer__id=&manufacturer__name=&manufacturer__name__icontains=&published=true",
+    "results": [
+        {
+            "id": 719,
+            "manufacturer": {
+                "id": 68,
+                "name": "Sunlu",
+                "website": "https://www.sunlu.com/"
+            },
+            "color_name": "Silky Silver",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--08-48-52-front_4STbyOG.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--08-48-52-back_oGMV5jj.jpg",
+            "image_other": null,
+            "date_added": "2020-08-15T17:05:06.344000Z",
+            "date_published": "2020-08-15T17:05:06.344000Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3GPzPYD",
+            "mfr_purchase_link": null,
+            "closest_pantone_1": {
+                "code": "13-4201 TCX",
+                "name": "Oyster Mushroom",
+                "hex_color": "#C3C6C8",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-428C",
+                "name": null,
+                "hex_color": "#C1C6C8",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "537 UP",
+                "name": null,
+                "hex_color": "#C6CDD2",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "428 C",
+                "hex_color": "#C1C6C8"
+            },
+            "closest_pms_2": {
+                "code": "427 C",
+                "hex_color": "#D0D3D4"
+            },
+            "closest_pms_3": {
+                "code": "538 C",
+                "hex_color": "#C5CFDA"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7047",
+                "name": "Telegrey 4",
+                "hex_color": "#CFD0CF",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 820-1",
+                "name": null,
+                "hex_color": "#C5C8CA",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H260L80C05",
+                "name": "Light Blue Grey",
+                "hex_color": "#C0C8CF",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/375/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/604/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1514/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1623/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1514/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1120/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2309/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3556/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1514/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/375/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2485/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/487/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/375/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1920/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/212/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--08-48-52-front-thumb_azHjTKK.jpg",
+            "hex_color": "C6CBD0",
+            "lab_l": 81.38,
+            "lab_a": -0.05,
+            "lab_b": -4.02,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Aug 15, 2020",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 335,
+            "manufacturer": {
+                "id": 68,
+                "name": "Sunlu",
+                "website": "https://www.sunlu.com/"
+            },
+            "color_name": "Grass Green",
+            "filament_type": {
+                "id": 8,
+                "name": "PLA 2",
+                "hot_end_temp": 215,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRN",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-21--16-52-33-front_tGmf8W9.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-21--16-52-33-back_zv4UpOz.jpg",
+            "image_other": null,
+            "date_added": "2019-09-30T04:44:03Z",
+            "date_published": "2019-09-30T04:44:03Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": null,
+            "closest_pantone_1": {
+                "code": "17-5421 TCX",
+                "name": "Porcelain Green",
+                "hex_color": "#108780",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2244C",
+                "name": null,
+                "hex_color": "#1B806D",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 130-15 U",
+                "name": null,
+                "hex_color": "#0B8571",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7473 C",
+                "hex_color": "#279989"
+            },
+            "closest_pms_2": {
+                "code": "555 C",
+                "hex_color": "#28724F"
+            },
+            "closest_pms_3": {
+                "code": "7731 C",
+                "hex_color": "#228848"
+            },
+            "closest_ral_1": {
+                "code": "RAL 5018",
+                "name": "Turquoise blue",
+                "hex_color": "#21888F",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 710-3",
+                "name": null,
+                "hex_color": "#058A8B",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H190L50C30",
+                "name": "Egyptian Green",
+                "hex_color": "#08847C",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1704/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1725/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/398/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/3242/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2793/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/2782/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/85/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/15/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2793/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1704/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1201/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/373/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1704/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/3524/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/305/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-21--16-52-33-front-thumb_Jq3aLJb.jpg",
+            "hex_color": "008B73",
+            "lab_l": 50.76,
+            "lab_a": -44.09,
+            "lab_b": 2.06,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Sep 30, 2019",
+            "is_available": false,
+            "published": true
+        }
+    ]
+}
