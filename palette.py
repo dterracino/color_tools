@@ -13,10 +13,11 @@ search by name, RGB, HSL, maker, type, etc. and get instant results!
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Tuple, Dict, List, Optional
+from typing import Tuple, Dict, List, Optional, Union, Set
 import json
 from pathlib import Path
 
+from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, rgb_to_hsl, lab_to_rgb
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc
 from color_tools.config import get_dual_color_mode
@@ -232,6 +233,11 @@ def _rounded_key(nums: Tuple[float, ...], ndigits: int = 2) -> str:
     """
     return ",".join(str(round(x, ndigits)) for x in nums)
 
+def _ensure_list(value: Union[str, List[str]]) -> List[str]:
+    """Ensures the input is a list of strings, wrapping if it's a single string."""
+    if isinstance(value, str):
+        return [value]
+    return value
 
 # ============================================================================
 # Palette Classes
@@ -289,8 +295,8 @@ class Palette:
         space: str = "lab",
         metric: str = "de2000",
         *,
-        cmc_l: float = 2.0,
-        cmc_c: float = 1.0,
+        cmc_l: float = ColorConstants.CMC_L_DEFAULT,
+        cmc_c: float = ColorConstants.CMC_C_DEFAULT,
     ) -> Tuple[ColorRecord, float]:
         """
         Find nearest color by space/metric.
@@ -408,6 +414,22 @@ class FilamentPalette:
                     self._by_finish[rec.finish] = []
                 self._by_finish[rec.finish].append(rec)
     
+    def _normalize_filter_values(self, value: Optional[Union[str, List[str]]]) -> Optional[Set[str]]:
+        """
+        Convert a filter value (str or list) to a set for fast lookups.
+        
+        Args:
+            value: A string, a list of strings, or None.
+            
+        Returns:
+            A set of strings, or None if the input was None.
+        """
+        if value is None:
+            return None
+        if isinstance(value, str):
+            return {value}
+        return set(value)
+
     @classmethod
     def load_default(cls) -> 'FilamentPalette':
         """
@@ -417,13 +439,39 @@ class FilamentPalette:
         """
         return cls(load_filaments())
 
-    def find_by_maker(self, maker: str) -> List[FilamentRecord]:
-        """Find all filaments by maker."""
-        return self._by_maker.get(maker, [])
+    def find_by_maker(self, maker: Union[str, List[str]]) -> List[FilamentRecord]:
+        """
+        Find all filaments by a single maker or a list of makers.
+        
+        Args:
+            maker: A single maker name (str) or a list of names.
+            
+        Returns:
+            A list of all matching FilamentRecord objects.
+        """
+        makers_to_find = _ensure_list(maker)
+        
+        all_filaments = []
+        for m in makers_to_find:
+            all_filaments.extend(self._by_maker.get(m, []))
+        return all_filaments
 
-    def find_by_type(self, type_name: str) -> List[FilamentRecord]:
-        """Find all filaments by type."""
-        return self._by_type.get(type_name, [])
+    def find_by_type(self, type_name: Union[str, List[str]]) -> List[FilamentRecord]:
+        """
+        Find all filaments by a single type or a list of types.
+        
+        Args:
+            type_name: A single filament type (str) or a list of types.
+            
+        Returns:
+            A list of all matching FilamentRecord objects.
+        """
+        types_to_find = _ensure_list(type_name)
+
+        all_filaments = []
+        for t in types_to_find:
+            all_filaments.extend(self._by_type.get(t, []))
+        return all_filaments
 
     def find_by_color(self, color: str) -> List[FilamentRecord]:
         """Find all filaments by color name (case-insensitive)."""
@@ -433,26 +481,58 @@ class FilamentPalette:
         """Find all filaments by exact RGB match."""
         return self._by_rgb.get(rgb, [])
 
-    def find_by_finish(self, finish: str) -> List[FilamentRecord]:
-        """Find all filaments by finish."""
-        return self._by_finish.get(finish, [])
+    def find_by_finish(self, finish: Union[str, List[str]]) -> List[FilamentRecord]:
+        """
+        Find all filaments by a single finish or a list of finishes.
+        
+        Args:
+            finish: A single filament finish (str) or a list of finishes.
+            
+        Returns:
+            A list of all matching FilamentRecord objects.
+        """
+        finishes_to_find = _ensure_list(finish)
+            
+        all_filaments = []
+        for f in finishes_to_find:
+            all_filaments.extend(self._by_finish.get(f, []))
+        return all_filaments
 
-    def filter(self, maker: Optional[str] = None, type_name: Optional[str] = None, 
-               finish: Optional[str] = None, color: Optional[str] = None) -> List[FilamentRecord]:
+    def filter(
+        self,
+        maker: Optional[Union[str, List[str]]] = None,
+        type_name: Optional[Union[str, List[str]]] = None,
+        finish: Optional[Union[str, List[str]]] = None,
+        color: Optional[str] = None
+    ) -> List[FilamentRecord]:
         """
         Filter filaments by multiple criteria.
         
         This is like SQL WHERE clauses! Start with all records, then filter
-        down by each criterion that's provided.
+        down by each criterion that's provided. Maker, type, and finish
+        can accept a single string or a list of strings.
+        
+        Args:
+            maker: A maker name or list of maker names.
+            type_name: A filament type or list of types.
+            finish: A filament finish or list of finishes.
+            color: A single color name to match (case-insensitive).
+        
+        Returns:
+            A list of FilamentRecord objects matching the criteria.
         """
         results = self.records
         
-        if maker:
-            results = [r for r in results if r.maker == maker]
-        if type_name:
-            results = [r for r in results if r.type == type_name]
-        if finish:
-            results = [r for r in results if r.finish == finish]
+        makers_set = self._normalize_filter_values(maker)
+        types_set = self._normalize_filter_values(type_name)
+        finishes_set = self._normalize_filter_values(finish)
+        
+        if makers_set:
+            results = [r for r in results if r.maker in makers_set]
+        if types_set:
+            results = [r for r in results if r.type in types_set]
+        if finishes_set:
+            results = [r for r in results if r.finish and r.finish in finishes_set]
         if color:
             results = [r for r in results if r.color.lower() == color.lower()]
             
@@ -463,35 +543,33 @@ class FilamentPalette:
         target_rgb: Tuple[int, int, int],
         metric: str = "de2000",
         *,
-        maker_filter: Optional[str] = None,
-        type_filter: Optional[str] = None,
-        cmc_l: float = 2.0,
-        cmc_c: float = 1.0,
+        maker: Optional[Union[str, List[str]]] = None,
+        type_name: Optional[Union[str, List[str]]] = None,
+        finish: Optional[Union[str, List[str]]] = None,
+        cmc_l: float = ColorConstants.CMC_L_DEFAULT,
+        cmc_c: float = ColorConstants.CMC_C_DEFAULT,
     ) -> Tuple[FilamentRecord, float]:
         """
-        Find nearest filament by color similarity.
+        Find nearest filament by color similarity, with optional filters.
         
         The killer feature for 3D printing! "I want this exact color... what
         filament should I buy?" 🎨🖨️
         
         Args:
-            target_rgb: Target RGB color tuple
-            metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'
-            maker_filter: Optional maker filter
-            type_filter: Optional type filter
-            cmc_l, cmc_c: Parameters for CMC metric
+            target_rgb: Target RGB color tuple.
+            metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'.
+            maker: Optional maker name or list of names to filter by.
+            type_name: Optional filament type or list of types to filter by.
+            finish: Optional filament finish or list of finishes to filter by.
+            cmc_l, cmc_c: Parameters for CMC metric.
         
         Returns:
-            (nearest_filament_record, distance) tuple
+            (nearest_filament_record, distance) tuple.
         """
         target_lab = rgb_to_lab(target_rgb)
         
-        # Apply filters
-        candidates = self.records
-        if maker_filter:
-            candidates = [r for r in candidates if r.maker == maker_filter]
-        if type_filter:
-            candidates = [r for r in candidates if r.type == type_filter]
+        # Apply filters by calling our powerful filter() method first!
+        candidates = self.filter(maker=maker, type_name=type_name, finish=finish)
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
@@ -542,3 +620,4 @@ class FilamentPalette:
     def finishes(self) -> List[str]:
         """Get sorted list of all finishes."""
         return sorted(self._by_finish.keys())
+

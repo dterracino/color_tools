@@ -101,6 +101,10 @@ class ColorConstants:
     CMC_F_POWER = 4.0
     CMC_F_DIVISOR = 1900.0
     
+    # Default l:c ratios for CMC (2:1 for acceptability, 1:1 for perceptibility)
+    CMC_L_DEFAULT = 2.0
+    CMC_C_DEFAULT = 1.0
+    
     # ===== Angle and Range Constants =====
     HUE_CIRCLE_DEGREES = 360.0          # Full circle for hue
     HUE_HALF_CIRCLE_DEGREES = 180.0     # Half circle
@@ -150,4 +154,5 @@ class ColorConstants:
     
     # This hash is computed once when the constants are known to be correct
     # Computed hash of all color science constants (SHA-256)
-    _EXPECTED_HASH = "d54cf8dd2f7b92bbb83e43c3b636d55d7d973d12a31cb911d35216ed0f370f5b"
+    _EXPECTED_HASH = "a58742b6833c94f54728512140c83a73c155d549f55e0428d0b279bc1ca6d8e8"
+

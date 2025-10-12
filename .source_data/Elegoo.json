@@ -1,0 +1,1783 @@
+{
+    "count": 17,
+    "next": null,
+    "previous": null,
+    "results": [
+        {
+            "id": 2630,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Purple",
+            "filament_type": {
+                "id": 57,
+                "name": "PLA Pro",
+                "hot_end_temp": 215,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "PPL",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/elegoo-purple-pla-pro-2630-front_EokXYRP.jpg",
+            "image_back": "https://filamentcolors.xyz/media/elegoo-purple-pla-pro-2630-back_6z4dScF.jpg",
+            "image_other": null,
+            "date_added": "2024-05-28T13:29:45.678631Z",
+            "date_published": "2025-08-31T16:03:16.832579Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3HOgp9Q",
+            "mfr_purchase_link": "https://us.elegoo.com/products/pla-pro-filament-1-75mm-colored-1kg?variant=43734185476277",
+            "closest_pantone_1": {
+                "code": "18-3840 TPX",
+                "name": "Purple Opulence",
+                "hex_color": "#6459A2",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-8163C",
+                "name": null,
+                "hex_color": "#5E549B",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "8163 C",
+                "name": null,
+                "hex_color": "#5E549B",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7670 C",
+                "hex_color": "#565294"
+            },
+            "closest_pms_2": {
+                "code": "7669 C",
+                "hex_color": "#615E9B"
+            },
+            "closest_pms_3": {
+                "code": "7671 C",
+                "hex_color": "#514689"
+            },
+            "closest_ral_1": {
+                "code": "RAL 5023",
+                "name": "Distant blue",
+                "hex_color": "#4D668E",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 570-M",
+                "name": null,
+                "hex_color": "#6B589A",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H300L40C45",
+                "name": "Coronation Blue",
+                "hex_color": "#59529C",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/529/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1759/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1914/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/208/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3394/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3678/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/979/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/58/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3394/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/529/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/3554/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1750/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/529/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/2789/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1814/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/elegoo-purple-pla-pro-2630-thumb_dzFoIsa.jpg",
+            "hex_color": "5D539D",
+            "lab_l": 39.41,
+            "lab_a": 23.13,
+            "lab_b": -39.81,
+            "td": 1.8,
+            "td_range": [
+                1.8,
+                1.8
+            ],
+            "human_readable_date": "Aug 31, 2025",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3658,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Sky Blue",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLU",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-12-07--08-14-51-front_p8ITMmE.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-12-07--08-14-51-back_wgPPuwh.jpg",
+            "image_other": null,
+            "date_added": "2024-10-29T23:24:23.243491Z",
+            "date_published": "2024-12-22T23:44:36.557553Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/4iOOtjx",
+            "mfr_purchase_link": "https://us.elegoo.com/products/elegoo-pla-filament-1-75mm-3d-printer-filament-1kg-spool-2-2-lbs?variant=43734134063285",
+            "closest_pantone_1": {
+                "code": "15-4722 TCX",
+                "name": "Capri",
+                "hex_color": "#44BBCA",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2226C",
+                "name": null,
+                "hex_color": "#3CCBDA",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "2226 C",
+                "name": null,
+                "hex_color": "#3CCBDA",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "637 C",
+                "hex_color": "#4EC3E0"
+            },
+            "closest_pms_2": {
+                "code": "319 C",
+                "hex_color": "#2DCCD3"
+            },
+            "closest_pms_3": {
+                "code": "305 C",
+                "hex_color": "#59CBE8"
+            },
+            "closest_ral_1": {
+                "code": "RAL 6027",
+                "name": "Light green",
+                "hex_color": "#81C0BB",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 690-1",
+                "name": null,
+                "hex_color": "#3FBFCB",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H210L70C35",
+                "name": "Panorama Blue",
+                "hex_color": "#35BDC8",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3329/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2953/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1331/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/4512/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1934/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1372/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2324/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2089/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1934/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3329/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1756/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/173/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3329/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/4322/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/113/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-12-07--08-14-51-front-thumb_afjslLP.jpg",
+            "hex_color": "45c8d6",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 2.1,
+            "td_range": [
+                2.1,
+                2.1
+            ],
+            "human_readable_date": "Dec 22, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3659,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Purple",
+            "filament_type": {
+                "id": 26,
+                "name": "PLA+",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "PPL",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-12-07--08-11-58-front_P52Zih9.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-12-07--08-11-58-back_jJyMeSG.jpg",
+            "image_other": null,
+            "date_added": "2024-10-29T23:24:44.494256Z",
+            "date_published": "2024-12-17T22:59:53.518162Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3DhZzO3",
+            "mfr_purchase_link": "https://us.elegoo.com/products/elegoo-pla-plus-3d-printer-filament-1-75mm-colored-1kg?variant=43734140616885",
+            "closest_pantone_1": {
+                "code": "18-3940 TN",
+                "name": "Simply Purple",
+                "hex_color": "#6050A8",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2077C",
+                "name": null,
+                "hex_color": "#6E3FA3",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "2077 XGC",
+                "name": null,
+                "hex_color": "#6E40AC",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "2587 C",
+                "hex_color": "#8246AF"
+            },
+            "closest_pms_2": {
+                "code": "266 C",
+                "hex_color": "#753BBD"
+            },
+            "closest_pms_3": {
+                "code": "7678 C",
+                "hex_color": "#68478D"
+            },
+            "closest_ral_1": {
+                "code": "RAL 4005",
+                "name": "Blue lilac",
+                "hex_color": "#83639D",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 570-M",
+                "name": null,
+                "hex_color": "#6B589A",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H300L40C45",
+                "name": "Coronation Blue",
+                "hex_color": "#59529C",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3129/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/874/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/119/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/521/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2684/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1781/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1129/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/4475/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2684/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3129/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/3889/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/106/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3129/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/264/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/3336/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-12-07--08-11-58-front-thumb_kTjsJ90.jpg",
+            "hex_color": "6e45a8",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 2.0,
+            "td_range": [
+                2.0,
+                2.0
+            ],
+            "human_readable_date": "Dec 17, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3657,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Silk Black Red",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "RED",
+            "alt_color_parent": "BLK",
+            "image_front": "https://filamentcolors.xyz/media/2024-12-07--07-50-32-front_h18KRTG.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-12-07--07-50-32-back_w9pNH7k.jpg",
+            "image_other": null,
+            "date_added": "2024-10-29T23:24:03.241432Z",
+            "date_published": "2024-12-17T22:22:24.385557Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/49HFJYp",
+            "mfr_purchase_link": "https://us.elegoo.com/products/elegoo-silk-pla-filament-1-75mm-colored-1kg?variant=44561620730037",
+            "closest_pantone_1": {
+                "code": "18-3715 TCX",
+                "name": "Montana Grape",
+                "hex_color": "#6C5971",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-7666C",
+                "name": null,
+                "hex_color": "#5C4E63",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 98-6 U",
+                "name": null,
+                "hex_color": "#64526A",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7666 C",
+                "hex_color": "#5C4E63"
+            },
+            "closest_pms_2": {
+                "code": "668 C",
+                "hex_color": "#614B79"
+            },
+            "closest_pms_3": {
+                "code": "5275 C",
+                "hex_color": "#595478"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7012",
+                "name": "Basalt grey",
+                "hex_color": "#596163",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 860-6",
+                "name": null,
+                "hex_color": "#5B5F5F",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H320L40C20",
+                "name": "Basil Mauve",
+                "hex_color": "#6C5472",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3690/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/3704/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/3657/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/4364/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1503/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/4437/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1216/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3095/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1503/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3690/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2732/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/2064/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3690/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/3667/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/374/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-12-07--07-50-32-front-thumb_g8Llvb0.jpg",
+            "hex_color": "65516b",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 0.6,
+            "td_range": [
+                0.6,
+                0.6
+            ],
+            "human_readable_date": "Dec 17, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3400,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Peacock Blue",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLU",
+            "alt_color_parent": "GRN",
+            "image_front": "https://filamentcolors.xyz/media/2024-10-08--13-45-10-front_z68N2pb.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-10-08--13-45-10-back_HMb0d7V.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:51:25.229311Z",
+            "date_published": "2024-10-20T18:56:09.317718Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3YrGsJj",
+            "mfr_purchase_link": "https://us.elegoo.com/products/pla-filament-1-75mm-special-colored-1kg",
+            "closest_pantone_1": {
+                "code": "19-4826 TPX",
+                "name": "Dragonfly",
+                "hex_color": "#265F6C",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-8762C",
+                "name": null,
+                "hex_color": "#295B65",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "8762 C",
+                "name": null,
+                "hex_color": "#295B65",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "5473 C",
+                "hex_color": "#115E67"
+            },
+            "closest_pms_2": {
+                "code": "7476 C",
+                "hex_color": "#0D5257"
+            },
+            "closest_pms_3": {
+                "code": "7477 C",
+                "hex_color": "#244C5A"
+            },
+            "closest_ral_1": {
+                "code": "RAL 5009",
+                "name": "Azure blue",
+                "hex_color": "#2E5978",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 650-5",
+                "name": null,
+                "hex_color": "#1D5B78",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H220L40C20",
+                "name": "Mordant Blue",
+                "hex_color": "#2A6671",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3274/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2560/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/79/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1835/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3288/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/2738/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/536/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/44/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3288/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3274/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2480/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/2793/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3274/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1907/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/3788/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-10-08--13-45-10-front-thumb_BxGawvK.jpg",
+            "hex_color": "20606c",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 1.9,
+            "td_range": [
+                1.9,
+                1.9
+            ],
+            "human_readable_date": "Oct 20, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3402,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Galaxy Purple",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "PPL",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-10-08--13-37-30-front_J1zaw7D.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-10-08--13-37-30-back_lsmloch.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:52:17.882605Z",
+            "date_published": "2024-10-20T18:42:45.653977Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/4dTQiYT",
+            "mfr_purchase_link": "https://us.elegoo.com/products/pla-filament-1-75mm-special-colored-1kg",
+            "closest_pantone_1": {
+                "code": "19-3847 TCX",
+                "name": "Deep Blue",
+                "hex_color": "#44377D",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2118C",
+                "name": null,
+                "hex_color": "#343579",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 99-16 C",
+                "name": null,
+                "hex_color": "#382E73",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7680 C",
+                "hex_color": "#523178"
+            },
+            "closest_pms_2": {
+                "code": "7672 C",
+                "hex_color": "#4C4184"
+            },
+            "closest_pms_3": {
+                "code": "269 C",
+                "hex_color": "#512D6D"
+            },
+            "closest_ral_1": {
+                "code": "RAL 5002",
+                "name": "Ultramarine blue",
+                "hex_color": "#2B2C7C",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 590-3",
+                "name": null,
+                "hex_color": "#2A366B",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H300L30C40",
+                "name": "Sage Violet",
+                "hex_color": "#413C7B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1744/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2443/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2337/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1538/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3274/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1963/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/948/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3788/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3274/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1744/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1190/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/536/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1744/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1647/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2249/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-10-08--13-37-30-front-thumb_2klbdSO.jpg",
+            "hex_color": "3a2f70",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 5.5,
+            "td_range": [
+                5.5,
+                5.5
+            ],
+            "human_readable_date": "Oct 20, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3399,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Orange",
+            "filament_type": {
+                "id": 26,
+                "name": "PLA+",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "RNG",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-10-08--13-36-26-front_zBKxHp5.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-10-08--13-36-26-back_AeLdT2R.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:51:08.691273Z",
+            "date_published": "2024-10-20T18:41:12.831269Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/40v6Q6L",
+            "mfr_purchase_link": "https://us.elegoo.com/products/elegoo-pla-plus-3d-printer-filament-1-75mm-colored-1kg",
+            "closest_pantone_1": {
+                "code": "16-1448 TPX",
+                "name": "Burnt Orange",
+                "hex_color": "#C7622B",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-10146C",
+                "name": null,
+                "hex_color": "#C56926",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "718 CP",
+                "name": null,
+                "hex_color": "#D1692E",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7583 C",
+                "hex_color": "#C4622D"
+            },
+            "closest_pms_2": {
+                "code": "7565 C",
+                "hex_color": "#CD7925"
+            },
+            "closest_pms_3": {
+                "code": "7578 C",
+                "hex_color": "#DC6B2F"
+            },
+            "closest_ral_1": {
+                "code": "RAL 2010",
+                "name": "Signal orange",
+                "hex_color": "#D4652F",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 390-6",
+                "name": null,
+                "hex_color": "#CD5E2A",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H060L60C60",
+                "name": "Bitter Orange",
+                "hex_color": "#D5762B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3919/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/307/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/4100/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/3659/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2552/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3490/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2318/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1804/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2552/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3919/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/281/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/4519/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3919/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/3383/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/3615/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-10-08--13-36-26-front-thumb_HcZlUH6.jpg",
+            "hex_color": "cc6a30",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 5.0,
+            "td_range": [
+                5.0,
+                5.0
+            ],
+            "human_readable_date": "Oct 20, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3403,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Galaxy Black",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": "BLU",
+            "image_front": "https://filamentcolors.xyz/media/2024-10-08--12-56-19-front_wihHYgd.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-10-08--12-56-19-back_WbeRSNa.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:52:39.540741Z",
+            "date_published": "2024-10-20T18:31:28.587515Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3UEL3pt",
+            "mfr_purchase_link": "https://us.elegoo.com/products/pla-filament-1-75mm-special-colored-1kg",
+            "closest_pantone_1": {
+                "code": "19-4316 TCX",
+                "name": "Stargazer",
+                "hex_color": "#39505C",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-8503C",
+                "name": null,
+                "hex_color": "#2B3D43",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "432 XGC",
+                "name": null,
+                "hex_color": "#39454D",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "432 C",
+                "hex_color": "#333F48"
+            },
+            "closest_pms_2": {
+                "code": "7477 C",
+                "hex_color": "#244C5A"
+            },
+            "closest_pms_3": {
+                "code": "7546 C",
+                "hex_color": "#253746"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7026",
+                "name": "Granite grey",
+                "hex_color": "#374447",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 810-6",
+                "name": null,
+                "hex_color": "#394146",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H240L30C10",
+                "name": "Dirty Blue",
+                "hex_color": "#344953",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/983/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/4321/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/692/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1008/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/227/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1509/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1665/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3169/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/227/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/983/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/911/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/545/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/983/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/2452/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2088/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-10-08--12-56-19-front-thumb_rwqjLL4.jpg",
+            "hex_color": "32464f",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 0.5,
+            "td_range": [
+                0.5,
+                0.5
+            ],
+            "human_readable_date": "Oct 20, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3401,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Silver",
+            "filament_type": {
+                "id": 55,
+                "name": "Silk PLA",
+                "hot_end_temp": 215,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-10-08--12-30-38-front_Qrypu7p.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-10-08--12-30-38-back_TsrqfQm.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:52:05.248322Z",
+            "date_published": "2024-10-20T17:56:47.689537Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3Yx3j68",
+            "mfr_purchase_link": "https://us.elegoo.com/collections/silk-pla-filaments/products/elegoo-silk-pla-filament-1-75mm-colored-1kg",
+            "closest_pantone_1": {
+                "code": "16-3916 TCX",
+                "name": "Sleet",
+                "hex_color": "#92949B",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-CoolGray7C",
+                "name": null,
+                "hex_color": "#97999B",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "Cool Gray 8 U",
+                "name": null,
+                "hex_color": "#939598",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "Cool Gray 7 C",
+                "hex_color": "#97999B"
+            },
+            "closest_pms_2": {
+                "code": "877 C",
+                "hex_color": "#8A8D8F"
+            },
+            "closest_pms_3": {
+                "code": "Cool Gray 8 C",
+                "hex_color": "#888B8D"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7045",
+                "name": "Telegrey 1",
+                "hex_color": "#91969A",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 810-1",
+                "name": null,
+                "hex_color": "#979DA2",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H280L60C05",
+                "name": "Tulle Grey",
+                "hex_color": "#8D9098",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/421/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1299/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/434/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2673/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2234/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3451/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2234/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2673/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2234/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/421/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2673/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1582/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/421/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1893/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2282/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-10-08--12-30-38-front-thumb_99Ab1PV.jpg",
+            "hex_color": "93969c",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 0.5,
+            "td_range": [
+                0.5,
+                0.5
+            ],
+            "human_readable_date": "Oct 20, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3398,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Red/Green",
+            "filament_type": {
+                "id": 55,
+                "name": "Silk PLA",
+                "hot_end_temp": 215,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "RED",
+            "alt_color_parent": "GRN",
+            "image_front": "https://filamentcolors.xyz/media/2024-09-25--14-22-33-front_txHXJdB.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-09-25--14-22-33-back_kXvHIkf.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:50:53.470953Z",
+            "date_published": "2024-10-06T16:55:44.351689Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3NgNRF8",
+            "mfr_purchase_link": null,
+            "closest_pantone_1": {
+                "code": "17-0517 TCX",
+                "name": "Dusky Green",
+                "hex_color": "#746C57",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-7497C",
+                "name": null,
+                "hex_color": "#7A7256",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "449 U",
+                "name": null,
+                "hex_color": "#716B54",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7497 C",
+                "hex_color": "#7A7256"
+            },
+            "closest_pms_2": {
+                "code": "417 C",
+                "hex_color": "#65665C"
+            },
+            "closest_pms_3": {
+                "code": "404 C",
+                "hex_color": "#776E64"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7006",
+                "name": "Beige grey",
+                "hex_color": "#756F61",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 770-3",
+                "name": null,
+                "hex_color": "#7A755A",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H100L50C10",
+                "name": "Lapwing Grey Green",
+                "hex_color": "#7A7562",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1378/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/4596/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1216/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/3657/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3496/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3704/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/3901/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/100/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3496/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1378/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/100/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/3496/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1378/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/4419/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1348/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-09-25--14-22-33-front-thumb_0qAkFVx.jpg",
+            "hex_color": "716c57",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 0.8,
+            "td_range": [
+                0.8,
+                0.8
+            ],
+            "human_readable_date": "Oct 06, 2024",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 3396,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Gold",
+            "filament_type": {
+                "id": 55,
+                "name": "Silk PLA",
+                "hot_end_temp": 215,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "YLW",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-09-25--14-20-39-front_TQmKPpO.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-09-25--14-20-39-back_8xj6hTk.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:50:20.196684Z",
+            "date_published": "2024-10-06T16:51:45.764436Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3Nfvgch",
+            "mfr_purchase_link": "https://us.elegoo.com/collections/silk-pla-filaments/products/elegoo-silk-pla-filament-1-75mm-colored-1kg",
+            "closest_pantone_1": {
+                "code": "14-0957 TCX",
+                "name": "Spectra Yellow",
+                "hex_color": "#F7B718",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-7555C",
+                "name": null,
+                "hex_color": "#D29F13",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "7405 U",
+                "name": null,
+                "hex_color": "#E6B10E",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7555 C",
+                "hex_color": "#D29F13"
+            },
+            "closest_pms_2": {
+                "code": "1245 C",
+                "hex_color": "#C69214"
+            },
+            "closest_pms_3": {
+                "code": "7758 C",
+                "hex_color": "#D4C304"
+            },
+            "closest_ral_1": {
+                "code": "RAL 1033",
+                "name": "Dahlia yellow",
+                "hex_color": "#F99A1C",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 260-6",
+                "name": null,
+                "hex_color": "#EFB416",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H085L70C70",
+                "name": "Immortelle Yellow",
+                "hex_color": "#D4A207",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/2143/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/538/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2243/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/886/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3643/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3490/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1723/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3272/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3643/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/2143/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2791/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/359/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/2143/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1153/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1100/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-09-25--14-20-39-front-thumb_egvAcq3.jpg",
+            "hex_color": "e2ac02",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 2.7,
+            "td_range": [
+                2.7,
+                2.7
+            ],
+            "human_readable_date": "Oct 06, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 3404,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Coral Pink",
+            "filament_type": {
+                "id": 55,
+                "name": "Silk PLA",
+                "hot_end_temp": 215,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "PNK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-09-25--14-18-42-front_Ll2Jfrm.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-09-25--14-18-42-back_0b9PlJf.jpg",
+            "image_other": null,
+            "date_added": "2024-08-10T01:52:49.519571Z",
+            "date_published": "2024-10-06T16:46:56.432910Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3BuGhUu",
+            "mfr_purchase_link": "https://us.elegoo.com/products/elegoo-silk-pla-filament-1-75mm-colored-1kg?variant=43734189179061",
+            "closest_pantone_1": {
+                "code": "17-1643 TPX",
+                "name": "Porcelain Rose",
+                "hex_color": "#E46A6D",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2031C",
+                "name": null,
+                "hex_color": "#D66965",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "2031 XGC",
+                "name": null,
+                "hex_color": "#D86D6C",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "709 C",
+                "hex_color": "#EF6079"
+            },
+            "closest_pms_2": {
+                "code": "7607 C",
+                "hex_color": "#C26E60"
+            },
+            "closest_pms_3": {
+                "code": "7418 C",
+                "hex_color": "#CD545B"
+            },
+            "closest_ral_1": {
+                "code": "RAL 3014",
+                "name": "Antique pink",
+                "hex_color": "#D47479",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 460-3",
+                "name": null,
+                "hex_color": "#DF6368",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H030L60C50",
+                "name": "Calypso Red",
+                "hex_color": "#DE6B66",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/879/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1363/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1717/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/713/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2931/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/277/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/3879/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1934/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2931/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/879/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/173/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/2118/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/879/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/666/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1466/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-09-25--14-18-42-front-thumb_MdDWvt0.jpg",
+            "hex_color": "db6e6e",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 2.0,
+            "td_range": [
+                2.0,
+                2.0
+            ],
+            "human_readable_date": "Oct 06, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 2821,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Clear",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "TRN",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-07-23--14-53-35-front_tj6oeri.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-07-23--14-53-35-back_i9asnxU.jpg",
+            "image_other": null,
+            "date_added": "2024-06-19T00:52:57.979449Z",
+            "date_published": "2024-08-07T19:30:44.079956Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/46GboZ2",
+            "mfr_purchase_link": "https://www.elegoo.com/products/elegoo-pla-filament-1-75mm-3d-printer-filament-1kg-spool-2-2-lbs",
+            "closest_pantone_1": {
+                "code": "14-4107 TCX",
+                "name": "Quiet Gray",
+                "hex_color": "#B9BABD",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-CoolGray4C",
+                "name": null,
+                "hex_color": "#BBBCBC",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 179-4 C",
+                "name": null,
+                "hex_color": "#BFBFC0",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "Cool Gray 4 C",
+                "hex_color": "#BBBCBC"
+            },
+            "closest_pms_2": {
+                "code": "Cool Gray 5 C",
+                "hex_color": "#B1B3B3"
+            },
+            "closest_pms_3": {
+                "code": "406 C",
+                "hex_color": "#C4BCB7"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7047",
+                "name": "Telegrey 4",
+                "hex_color": "#CFD0CF",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 860-3",
+                "name": null,
+                "hex_color": "#C1C2C4",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H300L80C05",
+                "name": "Hazy Mauve",
+                "hex_color": "#C8C6CE",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3820/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2821/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2821/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1315/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3868/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3820/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/3619/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3375/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3868/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3820/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1315/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1889/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3820/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/900/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1451/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-07-23--14-53-35-front-thumb_Iv0FYza.jpg",
+            "hex_color": "bebbc0",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 100.0,
+            "td_range": [
+                100.0,
+                100.0
+            ],
+            "human_readable_date": "Aug 07, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 2964,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Black",
+            "filament_type": {
+                "id": 26,
+                "name": "PLA+",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-06-29--09-27-40-front_tOoeqAH.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-06-29--09-27-40-back_C1zwtJQ.jpg",
+            "image_other": null,
+            "date_added": "2024-06-22T22:48:32.476274Z",
+            "date_published": "2024-07-08T20:39:07.140617Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3Lgokut",
+            "mfr_purchase_link": "https://us.elegoo.com/products/pla-filament-1-75mm-colored-1kg?_pos=2&_psq=black+pla&_ss=e&_v=1.0&variant=43734133670069",
+            "closest_pantone_1": {
+                "code": "19-1102 TPX",
+                "name": "Licorice",
+                "hex_color": "#343132",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-10399C",
+                "name": null,
+                "hex_color": "#363432",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 179-15 C",
+                "name": null,
+                "hex_color": "#363434",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "412 C",
+                "hex_color": "#382F2D"
+            },
+            "closest_pms_2": {
+                "code": "Black C",
+                "hex_color": "#2D2926"
+            },
+            "closest_pms_3": {
+                "code": "Black 7 C",
+                "hex_color": "#3D3935"
+            },
+            "closest_ral_1": {
+                "code": "RAL 9004",
+                "name": "Signal black",
+                "hex_color": "#2E3032",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 790-4",
+                "name": null,
+                "hex_color": "#302F32",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L20C00",
+                "name": "Slate Black",
+                "hex_color": "#2B2B2B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1639/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/853/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/224/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2287/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/413/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1639/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/413/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/853/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/413/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1639/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/853/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1009/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1639/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1997/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/458/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-06-29--09-27-40-front-thumb_7lB0zFy.jpg",
+            "hex_color": "343132",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": 0.2,
+            "td_range": [
+                0.2,
+                0.2
+            ],
+            "human_readable_date": "Jul 08, 2024",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 2377,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Grey",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-03-31--14-32-49-front_O2pL0ma.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-03-31--14-32-49-back_DWCmsAi.jpg",
+            "image_other": null,
+            "date_added": "2024-04-04T15:14:31.034214Z",
+            "date_published": "2024-04-04T15:14:31.040144Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/4aFDRyH",
+            "mfr_purchase_link": null,
+            "closest_pantone_1": {
+                "code": "14-4103 TCX",
+                "name": "Gray Violet",
+                "hex_color": "#BBBCBC",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-10103C",
+                "name": null,
+                "hex_color": "#B9BBBB",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "Cool Gray 4 U",
+                "name": null,
+                "hex_color": "#B7B8B9",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "Cool Gray 5 C",
+                "hex_color": "#B1B3B3"
+            },
+            "closest_pms_2": {
+                "code": "Cool Gray 4 C",
+                "hex_color": "#BBBCBC"
+            },
+            "closest_pms_3": {
+                "code": "421 C",
+                "hex_color": "#B2B4B2"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7038",
+                "name": "Agate grey",
+                "hex_color": "#B4B8B0",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 830-1",
+                "name": null,
+                "hex_color": "#BABCBA",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L75C00",
+                "name": "Marble Grey",
+                "hex_color": "#BABABA",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3868/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2377/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1170/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2751/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2821/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/2751/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/688/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1445/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2821/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3868/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1445/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/2821/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3868/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1170/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1797/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-03-31--14-32-49-front-thumb_2wErDOH.jpg",
+            "hex_color": "B5B7B8",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Apr 04, 2024",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 2182,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "White",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "WHT",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-01-30--06-36-05-front_G0SAMQF.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-01-30--06-36-05-back_7TtjKZF.jpg",
+            "image_other": null,
+            "date_added": "2024-01-08T22:01:35.968605Z",
+            "date_published": "2024-02-05T16:18:21.208986Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": null,
+            "closest_pantone_1": {
+                "code": "11-4001 TCX",
+                "name": "Brilliant White",
+                "hex_color": "#EDF1FE",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-656C",
+                "name": null,
+                "hex_color": "#DDE5ED",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 109-1 U",
+                "name": null,
+                "hex_color": "#E2E9F2",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "656 C",
+                "hex_color": "#DDE5ED"
+            },
+            "closest_pms_2": {
+                "code": "649 C",
+                "hex_color": "#DBE2E9"
+            },
+            "closest_pms_3": {
+                "code": "642 C",
+                "hex_color": "#D1DDE6"
+            },
+            "closest_ral_1": {
+                "code": "RAL 9003",
+                "name": "Signal white",
+                "hex_color": "#F4F8F4",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 160-1",
+                "name": null,
+                "hex_color": "#E3E1EC",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H270L90C05",
+                "name": "Bleached White",
+                "hex_color": "#DFE3E8",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/245/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/3662/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/500/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/3590/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1088/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/4372/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1088/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2041/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1088/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/245/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/3590/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1338/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/245/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1313/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/3382/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-01-30--06-36-05-front-thumb_buAWvTZ.jpg",
+            "hex_color": "e0e7f0",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Feb 05, 2024",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 2181,
+            "manufacturer": {
+                "id": 188,
+                "name": "Elegoo",
+                "website": "https://www.elegoo.com/pages/elegoo-pla-3d-printer-filament"
+            },
+            "color_name": "Black",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-01-30--06-12-52-front_1zDRB0L.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-01-30--06-12-52-back_pwrDHXA.jpg",
+            "image_other": null,
+            "date_added": "2024-01-08T22:01:14Z",
+            "date_published": "2024-02-05T16:01:44Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/42qH2r0",
+            "mfr_purchase_link": "https://www.elegoo.com/products/elegoo-pla-filament-1-75mm-3d-printer-filament-1kg-spool-2-2-lbs",
+            "closest_pantone_1": {
+                "code": "19-4008 TCX",
+                "name": "Meteorite",
+                "hex_color": "#2B2929",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-426C",
+                "name": null,
+                "hex_color": "#25282A",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "426 C",
+                "name": null,
+                "hex_color": "#25282A",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "426 C",
+                "hex_color": "#25282A"
+            },
+            "closest_pms_2": {
+                "code": "419 C",
+                "hex_color": "#212322"
+            },
+            "closest_pms_3": {
+                "code": "Neutral Black C",
+                "hex_color": "#222223"
+            },
+            "closest_ral_1": {
+                "code": "RAL 9017",
+                "name": "Traffic black",
+                "hex_color": "#2A2D2F",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 790-5",
+                "name": null,
+                "hex_color": "#212224",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L20C00",
+                "name": "Slate Black",
+                "hex_color": "#2B2B2B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1180/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2181/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/962/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1180/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/962/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1180/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1180/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2181/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/962/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1180/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2181/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/962/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1180/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/2220/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/509/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-01-30--06-12-52-front-thumb_I5KJDgF.jpg",
+            "hex_color": "282929",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Feb 05, 2024",
+            "is_available": true,
+            "published": true
+        }
+    ]
+}
