@@ -351,9 +351,9 @@ class Palette:
                 # Allow shorthands
                 l, c = cmc_l, cmc_c
                 if metric_l == "cmc21":
-                    l, c = 2.0, 1.0
+                    l, c = ColorConstants.CMC_L_DEFAULT, ColorConstants.CMC_C_DEFAULT
                 elif metric_l == "cmc11":
-                    l, c = 1.0, 1.0
+                    l, c = ColorConstants.CMC_C_DEFAULT, ColorConstants.CMC_C_DEFAULT
                 d = delta_e_cmc(value, r.lab, l=l, c=c)
             else:
                 d = fn(value, r.lab)  # type: ignore

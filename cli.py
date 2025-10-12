@@ -43,6 +43,9 @@ Examples:
   # Find nearest filament to an RGB color
   %(prog)s filament --nearest --value 255 0 0
   
+  # Find all PLA filaments from two different makers
+  %(prog)s filament --filter --type PLA --maker "Bambu Lab" "Sunlu"
+
   # List all filament makers
   %(prog)s filament --list-makers
   
@@ -109,13 +112,13 @@ Examples:
     color_parser.add_argument(
         "--cmc-l", 
         type=float, 
-        default=2.0, 
+        default=ColorConstants.CMC_L_DEFAULT, 
         help="CMC lightness parameter (default: 2.0)"
     )
     color_parser.add_argument(
         "--cmc-c", 
         type=float, 
-        default=1.0, 
+        default=ColorConstants.CMC_C_DEFAULT, 
         help="CMC chroma parameter (default: 1.0)"
     )
     
@@ -147,13 +150,13 @@ Examples:
     filament_parser.add_argument(
         "--cmc-l", 
         type=float, 
-        default=2.0, 
+        default=ColorConstants.CMC_L_DEFAULT, 
         help="CMC lightness parameter (default: 2.0)"
     )
     filament_parser.add_argument(
         "--cmc-c", 
         type=float, 
-        default=1.0, 
+        default=ColorConstants.CMC_C_DEFAULT, 
         help="CMC chroma parameter (default: 1.0)"
     )
     
@@ -177,18 +180,21 @@ Examples:
     # Filter operations
     filament_parser.add_argument(
         "--maker", 
+        nargs='+',
         type=str, 
-        help="Filter by maker"
+        help="Filter by one or more makers (e.g., --maker \"Bambu Lab\" \"Polymaker\")"
     )
     filament_parser.add_argument(
         "--type", 
+        nargs='+',
         type=str, 
-        help="Filter by type"
+        help="Filter by one or more types (e.g., --type PLA \"PLA+\")"
     )
     filament_parser.add_argument(
         "--finish", 
+        nargs='+',
         type=str, 
-        help="Filter by finish"
+        help="Filter by one or more finishes"
     )
     filament_parser.add_argument(
         "--color", 
@@ -372,8 +378,9 @@ Examples:
                 rec, d = filament_palette.nearest_filament(
                     rgb_val,
                     metric=args.metric,
-                    maker_filter=args.maker,
-                    type_filter=args.type,
+                    maker=args.maker,
+                    type_name=args.type,
+                    finish=args.finish,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
                 )
@@ -447,3 +454,4 @@ Examples:
         # If we get here, no valid convert operation was specified
         convert_parser.print_help()
         sys.exit(0)
+
