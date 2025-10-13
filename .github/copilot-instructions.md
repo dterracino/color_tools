@@ -215,3 +215,220 @@ filament, distance = filament_palette.nearest_filament(
 - The package works as library, CLI tool, or installed command
 - Constants hash must be regenerated if constants are modified (but they shouldn't be!)
 - JSON data file contains ~150 CSS colors and hundreds of filaments
+
+## Development Setup
+
+### Getting Started
+
+1. **Clone the repository**:
+   ```bash
+   git clone <repository-url>
+   cd color_tools
+   ```
+
+2. **Verify Python version**:
+   ```bash
+   python --version  # Should be 3.7+
+   ```
+
+3. **Test the installation**:
+   ```bash
+   # Run from parent directory of color_tools package
+   cd ..
+   python -m color_tools --help
+   python -m color_tools color --name coral
+   python -m color_tools --verify-constants
+   ```
+
+### Project Structure
+
+```
+color_tools/
+├── __init__.py           # Public API exports
+├── __main__.py           # Entry point for -m execution
+├── cli.py                # Command-line interface (top of import tree)
+├── conversions.py        # Color space conversions (RGB↔LAB↔HSL↔XYZ↔LCH)
+├── distance.py           # Perceptual distance metrics (Delta E formulas)
+├── gamut.py              # sRGB gamut checking and clamping
+├── palette.py            # Color/filament databases and search
+├── constants.py          # Immutable color science constants (NEVER modify)
+├── config.py             # Thread-safe runtime configuration
+├── validation.py         # Color name validation utilities
+├── validation_test.py    # Tests for validation module
+├── data/                 # JSON data files
+│   └── color_tools.json  # CSS colors + filament database
+├── .source_data/         # Source data and extraction scripts
+└── .github/
+    └── copilot-instructions.md  # This file
+```
+
+### Running Tests
+
+```bash
+# The project has minimal test infrastructure currently
+# Validation tests (requires fuzzywuzzy):
+pip install fuzzywuzzy python-Levenshtein
+cd color_tools
+python -m validation_test
+
+# Manual verification tests:
+python -m color_tools --verify-constants
+python -m color_tools color --name coral
+python -m color_tools filament --list-makers
+python -m color_tools convert --from rgb --to lab --value 255 128 64
+```
+
+### Development Workflow
+
+#### Making Changes to Color Conversions
+
+1. Edit `conversions.py` with your changes
+2. Test the conversion:
+   ```bash
+   python -m color_tools convert --from rgb --to lab --value 255 0 0
+   ```
+3. Verify constants haven't been accidentally modified:
+   ```bash
+   python -m color_tools --verify-constants
+   ```
+4. Update exports in `__init__.py` if adding new functions
+
+#### Adding New Distance Metrics
+
+1. Add function to `distance.py` with comprehensive docstring
+2. Export in `__init__.py`
+3. Add CLI support in `cli.py` (update `--metric` choices)
+4. Test with known values:
+   ```bash
+   python -m color_tools color --nearest --value 255 0 0 --metric your_new_metric
+   ```
+
+#### Modifying JSON Data
+
+1. Edit `data/color_tools.json` directly, or
+2. Use extraction scripts in `.source_data/` for bulk changes
+3. Validate structure is correct:
+   ```bash
+   python -c "import json; json.load(open('data/color_tools.json'))"
+   ```
+4. Test loading:
+   ```bash
+   python -m color_tools color --name coral
+   python -m color_tools filament --list-makers
+   ```
+
+## Troubleshooting
+
+### Import Errors
+
+**Problem**: `ImportError: attempted relative import with no known parent package`
+
+**Solution**: The package must be run from the parent directory:
+```bash
+# Wrong:
+cd color_tools
+python __main__.py
+
+# Correct:
+cd ..  # Parent directory containing color_tools/
+python -m color_tools
+```
+
+### Constants Verification Fails
+
+**Problem**: `ColorConstants integrity check FAILED!`
+
+**Solution**: 
+- If you didn't modify `constants.py`, this may be a pre-existing issue
+- If you did modify constants (you shouldn't!), revert your changes
+- Constants are from international standards and should never change
+
+### Color Not Found
+
+**Problem**: `Error: Color 'xyz' not found in database`
+
+**Solution**:
+- Check spelling and capitalization (use lowercase, e.g., "steelblue" not "SteelBlue")
+- List available colors: see `data/color_tools.json`
+- Use `--nearest` to find similar colors instead
+
+### No Filaments Match Criteria
+
+**Problem**: `No filaments found matching criteria`
+
+**Solution**:
+- Verify manufacturer names with `--list-makers`
+- Verify types with `--list-types`
+- Check finish options with `--list-finishes`
+- Manufacturer and type names are case-sensitive
+
+## Best Practices Summary
+
+✅ **DO:**
+- Use type hints on all functions
+- Follow PEP 8 style conventions
+- Write comprehensive docstrings with examples
+- Use `from __future__ import annotations` for forward references
+- Keep functions single-purpose and focused
+- Use early returns to reduce nesting
+- Test color conversions with known reference values
+- Verify constants integrity after any changes
+
+❌ **DON'T:**
+- Modify `ColorConstants` class values
+- Add external dependencies (Python stdlib only)
+- Remove or modify working tests
+- Use deep nesting (max 3-4 levels)
+- Create circular imports (cli.py is at the top)
+- Modify JSON structure without updating dataclasses
+
+## Quick Reference
+
+### Running the Tool
+
+```bash
+# From parent directory of color_tools package:
+python -m color_tools [command] [options]
+
+# Commands:
+#   color      - Search CSS colors
+#   filament   - Search 3D printing filaments  
+#   convert    - Convert between color spaces
+```
+
+### Testing Changes
+
+```bash
+# Verify constants integrity
+python -m color_tools --verify-constants
+
+# Test color lookup
+python -m color_tools color --name coral
+
+# Test filament search
+python -m color_tools filament --nearest --value 255 0 0
+
+# Test color conversion
+python -m color_tools convert --from rgb --to lab --value 128 64 200
+```
+
+### Import as Library
+
+```python
+from color_tools import (
+    rgb_to_lab,           # Convert RGB to LAB
+    delta_e_2000,         # Calculate perceptual distance
+    Palette,              # Search CSS colors
+    FilamentPalette,      # Search filaments
+    load_colors,          # Load color database
+    load_filaments,       # Load filament database
+)
+
+# Convert color
+lab = rgb_to_lab((255, 128, 64))
+
+# Find nearest color
+palette = Palette(load_colors())
+nearest, distance = palette.nearest_color((255, 128, 64))
+print(f"Nearest: {nearest.name} (ΔE={distance:.2f})")
+```
