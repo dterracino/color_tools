@@ -72,11 +72,12 @@ Search and query the 3D printing filament database.
 # Find nearest filament to red color
 python color_tools.py filament --nearest --value 255 0 0
 
-# Find nearest with specific manufacturer filter
-python color_tools.py filament --nearest --value 128 200 64 --maker "Prusament"
-
-# Use different color distance metric
+# Use different color distance metrics
 python color_tools.py filament --nearest --value 100 150 200 --metric cmc
+python color_tools.py filament --nearest --value 100 150 200 --metric de94
+
+# Adjust CMC parameters for different perceptual weighting
+python color_tools.py filament --nearest --value 100 150 200 --metric cmc --cmc-l 1.0 --cmc-c 1.0
 ```
 
 #### Handle Dual-Color Filaments
@@ -109,24 +110,38 @@ python color_tools.py filament --list-finishes
 # Filter by specific criteria
 python color_tools.py filament --filter --maker "Prusament" --type "PLA"
 python color_tools.py filament --filter --finish "Matte" --color "Black"
+
+# Filter by multiple makers
+python color_tools.py filament --filter --maker "Bambu Lab" "Polymaker"
+
+# Filter by multiple types
+python color_tools.py filament --filter --type PLA "PLA+" PETG
+
+# Filter by multiple finishes
+python color_tools.py filament --filter --finish Basic "Silk+" Matte
 ```
 
 **Filament Command Arguments:**
 
+**Nearest Neighbor Search:**
 - `--nearest`: Find nearest filament to RGB color
 - `--value R G B`: RGB color value (0-255 for each component)
 - `--metric {euclidean,de76,de94,de2000,cmc}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--dual-color-mode {first,last,mix}`: Handle dual-color filaments (default: first)
+
+**Filtering and Listing:**
 - `--list-makers`: List all filament manufacturers
 - `--list-types`: List all filament types (PLA, PETG, etc.)
 - `--list-finishes`: List all finish types (Matte, Glossy, etc.)
 - `--filter`: Display filaments matching filter criteria
-- `--maker NAME`: Filter by manufacturer
-- `--type NAME`: Filter by filament type
-- `--finish NAME`: Filter by finish type
+- `--maker NAME [NAME ...]`: Filter by one or more manufacturers (e.g., --maker "Bambu Lab" "Polymaker")
+- `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+")
+- `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+")
 - `--color NAME`: Filter by color name
+
+**Note:** Filter arguments (`--maker`, `--type`, `--finish`, `--color`) are used for filtering operations only. When any filter argument is provided, the command performs a filter operation and displays matching filaments. The `--filter` flag is optional when using filter arguments.
 
 ### Convert Command
 
@@ -222,11 +237,11 @@ Cylindrical representation of LAB:
 # I have RGB(180, 100, 200) and want to find matching filaments
 python color_tools.py filament --nearest --value 180 100 200
 
-# Only search Prusament PLA filaments
-python color_tools.py filament --nearest --value 180 100 200 --maker "Prusament" --type "PLA"
-
 # Use CMC color difference (textile industry standard)
 python color_tools.py filament --nearest --value 180 100 200 --metric cmc
+
+# Use different distance metric
+python color_tools.py filament --nearest --value 180 100 200 --metric de94
 ```
 
 ### Color Space Analysis
@@ -247,6 +262,12 @@ python color_tools.py color --nearest --value 65.2 25.8 -15.4 --space lab
 ```bash
 # Find all matte black filaments
 python color_tools.py filament --filter --finish "Matte" --color "Black"
+
+# Find filaments with multiple finish types
+python color_tools.py filament --filter --finish Basic Matte "Silk+"
+
+# Search across multiple manufacturers and types
+python color_tools.py filament --filter --maker "Bambu Lab" "Sunlu" --type PLA PETG
 
 # List all available Prusa filament types
 python color_tools.py filament --filter --maker "Prusament" | grep -o 'type: [^,]*' | sort -u
