@@ -44,7 +44,7 @@ Examples:
   %(prog)s filament --nearest --value 255 0 0
   
   # Find all PLA filaments from two different makers
-  %(prog)s filament --filter --type PLA --maker "Bambu Lab" "Sunlu"
+  %(prog)s filament --type PLA --maker "Bambu Lab" "Sunlu"
 
   # List all filament makers
   %(prog)s filament --list-makers
@@ -194,17 +194,12 @@ Examples:
         "--finish", 
         nargs='+',
         type=str, 
-        help="Filter by one or more finishes"
+        help="Filter by one or more finishes (e.g., --finish Matte \"Silk+\")"
     )
     filament_parser.add_argument(
         "--color", 
         type=str, 
         help="Filter by color name"
-    )
-    filament_parser.add_argument(
-        "--filter", 
-        action="store_true", 
-        help="Display filaments matching filter criteria"
     )
     filament_parser.add_argument(
         "--dual-color-mode",
@@ -349,7 +344,7 @@ Examples:
                 print(f"  {finish} ({count} filaments)")
             sys.exit(0)
         
-        if args.filter or (args.maker or args.type or args.finish or args.color):
+        if args.maker or args.type or args.finish or args.color:
             # Filter and display filaments
             results = filament_palette.filter(
                 maker=args.maker,
