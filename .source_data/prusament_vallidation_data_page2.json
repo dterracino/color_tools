@@ -1,0 +1,1843 @@
+{
+    "count": 68,
+    "next": null,
+    "previous": "https://filamentcolors.xyz/api/swatch/?alt_color_parent=&alt_color_parent__icontains=&color_name=&color_name__icontains=&color_parent=&color_parent__icontains=&filament_type__parent_type__name=&filament_type__parent_type__name__icontains=&id=&id__in=&manufacturer=54&manufacturer__id=&manufacturer__name=&manufacturer__name__icontains=&published=true",
+    "results": [
+        {
+            "id": 1577,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Anthracite Grey",
+            "filament_type": {
+                "id": 2,
+                "name": "PETG",
+                "hot_end_temp": 240,
+                "bed_temp": 80,
+                "parent_type": {
+                    "name": "PETG"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2023-02-19--10-55-03-front_kinoCm2.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2023-02-19--10-55-03-back_BOoqqEf.jpg",
+            "image_other": null,
+            "date_added": "2022-11-17T00:28:10.511920Z",
+            "date_published": "2023-02-19T21:22:49.724280Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/en/product/prusament-petg-anthracite-grey-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-3906 TPX",
+                "name": "Dark Shadow",
+                "hex_color": "#464B4E",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-446C",
+                "name": null,
+                "hex_color": "#3F4444",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "446 C",
+                "name": null,
+                "hex_color": "#3F4444",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "446 C",
+                "hex_color": "#3F4444"
+            },
+            "closest_pms_2": {
+                "code": "7540 C",
+                "hex_color": "#4B4F54"
+            },
+            "closest_pms_3": {
+                "code": "432 C",
+                "hex_color": "#333F48"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7026",
+                "name": "Granite grey",
+                "hex_color": "#374447",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 790-1",
+                "name": null,
+                "hex_color": "#3E4849",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H240L30C05",
+                "name": "Diamond Grey",
+                "hex_color": "#3E474B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/997/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1666/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1158/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/3687/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/940/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1505/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2121/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3687/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/940/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/997/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/3687/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/940/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/997/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1666/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/4362/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2023-02-19--10-55-03-front-thumb_0FZQ5gi.jpg",
+            "hex_color": "3f4647",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Feb 19, 2023",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 1659,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Carmine Red",
+            "filament_type": {
+                "id": 2,
+                "name": "PETG",
+                "hot_end_temp": 240,
+                "bed_temp": 80,
+                "parent_type": {
+                    "name": "PETG"
+                }
+            },
+            "color_parent": "RED",
+            "alt_color_parent": "TRN",
+            "image_front": "https://filamentcolors.xyz/media/2023-01-17--07-26-49-front_ViFIUfx.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2023-01-17--07-26-49-back_mvoxPtp.jpg",
+            "image_other": null,
+            "date_added": "2022-11-21T21:27:08.761193Z",
+            "date_published": "2023-01-17T18:20:21.649669Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3QNvPv0",
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-petg-carmine-red-transparent-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "17-1450 TCX",
+                "name": "Summer Fig",
+                "hex_color": "#BE4B3B",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-7619C",
+                "name": null,
+                "hex_color": "#C04C36",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 46-7 C",
+                "name": null,
+                "hex_color": "#B54634",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7599 C",
+                "hex_color": "#B33D26"
+            },
+            "closest_pms_2": {
+                "code": "180 C",
+                "hex_color": "#BE3A34"
+            },
+            "closest_pms_3": {
+                "code": "7598 C",
+                "hex_color": "#BD472A"
+            },
+            "closest_ral_1": {
+                "code": "RAL 2002",
+                "name": "Vermilion",
+                "hex_color": "#C63927",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 440-6",
+                "name": null,
+                "hex_color": "#B93525",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H040L50C50",
+                "name": "English Red",
+                "hex_color": "#BD553E",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/46/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/3305/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/4120/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2789/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1234/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/607/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1284/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1981/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1234/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/46/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/886/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/615/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/46/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/393/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1807/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2023-01-17--07-26-49-front-thumb_iJ4IPAs.jpg",
+            "hex_color": "b54230",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jan 17, 2023",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 1775,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Silver",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-25--16-42-58-front_GYcrs19.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-25--16-42-58-back_uXeR2yz.jpg",
+            "image_other": null,
+            "date_added": "2023-01-12T03:32:58Z",
+            "date_published": "2023-01-12T03:32:58Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": null,
+            "closest_pantone_1": {
+                "code": "17-3914 TCX",
+                "name": "Sharkskin",
+                "hex_color": "#838487",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-10389C",
+                "name": null,
+                "hex_color": "#7B8085",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "Cool Gray 10 U",
+                "name": null,
+                "hex_color": "#818387",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "Cool Gray 8 C",
+                "hex_color": "#888B8D"
+            },
+            "closest_pms_2": {
+                "code": "877 C",
+                "hex_color": "#8A8D8F"
+            },
+            "closest_pms_3": {
+                "code": "423 C",
+                "hex_color": "#898D8D"
+            },
+            "closest_ral_1": {
+                "code": "RAL 9023",
+                "name": "Pearl dark grey",
+                "hex_color": "#7E8182",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 820-4",
+                "name": null,
+                "hex_color": "#7D8589",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L55C00",
+                "name": "Medium Grey",
+                "hex_color": "#828282",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1370/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/3448/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/887/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2107/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/154/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1370/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1347/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1353/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/154/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1370/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1353/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/154/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1370/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/887/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1073/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-25--16-42-58-front-thumb_c83A5q8.jpg",
+            "hex_color": "828387",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jan 12, 2023",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 1724,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Jet Black",
+            "filament_type": {
+                "id": 29,
+                "name": "ASA",
+                "hot_end_temp": 240,
+                "bed_temp": 90,
+                "parent_type": {
+                    "name": "ABS / ASA"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-21--16-31-28-front_corOmW2.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-21--16-31-28-back_bxFYUXJ.jpg",
+            "image_other": null,
+            "date_added": "2022-12-02T03:36:01.103078Z",
+            "date_published": "2022-12-02T03:36:01.103078Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-asa-jet-black-850g/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-4008 TCX",
+                "name": "Meteorite",
+                "hex_color": "#2B2929",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-BlackC",
+                "name": null,
+                "hex_color": "#2D2926",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "Black C",
+                "name": null,
+                "hex_color": "#2D2926",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "Black C",
+                "hex_color": "#2D2926"
+            },
+            "closest_pms_2": {
+                "code": "419 C",
+                "hex_color": "#212322"
+            },
+            "closest_pms_3": {
+                "code": "Neutral Black C",
+                "hex_color": "#222223"
+            },
+            "closest_ral_1": {
+                "code": "RAL 9017",
+                "name": "Traffic black",
+                "hex_color": "#2A2D2F",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 790-M",
+                "name": null,
+                "hex_color": "#221F1D",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L20C00",
+                "name": "Slate Black",
+                "hex_color": "#2B2B2B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/701/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1222/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2779/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/580/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/431/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1772/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/732/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3373/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/431/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/701/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/828/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/355/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/701/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1033/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1011/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-21--16-31-28-front-thumb_TsxsjbS.jpg",
+            "hex_color": "292824",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Dec 02, 2022",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 1022,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Prusa Galaxy Black",
+            "filament_type": {
+                "id": 29,
+                "name": "ASA",
+                "hot_end_temp": 240,
+                "bed_temp": 90,
+                "parent_type": {
+                    "name": "ABS / ASA"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--15-47-11-front_R1JGo4R.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--15-47-11-back_dKSpAj2.jpg",
+            "image_other": null,
+            "date_added": "2022-08-20T18:28:23.817000Z",
+            "date_published": "2022-08-20T18:28:23.817000Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-asa-prusa-galaxy-black-850g/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-0405 TPX",
+                "name": "Beluga",
+                "hex_color": "#42413E",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-446C",
+                "name": null,
+                "hex_color": "#3F4444",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "446 C",
+                "name": null,
+                "hex_color": "#3F4444",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "446 C",
+                "hex_color": "#3F4444"
+            },
+            "closest_pms_2": {
+                "code": "447 C",
+                "hex_color": "#373A36"
+            },
+            "closest_pms_3": {
+                "code": "Black 7 C",
+                "hex_color": "#3D3935"
+            },
+            "closest_ral_1": {
+                "code": "RAL 6015",
+                "name": "Black olive",
+                "hex_color": "#3D403A",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 870-5",
+                "name": null,
+                "hex_color": "#4A4747",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L30C00",
+                "name": "Medium Black",
+                "hex_color": "#444443",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/619/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1022/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1022/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1925/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1394/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1925/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1394/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3900/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1394/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/619/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/3900/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/2276/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/619/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1581/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1673/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--15-47-11-front-thumb_jBfwnMN.jpg",
+            "hex_color": "3e413f",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Aug 20, 2022",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 944,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Mystic Green",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRN",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--08-10-39-front_5uTKjbT.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--08-10-39-back_gYZE8LD.jpg",
+            "image_other": null,
+            "date_added": "2022-03-20T04:32:57Z",
+            "date_published": "2022-03-20T04:32:57Z",
+            "notes": "",
+            "amazon_purchase_link": "https://www.amazon.com/Prusament-Mystic-Filament-Diameter-Tolerance/dp/B07QV27J33/ref=sr_1_3?keywords=Prusament+Mystic+Green+PLA&qid=1647750758&sr=8-3&tag=filamentcol0c-20",
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-premium-pla-mystic-green-1kg-2/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-0512 TPX",
+                "name": "Ivy Green",
+                "hex_color": "#585748",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-8521C",
+                "name": null,
+                "hex_color": "#505443",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "8521 C",
+                "name": null,
+                "hex_color": "#505443",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "418 C",
+                "hex_color": "#51534A"
+            },
+            "closest_pms_2": {
+                "code": "7763 C",
+                "hex_color": "#585C3B"
+            },
+            "closest_pms_3": {
+                "code": "7770 C",
+                "hex_color": "#635939"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7013",
+                "name": "Brown grey",
+                "hex_color": "#555548",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 840-5",
+                "name": null,
+                "hex_color": "#5A5D54",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H120L40C10",
+                "name": "Almond Green",
+                "hex_color": "#595E4C",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/253/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/968/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/299/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/374/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/3935/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/374/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/3913/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3933/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/3935/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/253/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/4456/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/2818/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/253/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/930/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2453/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--08-10-39-front-thumb_UNrI7iT.jpg",
+            "hex_color": "555846",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Mar 20, 2022",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 897,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Pineapple Yellow",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "YLW",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--15-20-28-front_Ouuu5dE.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--15-20-28-back_HXGDqwc.jpg",
+            "image_other": null,
+            "date_added": "2022-03-19T22:53:38.350000Z",
+            "date_published": "2022-03-19T22:53:38.350000Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3N4yNJj",
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-pineapple-yellow-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "14-0755 TCX",
+                "name": "Sulphur",
+                "hex_color": "#DDB614",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-115C",
+                "name": null,
+                "hex_color": "#FDDA24",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "116 CP",
+                "name": null,
+                "hex_color": "#F5CB08",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "115 C",
+                "hex_color": "#FDDA24"
+            },
+            "closest_pms_2": {
+                "code": "107 C",
+                "hex_color": "#FBE122"
+            },
+            "closest_pms_3": {
+                "code": "604 C",
+                "hex_color": "#EADA24"
+            },
+            "closest_ral_1": {
+                "code": "RAL 1016",
+                "name": "Sulfur yellow",
+                "hex_color": "#F1DD38",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 260-4",
+                "name": null,
+                "hex_color": "#E8C01F",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H095L80C70",
+                "name": "Mimosa Yellow",
+                "hex_color": "#DFC633",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/2143/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2464/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2243/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2192/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2318/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3490/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1953/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2375/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2318/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/2143/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2269/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1828/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/2143/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1380/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/959/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--15-20-28-front-thumb_OixT9rP.jpg",
+            "hex_color": "efd00b",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Mar 19, 2022",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 867,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Mystic Brown",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BRN",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--12-35-44-front_4Nb6beJ.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--12-35-44-back_4RgwVl4.jpg",
+            "image_other": null,
+            "date_added": "2022-01-30T20:41:55.802000Z",
+            "date_published": "2022-01-30T20:41:55.802000Z",
+            "notes": "This filament reflects oddly under strong light and is difficult to photograph correctly. I perceive that it is a slightly darker color than it appears here, but I can't quite get it to the same hue without butchering it more. It's a very pretty filament, I just can't quite do it justice here.",
+            "amazon_purchase_link": "https://amzn.to/3A6ee9E",
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-premium-pla-mystic-brown-1kg-2/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-1625 TCX",
+                "name": "Decadent Chocolate",
+                "hex_color": "#513235",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-Black5C",
+                "name": null,
+                "hex_color": "#3E2B2E",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "Black 5 C",
+                "name": null,
+                "hex_color": "#3E2B2E",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "Black 5 C",
+                "hex_color": "#3E2B2E"
+            },
+            "closest_pms_2": {
+                "code": "497 C",
+                "hex_color": "#512F2E"
+            },
+            "closest_pms_3": {
+                "code": "439 C",
+                "hex_color": "#453536"
+            },
+            "closest_ral_1": {
+                "code": "RAL 3007",
+                "name": "Black red",
+                "hex_color": "#402225",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 340-M",
+                "name": null,
+                "hex_color": "#53353B",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H010L20C10",
+                "name": "Wenge Black",
+                "hex_color": "#3E2A2C",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/680/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/916/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/3289/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2987/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/969/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/2088/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/293/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/916/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/969/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/680/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2987/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1008/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/680/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/735/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2783/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--12-35-44-front-thumb_Zu9aslP.jpg",
+            "hex_color": "482e31",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jan 30, 2022",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 861,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Gentleman's Grey",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-25--15-59-03-front_OUm01Ep.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-25--15-59-03-back_o6NPm4Q.jpg",
+            "image_other": null,
+            "date_added": "2022-01-30T20:38:27Z",
+            "date_published": "2022-01-30T20:38:27Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-gentleman-s-grey-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-4104 TPX",
+                "name": "Ebony",
+                "hex_color": "#3D4249",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-432C",
+                "name": null,
+                "hex_color": "#333F48",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "432 C",
+                "name": null,
+                "hex_color": "#333F48",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "432 C",
+                "hex_color": "#333F48"
+            },
+            "closest_pms_2": {
+                "code": "446 C",
+                "hex_color": "#3F4444"
+            },
+            "closest_pms_3": {
+                "code": "7546 C",
+                "hex_color": "#253746"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7016",
+                "name": "Anthracite grey",
+                "hex_color": "#373F43",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 810-6",
+                "name": null,
+                "hex_color": "#394146",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H240L30C05",
+                "name": "Diamond Grey",
+                "hex_color": "#3E474B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/2843/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/424/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2463/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2473/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/916/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/2094/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2093/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/3853/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/916/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/2843/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/969/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/916/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/2843/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/297/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2452/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-25--15-59-03-front-thumb_6GbTei5.jpg",
+            "hex_color": "354047",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jan 30, 2022",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 860,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Opal Green",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRN",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-21--16-01-07-front_bFPnK8I.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-21--16-01-07-back_7Gg0U71.jpg",
+            "image_other": null,
+            "date_added": "2022-01-30T20:37:43Z",
+            "date_published": "2022-01-30T20:37:43Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/3R0ogjm",
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-opal-green-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-5420 TCX",
+                "name": "Evergreen",
+                "hex_color": "#11574A",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-343C",
+                "name": null,
+                "hex_color": "#115740",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 135-15 C",
+                "name": null,
+                "hex_color": "#095D4D",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "343 C",
+                "hex_color": "#115740"
+            },
+            "closest_pms_2": {
+                "code": "7476 C",
+                "hex_color": "#0D5257"
+            },
+            "closest_pms_3": {
+                "code": "554 C",
+                "hex_color": "#205C40"
+            },
+            "closest_ral_1": {
+                "code": "RAL 6036",
+                "name": "Pearl opal green",
+                "hex_color": "#005D4C",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 750-4",
+                "name": null,
+                "hex_color": "#164234",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H170L30C25",
+                "name": "Raspberry Leaf Green",
+                "hex_color": "#044F3B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/2090/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/45/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/589/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1119/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1414/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1501/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/844/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1097/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1414/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/2090/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1097/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/373/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/2090/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/2079/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2777/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-21--16-01-07-front-thumb_lVBczOh.jpg",
+            "hex_color": "065b4a",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jan 30, 2022",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 652,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Prusa Orange",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "RNG",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--14-56-05-front_hph0bPX.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--14-56-05-back_gYAucPp.jpg",
+            "image_other": null,
+            "date_added": "2020-07-03T22:55:19Z",
+            "date_published": "2020-07-03T22:55:19Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-prusa-orange-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "16-1462 TPX",
+                "name": "Golden Poppy",
+                "hex_color": "#F2672E",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2026C",
+                "name": null,
+                "hex_color": "#F4633A",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "165 XGC",
+                "name": null,
+                "hex_color": "#FB7139",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "158 C",
+                "hex_color": "#E87722"
+            },
+            "closest_pms_2": {
+                "code": "7577 C",
+                "hex_color": "#E07E3C"
+            },
+            "closest_pms_3": {
+                "code": "715 C",
+                "hex_color": "#F68D2E"
+            },
+            "closest_ral_1": {
+                "code": "RAL 2003",
+                "name": "Pastel orange",
+                "hex_color": "#FA842B",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 380-5",
+                "name": null,
+                "hex_color": "#F2782F",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H050L60C70",
+                "name": "Carrot Orange",
+                "hex_color": "#E9672D",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/3376/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/3148/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/3886/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1927/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2622/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1331/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/4/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1934/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2622/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/3376/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1934/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/18/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/3376/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1834/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/130/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--14-56-05-front-thumb_MzSDWeh.jpg",
+            "hex_color": "fe6e32",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jul 03, 2020",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 520,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Ms. Pink",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "PNK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--08-33-44-front_1TtkqAB.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--08-33-44-back_dABJ62X.jpg",
+            "image_other": null,
+            "date_added": "2020-06-20T00:31:17.998000Z",
+            "date_published": "2020-06-20T00:31:17.998000Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-ms-pink-blend-970g/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "17-2033 TPX",
+                "name": "Fandango Pink",
+                "hex_color": "#DE5285",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-212C",
+                "name": null,
+                "hex_color": "#F04E98",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "Rhodamine Red U",
+                "name": null,
+                "hex_color": "#E44C9A",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "212 C",
+                "hex_color": "#F04E98"
+            },
+            "closest_pms_2": {
+                "code": "7424 C",
+                "hex_color": "#E24585"
+            },
+            "closest_pms_3": {
+                "code": "232 C",
+                "hex_color": "#E93CAC"
+            },
+            "closest_ral_1": {
+                "code": "RAL 4003",
+                "name": "Heather violet",
+                "hex_color": "#D15B8F",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 510-4",
+                "name": null,
+                "hex_color": "#C4638D",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H350L50C50",
+                "name": "Nail Polish Pink",
+                "hex_color": "#BD4E84",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1828/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1934/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1477/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/1331/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/4232/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1686/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2622/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/1927/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/4232/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1828/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1927/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/1350/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1828/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1467/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1355/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--08-33-44-front-thumb_NSjP6f7.jpg",
+            "hex_color": "e34a94",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jun 20, 2020",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 512,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Pearl Mouse",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "GRY",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--13-43-29-front_HnJQfu8.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--13-43-29-back_JVI9rln.jpg",
+            "image_other": null,
+            "date_added": "2020-06-20T00:28:55.199000Z",
+            "date_published": "2020-06-20T00:28:55.199000Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/36dZdI8",
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-pearl-mouse-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "16-0806 TPG",
+                "name": "Goat",
+                "hex_color": "#A49D90",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-10352C",
+                "name": null,
+                "hex_color": "#AA9F8E",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "402 XGC",
+                "name": null,
+                "hex_color": "#A09B8E",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7536 C",
+                "hex_color": "#A69F88"
+            },
+            "closest_pms_2": {
+                "code": "Black 0961 C",
+                "hex_color": "#9E978E"
+            },
+            "closest_pms_3": {
+                "code": "402 C",
+                "hex_color": "#9D968D"
+            },
+            "closest_ral_1": {
+                "code": "RAL 7036",
+                "name": "Platinum grey",
+                "hex_color": "#9A9697",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 210-M",
+                "name": null,
+                "hex_color": "#A5A99B",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H090L60C10",
+                "name": "Oyster Grey",
+                "hex_color": "#968F7F",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1873/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1991/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1535/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2768/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/2673/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3584/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2302/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2234/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/2673/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1873/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2359/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/3905/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1873/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1361/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/381/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--13-43-29-front-thumb_W7ELKXR.jpg",
+            "hex_color": "a49d8e",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jun 20, 2020",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 511,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Azure Blue",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLU",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--08-18-29-front_FLJ2x6m.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--08-18-29-back_e5nRdoq.jpg",
+            "image_other": null,
+            "date_added": "2020-06-20T00:28:34.169000Z",
+            "date_published": "2020-06-20T00:28:34.169000Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-pla-azure-blue-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "17-4427 TCX",
+                "name": "Bluejay",
+                "hex_color": "#157EA0",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2390C",
+                "name": null,
+                "hex_color": "#077CAB",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 116-7 U",
+                "name": null,
+                "hex_color": "#0787B1",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7689 C",
+                "hex_color": "#298FC2"
+            },
+            "closest_pms_2": {
+                "code": "647 C",
+                "hex_color": "#236192"
+            },
+            "closest_pms_3": {
+                "code": "7685 C",
+                "hex_color": "#2C5697"
+            },
+            "closest_ral_1": {
+                "code": "RAL 5015",
+                "name": "Sky blue",
+                "hex_color": "#2874B2",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 660-2",
+                "name": null,
+                "hex_color": "#0B8DA8",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H240L50C30",
+                "name": "Summer Blue",
+                "hex_color": "#1880A1",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/811/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/4221/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/1785/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/759/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/85/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/2219/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/3269/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/359/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/85/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/811/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/1030/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/3641/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/811/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1713/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2338/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--08-18-29-front-thumb_tji7Cpj.jpg",
+            "hex_color": "0082ad",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jun 20, 2020",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 510,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Neon Green Transparent",
+            "filament_type": {
+                "id": 2,
+                "name": "PETG",
+                "hot_end_temp": 240,
+                "bed_temp": 80,
+                "parent_type": {
+                    "name": "PETG"
+                }
+            },
+            "color_parent": "GRN",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-25--16-25-57-front_7ScHz2K.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-25--16-25-57-back_eayNaVI.jpg",
+            "image_other": null,
+            "date_added": "2020-06-20T00:28:13.936000Z",
+            "date_published": "2020-06-20T00:28:13.936000Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-petg-neon-green-transparent-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "13-0550 TPG",
+                "name": "Lime Punch",
+                "hex_color": "#BFD641",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-2283C",
+                "name": null,
+                "hex_color": "#A7E163",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "374 U",
+                "name": null,
+                "hex_color": "#A6E35F",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "7487 C",
+                "hex_color": "#8EDD65"
+            },
+            "closest_pms_2": {
+                "code": "367 C",
+                "hex_color": "#A4D65E"
+            },
+            "closest_pms_3": {
+                "code": "374 C",
+                "hex_color": "#C5E86C"
+            },
+            "closest_ral_1": {
+                "code": "RAL 1000",
+                "name": "Green beige",
+                "hex_color": "#CDBA88",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 230-2",
+                "name": null,
+                "hex_color": "#96C86C",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H120L80C60",
+                "name": "Neon Green",
+                "hex_color": "#B0D45D",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1938/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/1868/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/2622/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/4314/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/895/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1934/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/1927/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/894/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/895/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1938/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/3503/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/879/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1938/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/1084/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/344/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-25--16-25-57-front-thumb_CcHBu0R.jpg",
+            "hex_color": "a6ec5f",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jun 20, 2020",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 509,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Jet Black",
+            "filament_type": {
+                "id": 2,
+                "name": "PETG",
+                "hot_end_temp": 240,
+                "bed_temp": 80,
+                "parent_type": {
+                    "name": "PETG"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-25--14-42-48-front_cDSOqCM.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-25--14-42-48-back_s1pH5xu.jpg",
+            "image_other": null,
+            "date_added": "2020-06-20T00:27:52Z",
+            "date_published": "2020-06-20T00:27:52Z",
+            "notes": "",
+            "amazon_purchase_link": null,
+            "mfr_purchase_link": "https://www.prusa3d.com/product/prusament-petg-jet-black-1kg/?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-4004 TCX",
+                "name": "Tap Shoe",
+                "hex_color": "#2A2B2D",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-426C",
+                "name": null,
+                "hex_color": "#25282A",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "426 C",
+                "name": null,
+                "hex_color": "#25282A",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "426 C",
+                "hex_color": "#25282A"
+            },
+            "closest_pms_2": {
+                "code": "419 C",
+                "hex_color": "#212322"
+            },
+            "closest_pms_3": {
+                "code": "Neutral Black C",
+                "hex_color": "#222223"
+            },
+            "closest_ral_1": {
+                "code": "RAL 9017",
+                "name": "Traffic black",
+                "hex_color": "#2A2D2F",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 790-4",
+                "name": null,
+                "hex_color": "#302F32",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L20C00",
+                "name": "Slate Black",
+                "hex_color": "#2B2B2B",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1180/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/509/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/962/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/199/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/92/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/1180/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/962/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2047/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/92/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1180/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/199/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/92/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1180/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/2181/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/3315/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-25--14-42-48-front-thumb_KiM8Xly.jpg",
+            "hex_color": "292b2b",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Jun 20, 2020",
+            "is_available": false,
+            "published": true
+        },
+        {
+            "id": 378,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Prusa Orange",
+            "filament_type": {
+                "id": 2,
+                "name": "PETG",
+                "hot_end_temp": 240,
+                "bed_temp": 80,
+                "parent_type": {
+                    "name": "PETG"
+                }
+            },
+            "color_parent": "RNG",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2022-11-26--12-38-22-front_5C7bdNg.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2022-11-26--12-38-22-back_Pc08kMu.jpg",
+            "image_other": null,
+            "date_added": "2019-10-03T04:43:53Z",
+            "date_published": "2019-10-03T04:43:53Z",
+            "notes": "Yes, it's THAT orange.",
+            "amazon_purchase_link": "https://amzn.to/2o4Ft3t",
+            "mfr_purchase_link": "https://shop.prusa3d.com/en/prusament/801-prusament-petg-prusa-orange-1kg.html?search_query=orange&results=9&a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "16-1363 TCX",
+                "name": "Puffin's Bill",
+                "hex_color": "#E95C20",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-166C",
+                "name": null,
+                "hex_color": "#E35205",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "166 C",
+                "name": null,
+                "hex_color": "#E35205",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "166 C",
+                "hex_color": "#E35205"
+            },
+            "closest_pms_2": {
+                "code": "1655 C",
+                "hex_color": "#FC4C02"
+            },
+            "closest_pms_3": {
+                "code": "1595 C",
+                "hex_color": "#D86018"
+            },
+            "closest_ral_1": {
+                "code": "RAL 2004",
+                "name": "Pure orange",
+                "hex_color": "#E75B12",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 390-3",
+                "name": null,
+                "hex_color": "#DE5411",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H050L60C80",
+                "name": "Gerbera Red",
+                "hex_color": "#F6611A",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/1953/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2155/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/125/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/886/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/1828/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/3490/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/2318/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2269/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/1828/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/1953/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/886/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/21/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/1953/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/869/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/2464/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2022-11-26--12-38-22-front-thumb_jnNOJoU.jpg",
+            "hex_color": "eb5405",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Oct 03, 2019",
+            "is_available": true,
+            "published": true
+        },
+        {
+            "id": 377,
+            "manufacturer": {
+                "id": 54,
+                "name": "Prusament",
+                "website": "https://shop.prusa3d.com/en/42-prusament"
+            },
+            "color_name": "Galaxy Black",
+            "filament_type": {
+                "id": 1,
+                "name": "PLA",
+                "hot_end_temp": 205,
+                "bed_temp": 60,
+                "parent_type": {
+                    "name": "PLA"
+                }
+            },
+            "color_parent": "BLK",
+            "alt_color_parent": null,
+            "image_front": "https://filamentcolors.xyz/media/2024-01-11--11-28-35-front_wUkfPsS.jpg",
+            "image_back": "https://filamentcolors.xyz/media/2024-01-11--11-28-35-back_71SrwK0.jpg",
+            "image_other": null,
+            "date_added": "2019-10-03T04:43:02Z",
+            "date_published": "2019-10-03T04:43:02Z",
+            "notes": "",
+            "amazon_purchase_link": "https://amzn.to/2pxSdQy",
+            "mfr_purchase_link": "https://shop.prusa3d.com/en/prusament/711-prusament-pla-prusa-galaxy-black-1kg.html?a_aid=fcolorsxyz",
+            "closest_pantone_1": {
+                "code": "19-0000 TPX",
+                "name": "Raven",
+                "hex_color": "#353635",
+                "category": "Fashion and Interior Designers"
+            },
+            "closest_pantone_2": {
+                "code": "PQ-446C",
+                "name": null,
+                "hex_color": "#3F4444",
+                "category": "Industrial Designers"
+            },
+            "closest_pantone_3": {
+                "code": "P 172-16 C",
+                "name": null,
+                "hex_color": "#474646",
+                "category": "Graphic Designers"
+            },
+            "closest_pms_1": {
+                "code": "446 C",
+                "hex_color": "#3F4444"
+            },
+            "closest_pms_2": {
+                "code": "447 C",
+                "hex_color": "#373A36"
+            },
+            "closest_pms_3": {
+                "code": "Black 7 C",
+                "hex_color": "#3D3935"
+            },
+            "closest_ral_1": {
+                "code": "RAL 8019",
+                "name": "Grey brown",
+                "hex_color": "#3F3A3A",
+                "category": "RAL Classic"
+            },
+            "closest_ral_2": {
+                "code": "RAL 870-5",
+                "name": null,
+                "hex_color": "#4A4747",
+                "category": "RAL Effect"
+            },
+            "closest_ral_3": {
+                "code": "H000L25C00",
+                "name": "Onyx Black",
+                "hex_color": "#3A3A3A",
+                "category": "RAL Design System+"
+            },
+            "complement": "https://filamentcolors.xyz/api/swatch/608/",
+            "analogous_1": "https://filamentcolors.xyz/api/swatch/2639/",
+            "analogous_2": "https://filamentcolors.xyz/api/swatch/3367/",
+            "triadic_1": "https://filamentcolors.xyz/api/swatch/2307/",
+            "triadic_2": "https://filamentcolors.xyz/api/swatch/608/",
+            "split_complement_1": "https://filamentcolors.xyz/api/swatch/608/",
+            "split_complement_2": "https://filamentcolors.xyz/api/swatch/608/",
+            "tetradic_1": "https://filamentcolors.xyz/api/swatch/2639/",
+            "tetradic_2": "https://filamentcolors.xyz/api/swatch/608/",
+            "tetradic_3": "https://filamentcolors.xyz/api/swatch/608/",
+            "square_1": "https://filamentcolors.xyz/api/swatch/2639/",
+            "square_2": "https://filamentcolors.xyz/api/swatch/3367/",
+            "square_3": "https://filamentcolors.xyz/api/swatch/608/",
+            "closest_1": "https://filamentcolors.xyz/api/swatch/2639/",
+            "closest_2": "https://filamentcolors.xyz/api/swatch/1673/",
+            "tags": [],
+            "card_img": "https://filamentcolors.xyz/media/2024-01-11--11-28-35-front-thumb_tPJKGTS.jpg",
+            "hex_color": "3d3e3d",
+            "lab_l": null,
+            "lab_a": null,
+            "lab_b": null,
+            "td": null,
+            "td_range": null,
+            "human_readable_date": "Oct 03, 2019",
+            "is_available": true,
+            "published": true
+        }
+    ]
+}
