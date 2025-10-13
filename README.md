@@ -22,11 +22,101 @@ git clone <repository-url>
 cd color_tools
 ```
 
-The script uses only Python standard library modules - no additional dependencies required.
+The core module uses only Python standard library - no external dependencies required for basic functionality.
+
+**Optional dependency**: The `validation` module requires `fuzzywuzzy` for fuzzy color name matching. Install with:
+```bash
+pip install fuzzywuzzy
+```
+
+**To use as a library**, add the repository to your Python path or import it directly:
+
+```python
+# Option 1: Add to Python path
+import sys
+sys.path.insert(0, '/path/to/color_tools')
+from color_tools import rgb_to_lab, Palette
+
+# Option 2: Run from the color_tools directory
+# Then import normally in your scripts
+```
+
+**To use the CLI**, run from the repository directory:
+
+```bash
+python -m color_tools --help
+```
 
 ## Usage
 
-The tool provides three main commands: `color`, `filament`, and `convert`.
+Color Tools can be used in two ways:
+1. **As a Python Library**: Import functions directly in your Python code
+2. **As a CLI Tool**: Use the command-line interface for interactive work
+
+### Library Usage
+
+Import and use color_tools functions in your Python code:
+
+```python
+from color_tools import rgb_to_lab, delta_e_2000, Palette, FilamentPalette
+
+# Convert RGB to LAB color space
+lab = rgb_to_lab((255, 128, 64))
+print(f"LAB: {lab}")  # LAB: (67.05, 42.83, 74.02)
+
+# Calculate color difference between two LAB colors
+color1 = (50, 25, -30)
+color2 = (55, 20, -25)
+difference = delta_e_2000(color1, color2)
+print(f"Delta E: {difference}")
+
+# Load CSS color palette and find nearest color
+palette = Palette.load_default()
+nearest, distance = palette.nearest_color(lab, space="lab")
+print(f"Nearest CSS color: {nearest.name} (distance: {distance:.2f})")
+
+# Load filament palette and search
+filament_palette = FilamentPalette.load_default()
+filament, distance = filament_palette.nearest_filament((180, 100, 200))
+print(f"Nearest filament: {filament.maker} {filament.type} - {filament.color}")
+
+# Filter filaments by criteria
+pla_filaments = filament_palette.filter(type_name="PLA", maker="Bambu Lab")
+print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
+```
+
+**Common Library Functions:**
+
+**Color Conversions:**
+- `rgb_to_lab()`, `lab_to_rgb()` - RGB ↔ LAB conversion
+- `rgb_to_lch()`, `lch_to_rgb()` - RGB ↔ LCH conversion  
+- `rgb_to_hsl()` - RGB → HSL conversion
+- `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion
+- `lab_to_lch()`, `lch_to_lab()` - LAB ↔ LCH conversion
+
+**Distance Metrics:**
+- `delta_e_2000()` - CIEDE2000 (recommended)
+- `delta_e_94()` - CIE94
+- `delta_e_76()` - CIE76
+- `delta_e_cmc()` - CMC color difference
+- `euclidean()` - Simple Euclidean distance
+
+**Gamut Operations:**
+- `is_in_srgb_gamut()` - Check if LAB color is displayable
+- `find_nearest_in_gamut()` - Find closest displayable color
+- `clamp_to_gamut()` - Force color into sRGB gamut
+
+**Palettes:**
+- `Palette.load_default()` - Load CSS color database
+- `FilamentPalette.load_default()` - Load filament database
+- `palette.nearest_color()` - Find nearest color match
+- `palette.find_by_name()` - Look up color by name
+- `filament_palette.nearest_filament()` - Find nearest filament
+- `filament_palette.filter()` - Filter by maker, type, finish, color
+
+### CLI Usage
+
+The CLI provides three main commands: `color`, `filament`, and `convert`.
 
 ### Color Command
 
@@ -108,17 +198,17 @@ python color_tools.py filament --list-types
 python color_tools.py filament --list-finishes
 
 # Filter by specific criteria
-python color_tools.py filament --filter --maker "Prusament" --type "PLA"
-python color_tools.py filament --filter --finish "Matte" --color "Black"
+python color_tools.py filament --maker "Bambu Lab" --type "PLA"
+python color_tools.py filament --finish "Matte" --color "Black"
 
 # Filter by multiple makers
-python color_tools.py filament --filter --maker "Bambu Lab" "Polymaker"
+python color_tools.py filament --maker "Bambu Lab" "Polymaker"
 
 # Filter by multiple types
-python color_tools.py filament --filter --type PLA "PLA+" PETG
+python color_tools.py filament --type PLA "PLA+" PETG
 
 # Filter by multiple finishes
-python color_tools.py filament --filter --finish Basic "Silk+" Matte
+python color_tools.py filament --finish Basic "Silk+" Matte
 ```
 
 **Filament Command Arguments:**
@@ -135,13 +225,12 @@ python color_tools.py filament --filter --finish Basic "Silk+" Matte
 - `--list-makers`: List all filament manufacturers
 - `--list-types`: List all filament types (PLA, PETG, etc.)
 - `--list-finishes`: List all finish types (Matte, Glossy, etc.)
-- `--filter`: Display filaments matching filter criteria
 - `--maker NAME [NAME ...]`: Filter by one or more manufacturers (e.g., --maker "Bambu Lab" "Polymaker")
 - `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+")
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+")
 - `--color NAME`: Filter by color name
 
-**Note:** Filter arguments (`--maker`, `--type`, `--finish`, `--color`) are used for filtering operations only. When any filter argument is provided, the command performs a filter operation and displays matching filaments. The `--filter` flag is optional when using filter arguments.
+**Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments.
 
 ### Convert Command
 
@@ -261,16 +350,16 @@ python color_tools.py color --nearest --value 65.2 25.8 -15.4 --space lab
 
 ```bash
 # Find all matte black filaments
-python color_tools.py filament --filter --finish "Matte" --color "Black"
+python color_tools.py filament --finish "Matte" --color "Black"
 
 # Find filaments with multiple finish types
-python color_tools.py filament --filter --finish Basic Matte "Silk+"
+python color_tools.py filament --finish Basic Matte "Silk+"
 
 # Search across multiple manufacturers and types
-python color_tools.py filament --filter --maker "Bambu Lab" "Sunlu" --type PLA PETG
+python color_tools.py filament --maker "Bambu Lab" "Sunlu" --type PLA PETG
 
-# List all available Prusa filament types
-python color_tools.py filament --filter --maker "Prusament" | grep -o 'type: [^,]*' | sort -u
+# List all available filament types from a specific maker
+python color_tools.py filament --maker "Polymaker" | grep -o 'type: [^,]*' | sort -u
 ```
 
 ## Data Files
@@ -286,12 +375,12 @@ Example filament entry:
 
 ```json
 {
-  "maker": "Prusament",
+  "maker": "Bambu Lab",
   "type": "PLA",
-  "finish": "Matte", 
-  "color": "Jet Black",
+  "finish": "Basic", 
+  "color": "Black",
   "hex": "#000000",
-  "td_value": 0.1
+  "td_value": null
 }
 ```
 
