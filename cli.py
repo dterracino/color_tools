@@ -194,7 +194,7 @@ Examples:
         "--finish", 
         nargs='+',
         type=str, 
-        help="Filter by one or more finishes"
+        help="Filter by one or more finishes (e.g., --finish Basic \"Silk+\")"
     )
     filament_parser.add_argument(
         "--color", 
