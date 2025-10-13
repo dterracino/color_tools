@@ -14,9 +14,9 @@ a much larger volume. The intersection is the "sRGB gamut."
 from __future__ import annotations
 from typing import Tuple
 
-from color_tools.constants import ColorConstants
-from color_tools.conversions import lab_to_rgb, lab_to_lch, lch_to_lab
-from color_tools.config import get_gamut_tolerance, get_gamut_max_iterations
+from .constants import ColorConstants
+from .conversions import lab_to_rgb, lab_to_lch, lch_to_lab
+from .config import get_gamut_tolerance, get_gamut_max_iterations
 
 
 def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = None) -> bool:
@@ -163,7 +163,7 @@ def clamp_to_gamut(lab: Tuple[float, float, float]) -> Tuple[float, float, float
     Returns:
         In-gamut L*a*b* color (clamped)
     """
-    from color_tools.conversions import rgb_to_lab
+    from .conversions import rgb_to_lab
     # Convert to RGB (with clamping), then back to LAB
     rgb = lab_to_rgb(lab, clamp=True)
     return rgb_to_lab(rgb)

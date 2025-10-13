@@ -15,11 +15,11 @@ import argparse
 import sys
 from pathlib import Path
 
-from color_tools.constants import ColorConstants
-from color_tools.config import set_dual_color_mode
-from color_tools.conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, rgb_to_lch, lch_to_lab, lch_to_rgb
-from color_tools.gamut import is_in_srgb_gamut, find_nearest_in_gamut
-from color_tools.palette import Palette, FilamentPalette, load_colors, load_filaments
+from .constants import ColorConstants
+from .config import set_dual_color_mode
+from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, rgb_to_lch, lch_to_lab, lch_to_rgb
+from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
+from .palette import Palette, FilamentPalette, load_colors, load_filaments
 
 
 def main():

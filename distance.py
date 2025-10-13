@@ -14,8 +14,8 @@ from __future__ import annotations
 from typing import Tuple
 import math
 
-from color_tools.constants import ColorConstants
-from color_tools.conversions import lab_to_lch
+from .constants import ColorConstants
+from .conversions import lab_to_lch
 
 
 # ============================================================================

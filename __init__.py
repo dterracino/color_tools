@@ -27,7 +27,11 @@ __version__ = "1.0.0"
 # Core Conversion Functions (Most Commonly Used)
 # ============================================================================
 
-from color_tools.conversions import (
+from .conversions import (
+    # Hex ↔ RGB (basic web colors)
+    hex_to_rgb,
+    rgb_to_hex,
+    
     # RGB ↔ LAB (the main event!)
     rgb_to_lab,
     lab_to_rgb,
@@ -57,7 +61,7 @@ from color_tools.conversions import (
 # Distance Metrics (Color Difference Formulas)
 # ============================================================================
 
-from color_tools.distance import (
+from .distance import (
     # The main Delta E formulas
     delta_e_2000,   # 👈 Use this one! Gold standard
     delta_e_94,
@@ -73,7 +77,7 @@ from color_tools.distance import (
 # Gamut Operations (Can Your Monitor Show This Color?)
 # ============================================================================
 
-from color_tools.gamut import (
+from .gamut import (
     is_in_srgb_gamut,
     find_nearest_in_gamut,
     clamp_to_gamut,
@@ -83,7 +87,7 @@ from color_tools.gamut import (
 # Palettes & Data Classes (The Search Engine!)
 # ============================================================================
 
-from color_tools.palette import (
+from .palette import (
     # Main palette classes
     Palette,
     FilamentPalette,
@@ -101,7 +105,7 @@ from color_tools.palette import (
 # Configuration (Usually Don't Need These Directly)
 # ============================================================================
 
-from color_tools.config import (
+from .config import (
     set_dual_color_mode,
     get_dual_color_mode,
 )
@@ -126,6 +130,8 @@ __all__ = [
     "__version__",
     
     # Conversion functions (most commonly used)
+    "hex_to_rgb",
+    "rgb_to_hex",
     "rgb_to_lab",
     "lab_to_rgb",
     "rgb_to_lch",

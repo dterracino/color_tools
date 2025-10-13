@@ -17,10 +17,10 @@ from typing import Tuple, Dict, List, Optional, Union, Set
 import json
 from pathlib import Path
 
-from color_tools.constants import ColorConstants
-from color_tools.conversions import rgb_to_lab, rgb_to_hsl, lab_to_rgb
-from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc
-from color_tools.config import get_dual_color_mode
+from .constants import ColorConstants
+from .conversions import rgb_to_lab, rgb_to_hsl, lab_to_rgb
+from .distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc
+from .config import get_dual_color_mode
 
 
 # ============================================================================

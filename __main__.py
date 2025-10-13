@@ -6,7 +6,7 @@ looks for this file and executes it. Our job: call cli.main() and get
 out of the way!
 """
 
-from color_tools.cli import main
+from .cli import main
 
 if __name__ == "__main__":
     main()

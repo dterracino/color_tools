@@ -10,12 +10,56 @@ All conversions use D65 illuminant and proper color science math.
 """
 
 from __future__ import annotations
-from typing import Tuple
+from typing import Optional, Tuple
 import math
 import colorsys
 
-from color_tools.constants import ColorConstants
+from .constants import ColorConstants
 
+
+# ============================================================================
+# General Helpers
+# ============================================================================
+
+def hex_to_rgb(hex_code: str) -> Optional[Tuple[int, int, int]]:
+    """
+    Converts a hex color string to an RGB tuple.
+
+    Args:
+        hex_code: Hex color string in the format "#RRGGBB" or "RRGGBB".
+
+    Returns:
+        rgb: Tuple of (R, G, B) where each component is 0-255.
+        None if the hex code is invalid.
+    """
+    hex_clean = hex_code.lstrip('#')
+    if len(hex_clean) == 6:
+        try:
+            return (
+                int(hex_clean[0:2], 16),
+                int(hex_clean[2:4], 16),
+                int(hex_clean[4:6], 16)
+            )
+        except ValueError:
+            return None
+    return None
+    
+def rgb_to_hex(rgb: Tuple[int, int, int]) -> str:
+    """
+    Converts an RGB tuple to a hex color string.
+    
+    Args:
+        rgb: Tuple of (R, G, B) where each component is 0-255.
+    
+    Returns:
+        Hex color string in the format "#RRGGBB".
+    """
+    r, g, b = rgb
+    return "#{:02X}{:02X}{:02X}".format(
+        max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, r)),
+        max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, g)),
+        max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, b))
+    )    
 
 # ============================================================================
 # Forward Conversions (RGB → LAB)
