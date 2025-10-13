@@ -18,7 +18,7 @@ import json
 from pathlib import Path
 
 from .constants import ColorConstants
-from .conversions import rgb_to_lab, rgb_to_hsl, lab_to_rgb
+from .conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb
 from .distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc
 from .config import get_dual_color_mode
 
@@ -73,26 +73,20 @@ class FilamentRecord:
         Returns:
             RGB tuple (0-255 for each component)
         """
-        hex_clean = self.hex.lstrip('#')
+        hex_clean = self.hex.strip()
         
         # Check for dual-color format (e.g., "#333333-#666666")
         if '-' in hex_clean:
-            # Split into individual colors
-            hex_parts = [h.strip().lstrip('#') for h in hex_clean.split('-')]
+            # Split into individual colors and clean them
+            hex_parts = [h.strip() for h in hex_clean.split('-')]
             
-            # Parse both colors
+            # Parse both colors using our existing hex_to_rgb function
             rgb_colors = []
             for hex_part in hex_parts[:2]:  # Only take first 2 if more exist
-                if len(hex_part) == 6:
-                    try:
-                        rgb_colors.append((
-                            int(hex_part[0:2], 16),
-                            int(hex_part[2:4], 16),
-                            int(hex_part[4:6], 16)
-                        ))
-                    except ValueError:
-                        rgb_colors.append((0, 0, 0))
-                else:
+                try:
+                    result = hex_to_rgb(hex_part)
+                    rgb_colors.append(result if result is not None else (0, 0, 0))
+                except (ValueError, TypeError):
                     rgb_colors.append((0, 0, 0))
             
             # If we didn't get 2 valid colors, fall back to first
@@ -118,21 +112,12 @@ class FilamentRecord:
             else:  # "first" (default)
                 return rgb_colors[0]
         
-        # Single color - standard hex parsing
-        # Handle potential multi-color hex values with commas or newlines
-        if ',' in hex_clean or '\n' in hex_clean:
-            hex_clean = hex_clean.split(',')[0].split('\n')[0].strip()
-        
-        if len(hex_clean) == 6:
-            try:
-                return (
-                    int(hex_clean[0:2], 16),
-                    int(hex_clean[2:4], 16),
-                    int(hex_clean[4:6], 16)
-                )
-            except ValueError:
-                return (0, 0, 0)
-        return (0, 0, 0)
+        # Single color - use our existing hex_to_rgb function
+        try:
+            result = hex_to_rgb(hex_clean)
+            return result if result is not None else (0, 0, 0)
+        except (ValueError, TypeError):
+            return (0, 0, 0)
     
     @property
     def lab(self) -> Tuple[float, float, float]:
