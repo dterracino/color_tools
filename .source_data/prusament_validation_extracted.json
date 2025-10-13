@@ -1,0 +1,614 @@
+[
+  {
+    "maker": "Prusament",
+    "type": "PC",
+    "finish": "Blend",
+    "color": "Jet Black",
+    "hex": "#24292A",
+    "td_value": null,
+    "product": "Pc Blend Jet Black 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PC",
+    "finish": "Blend",
+    "color": "Prusa Orange",
+    "hex": "#EA5E1A",
+    "td_value": null,
+    "product": "Pc Blend Prusa Orange 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PC",
+    "finish": "Blend",
+    "color": "Natural",
+    "hex": "#DFDFD3",
+    "td_value": null,
+    "product": "Pc Blend Natural 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PC",
+    "finish": "Carbon Fiber",
+    "color": "Black",
+    "hex": "#262727",
+    "td_value": null,
+    "product": "Pc Blend Carbon Fiber Black 800g 2"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PC",
+    "finish": "Blend",
+    "color": "Urban Grey",
+    "hex": "#999596",
+    "td_value": null,
+    "product": "Pc Blend Urban Grey 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Yellow Gold",
+    "hex": "#9A8524",
+    "td_value": null,
+    "product": "Petg Yellow Gold 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "rPLA",
+    "finish": null,
+    "color": "Wine",
+    "hex": "#5E4940",
+    "td_value": null,
+    "product": "Rpla Wine Pigment 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": "Tungsten",
+    "color": "75%",
+    "hex": "#545252",
+    "td_value": null,
+    "product": "Petg Tungsten 75 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Purple",
+    "hex": "#453A72",
+    "td_value": null,
+    "product": "Pla Galaxy Purple 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Pearl",
+    "color": "White",
+    "hex": "#D0D7D8",
+    "td_value": null,
+    "product": "Pla Pearl White Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Blend",
+    "color": "Viva La Bronze",
+    "hex": "#B38E3F",
+    "td_value": null,
+    "product": "Pla Viva La Bronze Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gravity Grey",
+    "hex": "#9FA4A8",
+    "td_value": null,
+    "product": "Pla Gravity Grey 1kg 2"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Prusa Orange",
+    "hex": "#F55928",
+    "td_value": null,
+    "product": "Asa Prusa Orange 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Signal White",
+    "hex": "#E3DFD9",
+    "td_value": null,
+    "product": "Asa Signal White 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Army Green",
+    "hex": "#5E6345",
+    "td_value": null,
+    "product": "Pla Army Green 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Silver",
+    "hex": "#999AA0",
+    "td_value": null,
+    "product": "Pla Galaxy Silver 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pristine White",
+    "hex": "#E6EAEF",
+    "td_value": null,
+    "product": "Pla Pristine White 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Natural",
+    "hex": "#D6D6CD",
+    "td_value": null,
+    "product": "Asa Natural 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Lipstick Red",
+    "hex": "#D02F37",
+    "td_value": null,
+    "product": "Asa Lipstick Red 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Sapphire Blue",
+    "hex": "#3B4468",
+    "td_value": null,
+    "product": "Asa Sapphire Blue 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Blend",
+    "color": "My Silverness",
+    "hex": "#AEB8C1",
+    "td_value": null,
+    "product": "Pla My Silverness Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "rPLA",
+    "finish": null,
+    "color": "Corn",
+    "hex": "#B37B47",
+    "td_value": null,
+    "product": "Rpla Corn Pigment 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "rPLA",
+    "finish": null,
+    "color": "Algae",
+    "hex": "#674B42",
+    "td_value": null,
+    "product": "Rpla Algae Pigment 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": "Carbon Fiber",
+    "color": "Black",
+    "hex": "#3B353A",
+    "td_value": null,
+    "product": "Petg Carbon Fiber Black 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": "V0",
+    "color": "Jet Black",
+    "hex": "#363331",
+    "td_value": null,
+    "product": "Petg V0 Jet Black 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Blend",
+    "color": "Lime Green",
+    "hex": "#A7B853",
+    "td_value": null,
+    "product": "Pla Lime Green Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": "V0",
+    "color": "Natural",
+    "hex": "#DEE2DA",
+    "td_value": null,
+    "product": "Petg V0 Natural 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "rPLA",
+    "finish": null,
+    "color": "Risotto",
+    "hex": "#CCC9C0",
+    "td_value": null,
+    "product": "Rpla Risotto Pigment 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Oh My Gold",
+    "hex": "#CE9F2E",
+    "td_value": null,
+    "product": "Pla Oh My Gold Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Grey",
+    "hex": "#B0B4B5",
+    "td_value": null,
+    "product": "Pla Marble Grey 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Lipstick Red",
+    "hex": "#BF2B2B",
+    "td_value": null,
+    "product": "Pla Lipstick Red 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Vanilla White",
+    "hex": "#D9D4C6",
+    "td_value": null,
+    "product": "Pla Vanilla White 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Green",
+    "hex": "#42663A",
+    "td_value": null,
+    "product": "Pla Galaxy Green 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Royal Blue",
+    "hex": "#00518F",
+    "td_value": null,
+    "product": "Pla Royal Blue Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Jet Black",
+    "hex": "#393C3C",
+    "td_value": null,
+    "product": "Pla Jet Black 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Urban Grey",
+    "hex": "#95908D",
+    "td_value": null,
+    "product": "Petg Urban Grey 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Jungle Green",
+    "hex": "#007249",
+    "td_value": null,
+    "product": "Petg Jungle Green 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Ocean Blue",
+    "hex": "#194C55",
+    "td_value": null,
+    "product": "Petg Ocean Blue 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Signal White",
+    "hex": "#E5E0E3",
+    "td_value": null,
+    "product": "Petg Signal White 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Mango Yellow",
+    "hex": "#F2B70A",
+    "td_value": null,
+    "product": "Petg Mango Yellow 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Lipstick Red",
+    "hex": "#BB2E33",
+    "td_value": null,
+    "product": "Petg Lipstick Red 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Clear",
+    "hex": "#E4E7E5",
+    "td_value": null,
+    "product": "Petg Clear 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Chalky Blue",
+    "hex": "#6F9AAA",
+    "td_value": null,
+    "product": "Petg Chalky Blue 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Prusa Orange Transparent",
+    "hex": "#F17231",
+    "td_value": null,
+    "product": "Petg Prusa Orange 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Terracotta Light",
+    "hex": "#B87F6A",
+    "td_value": null,
+    "product": "Petg Terracotta Light 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Ultramarine Blue",
+    "hex": "#2B3B61",
+    "td_value": null,
+    "product": "Petg Ultramarine Blue Transparent 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Matte Black",
+    "hex": "#303635",
+    "td_value": null,
+    "product": "Petg Matte Black 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Prusa Galaxy Black",
+    "hex": "#494547",
+    "td_value": null,
+    "product": "Petg Prusa Galaxy Black 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Simply Green",
+    "hex": "#70A641",
+    "td_value": null,
+    "product": "Pla Simply Green 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Pistachio Green",
+    "hex": "#93A683",
+    "td_value": null,
+    "product": "Petg Pistachio Green 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Anthracite Grey",
+    "hex": "#3F4647",
+    "td_value": null,
+    "product": "Petg Anthracite Grey 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Carmine Red",
+    "hex": "#B54230",
+    "td_value": null,
+    "product": "Petg Carmine Red Transparent 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Silver",
+    "hex": "#828387",
+    "td_value": null,
+    "product": "PLA Silver"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Jet Black",
+    "hex": "#292824",
+    "td_value": null,
+    "product": "Asa Jet Black 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "ASA",
+    "finish": null,
+    "color": "Prusa Galaxy Black",
+    "hex": "#3E413F",
+    "td_value": null,
+    "product": "Asa Prusa Galaxy Black 850g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mystic Green",
+    "hex": "#555846",
+    "td_value": null,
+    "product": "Premium Pla Mystic Green 1kg 2"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pineapple Yellow",
+    "hex": "#EFD00B",
+    "td_value": null,
+    "product": "Pla Pineapple Yellow 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mystic Brown",
+    "hex": "#482E31",
+    "td_value": null,
+    "product": "Premium Pla Mystic Brown 1kg 2"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gentleman's Grey",
+    "hex": "#354047",
+    "td_value": null,
+    "product": "Pla Gentleman S Grey 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Opal Green",
+    "hex": "#065B4A",
+    "td_value": null,
+    "product": "Pla Opal Green 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Prusa Orange",
+    "hex": "#FE6E32",
+    "td_value": null,
+    "product": "Pla Prusa Orange 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Ms. Pink",
+    "hex": "#E34A94",
+    "td_value": null,
+    "product": "Pla Ms Pink Blend 970g"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Pearl",
+    "color": "Mouse",
+    "hex": "#A49D8E",
+    "td_value": null,
+    "product": "Pla Pearl Mouse 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": null,
+    "color": "Azure Blue",
+    "hex": "#0082AD",
+    "td_value": null,
+    "product": "Pla Azure Blue 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Neon Green Transparent",
+    "hex": "#A6EC5F",
+    "td_value": null,
+    "product": "Petg Neon Green Transparent 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Jet Black",
+    "hex": "#292B2B",
+    "td_value": null,
+    "product": "Petg Jet Black 1kg"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PETG",
+    "finish": null,
+    "color": "Prusa Orange",
+    "hex": "#EB5405",
+    "td_value": null,
+    "product": "Prusament"
+  },
+  {
+    "maker": "Prusament",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Black",
+    "hex": "#3D3E3D",
+    "td_value": null,
+    "product": "Prusament"
+  }
+]
