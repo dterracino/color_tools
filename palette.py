@@ -40,6 +40,7 @@ class ColorRecord:
     rgb: Tuple[int, int, int]
     hsl: Tuple[float, float, float]   # (H°, S%, L%)
     lab: Tuple[float, float, float]   # (L*, a*, b*)
+    lch: Tuple[float, float, float]   # (L*, C*, H°)
 
 
 @dataclass(frozen=True)
@@ -125,6 +126,12 @@ class FilamentRecord:
         return rgb_to_lab(self.rgb)
     
     @property
+    def lch(self) -> Tuple[float, float, float]:
+        """Convert to LCH color space."""
+        from .conversions import lab_to_lch
+        return lab_to_lch(self.lab)
+    
+    @property
     def hsl(self) -> Tuple[float, float, float]:
         """Convert to HSL color space."""
         return rgb_to_hsl(self.rgb)
@@ -163,12 +170,35 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     
     records: List[ColorRecord] = []
     for c in data.get("colors", []):
+        # Handle both old format (named objects) and new format (tuples)
+        if isinstance(c["rgb"], list):
+            # New tuple format
+            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
+            hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
+            lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
+            # LCH should be present in new format, but handle gracefully if missing
+            if "lch" in c:
+                lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
+            else:
+                # Fallback: compute LCH from LAB if missing
+                from .conversions import lab_to_lch
+                lch = lab_to_lch(lab)
+        else:
+            # Old named object format
+            rgb = (c["rgb"]["r"], c["rgb"]["g"], c["rgb"]["b"])
+            hsl = (float(c["hsl"]["h"]), float(c["hsl"]["s"]), float(c["hsl"]["l"]))
+            lab = (float(c["lab"]["L"]), float(c["lab"]["a"]), float(c["lab"]["b"]))
+            # LCH not available in old format, compute it
+            from .conversions import lab_to_lch
+            lch = lab_to_lch(lab)
+        
         records.append(ColorRecord(
             name=c["name"],
             hex=c["hex"],
-            rgb=(c["rgb"]["r"], c["rgb"]["g"], c["rgb"]["b"]),
-            hsl=(float(c["hsl"]["h"]), float(c["hsl"]["s"]), float(c["hsl"]["l"])),
-            lab=(float(c["lab"]["L"]), float(c["lab"]["a"]), float(c["lab"]["b"])),
+            rgb=rgb,
+            hsl=hsl,
+            lab=lab,
+            lch=lch,
         ))
     return records
 
@@ -247,6 +277,7 @@ class Palette:
         self._by_rgb: Dict[Tuple[int, int, int], ColorRecord] = {r.rgb: r for r in records}
         self._by_hsl: Dict[str, ColorRecord] = {_rounded_key(r.hsl): r for r in records}
         self._by_lab: Dict[str, ColorRecord] = {_rounded_key(r.lab): r for r in records}
+        self._by_lch: Dict[str, ColorRecord] = {_rounded_key(r.lch): r for r in records}
     
     @classmethod
     def load_default(cls) -> 'Palette':
@@ -274,6 +305,10 @@ class Palette:
         """Find color by LAB match (with rounding for fuzzy matching)."""
         return self._by_lab.get(_rounded_key(lab, rounding))
 
+    def find_by_lch(self, lch: Tuple[float, float, float], rounding: int = 2) -> Optional[ColorRecord]:
+        """Find color by LCH match (with rounding for fuzzy matching)."""
+        return self._by_lch.get(_rounded_key(lch, rounding))
+
     def nearest_color(
         self,
         value: Tuple[float, float, float],
@@ -290,8 +325,8 @@ class Palette:
         and finds the one with minimum distance in the specified space.
         
         Args:
-            value: Color in the specified space (RGB, HSL, or LAB)
-            space: Color space - 'rgb', 'hsl', or 'lab' (default: 'lab')
+            value: Color in the specified space (RGB, HSL, LAB, or LCH)
+            space: Color space - 'rgb', 'hsl', 'lab', or 'lch' (default: 'lab')
             metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'
             cmc_l, cmc_c: Parameters for CMC metric (default 2:1 for acceptability)
         
@@ -313,6 +348,15 @@ class Palette:
         if space.lower() == "hsl":
             for r in self.records:
                 d = hsl_euclidean(value, r.hsl)
+                if d < best_d:
+                    best_rec, best_d = r, d
+            return best_rec, best_d  # type: ignore
+
+        # LCH space - use Euclidean distance with hue wraparound
+        if space.lower() == "lch":
+            for r in self.records:
+                # LCH has circular hue like HSL, so we need special handling
+                d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
                 if d < best_d:
                     best_rec, best_d = r, d
             return best_rec, best_d  # type: ignore

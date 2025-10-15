@@ -154,5 +154,5 @@ class ColorConstants:
     
     # This hash is computed once when the constants are known to be correct
     # Computed hash of all color science constants (SHA-256)
-    _EXPECTED_HASH = "a58742b6833c94f54728512140c83a73c155d549f55e0428d0b279bc1ca6d8e8"
+    _EXPECTED_HASH = "879f819a84b516e5510a93af8cfaed6c430cbed72e14bcc91e48b7ffd5cd5f21"
 

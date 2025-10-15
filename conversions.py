@@ -339,3 +339,54 @@ def rgb_to_winhsl(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     win_s = int(round(s * ColorConstants.WIN_HSL_MAX))
     win_l = int(round(l * ColorConstants.WIN_HSL_MAX))
     return (win_h, win_s, win_l)
+
+
+def hsl_to_rgb(hsl: Tuple[float, float, float]) -> Tuple[int, int, int]:
+    """
+    Convert HSL (H: 0-360, S: 0-100, L: 0-100) to RGB (0-255).
+    
+    This is the inverse of rgb_to_hsl(), converting from the standard
+    HSL representation back to 8-bit RGB values.
+    
+    Args:
+        hsl: HSL tuple (Hue 0-360°, Saturation 0-100%, Lightness 0-100%)
+        
+    Returns:
+        RGB tuple (0-255 for each component)
+    """
+    h, s, l = hsl
+    # Normalize to 0-1 range
+    h_norm = h / 360.0
+    s_norm = s / 100.0
+    l_norm = l / 100.0
+    
+    # Use the standard HSL to RGB algorithm
+    def hue_to_rgb(p: float, q: float, t: float) -> float:
+        if t < 0:
+            t += 1
+        if t > 1:
+            t -= 1
+        if t < 1/6:
+            return p + (q - p) * 6 * t
+        if t < 1/2:
+            return q
+        if t < 2/3:
+            return p + (q - p) * (2/3 - t) * 6
+        return p
+    
+    if s_norm == 0:
+        # Achromatic (gray)
+        r = g = b = l_norm
+    else:
+        q = l_norm * (1 + s_norm) if l_norm < 0.5 else l_norm + s_norm - l_norm * s_norm
+        p = 2 * l_norm - q
+        r = hue_to_rgb(p, q, h_norm + 1/3)
+        g = hue_to_rgb(p, q, h_norm)
+        b = hue_to_rgb(p, q, h_norm - 1/3)
+    
+    # Convert to 0-255 range and clamp
+    return (
+        max(0, min(255, int(round(r * 255)))),
+        max(0, min(255, int(round(g * 255)))),
+        max(0, min(255, int(round(b * 255))))
+    )

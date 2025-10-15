@@ -7,7 +7,7 @@ A comprehensive Python library for color science operations, color space convers
 - **Multiple Color Spaces**: RGB, HSL, LAB, LCH with accurate conversions
 - **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC)
 - **Color Databases**:
-  - Complete CSS color names with hex/RGB/HSL/LAB values
+  - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
   - Extensive 3D printing filament database with manufacturer info
 - **Gamut Checking**: Verify if colors are representable in sRGB
 - **Thread-Safe**: Configurable runtime settings per thread
@@ -25,6 +25,7 @@ cd color_tools
 The core module uses only Python standard library - no external dependencies required for basic functionality.
 
 **Optional dependency**: The `validation` module requires `fuzzywuzzy` for fuzzy color name matching. Install with:
+
 ```bash
 pip install fuzzywuzzy
 ```
@@ -50,6 +51,7 @@ python -m color_tools --help
 ## Usage
 
 Color Tools can be used in two ways:
+
 1. **As a Python Library**: Import functions directly in your Python code
 2. **As a CLI Tool**: Use the command-line interface for interactive work
 
@@ -88,9 +90,10 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 **Common Library Functions:**
 
 **Color Conversions:**
+
 - `rgb_to_lab()`, `lab_to_rgb()` - RGB ↔ LAB conversion (most common)
 - `rgb_to_lch()`, `lch_to_rgb()` - RGB ↔ LCH conversion  
-- `rgb_to_hsl()` - RGB → HSL conversion (0-360, 0-100, 0-100 range)
+- `rgb_to_hsl()`, `hsl_to_rgb()` - RGB ↔ HSL conversion (0-360, 0-100, 0-100 range)
 - `rgb_to_winhsl()` - RGB → Windows HSL (0-240, 0-240, 0-240 range)
 - `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion
 - `lab_to_lch()`, `lch_to_lab()` - LAB ↔ LCH conversion
@@ -98,6 +101,7 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 - `xyz_to_lab()`, `lab_to_xyz()` - XYZ ↔ LAB conversion (for advanced use)
 
 **Distance Metrics:**
+
 - `delta_e_2000()` - CIEDE2000 (recommended)
 - `delta_e_94()` - CIE94
 - `delta_e_76()` - CIE76
@@ -105,22 +109,27 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 - `euclidean()` - Simple Euclidean distance
 
 **Gamut Operations:**
+
 - `is_in_srgb_gamut()` - Check if LAB color is displayable
 - `find_nearest_in_gamut()` - Find closest displayable color
 - `clamp_to_gamut()` - Force color into sRGB gamut
 
 **Palettes:**
+
 - `Palette.load_default()` - Load CSS color database
 - `FilamentPalette.load_default()` - Load filament database
 - `palette.nearest_color()` - Find nearest color match
 - `palette.find_by_name()` - Look up color by name
 - `palette.find_by_rgb()` - Look up by exact RGB value
+- `palette.find_by_lab()` - Look up by LAB value (with rounding)
+- `palette.find_by_lch()` - Look up by LCH value (with rounding)
 - `filament_palette.nearest_filament()` - Find nearest filament
 - `filament_palette.filter()` - Filter by maker, type, finish, color
 - `filament_palette.find_by_maker()` - Get all filaments from a maker
 - `filament_palette.find_by_type()` - Get all filaments of a type
 
 **Configuration:**
+
 - `set_dual_color_mode()` - Set how dual-color filaments are handled
 - `get_dual_color_mode()` - Get current dual-color mode
 
@@ -136,6 +145,7 @@ print(color.hex)    # "#FF7F50"
 print(color.rgb)    # (255, 127, 80)
 print(color.hsl)    # (16.1, 100.0, 65.7)
 print(color.lab)    # (67.3, 45.4, 47.5)
+print(color.lch)    # (67.3, 65.7, 46.3)
 
 # FilamentRecord - returned by FilamentPalette methods
 filament, distance = filament_palette.nearest_filament((255, 0, 0))
@@ -145,6 +155,8 @@ print(filament.finish)  # e.g., "PolyMax"
 print(filament.color)   # e.g., "Red"
 print(filament.hex)     # e.g., "#ED2F20"
 print(filament.rgb)     # e.g., (237, 47, 32)
+print(filament.lab)     # e.g., (48.2, 68.1, 54.3) - computed on demand
+print(filament.lch)     # e.g., (48.2, 87.4, 38.6) - computed on demand
 ```
 
 ### CLI Usage
@@ -171,6 +183,12 @@ python -m color_tools color --nearest --value 128 64 200 --space rgb
 # Find nearest using LAB values with CIE94 metric
 python -m color_tools color --nearest --value 50 25 -30 --space lab --metric de94
 
+# Find nearest using HSL values
+python -m color_tools color --nearest --value 16.1 100 65.7 --space hsl
+
+# Find nearest using LCH values (perceptually uniform cylindrical space)
+python -m color_tools color --nearest --value 67.3 65.7 46.3 --space lch
+
 # Use CMC color difference formula
 python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc --cmc-l 2.0 --cmc-c 1.0
 ```
@@ -180,7 +198,7 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--name NAME`: Find exact color by name (case-insensitive)
 - `--nearest`: Find the closest color to specified value
 - `--value V1 V2 V3`: Color value tuple (format depends on `--space`)
-- `--space {rgb,hsl,lab}`: Color space of input value (default: lab)
+- `--space {rgb,hsl,lab,lch}`: Color space of input value (default: lab)
 - `--metric {euclidean,de76,de94,de2000,cmc,cmc21,cmc11}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
@@ -247,6 +265,7 @@ python -m color_tools filament --finish Basic "Silk+" Matte
 **Filament Command Arguments:**
 
 **Nearest Neighbor Search:**
+
 - `--nearest`: Find nearest filament to RGB color
 - `--value R G B`: RGB color value (0-255 for each component)
 - `--metric {euclidean,de76,de94,de2000,cmc}`: Distance metric (default: de2000)
@@ -255,6 +274,7 @@ python -m color_tools filament --finish Basic "Silk+" Matte
 - `--dual-color-mode {first,last,mix}`: Handle dual-color filaments (default: first)
 
 **Filtering and Listing:**
+
 - `--list-makers`: List all filament manufacturers
 - `--list-types`: List all filament types (PLA, PETG, etc.)
 - `--list-finishes`: List all finish types (Matte, Glossy, etc.)
@@ -334,6 +354,13 @@ Cylindrical representation of LAB:
 - **C*** (Chroma): 0+ (color intensity)
 - **h°** (Hue): 0-360 degrees
 
+**LCH is ideal for user interfaces** because:
+
+- Hue can be adjusted independently (0-360°)
+- Chroma controls saturation in a perceptually uniform way
+- Much more intuitive than HSL for color manipulation
+- Perfect for color picker wheels and gradients
+
 ## Distance Metrics
 
 ### Delta E Formulas
@@ -372,11 +399,23 @@ python -m color_tools filament --nearest --value 180 100 200 --metric de94
 # Convert my RGB color to LAB for analysis
 python -m color_tools convert --from rgb --to lab --value 180 100 200
 
+# Convert HSL to RGB
+python -m color_tools convert --from hsl --to rgb --value 16.1 100 65.7
+
+# Convert LAB to LCH for hue-based analysis
+python -m color_tools convert --from lab --to lch --value 65.2 25.8 -15.4
+
+# Convert LCH back to RGB
+python -m color_tools convert --from lch --to rgb --value 65.2 30.1 328.3
+
 # Check if a highly saturated LAB color can be displayed
 python -m color_tools convert --check-gamut --value 50 80 60
 
 # Find the CSS color name closest to my LAB measurement
 python -m color_tools color --nearest --value 65.2 25.8 -15.4 --space lab
+
+# Find nearest color using LCH (perceptually uniform cylindrical space)
+python -m color_tools color --nearest --value 67.3 65.7 46.3 --space lch
 ```
 
 ### Batch Operations
@@ -401,8 +440,21 @@ python -m color_tools filament --maker "Polymaker" | grep -o 'type: [^,]*' | sor
 
 The JSON file contains two main sections:
 
-- **colors**: CSS color database with name, hex, RGB, HSL, and LAB values
+- **colors**: CSS color database with name, hex, RGB, HSL, LAB, and LCH values
 - **filaments**: 3D printing filament database with manufacturer, type, finish, color name, hex value, and optional transparency (td_value)
+
+Example color entry:
+
+```json
+{
+  "name": "coral",
+  "hex": "#FF7F50",
+  "rgb": [255, 127, 80],
+  "hsl": [16.1, 100.0, 65.7],
+  "lab": [67.30, 45.35, 47.49],
+  "lch": [67.30, 65.67, 46.3]
+}
+```
 
 Example filament entry:
 
@@ -459,10 +511,20 @@ For large datasets, consider filtering by manufacturer or type before performing
 
 ## Contributing
 
-When modifying color science constants, always verify integrity:
+### Constants Integrity
+
+**CRITICAL**: The color science constants in `constants.py` should **NEVER** be modified. They represent fundamental values from international standards (CIE, sRGB specification) and changing them would break color accuracy.
+
+To verify the constants haven't been tampered with:
 
 ```bash
 python -m color_tools --verify-constants
 ```
 
-This ensures the mathematical foundation remains scientifically accurate.
+**If constants verification fails**, this indicates either:
+
+1. **Accidental modification** - restore from git: `git checkout constants.py`
+2. **Malicious tampering** - investigate and restore from a known good backup
+3. **Development changes** - if you're a maintainer who legitimately needs to update constants, you'll need to regenerate the integrity hash (contact project maintainers)
+
+The integrity check uses SHA-256 hashing to ensure the mathematical foundation remains scientifically accurate and unchanged.

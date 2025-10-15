@@ -17,9 +17,38 @@ from pathlib import Path
 
 from .constants import ColorConstants
 from .config import set_dual_color_mode
-from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, rgb_to_lch, lch_to_lab, lch_to_rgb
+from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
 from .palette import Palette, FilamentPalette, load_colors, load_filaments
+
+
+def _get_program_name() -> str:
+    """
+    Determine the appropriate program name based on how the script was invoked.
+    
+    Returns:
+        A user-friendly program name for help text
+    """
+    argv0 = sys.argv[0]
+    
+    # Case 1: Running as a module (python -m color_tools)
+    if argv0.endswith('__main__.py') or '__main__' in argv0:
+        return "python -m color_tools"
+    
+    # Case 2: Running the script directly (python color_tools.py)
+    elif argv0.endswith('color_tools.py'):
+        return "python color_tools.py"
+    
+    # Case 3: Installed as a console script (color-tools)
+    elif 'color_tools' in argv0 or 'color-tools' in argv0:
+        # Extract just the command name without path
+        from pathlib import Path
+        return Path(argv0).name
+    
+    # Case 4: Unknown/fallback - use the basename
+    else:
+        from pathlib import Path
+        return Path(argv0).name
 
 
 def main():
@@ -29,31 +58,35 @@ def main():
     Note: No `if __name__ == "__main__":` here! That's __main__.py's job.
     This function is just the CLI logic - pure and testable.
     """
+    # Determine the proper program name based on how we were invoked
+    prog_name = _get_program_name()
+    
     parser = argparse.ArgumentParser(
+        prog=prog_name,
         description="Color search and conversion tools",
         formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog="""
+        epilog=f"""
 Examples:
   # Find nearest CSS color to an RGB value
-  %(prog)s color --nearest --value 128 64 200
+  {prog_name} color --nearest --value 128 64 200
   
   # Find color by name
-  %(prog)s color --name "coral"
+  {prog_name} color --name "coral"
   
   # Find nearest filament to an RGB color
-  %(prog)s filament --nearest --value 255 0 0
+  {prog_name} filament --nearest --value 255 0 0
   
   # Find all PLA filaments from two different makers
-  %(prog)s filament --type PLA --maker "Bambu Lab" "Sunlu"
+  {prog_name} filament --type PLA --maker "Bambu Lab" "Sunlu"
 
   # List all filament makers
-  %(prog)s filament --list-makers
+  {prog_name} filament --list-makers
   
   # Convert between color spaces
-  %(prog)s convert --from rgb --to lab --value 255 128 0
+  {prog_name} convert --from rgb --to lab --value 255 128 0
   
   # Check if LAB color is in sRGB gamut
-  %(prog)s convert --check-gamut --value 50 100 50
+  {prog_name} convert --check-gamut --value 50 100 50
         """
     )
     
@@ -95,11 +128,11 @@ Examples:
         nargs=3, 
         type=float, 
         metavar=("V1", "V2", "V3"),
-        help="Color value tuple (RGB: r g b | HSL: h s l | LAB: L a b)"
+        help="Color value tuple (RGB: r g b | HSL: h s l | LAB: L a b | LCH: L C h)"
     )
     color_parser.add_argument(
         "--space", 
-        choices=["rgb", "hsl", "lab"], 
+        choices=["rgb", "hsl", "lab", "lch"], 
         default="lab",
         help="Color space of the input value (default: lab)"
     )
@@ -252,6 +285,9 @@ Examples:
             print(f"Current hash:  {ColorConstants._compute_hash()}", file=sys.stderr)
             sys.exit(1)
         print("✓ ColorConstants integrity verified")
+        # If only verifying constants (no other command), exit after success
+        if not args.command:
+            sys.exit(0)
     
     # Handle no subcommand
     if not args.command:
@@ -276,6 +312,7 @@ Examples:
             print(f"RGB:  {rec.rgb}")
             print(f"HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
             print(f"LAB:  ({rec.lab[0]:.2f}, {rec.lab[1]:.2f}, {rec.lab[2]:.2f})")
+            print(f"LCH:  ({rec.lch[0]:.2f}, {rec.lch[1]:.2f}, {rec.lch[2]:.1f}°)")
             sys.exit(0)
         
         if args.nearest:
@@ -285,19 +322,10 @@ Examples:
             
             val = tuple(args.value)
             
-            # Convert to LAB if needed for distance calculation
-            if args.space == "rgb":
-                rgb_val = (int(val[0]), int(val[1]), int(val[2]))
-                lab_val = rgb_to_lab(rgb_val)
-            elif args.space == "hsl":
-                print("Error: HSL search not yet implemented")
-                sys.exit(1)
-            else:  # lab
-                lab_val = val
-            
+            # Use the specified color space directly
             rec, d = palette.nearest_color(
-                lab_val,
-                space="lab",
+                val,
+                space=args.space,
                 metric=args.metric,
                 cmc_l=args.cmc_l,
                 cmc_c=args.cmc_c,
@@ -307,6 +335,7 @@ Examples:
             print(f"RGB:  {rec.rgb}")
             print(f"HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
             print(f"LAB:  ({rec.lab[0]:.2f}, {rec.lab[1]:.2f}, {rec.lab[2]:.2f})")
+            print(f"LCH:  ({rec.lch[0]:.2f}, {rec.lch[1]:.2f}, {rec.lch[2]:.1f}°)")
             sys.exit(0)
         
         # If we get here, no valid color operation was specified
@@ -344,24 +373,6 @@ Examples:
                 print(f"  {finish} ({count} filaments)")
             sys.exit(0)
         
-        if args.maker or args.type or args.finish or args.color:
-            # Filter and display filaments
-            results = filament_palette.filter(
-                maker=args.maker,
-                type_name=args.type,
-                finish=args.finish,
-                color=args.color
-            )
-            
-            if not results:
-                print("No filaments found matching the criteria")
-                sys.exit(1)
-            
-            print(f"Found {len(results)} filament(s):")
-            for rec in results:
-                print(f"  {rec}")
-            sys.exit(0)
-        
         if args.nearest:
             if not args.value:
                 print("Error: --nearest requires --value with RGB components")
@@ -384,6 +395,24 @@ Examples:
             except ValueError as e:
                 print(f"Error: {e}")
                 sys.exit(1)
+            sys.exit(0)
+
+        if args.maker or args.type or args.finish or args.color:
+            # Filter and display filaments
+            results = filament_palette.filter(
+                maker=args.maker,
+                type_name=args.type,
+                finish=args.finish,
+                color=args.color
+            )
+            
+            if not results:
+                print("No filaments found matching the criteria")
+                sys.exit(1)
+            
+            print(f"Found {len(results)} filament(s):")
+            for rec in results:
+                print(f"  {rec}")
             sys.exit(0)
         
         # If we get here, no valid filament operation was specified
@@ -426,8 +455,7 @@ Examples:
             if from_space == "rgb":
                 rgb = (int(val[0]), int(val[1]), int(val[2]))
             elif from_space == "hsl":
-                print("Error: HSL to RGB conversion not yet implemented")
-                sys.exit(1)
+                rgb = hsl_to_rgb(val)
             elif from_space == "lab":
                 rgb = lab_to_rgb(val)
             elif from_space == "lch":

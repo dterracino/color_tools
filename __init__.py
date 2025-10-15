@@ -54,6 +54,7 @@ from .conversions import (
     
     # RGB ↔ HSL (common web dev color space)
     rgb_to_hsl,
+    hsl_to_rgb,
     rgb_to_winhsl,  # Windows HSL (0-240 range)
 )
 
@@ -143,6 +144,7 @@ __all__ = [
     "xyz_to_lab",
     "lab_to_xyz",
     "rgb_to_hsl",
+    "hsl_to_rgb",
     "rgb_to_winhsl",
     
     # Distance metrics
