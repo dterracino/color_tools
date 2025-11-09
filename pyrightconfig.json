@@ -1,6 +1,6 @@
 {
   "include": ["."],
-  "exclude": ["**/.source_data/**", "**/data/**","**/tooling/**","**/node_modules", "**/__pycache__", ".venv/**", "venv/**", "env/**", ".github/**"],
+  "exclude": ["**/.source_data/**", "**/tooling/**","**/node_modules", "**/__pycache__", ".venv/**", "venv/**", "env/**", ".github/**", "color_tools/data/**"],
   "typeCheckingMode": "basic",
   "reportMissingImports": true,
   "reportMissingTypeStubs": false,

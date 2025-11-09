@@ -1,0 +1,58 @@
+[build-system]
+requires = ["setuptools>=61.0"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "color-match-tools"
+version = "3.0.0"
+description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
+readme = "README.md"
+requires-python = ">=3.10"
+license = { file = "LICENSE" }
+authors = [
+    { name = "David Terracino", email = "dterracino@gmail.com" }
+]
+keywords = ["color", "color-science", "delta-e", "color-conversion", "color-matching", "rgb", "lab", "lch", "hsl", "xyz", "ciede2000", "cie94", "cie76", "gamut", "srgb", "3d-printing", "filament"]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Topic :: Multimedia :: Graphics",
+    "Topic :: Scientific/Engineering",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "License :: OSI Approved :: MIT License",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Operating System :: OS Independent",
+]
+
+# No external dependencies - pure Python stdlib!
+dependencies = []
+
+[project.optional-dependencies]
+dev = [
+    "pyright>=1.1.0",
+    "build>=1.0.0",
+    "twine>=4.0.0",
+]
+test = [
+    "fuzzywuzzy>=0.18.0",
+]
+
+[project.urls]
+Homepage = "https://github.com/dterracino/color_tools"
+Repository = "https://github.com/dterracino/color_tools"
+Issues = "https://github.com/dterracino/color_tools/issues"
+Changelog = "https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md"
+Documentation = "https://github.com/dterracino/color_tools/blob/main/README.md"
+
+[project.scripts]
+color-tools = "color_tools.cli:main"
+
+[tool.setuptools]
+packages = ["color_tools"]
+
+[tool.setuptools.package-data]
+color_tools = ["data/*.json"]

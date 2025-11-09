@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.0.0] - 2025-11-09
+
+### Changed - BREAKING
+
+- **Package restructuring**: Reorganized project into proper Python package structure
+  - All Python modules moved to nested `color_tools/color_tools/` directory
+  - Data files moved to `color_tools/color_tools/data/`
+  - Import paths remain `from color_tools import ...` (no change for users)
+  - CLI usage unchanged: `python -m color_tools` works the same way
+- **Added pyproject.toml**: Modern Python packaging with full metadata
+  - Package now installable with `pip install -e .` for development
+  - Defines `color-tools` console script entry point
+  - Declares Python 3.10+ requirement explicitly
+  - No external dependencies (pure stdlib)
+
+### Added
+
+- Created `pyproject.toml` for modern Python packaging standards
+- Package can now be installed and used as a proper Python library
+- Console script `color-tools` available after installation
+
+### Notes
+
+This is a major version bump due to package restructuring. While the public API and CLI remain unchanged, the internal file structure has been reorganized. If you were importing modules directly from the file system (not recommended), you'll need to update those references.
+
 ## [2.1.1] - 2025-11-09
 
 ### Fixed

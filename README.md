@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 2.1.1 | [Changelog](CHANGELOG.md)
+**Version:** 3.0.0 | [Changelog](CHANGELOG.md)
 
 ## Features
 
@@ -18,45 +18,47 @@ A comprehensive Python library for color science operations, color space convers
 
 ## Installation
 
-Clone this repository and ensure you have Python 3.10+:
+**Requirements:** Python 3.10+
+
+### For Development or Direct Use
+
+Clone this repository and install in development mode:
 
 ```bash
 git clone <repository-url>
 cd color_tools
+pip install -e .
 ```
 
-The core module uses only Python standard library - no external dependencies required for basic functionality.
+This installs the package in "editable" mode, allowing you to modify the code while using it.
 
-**Optional dependency**: The `validation` module requires `fuzzywuzzy` for fuzzy color name matching. Install with:
+### For Library Use Only
+
+If you just want to use it as a library without the CLI:
+
+```bash
+git clone <repository-url>
+cd color_tools
+pip install .
+```
+
+### Dependencies
+
+The core module uses **only Python standard library** - no external dependencies required for basic functionality.
+
+**Optional dependency**: The `validation` module requires `fuzzywuzzy` for fuzzy color name matching:
 
 ```bash
 pip install fuzzywuzzy
 ```
 
-**To use as a library**, add the repository to your Python path or import it directly:
-
-```python
-# Option 1: Add to Python path
-import sys
-sys.path.insert(0, '/path/to/color_tools')
-from color_tools import rgb_to_lab, Palette
-
-# Option 2: Run from the color_tools directory
-# Then import normally in your scripts
-```
-
-**To use the CLI**, run from the repository directory:
-
-```bash
-python -m color_tools --help
-```
-
 ## Usage
 
-Color Tools can be used in two ways:
+Color Tools can be used in three ways:
 
 1. **As a Python Library**: Import functions directly in your Python code
-2. **As a CLI Tool**: Use the command-line interface for interactive work
+2. **As a CLI Tool**: Use `python -m color_tools` from the repository
+3. **As an Installed Command**: Use `color-tools` command after `pip install`
 
 ### Library Usage
 
