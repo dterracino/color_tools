@@ -10,6 +10,20 @@ This is a color science library for Python 3.10+ that provides:
 
 ## Code Style and Standards
 
+### Core Architectural Principles
+- **Separation of Concerns**: Each module has a single, well-defined responsibility
+  - `conversions.py`: Color space transformations ONLY
+  - `distance.py`: Distance metrics ONLY
+  - `palette.py`: Data loading and search ONLY
+  - `constants.py`: Immutable constants ONLY
+  - `config.py`: Runtime configuration ONLY
+  - `cli.py`: User interface ONLY (orchestrates, doesn't implement logic)
+- **DRY (Don't Repeat Yourself)**: Never duplicate logic
+  - Shared functionality goes in the appropriate module
+  - Reuse existing functions rather than reimplementing
+  - If you find yourself copying code, create a shared function instead
+  - Common patterns should be abstracted into utilities
+
 ### General Python Guidelines
 - Use Python 3.10+ syntax (union types with `|`, modern type hints)
 - Follow PEP 8 style conventions
@@ -138,7 +152,7 @@ Data is split into three separate JSON files in the `data/` directory:
 [
   {
     "name": "coral",
-    "hex": "#FF7F50",
+    "hex": "{the color's hex code}",
     "rgb": [255, 127, 80],
     "hsl": [16.1, 100.0, 65.7],
     "lab": [67.3, 44.6, 49.7],
@@ -155,7 +169,7 @@ Data is split into three separate JSON files in the `data/` directory:
     "type": "PLA",
     "finish": "Matte",
     "color": "Jet Black",
-    "hex": "#000000",
+    "hex": "{the filament's hex code}",
     "td_value": 0.1
   }
 ]
