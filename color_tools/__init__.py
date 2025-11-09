@@ -21,7 +21,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "3.0.0"
+__version__ = "3.1.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -101,6 +101,7 @@ from .palette import (
     load_colors,
     load_filaments,
     load_maker_synonyms,
+    load_palette,
 )
 
 # ============================================================================
@@ -169,6 +170,7 @@ __all__ = [
     "load_colors",
     "load_filaments",
     "load_maker_synonyms",
+    "load_palette",
     
     # Config functions
     "set_dual_color_mode",

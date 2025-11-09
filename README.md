@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 3.0.0 | [Changelog](CHANGELOG.md)
+**Version:** 3.1.0 | [Changelog](CHANGELOG.md)
 
 ## Features
 
@@ -12,6 +12,7 @@ A comprehensive Python library for color science operations, color space convers
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
   - Extensive 3D printing filament database with manufacturer info
   - Maker synonym support for flexible filament searches
+  - **Retro/Classic Palettes**: CGA, EGA, VGA, and Web-safe color palettes
 - **Gamut Checking**: Verify if colors are representable in sRGB
 - **Thread-Safe**: Configurable runtime settings per thread
 - **Color Science Integrity**: Built-in verification of color constants
@@ -82,6 +83,18 @@ palette = Palette.load_default()
 nearest, distance = palette.nearest_color(lab, space="lab")
 print(f"Nearest CSS color: {nearest.name} (distance: {distance:.2f})")
 
+# Load a retro/classic palette (CGA, EGA, VGA, Web Safe)
+from color_tools import load_palette
+
+cga = load_palette('cga4')  # Classic CGA 4-color palette
+color, distance = cga.nearest_color((128, 64, 200), space='rgb')
+print(f"Nearest CGA color: {color.name} ({color.hex})")
+
+# Available palettes: cga4, cga16, ega16, ega64, vga, web
+ega = load_palette('ega16')  # Standard EGA 16-color palette
+vga = load_palette('vga')    # VGA 256-color palette (Mode 13h)
+web = load_palette('web')    # Web-safe 216-color palette
+
 # Load filament palette and search
 filament_palette = FilamentPalette.load_default()
 filament, distance = filament_palette.nearest_filament((180, 100, 200))
@@ -122,6 +135,7 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 **Palettes:**
 
 - `Palette.load_default()` - Load CSS color database
+- `load_palette(name)` - Load retro/classic palette (cga4, cga16, ega16, ega64, vga, web)
 - `FilamentPalette.load_default()` - Load filament database
 - `palette.nearest_color()` - Find nearest color match
 - `palette.find_by_name()` - Look up color by name
@@ -207,6 +221,34 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--metric {euclidean,de76,de94,de2000,cmc,cmc21,cmc11}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
+- `--palette {cga4,cga16,ega16,ega64,vga,web}`: Use retro/classic palette instead of CSS colors
+
+#### Custom Palettes
+
+Use retro/classic color palettes for vintage graphics, pixel art, or color quantization:
+
+```bash
+# Find nearest CGA 4-color match (classic gaming palette)
+python -m color_tools color --palette cga4 --nearest --value 128 64 200 --space rgb
+
+# Find nearest EGA 16-color match
+python -m color_tools color --palette ega16 --nearest --value 255 128 0 --space rgb
+
+# Find nearest VGA 256-color match (Mode 13h)
+python -m color_tools color --palette vga --nearest --value 100 200 150 --space rgb
+
+# Find nearest web-safe color (6×6×6 RGB cube)
+python -m color_tools color --palette web --nearest --value 123 200 88 --space rgb
+```
+
+**Available Palettes:**
+
+- `cga4` - CGA 4-color (Palette 1, high intensity): Black, Light Cyan, Light Magenta, White
+- `cga16` - CGA 16-color (full RGBI palette)
+- `ega16` - EGA 16-color (standard/default palette)
+- `ega64` - EGA 64-color (full 6-bit RGB palette)
+- `vga` - VGA 256-color (Mode 13h palette)
+- `web` - Web-safe 216-color palette (6×6×6 RGB cube)
 
 ### Filament Command
 

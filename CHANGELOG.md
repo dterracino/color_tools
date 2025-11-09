@@ -5,6 +5,46 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [3.1.0] - 2025-11-09
+
+### Added
+
+- **Custom palette support**: Load and use retro/classic color palettes
+  - New `load_palette()` function to load named palettes
+  - Six built-in palettes: `cga4`, `cga16`, `ega16`, `ega64`, `vga`, `web`
+  - CGA 4-color: Classic gaming palette (Palette 1, high intensity)
+  - CGA 16-color: Full RGBI palette
+  - EGA 16-color: Standard/default EGA palette
+  - EGA 64-color: Full 6-bit RGB palette
+  - VGA 256-color: Classic Mode 13h palette
+  - Web Safe: 216-color web-safe palette (6×6×6 RGB cube)
+  - CLI support: `--palette <name>` flag for `color` command
+  - All palettes work with existing distance metrics (de2000, de94, etc.)
+  - Perfect for retro graphics, pixel art, and color quantization projects
+
+- **Palette generation tooling**:
+  - New `tooling/generate_palettes.py` script
+  - Uses `color_tools` library to compute accurate LAB/LCH/HSL values
+  - Pre-computes all color space conversions for fast loading
+  - Palettes stored in `color_tools/data/palettes/` directory
+
+### Examples
+
+```python
+# Library usage
+from color_tools import load_palette
+
+cga = load_palette('cga4')
+color, distance = cga.nearest_color((128, 64, 200), space='rgb')
+print(f"{color.name}: {color.hex}")  # Light Magenta: #ff55ff
+```
+
+```bash
+# CLI usage
+python -m color_tools color --palette cga4 --nearest --value 128 64 200
+python -m color_tools color --palette ega16 --nearest --value 255 0 0 --space rgb
+```
+
 ## [3.0.0] - 2025-11-09
 
 ### Changed - BREAKING

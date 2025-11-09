@@ -20,7 +20,7 @@ from .constants import ColorConstants
 from .config import set_dual_color_mode
 from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
-from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms
+from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
 
 
 def _get_program_name() -> str:
@@ -171,6 +171,12 @@ Examples:
         type=float, 
         default=ColorConstants.CMC_C_DEFAULT, 
         help="CMC chroma parameter (default: 1.0)"
+    )
+    color_parser.add_argument(
+        "--palette",
+        type=str,
+        choices=["cga4", "cga16", "ega16", "ega64", "vga", "web"],
+        help="Use a retro palette instead of CSS colors (cga4, cga16, ega16, ega64, vga, web)"
     )
     
     # ==================== FILAMENT SUBCOMMAND ====================
@@ -345,8 +351,11 @@ Examples:
     
     # ==================== COLOR COMMAND HANDLER ====================
     if args.command == "color":
-        # Load color palette
-        palette = Palette(load_colors(json_path))
+        # Load color palette (either custom retro palette or default CSS colors)
+        if args.palette:
+            palette = load_palette(args.palette)
+        else:
+            palette = Palette(load_colors(json_path))
         
         if args.name:
             rec = palette.find_by_name(args.name)

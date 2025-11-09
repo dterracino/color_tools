@@ -354,6 +354,68 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     return synonyms
 
 
+def load_palette(name: str) -> 'Palette':
+    """
+    Load a named retro palette from the palettes directory.
+    
+    Available palettes:
+    - cga4: CGA 4-color palette (Palette 1, high intensity) - classic gaming!
+    - cga16: CGA 16-color palette (full RGBI)
+    - ega16: EGA 16-color palette (standard/default)
+    - ega64: EGA 64-color palette (full 6-bit RGB)
+    - vga: VGA 256-color palette (Mode 13h)
+    - web: Web-safe 216-color palette (6x6x6 RGB cube)
+    
+    Args:
+        name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web')
+    
+    Returns:
+        Palette object loaded from the specified palette file
+    
+    Raises:
+        FileNotFoundError: If the palette file doesn't exist
+        ValueError: If the palette file is malformed
+    
+    Example:
+        >>> cga = load_palette("cga4")
+        >>> color, dist = cga.nearest_color((128, 64, 200))
+        >>> print(f"Nearest CGA color: {color.name}")
+    """
+    palettes_dir = Path(__file__).parent / "data" / "palettes"
+    palette_file = palettes_dir / f"{name}.json"
+    
+    if not palette_file.exists():
+        available = [p.stem for p in palettes_dir.glob("*.json")]
+        raise FileNotFoundError(
+            f"Palette '{name}' not found. Available palettes: {', '.join(available)}"
+        )
+    
+    # Load the palette using load_colors (same format)
+    with open(palette_file, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    if not isinstance(data, list):
+        raise ValueError(f"Expected array of colors at root level in {palette_file}")
+    
+    records: List[ColorRecord] = []
+    for c in data:
+        rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
+        hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
+        lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
+        lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
+        
+        records.append(ColorRecord(
+            name=c["name"],
+            hex=c["hex"],
+            rgb=rgb,
+            hsl=hsl,
+            lab=lab,
+            lch=lch,
+        ))
+    
+    return Palette(records)
+
+
 # ============================================================================
 # Helper Functions
 # ============================================================================
