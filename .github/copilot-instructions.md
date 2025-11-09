@@ -96,8 +96,9 @@ The CLI has three main commands:
 3. **convert**: Convert between color spaces and check gamut
 
 ### Global Arguments
-- `--json PATH`: Path to directory containing JSON data files (colors.json, filaments.json, maker_synonyms.json) or path to specific JSON file
+- `--json DIR`: Path to directory containing all JSON data files (colors.json, filaments.json, maker_synonyms.json). Must be a directory. Default: package data directory
 - `--verify-constants`: Verify integrity of color science constants
+- `--version`: Show version number and exit
 
 ### Dual-Color Mode
 - Some filaments have two colors (hex and hex2)

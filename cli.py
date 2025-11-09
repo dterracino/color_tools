@@ -101,8 +101,9 @@ Examples:
     parser.add_argument(
         "--json", 
         type=str, 
+        metavar="DIR",
         default=None,  # Will use default package data if None
-        help="Path to directory containing JSON data files (colors.json and filaments.json), or path to specific JSON file (default: uses package data)"
+        help="Path to directory containing JSON data files (colors.json, filaments.json, maker_synonyms.json). Default: uses package data directory"
     )
     parser.add_argument(
         "--verify-constants",
@@ -301,8 +302,17 @@ Examples:
         parser.print_help()
         sys.exit(0)
     
-    # Convert json_path to Path if provided
-    json_path = Path(args.json) if args.json else None
+    # Validate and convert json_path to Path if provided
+    json_path = None
+    if args.json:
+        json_path = Path(args.json)
+        if not json_path.exists():
+            print(f"Error: JSON directory does not exist: {json_path}")
+            sys.exit(1)
+        if not json_path.is_dir():
+            print(f"Error: --json must be a directory containing colors.json, filaments.json, and maker_synonyms.json")
+            print(f"Provided path is not a directory: {json_path}")
+            sys.exit(1)
     
     # ==================== COLOR COMMAND HANDLER ====================
     if args.command == "color":

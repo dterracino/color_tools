@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 2.0.0 | [Changelog](CHANGELOG.md)
+**Version:** 2.0.1 | [Changelog](CHANGELOG.md)
 
 ## Features
 
@@ -326,8 +326,9 @@ python -m color_tools convert --check-gamut --from lch --value 70 80 120
 
 These arguments work with all commands:
 
-- `--json PATH`: Path to directory containing JSON data files (colors.json, filaments.json, maker_synonyms.json) or path to specific JSON file
+- `--json DIR`: Path to directory containing all JSON data files (colors.json, filaments.json, maker_synonyms.json). Must be a directory, not a file. Default: uses package data directory
 - `--verify-constants`: Verify integrity of color science constants
+- `--version`: Show version number and exit
 
 ## Color Spaces
 
