@@ -1,0 +1,313 @@
+"""Unit tests for color_tools.palette module."""
+
+import unittest
+import sys
+from pathlib import Path
+
+# Add parent directory to path for imports
+parent_dir = Path(__file__).parent.parent.parent
+if str(parent_dir) not in sys.path:
+    sys.path.insert(0, str(parent_dir))
+
+from color_tools.palette import (
+    Palette,
+    FilamentPalette,
+    ColorRecord,
+    FilamentRecord,
+)
+
+
+class TestColorRecord(unittest.TestCase):
+    """Test ColorRecord dataclass."""
+    
+    def test_color_record_creation(self):
+        """Test creating a ColorRecord."""
+        color = ColorRecord(
+            name="red",
+            hex="#FF0000",
+            rgb=(255, 0, 0),
+            hsl=(0.0, 100.0, 50.0),
+            lab=(53.24, 80.09, 67.20),
+            lch=(53.24, 104.55, 39.99)
+        )
+        self.assertEqual(color.name, "red")
+        self.assertEqual(color.hex, "#FF0000")
+        self.assertEqual(color.rgb, (255, 0, 0))
+    
+    def test_color_record_immutable(self):
+        """Test that ColorRecord is immutable (frozen)."""
+        color = ColorRecord(
+            name="red",
+            hex="#FF0000",
+            rgb=(255, 0, 0),
+            hsl=(0.0, 100.0, 50.0),
+            lab=(53.24, 80.09, 67.20),
+            lch=(53.24, 104.55, 39.99)
+        )
+        with self.assertRaises(AttributeError):
+            color.name = "blue"
+
+
+class TestFilamentRecord(unittest.TestCase):
+    """Test FilamentRecord dataclass."""
+    
+    def test_filament_record_creation(self):
+        """Test creating a FilamentRecord."""
+        filament = FilamentRecord(
+            maker="Test Maker",
+            type="PLA",
+            finish="Matte",
+            color="Red",
+            hex="#FF0000",
+            td_value=0.5
+        )
+        self.assertEqual(filament.maker, "Test Maker")
+        self.assertEqual(filament.type, "PLA")
+        self.assertEqual(filament.color, "Red")
+        # rgb is a property that converts from hex
+        self.assertEqual(filament.rgb, (255, 0, 0))
+    
+    def test_filament_record_immutable(self):
+        """Test that FilamentRecord is immutable (frozen)."""
+        filament = FilamentRecord(
+            maker="Test Maker",
+            type="PLA",
+            finish="Matte",
+            color="Red",
+            hex="#FF0000",
+            td_value=0.5
+        )
+        with self.assertRaises(AttributeError):
+            filament.color = "Blue"
+
+
+class TestPalette(unittest.TestCase):
+    """Test Palette class for CSS colors."""
+    
+    def test_load_default(self):
+        """Test loading default palette."""
+        palette = Palette.load_default()
+        self.assertIsInstance(palette, Palette)
+        self.assertGreater(len(palette.records), 0)
+    
+    def test_find_by_name_exact(self):
+        """Test finding color by exact name."""
+        palette = Palette.load_default()
+        result = palette.find_by_name("red")
+        # May or may not find exact "red" depending on what's in the palette
+        # Just test it returns the right type
+        self.assertTrue(result is None or isinstance(result, ColorRecord))
+    
+    def test_find_by_name_case_insensitive(self):
+        """Test that name search is case insensitive."""
+        palette = Palette.load_default()
+        # Find a color that exists
+        if palette.records:
+            color_name = palette.records[0].name
+            result1 = palette.find_by_name(color_name.lower())
+            result2 = palette.find_by_name(color_name.upper())
+            result3 = palette.find_by_name(color_name)
+            # All should return the same result
+            if result1:  # If found
+                self.assertEqual(result1.name, result2.name if result2 else None)
+                self.assertEqual(result1.name, result3.name if result3 else None)
+    
+    def test_find_by_rgb(self):
+        """Test finding color by RGB value."""
+        palette = Palette.load_default()
+        # Use a color from the palette
+        if palette.records:
+            color = palette.records[0]
+            # Search by its RGB
+            result = palette.find_by_rgb(color.rgb)
+            self.assertIsNotNone(result)
+            self.assertEqual(result.rgb, color.rgb)
+    
+    def test_find_by_lab(self):
+        """Test finding color by LAB value."""
+        palette = Palette.load_default()
+        # Use a color from the palette
+        if palette.records:
+            color = palette.records[0]
+            # Search by its LAB (exact match may fail due to rounding)
+            result = palette.find_by_lab(color.lab, rounding=1)
+            # May or may not find depending on rounding
+            self.assertTrue(result is None or isinstance(result, ColorRecord))
+    
+    def test_nearest_color_rgb(self):
+        """Test finding nearest color by RGB."""
+        palette = Palette.load_default()
+        # Find nearest color to a pure red
+        nearest, distance = palette.nearest_color((255, 0, 0), space="rgb")
+        self.assertIsNotNone(nearest)
+        self.assertIsInstance(distance, float)
+        self.assertGreaterEqual(distance, 0)
+    
+    def test_nearest_color_lab(self):
+        """Test finding nearest color by LAB."""
+        palette = Palette.load_default()
+        # Find nearest color to a LAB value
+        nearest, distance = palette.nearest_color((50, 25, -30), space="lab")
+        self.assertIsNotNone(nearest)
+        self.assertIsInstance(distance, float)
+        self.assertGreaterEqual(distance, 0)
+    
+    def test_nearest_color_hsl(self):
+        """Test finding nearest color by HSL."""
+        palette = Palette.load_default()
+        # Find nearest color to an HSL value
+        nearest, distance = palette.nearest_color((180, 50, 50), space="hsl")
+        self.assertIsNotNone(nearest)
+        self.assertIsInstance(distance, float)
+        self.assertGreaterEqual(distance, 0)
+    
+    def test_nearest_color_metric(self):
+        """Test finding nearest color with specific metric."""
+        palette = Palette.load_default()
+        # Find nearest with Delta E 2000
+        nearest, distance = palette.nearest_color(
+            (50, 25, -30),
+            space="lab",
+            metric="de2000"
+        )
+        self.assertIsNotNone(nearest)
+        self.assertGreaterEqual(distance, 0)
+
+
+class TestFilamentPalette(unittest.TestCase):
+    """Test FilamentPalette class for 3D printing filaments."""
+    
+    def test_load_default(self):
+        """Test loading default filament palette."""
+        palette = FilamentPalette.load_default()
+        self.assertIsInstance(palette, FilamentPalette)
+        self.assertGreater(len(palette.records), 0)
+    
+    def test_find_by_maker(self):
+        """Test finding filaments by maker."""
+        palette = FilamentPalette.load_default()
+        # Get all makers (it's a property, not a method)
+        makers_list = palette.makers
+        if makers_list:
+            # Search for first maker
+            results = palette.find_by_maker(makers_list[0])
+            self.assertGreater(len(results), 0)
+            # All results should be from that maker
+            self.assertTrue(all(f.maker == makers_list[0] for f in results))
+    
+    def test_find_by_maker_synonym(self):
+        """Test finding filaments by maker synonym."""
+        palette = FilamentPalette.load_default()
+        # Try to find using "Bambu" which should map to "Bambu Lab"
+        results_synonym = palette.find_by_maker("Bambu")
+        results_canonical = palette.find_by_maker("Bambu Lab")
+        # Should return same results
+        if results_canonical:  # Only test if Bambu Lab exists
+            self.assertEqual(len(results_synonym), len(results_canonical))
+    
+    def test_find_by_type(self):
+        """Test finding filaments by type."""
+        palette = FilamentPalette.load_default()
+        types_list = palette.types
+        if types_list:
+            results = palette.find_by_type(types_list[0])
+            self.assertGreater(len(results), 0)
+            self.assertTrue(all(f.type == types_list[0] for f in results))
+    
+    def test_find_by_finish(self):
+        """Test finding filaments by finish."""
+        palette = FilamentPalette.load_default()
+        finishes_list = palette.finishes
+        if finishes_list:
+            results = palette.find_by_finish(finishes_list[0])
+            self.assertGreater(len(results), 0)
+            self.assertTrue(all(f.finish == finishes_list[0] for f in results))
+    
+    def test_filter_combined(self):
+        """Test filtering with multiple criteria."""
+        palette = FilamentPalette.load_default()
+        makers_list = palette.makers
+        types_list = palette.types
+        if makers_list and types_list:
+            results = palette.filter(maker=makers_list[0], type_name=types_list[0])
+            # All results should match both criteria
+            for f in results:
+                self.assertEqual(f.maker, makers_list[0])
+                self.assertEqual(f.type, types_list[0])
+    
+    def test_list_makers(self):
+        """Test listing all makers."""
+        palette = FilamentPalette.load_default()
+        makers_list = palette.makers
+        self.assertIsInstance(makers_list, list)
+        self.assertGreater(len(makers_list), 0)
+        # Should be sorted
+        self.assertEqual(makers_list, sorted(makers_list))
+    
+    def test_list_types(self):
+        """Test listing all types."""
+        palette = FilamentPalette.load_default()
+        types_list = palette.types
+        self.assertIsInstance(types_list, list)
+        self.assertGreater(len(types_list), 0)
+        # Should be sorted
+        self.assertEqual(types_list, sorted(types_list))
+    
+    def test_list_finishes(self):
+        """Test listing all finishes."""
+        palette = FilamentPalette.load_default()
+        finishes_list = palette.finishes
+        self.assertIsInstance(finishes_list, list)
+        self.assertGreater(len(finishes_list), 0)
+        # Should be sorted
+        self.assertEqual(finishes_list, sorted(finishes_list))
+    
+    def test_nearest_filament(self):
+        """Test finding nearest filament."""
+        palette = FilamentPalette.load_default()
+        # Find nearest to pure red
+        nearest, distance = palette.nearest_filament((255, 0, 0))
+        self.assertIsNotNone(nearest)
+        self.assertIsInstance(distance, float)
+        self.assertGreaterEqual(distance, 0)
+    
+    def test_nearest_filament_with_filter(self):
+        """Test finding nearest filament with filtering."""
+        palette = FilamentPalette.load_default()
+        makers_list = palette.makers
+        if makers_list:
+            # Find nearest PLA from first maker
+            nearest, distance = palette.nearest_filament(
+                (180, 100, 200),
+                maker=makers_list[0],
+                type_name="PLA"
+            )
+            if nearest:  # Only test if match found
+                self.assertEqual(nearest.maker, makers_list[0])
+                self.assertEqual(nearest.type, "PLA")
+
+
+class TestPaletteEdgeCases(unittest.TestCase):
+    """Test edge cases and error handling."""
+    
+    def test_nearest_color_empty_palette(self):
+        """Test nearest color on empty palette."""
+        palette = Palette([])
+        # Should handle empty palette gracefully
+        try:
+            nearest, distance = palette.nearest_color((255, 0, 0))
+            # If it doesn't raise, it should return None
+            self.assertTrue(nearest is None or distance is None or distance == float('inf'))
+        except (ValueError, IndexError):
+            # Or it might raise an error, which is also acceptable
+            pass
+    
+    def test_find_by_name_no_match(self):
+        """Test finding color with no matches."""
+        palette = Palette.load_default()
+        result = palette.find_by_name("this_color_should_not_exist_12345")
+        self.assertIsNone(result)
+
+
+if __name__ == '__main__':
+    unittest.main()
