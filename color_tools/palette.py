@@ -170,7 +170,8 @@ def _parse_color_records(data: list, source_file: str = "JSON data") -> List[Col
     for i, c in enumerate(data):
         try:
             # Parse color data (all values should be arrays/tuples)
-            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
+            # Validate/coerce RGB to int to ensure numeric values
+            rgb = (int(c["rgb"][0]), int(c["rgb"][1]), int(c["rgb"][2]))
             hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
             lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
             lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
