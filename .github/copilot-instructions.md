@@ -96,7 +96,7 @@ The CLI has three main commands:
 3. **convert**: Convert between color spaces and check gamut
 
 ### Global Arguments
-- `--json PATH`: Custom JSON data file path
+- `--json PATH`: Path to directory containing JSON data files (colors.json, filaments.json, maker_synonyms.json) or path to specific JSON file
 - `--verify-constants`: Verify integrity of color science constants
 
 ### Dual-Color Mode
@@ -104,30 +104,50 @@ The CLI has three main commands:
 - Mode determines which color to use: "first" (default), "second", or "mix"
 - Must be set BEFORE loading FilamentPalette
 
+### Maker Synonyms
+- Filament searches support maker synonyms (e.g., "Bambu" finds "Bambu Lab")
+- Synonyms defined in `data/maker_synonyms.json`
+- Automatically loaded by `FilamentPalette.load_default()`
+
 ## Data Files
 
-### color_tools.json Structure
+### JSON Data Structure
+
+Data is split into three separate JSON files in the `data/` directory:
+
+#### `colors.json` - CSS Color Database
+```json
+[
+  {
+    "name": "coral",
+    "hex": "#FF7F50",
+    "rgb": [255, 127, 80],
+    "hsl": [16.1, 100.0, 65.7],
+    "lab": [67.3, 44.6, 49.7],
+    "lch": [67.3, 66.9, 48.1]
+  }
+]
+```
+
+#### `filaments.json` - 3D Printing Filament Database
+```json
+[
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Jet Black",
+    "hex": "#000000",
+    "td_value": 0.1
+  }
+]
+```
+
+#### `maker_synonyms.json` - Maker Name Synonyms
 ```json
 {
-  "colors": [
-    {
-      "name": "coral",
-      "hex": "#FF7F50",
-      "rgb": {"r": 255, "g": 127, "b": 80},
-      "hsl": [16.1, 100.0, 65.7],
-      "lab": [67.3, 44.6, 49.7]
-    }
-  ],
-  "filaments": [
-    {
-      "maker": "Prusament",
-      "type": "PLA",
-      "finish": "Matte",
-      "color": "Jet Black",
-      "hex": "#000000",
-      "td_value": 0.1
-    }
-  ]
+  "Bambu Lab": ["Bambu", "BLL"],
+  "Paramount 3D": ["Paramount", "Paramount3D"]
 }
 ```
 
@@ -175,17 +195,26 @@ rgb = xyz_to_rgb(xyz)
 ### Palette Usage
 ```python
 # Load and search palettes
-from color_tools.palette import Palette, FilamentPalette, load_colors, load_filaments
+from color_tools.palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms
 
-palette = Palette(load_colors())
+# CSS colors
+palette = Palette.load_default()  # Loads from data/colors.json
 color, distance = palette.nearest_color((255, 128, 64))
 
-filament_palette = FilamentPalette(load_filaments())
+# Filaments with maker synonyms
+filament_palette = FilamentPalette.load_default()  # Loads filaments + synonyms
 filament, distance = filament_palette.nearest_filament(
     (180, 100, 200),
-    maker="Prusament",
+    maker="Bambu",  # Can use synonym instead of "Bambu Lab"
     type_name="PLA"
 )
+
+# Manual loading (advanced)
+colors = load_colors()  # From data/colors.json
+filaments = load_filaments()  # From data/filaments.json
+synonyms = load_maker_synonyms()  # From data/maker_synonyms.json
+palette = Palette(colors)
+filament_palette = FilamentPalette(filaments, synonyms)
 ```
 
 ## When Adding New Features
@@ -214,4 +243,11 @@ filament, distance = filament_palette.nearest_filament(
 - README.md contains comprehensive usage examples - keep it updated
 - The package works as library, CLI tool, or installed command
 - Constants hash must be regenerated if constants are modified (but they shouldn't be!)
-- JSON data file contains ~150 CSS colors and hundreds of filaments
+- JSON data is now split into separate files: `colors.json` and `filaments.json`
+
+## Available Custom Agents
+
+Use these specialized agents for specific tasks:
+- **@test-specialist**: Expert in creating comprehensive unit tests with unittest framework. Use for creating/improving tests, test coverage analysis, or test design patterns.
+  - Example: `@test-specialist add tests for the new distance metric`
+  - Example: `@test-specialist review test coverage for palette.py`

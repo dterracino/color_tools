@@ -2,6 +2,8 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
+**Version:** 2.0.0 | [Changelog](CHANGELOG.md)
+
 ## Features
 
 - **Multiple Color Spaces**: RGB, HSL, LAB, LCH with accurate conversions
@@ -9,6 +11,7 @@ A comprehensive Python library for color science operations, color space convers
 - **Color Databases**:
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
   - Extensive 3D printing filament database with manufacturer info
+  - Maker synonym support for flexible filament searches
 - **Gamut Checking**: Verify if colors are representable in sRGB
 - **Thread-Safe**: Configurable runtime settings per thread
 - **Color Science Integrity**: Built-in verification of color constants
@@ -82,8 +85,8 @@ filament_palette = FilamentPalette.load_default()
 filament, distance = filament_palette.nearest_filament((180, 100, 200))
 print(f"Nearest filament: {filament.maker} {filament.type} - {filament.color}")
 
-# Filter filaments by criteria
-pla_filaments = filament_palette.filter(type_name="PLA", maker="Bambu Lab")
+# Filter filaments by criteria (supports maker synonyms)
+pla_filaments = filament_palette.filter(type_name="PLA", maker="Bambu")  # "Bambu" finds "Bambu Lab"
 print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 ```
 
@@ -124,8 +127,8 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 - `palette.find_by_lab()` - Look up by LAB value (with rounding)
 - `palette.find_by_lch()` - Look up by LCH value (with rounding)
 - `filament_palette.nearest_filament()` - Find nearest filament
-- `filament_palette.filter()` - Filter by maker, type, finish, color
-- `filament_palette.find_by_maker()` - Get all filaments from a maker
+- `filament_palette.filter()` - Filter by maker, type, finish, color (supports maker synonyms)
+- `filament_palette.find_by_maker()` - Get all filaments from a maker (supports synonyms)
 - `filament_palette.find_by_type()` - Get all filaments of a type
 
 **Configuration:**
@@ -248,12 +251,12 @@ python -m color_tools filament --list-types
 # List all finishes
 python -m color_tools filament --list-finishes
 
-# Filter by specific criteria
-python -m color_tools filament --maker "Bambu Lab" --type "PLA"
+# Filter by specific criteria (supports maker synonyms)
+python -m color_tools filament --maker "Bambu" --type "PLA"  # "Bambu" finds "Bambu Lab"
 python -m color_tools filament --finish "Matte" --color "Black"
 
-# Filter by multiple makers
-python -m color_tools filament --maker "Bambu Lab" "Polymaker"
+# Filter by multiple makers (can mix canonical names and synonyms)
+python -m color_tools filament --maker "Bambu" "Polymaker"
 
 # Filter by multiple types
 python -m color_tools filament --type PLA "PLA+" PETG
@@ -278,7 +281,7 @@ python -m color_tools filament --finish Basic "Silk+" Matte
 - `--list-makers`: List all filament manufacturers
 - `--list-types`: List all filament types (PLA, PETG, etc.)
 - `--list-finishes`: List all finish types (Matte, Glossy, etc.)
-- `--maker NAME [NAME ...]`: Filter by one or more manufacturers (e.g., --maker "Bambu Lab" "Polymaker")
+- `--maker NAME [NAME ...]`: Filter by one or more manufacturers (e.g., --maker "Bambu" "Polymaker"). Supports maker synonyms (e.g., "Bambu" finds "Bambu Lab").
 - `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+")
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+")
 - `--color NAME`: Filter by color name
@@ -323,7 +326,7 @@ python -m color_tools convert --check-gamut --from lch --value 70 80 120
 
 These arguments work with all commands:
 
-- `--json PATH`: Path to JSON data file (default: color_tools.json)
+- `--json PATH`: Path to directory containing JSON data files (colors.json, filaments.json, maker_synonyms.json) or path to specific JSON file
 - `--verify-constants`: Verify integrity of color science constants
 
 ## Color Spaces
@@ -436,38 +439,54 @@ python -m color_tools filament --maker "Polymaker" | grep -o 'type: [^,]*' | sor
 
 ## Data Files
 
-### color_tools.json Structure
+The data is organized into three separate JSON files in the `data/` directory:
 
-The JSON file contains two main sections:
+### colors.json - CSS Color Database
 
-- **colors**: CSS color database with name, hex, RGB, HSL, LAB, and LCH values
-- **filaments**: 3D printing filament database with manufacturer, type, finish, color name, hex value, and optional transparency (td_value)
+Array of color objects with complete color space representations:
 
-Example color entry:
+```json
+[
+  {
+    "name": "coral",
+    "hex": "#FF7F50",
+    "rgb": [255, 127, 80],
+    "hsl": [16.1, 100.0, 65.7],
+    "lab": [67.30, 45.35, 47.49],
+    "lch": [67.30, 65.67, 46.3]
+  }
+]
+```
+
+### filaments.json - 3D Printing Filament Database
+
+Array of filament objects with manufacturer info and color data:
+
+```json
+[
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Basic", 
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  }
+]
+```
+
+### maker_synonyms.json - Maker Name Synonyms
+
+Mapping of canonical maker names to common synonyms/abbreviations:
 
 ```json
 {
-  "name": "coral",
-  "hex": "#FF7F50",
-  "rgb": [255, 127, 80],
-  "hsl": [16.1, 100.0, 65.7],
-  "lab": [67.30, 45.35, 47.49],
-  "lch": [67.30, 65.67, 46.3]
+  "Bambu Lab": ["Bambu", "BLL"],
+  "Paramount 3D": ["Paramount", "Paramount3D"]
 }
 ```
 
-Example filament entry:
-
-```json
-{
-  "maker": "Bambu Lab",
-  "type": "PLA",
-  "finish": "Basic", 
-  "color": "Black",
-  "hex": "#000000",
-  "td_value": null
-}
-```
+**Synonym Support:** Filament searches automatically support maker synonyms. For example, searching for "Bambu" will find all "Bambu Lab" filaments.
 
 ## Technical Notes
 

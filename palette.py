@@ -151,46 +151,37 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     """
     Load CSS color database from JSON file.
     
-    The JSON has two top-level keys: "colors" and "filaments".
-    This function only loads the "colors" section.
-    
     Args:
-        json_path: Path to JSON file. If None, looks for color_tools.json
-                   in the package's data/ directory.
+        json_path: Path to directory containing JSON files, or path to specific
+                   colors JSON file. If None, looks for colors.json in the 
+                   package's data/ directory.
     
     Returns:
         List of ColorRecord objects
     """
     if json_path is None:
         # Default: look in package's data/ directory
-        json_path = Path(__file__).parent / "data" / "color_tools.json"
+        json_path = Path(__file__).parent / "data" / ColorConstants.COLORS_JSON_FILENAME
+    else:
+        json_path = Path(json_path)
+        # If it's a directory, append the filename
+        if json_path.is_dir():
+            json_path = json_path / ColorConstants.COLORS_JSON_FILENAME
     
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     
+    # Data should be an array of color objects at the root level
+    if not isinstance(data, list):
+        raise ValueError(f"Expected array of colors at root level in {json_path}")
+    
     records: List[ColorRecord] = []
-    for c in data.get("colors", []):
-        # Handle both old format (named objects) and new format (tuples)
-        if isinstance(c["rgb"], list):
-            # New tuple format
-            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
-            hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
-            lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
-            # LCH should be present in new format, but handle gracefully if missing
-            if "lch" in c:
-                lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
-            else:
-                # Fallback: compute LCH from LAB if missing
-                from .conversions import lab_to_lch
-                lch = lab_to_lch(lab)
-        else:
-            # Old named object format
-            rgb = (c["rgb"]["r"], c["rgb"]["g"], c["rgb"]["b"])
-            hsl = (float(c["hsl"]["h"]), float(c["hsl"]["s"]), float(c["hsl"]["l"]))
-            lab = (float(c["lab"]["L"]), float(c["lab"]["a"]), float(c["lab"]["b"]))
-            # LCH not available in old format, compute it
-            from .conversions import lab_to_lch
-            lch = lab_to_lch(lab)
+    for c in data:
+        # Parse color data (all values should be arrays/tuples)
+        rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
+        hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
+        lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
+        lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
         
         records.append(ColorRecord(
             name=c["name"],
@@ -208,21 +199,31 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
     Load filament database from JSON file.
     
     Args:
-        json_path: Path to JSON file. If None, looks for color_tools.json
-                   in the package's data/ directory.
+        json_path: Path to directory containing JSON files, or path to specific
+                   filaments JSON file. If None, looks for filaments.json in 
+                   the package's data/ directory.
     
     Returns:
         List of FilamentRecord objects
     """
     if json_path is None:
         # Default: look in package's data/ directory
-        json_path = Path(__file__).parent / "data" / "color_tools.json"
+        json_path = Path(__file__).parent / "data" / ColorConstants.FILAMENTS_JSON_FILENAME
+    else:
+        json_path = Path(json_path)
+        # If it's a directory, append the filename
+        if json_path.is_dir():
+            json_path = json_path / ColorConstants.FILAMENTS_JSON_FILENAME
     
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     
+    # Data should be an array of filament objects at the root level
+    if not isinstance(data, list):
+        raise ValueError(f"Expected array of filaments at root level in {json_path}")
+    
     records: List[FilamentRecord] = []
-    for f in data.get("filaments", []):
+    for f in data:
         records.append(FilamentRecord(
             maker=f["maker"],
             type=f["type"],
@@ -232,6 +233,35 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
             td_value=f.get("td_value"),  # td_value can be None
         ))
     return records
+
+
+def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[str]]:
+    """
+    Load maker synonyms from JSON file.
+    
+    Args:
+        json_path: Path to directory containing JSON files, or path to specific
+                   maker_synonyms JSON file. If None, looks for maker_synonyms.json 
+                   in the package's data/ directory.
+    
+    Returns:
+        Dictionary mapping canonical maker names to lists of synonyms
+    """
+    if json_path is None:
+        # Default: look in package's data/ directory
+        json_path = Path(__file__).parent / "data" / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+    else:
+        json_path = Path(json_path)
+        # If it's a directory, append the filename
+        if json_path.is_dir():
+            json_path = json_path / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+    
+    try:
+        with open(json_path, "r", encoding="utf-8") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        # Return empty dict if file doesn't exist
+        return {}
 
 
 # ============================================================================
@@ -400,10 +430,14 @@ class FilamentPalette:
     
     The indices allow for fast filtering: "Show me all Bambu Lab PLA Matte filaments"
     becomes a simple dictionary lookup instead of scanning the whole list! 📇
+    
+    Supports maker synonyms: you can search for "Bambu" and it will find "Bambu Lab"
+    filaments automatically.
     """
     
-    def __init__(self, records: List[FilamentRecord]) -> None:
+    def __init__(self, records: List[FilamentRecord], maker_synonyms: Optional[Dict[str, List[str]]] = None) -> None:
         self.records = records
+        self.maker_synonyms = maker_synonyms or {}
         
         # Create various lookup indices (note: Lists, not single items!)
         # Multiple filaments can share the same maker/type/color
@@ -443,6 +477,36 @@ class FilamentPalette:
                     self._by_finish[rec.finish] = []
                 self._by_finish[rec.finish].append(rec)
     
+    def _expand_maker_names(self, makers: List[str]) -> Set[str]:
+        """
+        Expand maker names to include synonyms.
+        
+        For example, if "Bambu" is provided and "Bambu Lab" has synonyms ["Bambu", "BLL"],
+        this will return {"Bambu Lab", "Bambu", "BLL"}.
+        
+        Args:
+            makers: List of maker names or synonyms to expand
+        
+        Returns:
+            Set of all canonical names and synonyms that match
+        """
+        expanded = set()
+        for maker in makers:
+            # Add the original name
+            expanded.add(maker)
+            
+            # Check if this maker IS a canonical name
+            if maker in self.maker_synonyms:
+                expanded.update(self.maker_synonyms[maker])
+            
+            # Check if this maker is a synonym for a canonical name
+            for canonical, synonyms in self.maker_synonyms.items():
+                if maker in synonyms:
+                    expanded.add(canonical)
+                    expanded.update(synonyms)
+        
+        return expanded
+    
     def _normalize_filter_values(self, value: Optional[Union[str, List[str]]]) -> Optional[Set[str]]:
         """
         Convert a filter value (str or list) to a set for fast lookups.
@@ -465,25 +529,39 @@ class FilamentPalette:
         Load the default filament palette from the package data.
         
         Convenience method for quick loading without worrying about paths.
+        Also loads maker synonyms automatically.
         """
-        return cls(load_filaments())
+        return cls(load_filaments(), load_maker_synonyms())
 
     def find_by_maker(self, maker: Union[str, List[str]]) -> List[FilamentRecord]:
         """
         Find all filaments by a single maker or a list of makers.
         
+        Supports synonyms: searching for "Bambu" will find "Bambu Lab" filaments.
+        
         Args:
-            maker: A single maker name (str) or a list of names.
+            maker: A single maker name (str) or a list of names (can use synonyms).
             
         Returns:
             A list of all matching FilamentRecord objects.
         """
         makers_to_find = _ensure_list(maker)
+        expanded_makers = self._expand_maker_names(makers_to_find)
         
         all_filaments = []
-        for m in makers_to_find:
+        for m in expanded_makers:
             all_filaments.extend(self._by_maker.get(m, []))
-        return all_filaments
+        
+        # Remove duplicates while preserving order
+        seen = set()
+        unique_filaments = []
+        for filament in all_filaments:
+            filament_id = id(filament)  # Use object identity
+            if filament_id not in seen:
+                seen.add(filament_id)
+                unique_filaments.append(filament)
+        
+        return unique_filaments
 
     def find_by_type(self, type_name: Union[str, List[str]]) -> List[FilamentRecord]:
         """
@@ -541,8 +619,10 @@ class FilamentPalette:
         down by each criterion that's provided. Maker, type, and finish
         can accept a single string or a list of strings.
         
+        Supports maker synonyms: filtering by "Bambu" will include "Bambu Lab".
+        
         Args:
-            maker: A maker name or list of maker names.
+            maker: A maker name or list of maker names (can use synonyms).
             type_name: A filament type or list of types.
             finish: A filament finish or list of finishes.
             color: A single color name to match (case-insensitive).
@@ -555,6 +635,10 @@ class FilamentPalette:
         makers_set = self._normalize_filter_values(maker)
         types_set = self._normalize_filter_values(type_name)
         finishes_set = self._normalize_filter_values(finish)
+        
+        # Expand maker names to include synonyms
+        if makers_set:
+            makers_set = self._expand_maker_names(list(makers_set))
         
         if makers_set:
             results = [r for r in results if r.maker in makers_set]

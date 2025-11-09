@@ -15,11 +15,12 @@ import argparse
 import sys
 from pathlib import Path
 
+from . import __version__
 from .constants import ColorConstants
 from .config import set_dual_color_mode
 from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
-from .palette import Palette, FilamentPalette, load_colors, load_filaments
+from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms
 
 
 def _get_program_name() -> str:
@@ -92,10 +93,16 @@ Examples:
     
     # Global arguments (apply to all subcommands)
     parser.add_argument(
+        "--version",
+        action="version",
+        version=f"%(prog)s {__version__}",
+        help="Show version number and exit"
+    )
+    parser.add_argument(
         "--json", 
         type=str, 
         default=None,  # Will use default package data if None
-        help="Path to JSON data file (default: uses package data)"
+        help="Path to directory containing JSON data files (colors.json and filaments.json), or path to specific JSON file (default: uses package data)"
     )
     parser.add_argument(
         "--verify-constants",
@@ -349,8 +356,8 @@ Examples:
         if hasattr(args, 'dual_color_mode'):
             set_dual_color_mode(args.dual_color_mode)
         
-        # Load filament palette
-        filament_palette = FilamentPalette(load_filaments(json_path))
+        # Load filament palette with maker synonyms
+        filament_palette = FilamentPalette(load_filaments(json_path), load_maker_synonyms(json_path))
         
         if args.list_makers:
             print("Available makers:")

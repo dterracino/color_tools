@@ -115,6 +115,12 @@ class ColorConstants:
     XYZ_SCALE_FACTOR = 100.0            # XYZ typically scaled 0-100
     WIN_HSL_MAX = 240.0                 # Windows uses 0-240 for HSL
     
+    # ===== Data File Paths =====
+    # Default filenames for color and filament databases
+    COLORS_JSON_FILENAME = "colors.json"
+    FILAMENTS_JSON_FILENAME = "filaments.json"
+    MAKER_SYNONYMS_JSON_FILENAME = "maker_synonyms.json"
+    
     # Computed values (derived from above constants)
     LAB_DELTA_CUBED = LAB_DELTA ** 3
     LAB_F_SCALE = 3.0 * (LAB_DELTA ** 2)
