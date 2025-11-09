@@ -5,6 +5,38 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [2.1.1] - 2025-11-09
+
+### Fixed
+
+- Fixed type hint errors in `constants.py` by adding proper imports for type checking
+- Added `from __future__ import annotations` for better type hint support
+- Removed string quotes from `Path` type hints using `TYPE_CHECKING` conditional import
+
+## [2.1.0] - 2025-11-09
+
+### Added
+
+- **Data file integrity verification** with SHA-256 hashes
+  - Core data files (colors.json, filaments.json, maker_synonyms.json) are now protected with SHA-256 hashes
+  - New `--verify-data` flag to verify data file integrity
+  - New `--verify-all` flag to verify both constants and data files
+  - `ColorConstants.verify_data_file()` and `verify_all_data_files()` methods
+- **User data extension system** for custom colors, filaments, and synonyms
+  - `data/user-colors.json` - Add custom CSS colors (optional)
+  - `data/user-filaments.json` - Add custom filaments (optional)
+  - `data/user-synonyms.json` - Add or extend maker synonyms (optional)
+  - User files automatically loaded and merged with core data
+  - User files are not verified (user-managed, full flexibility)
+- Documentation for user data files and integrity verification
+
+### Changed
+
+- `load_colors()` now loads and merges user-colors.json if present
+- `load_filaments()` now loads and merges user-filaments.json if present
+- `load_maker_synonyms()` now loads and merges user-synonyms.json if present
+- Updated ColorConstants hash to include new data file hash constants
+
 ## [2.0.1] - 2025-11-09
 
 ### Fixed

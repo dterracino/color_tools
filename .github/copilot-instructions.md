@@ -97,7 +97,9 @@ The CLI has three main commands:
 
 ### Global Arguments
 - `--json DIR`: Path to directory containing all JSON data files (colors.json, filaments.json, maker_synonyms.json). Must be a directory. Default: package data directory
-- `--verify-constants`: Verify integrity of color science constants
+- `--verify-constants`: Verify integrity of color science constants before proceeding
+- `--verify-data`: Verify integrity of core data files before proceeding
+- `--verify-all`: Verify integrity of both constants and data files before proceeding
 - `--version`: Show version number and exit
 
 ### Dual-Color Mode
@@ -108,6 +110,21 @@ The CLI has three main commands:
 ### Maker Synonyms
 - Filament searches support maker synonyms (e.g., "Bambu" finds "Bambu Lab")
 - Synonyms defined in `data/maker_synonyms.json`
+
+### User Data Files (Optional Extensions)
+Users can extend core databases with custom data:
+- `user-colors.json` - Add custom colors (same format as colors.json)
+- `user-filaments.json` - Add custom filaments (same format as filaments.json)
+- `user-synonyms.json` - Add or extend maker synonyms (same format as maker_synonyms.json)
+- User files are optional, automatically loaded/merged if present
+- User files are NOT verified for integrity (user-managed)
+- Users responsible for avoiding duplicate entries with core data
+
+### Data Integrity
+- Core data files protected by SHA-256 hashes stored in constants.py
+- Use `--verify-data` to check core data integrity
+- User data files are not verified
+- Data verification is optional (opt-in via CLI flags)
 - Automatically loaded by `FilamentPalette.load_default()`
 
 ## Data Files

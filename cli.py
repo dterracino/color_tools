@@ -110,6 +110,16 @@ Examples:
         action="store_true",
         help="Verify integrity of color science constants before proceeding"
     )
+    parser.add_argument(
+        "--verify-data",
+        action="store_true",
+        help="Verify integrity of core data files (colors.json, filaments.json, maker_synonyms.json) before proceeding"
+    )
+    parser.add_argument(
+        "--verify-all",
+        action="store_true",
+        help="Verify integrity of both constants and data files before proceeding"
+    )
     
     # Create subparsers for the three main commands
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
@@ -284,6 +294,11 @@ Examples:
     # Parse arguments
     args = parser.parse_args()
     
+    # Handle --verify-all flag
+    if args.verify_all:
+        args.verify_constants = True
+        args.verify_data = True
+    
     # Verify constants integrity if requested
     if args.verify_constants:
         if not ColorConstants.verify_integrity():
@@ -293,9 +308,23 @@ Examples:
             print(f"Current hash:  {ColorConstants._compute_hash()}", file=sys.stderr)
             sys.exit(1)
         print("✓ ColorConstants integrity verified")
-        # If only verifying constants (no other command), exit after success
-        if not args.command:
-            sys.exit(0)
+    
+    # Verify data files integrity if requested
+    if args.verify_data:
+        # Determine data directory (use args.json if provided, otherwise None for default)
+        data_dir = Path(args.json) if args.json else None
+        all_valid, errors = ColorConstants.verify_all_data_files(data_dir)
+        
+        if not all_valid:
+            print("ERROR: Data file integrity check FAILED!", file=sys.stderr)
+            for error in errors:
+                print(f"  {error}", file=sys.stderr)
+            sys.exit(1)
+        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json)")
+    
+    # If only verifying (no other command), exit after success
+    if (args.verify_constants or args.verify_data) and not args.command:
+        sys.exit(0)
     
     # Handle no subcommand
     if not args.command:

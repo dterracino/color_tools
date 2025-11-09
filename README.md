@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 2.0.1 | [Changelog](CHANGELOG.md)
+**Version:** 2.1.1 | [Changelog](CHANGELOG.md)
 
 ## Features
 
@@ -327,7 +327,9 @@ python -m color_tools convert --check-gamut --from lch --value 70 80 120
 These arguments work with all commands:
 
 - `--json DIR`: Path to directory containing all JSON data files (colors.json, filaments.json, maker_synonyms.json). Must be a directory, not a file. Default: uses package data directory
-- `--verify-constants`: Verify integrity of color science constants
+- `--verify-constants`: Verify integrity of color science constants before proceeding
+- `--verify-data`: Verify integrity of core data files before proceeding
+- `--verify-all`: Verify integrity of both constants and data files before proceeding
 - `--version`: Show version number and exit
 
 ## Color Spaces
@@ -488,6 +490,50 @@ Mapping of canonical maker names to common synonyms/abbreviations:
 ```
 
 **Synonym Support:** Filament searches automatically support maker synonyms. For example, searching for "Bambu" will find all "Bambu Lab" filaments.
+
+### User Data Files (Optional Extensions)
+
+You can extend the core databases with your own custom data by creating optional user files in the same directory as the core data files:
+
+- **user-colors.json** - Add custom colors (same format as colors.json)
+- **user-filaments.json** - Add custom filaments (same format as filaments.json)
+- **user-synonyms.json** - Add or extend maker synonyms (same format as maker_synonyms.json)
+
+User data is automatically loaded and merged with core data. User files are optional and ignored if they don't exist. These files are **not** verified for integrity - only core data files are protected by SHA-256 hashes.
+
+**Example user-colors.json:**
+
+```json
+[
+  {
+    "name": "myCustomPurple",
+    "hex": "#9B59B6",
+    "rgb": [155, 89, 182],
+    "hsl": [283.1, 39.0, 53.1],
+    "lab": [48.5, 45.7, -40.2],
+    "lch": [48.5, 60.8, 318.6]
+  }
+]
+```
+
+**Note:** Users are responsible for avoiding duplicate entries between core and user data files.
+
+### Data Integrity Verification
+
+Core data files are protected with SHA-256 hashes to ensure integrity:
+
+```bash
+# Verify data files only
+python -m color_tools --verify-data
+
+# Verify color science constants only
+python -m color_tools --verify-constants
+
+# Verify both constants and data files
+python -m color_tools --verify-all
+```
+
+User data files are not verified - you have full control over their contents.
 
 ## Technical Notes
 

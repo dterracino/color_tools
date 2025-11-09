@@ -149,7 +149,10 @@ class FilamentRecord:
 
 def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     """
-    Load CSS color database from JSON file.
+    Load CSS color database from JSON files (core + user additions).
+    
+    Loads colors from both the core colors.json file and optional user-colors.json
+    file in the same directory. Core colors are loaded first, followed by user colors.
     
     Args:
         json_path: Path to directory containing JSON files, or path to specific
@@ -157,17 +160,22 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
                    package's data/ directory.
     
     Returns:
-        List of ColorRecord objects
+        List of ColorRecord objects (core colors + user colors)
     """
     if json_path is None:
         # Default: look in package's data/ directory
-        json_path = Path(__file__).parent / "data" / ColorConstants.COLORS_JSON_FILENAME
+        data_dir = Path(__file__).parent / "data"
+        json_path = data_dir / ColorConstants.COLORS_JSON_FILENAME
     else:
         json_path = Path(json_path)
         # If it's a directory, append the filename
         if json_path.is_dir():
+            data_dir = json_path
             json_path = json_path / ColorConstants.COLORS_JSON_FILENAME
+        else:
+            data_dir = json_path.parent
     
+    # Load core colors
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     
@@ -191,12 +199,41 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
             lab=lab,
             lch=lch,
         ))
+    
+    # Load optional user colors from same directory
+    user_json_path = data_dir / ColorConstants.USER_COLORS_JSON_FILENAME
+    if user_json_path.exists():
+        with open(user_json_path, "r", encoding="utf-8") as f:
+            user_data = json.load(f)
+        
+        if not isinstance(user_data, list):
+            raise ValueError(f"Expected array of colors at root level in {user_json_path}")
+        
+        for c in user_data:
+            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
+            hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
+            lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
+            lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
+            
+            records.append(ColorRecord(
+                name=c["name"],
+                hex=c["hex"],
+                rgb=rgb,
+                hsl=hsl,
+                lab=lab,
+                lch=lch,
+            ))
+    
     return records
 
 
 def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
     """
-    Load filament database from JSON file.
+    Load filament database from JSON files (core + user additions).
+    
+    Loads filaments from both the core filaments.json file and optional 
+    user-filaments.json file in the same directory. Core filaments are loaded 
+    first, followed by user filaments.
     
     Args:
         json_path: Path to directory containing JSON files, or path to specific
@@ -204,17 +241,22 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
                    the package's data/ directory.
     
     Returns:
-        List of FilamentRecord objects
+        List of FilamentRecord objects (core filaments + user filaments)
     """
     if json_path is None:
         # Default: look in package's data/ directory
-        json_path = Path(__file__).parent / "data" / ColorConstants.FILAMENTS_JSON_FILENAME
+        data_dir = Path(__file__).parent / "data"
+        json_path = data_dir / ColorConstants.FILAMENTS_JSON_FILENAME
     else:
         json_path = Path(json_path)
         # If it's a directory, append the filename
         if json_path.is_dir():
+            data_dir = json_path
             json_path = json_path / ColorConstants.FILAMENTS_JSON_FILENAME
+        else:
+            data_dir = json_path.parent
     
+    # Load core filaments
     with open(json_path, "r", encoding="utf-8") as f:
         data = json.load(f)
     
@@ -232,12 +274,36 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
             hex=f["hex"],
             td_value=f.get("td_value"),  # td_value can be None
         ))
+    
+    # Load optional user filaments from same directory
+    user_json_path = data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME
+    if user_json_path.exists():
+        with open(user_json_path, "r", encoding="utf-8") as f:
+            user_data = json.load(f)
+        
+        if not isinstance(user_data, list):
+            raise ValueError(f"Expected array of filaments at root level in {user_json_path}")
+        
+        for f in user_data:
+            records.append(FilamentRecord(
+                maker=f["maker"],
+                type=f["type"],
+                finish=f.get("finish"),
+                color=f["color"],
+                hex=f["hex"],
+                td_value=f.get("td_value"),
+            ))
+    
     return records
 
 
 def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[str]]:
     """
-    Load maker synonyms from JSON file.
+    Load maker synonyms from JSON files (core + user additions).
+    
+    Loads synonyms from both the core maker_synonyms.json file and optional
+    user-synonyms.json file in the same directory. Synonyms are merged, with
+    user additions extending (not replacing) core synonyms.
     
     Args:
         json_path: Path to directory containing JSON files, or path to specific
@@ -249,19 +315,43 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     """
     if json_path is None:
         # Default: look in package's data/ directory
-        json_path = Path(__file__).parent / "data" / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+        data_dir = Path(__file__).parent / "data"
+        json_path = data_dir / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
     else:
         json_path = Path(json_path)
         # If it's a directory, append the filename
         if json_path.is_dir():
+            data_dir = json_path
             json_path = json_path / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+        else:
+            data_dir = json_path.parent
     
+    # Load core synonyms
     try:
         with open(json_path, "r", encoding="utf-8") as f:
-            return json.load(f)
+            synonyms = json.load(f)
     except FileNotFoundError:
-        # Return empty dict if file doesn't exist
-        return {}
+        synonyms = {}
+    
+    # Load optional user synonyms from same directory and merge
+    user_json_path = data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME
+    if user_json_path.exists():
+        with open(user_json_path, "r", encoding="utf-8") as f:
+            user_synonyms = json.load(f)
+        
+        # Merge user synonyms into core synonyms
+        for maker, user_syn_list in user_synonyms.items():
+            if maker in synonyms:
+                # Extend existing synonym list (avoid duplicates)
+                existing = set(synonyms[maker])
+                for syn in user_syn_list:
+                    if syn not in existing:
+                        synonyms[maker].append(syn)
+            else:
+                # Add new maker with their synonyms
+                synonyms[maker] = user_syn_list
+    
+    return synonyms
 
 
 # ============================================================================

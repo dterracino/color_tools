@@ -6,8 +6,13 @@ sRGB specification, and various color difference formulas. They should
 never be modified as they represent fundamental color science.
 """
 
+from __future__ import annotations
 import json
 import hashlib
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from pathlib import Path
 
 
 class ColorConstants:
@@ -160,5 +165,85 @@ class ColorConstants:
     
     # This hash is computed once when the constants are known to be correct
     # Computed hash of all color science constants (SHA-256)
-    _EXPECTED_HASH = "879f819a84b516e5510a93af8cfaed6c430cbed72e14bcc91e48b7ffd5cd5f21"
+    # Updated after adding data file hash constants
+    _EXPECTED_HASH = "a9bce61930e00638b28b8df7e544f4c15ea377b030877df040268ca2fc0e75a6"
+    
+    # ========================================================================
+    # Data File Integrity Hashes
+    # ========================================================================
+    # SHA-256 hashes of core data files for integrity verification
+    # These hashes are computed from the exact file contents (including whitespace)
+    
+    COLORS_JSON_HASH = "3ba4ebb50dc7d437e35855870f701f544c4222726d4891e54dcc90a231976abd"
+    FILAMENTS_JSON_HASH = "ecb0b4e8e4519ef0989902d5073e55b161071d85485c27f43d85fa16d6312294"
+    MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
+    
+    # User data files (optional, not verified)
+    USER_COLORS_JSON_FILENAME = "user-colors.json"
+    USER_FILAMENTS_JSON_FILENAME = "user-filaments.json"
+    USER_SYNONYMS_JSON_FILENAME = "user-synonyms.json"
+    
+    @staticmethod
+    def verify_data_file(filepath: Path, expected_hash: str) -> bool:
+        """
+        Verify integrity of a data file using SHA-256 hash.
+        
+        Args:
+            filepath: Path to the data file to verify
+            expected_hash: Expected SHA-256 hash of the file contents
+            
+        Returns:
+            True if file hash matches expected hash, False otherwise
+        """
+        import hashlib
+        from pathlib import Path
+        
+        if not Path(filepath).exists():
+            return False
+            
+        with open(filepath, 'rb') as f:
+            actual_hash = hashlib.sha256(f.read()).hexdigest()
+        
+        return actual_hash == expected_hash
+    
+    @classmethod
+    def verify_all_data_files(cls, data_dir: Path | None = None) -> tuple[bool, list[str]]:
+        """
+        Verify integrity of all core data files.
+        
+        Args:
+            data_dir: Directory containing data files. If None, uses package data directory.
+            
+        Returns:
+            Tuple of (all_valid, list_of_errors)
+            - all_valid: True if all files pass verification
+            - list_of_errors: List of error messages for any failed verifications
+        """
+        from pathlib import Path
+        
+        if data_dir is None:
+            # Use package data directory
+            data_dir = Path(__file__).parent / "data"
+        else:
+            data_dir = Path(data_dir)
+        
+        errors = []
+        
+        # Verify colors.json
+        colors_path = data_dir / cls.COLORS_JSON_FILENAME
+        if not cls.verify_data_file(colors_path, cls.COLORS_JSON_HASH):
+            errors.append(f"colors.json integrity check FAILED: {colors_path}")
+        
+        # Verify filaments.json
+        filaments_path = data_dir / cls.FILAMENTS_JSON_FILENAME
+        if not cls.verify_data_file(filaments_path, cls.FILAMENTS_JSON_HASH):
+            errors.append(f"filaments.json integrity check FAILED: {filaments_path}")
+        
+        # Verify maker_synonyms.json
+        synonyms_path = data_dir / cls.MAKER_SYNONYMS_JSON_FILENAME
+        if not cls.verify_data_file(synonyms_path, cls.MAKER_SYNONYMS_JSON_HASH):
+            errors.append(f"maker_synonyms.json integrity check FAILED: {synonyms_path}")
+        
+        return (len(errors) == 0, errors)
+
 
