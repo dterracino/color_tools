@@ -147,6 +147,54 @@ class FilamentRecord:
 # Data Loading
 # ============================================================================
 
+def _parse_color_records(data: list, source_file: str = "JSON data") -> List[ColorRecord]:
+    """
+    Parse a list of color data dictionaries into ColorRecord objects.
+    
+    This is a helper function used by load_colors() and load_palette() to avoid
+    code duplication. It handles the common parsing logic for color JSON data.
+    
+    Args:
+        data: List of dictionaries containing color data
+        source_file: Name of the source file for error messages
+    
+    Returns:
+        List of ColorRecord objects
+    
+    Raises:
+        KeyError: If required keys are missing from the color data
+        ValueError: If color data values are invalid
+    """
+    records: List[ColorRecord] = []
+    
+    for i, c in enumerate(data):
+        try:
+            # Parse color data (all values should be arrays/tuples)
+            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
+            hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
+            lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
+            lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
+            
+            records.append(ColorRecord(
+                name=c["name"],
+                hex=c["hex"],
+                rgb=rgb,
+                hsl=hsl,
+                lab=lab,
+                lch=lch,
+            ))
+        except KeyError as e:
+            raise ValueError(
+                f"Missing required key {e} in color at index {i} in {source_file}"
+            ) from e
+        except (TypeError, IndexError, ValueError) as e:
+            raise ValueError(
+                f"Invalid color data at index {i} in {source_file}: {e}"
+            ) from e
+    
+    return records
+
+
 def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     """
     Load CSS color database from JSON files (core + user additions).
@@ -183,22 +231,8 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     if not isinstance(data, list):
         raise ValueError(f"Expected array of colors at root level in {json_path}")
     
-    records: List[ColorRecord] = []
-    for c in data:
-        # Parse color data (all values should be arrays/tuples)
-        rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
-        hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
-        lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
-        lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
-        
-        records.append(ColorRecord(
-            name=c["name"],
-            hex=c["hex"],
-            rgb=rgb,
-            hsl=hsl,
-            lab=lab,
-            lch=lch,
-        ))
+    # Parse color records using helper function
+    records = _parse_color_records(data, str(json_path))
     
     # Load optional user colors from same directory
     user_json_path = data_dir / ColorConstants.USER_COLORS_JSON_FILENAME
@@ -209,20 +243,9 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         if not isinstance(user_data, list):
             raise ValueError(f"Expected array of colors at root level in {user_json_path}")
         
-        for c in user_data:
-            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
-            hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
-            lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
-            lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
-            
-            records.append(ColorRecord(
-                name=c["name"],
-                hex=c["hex"],
-                rgb=rgb,
-                hsl=hsl,
-                lab=lab,
-                lch=lch,
-            ))
+        # Parse user color records using helper function
+        user_records = _parse_color_records(user_data, str(user_json_path))
+        records.extend(user_records)
     
     return records
 
@@ -374,7 +397,7 @@ def load_palette(name: str) -> 'Palette':
     
     Raises:
         FileNotFoundError: If the palette file doesn't exist
-        ValueError: If the palette file is malformed
+        ValueError: If the palette file is malformed or contains invalid data
     
     Example:
         >>> cga = load_palette("cga4")
@@ -385,35 +408,26 @@ def load_palette(name: str) -> 'Palette':
     palette_file = palettes_dir / f"{name}.json"
     
     if not palette_file.exists():
-        available = [p.stem for p in palettes_dir.glob("*.json")]
+        available = sorted([p.stem for p in palettes_dir.glob("*.json")])
         raise FileNotFoundError(
             f"Palette '{name}' not found. Available palettes: {', '.join(available)}"
         )
     
-    # Load the palette using load_colors (same format)
-    with open(palette_file, "r", encoding="utf-8") as f:
-        data = json.load(f)
+    # Load the palette JSON data
+    try:
+        with open(palette_file, "r", encoding="utf-8") as f:
+            data = json.load(f)
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Invalid JSON in palette file {palette_file}: {e}") from e
     
     if not isinstance(data, list):
         raise ValueError(f"Expected array of colors at root level in {palette_file}")
     
-    records: List[ColorRecord] = []
-    for c in data:
-        rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
-        hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
-        lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
-        lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
-        
-        records.append(ColorRecord(
-            name=c["name"],
-            hex=c["hex"],
-            rgb=rgb,
-            hsl=hsl,
-            lab=lab,
-            lch=lch,
-        ))
+    # Parse color records using shared helper function
+    records = _parse_color_records(data, str(palette_file))
     
     return Palette(records)
+
 
 
 # ============================================================================
