@@ -18,7 +18,7 @@ A comprehensive Python library for color science operations, color space convers
 
 ## Installation
 
-Clone this repository and ensure you have Python 3.7+:
+Clone this repository and ensure you have Python 3.10+:
 
 ```bash
 git clone <repository-url>

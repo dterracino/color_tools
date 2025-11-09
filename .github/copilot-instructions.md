@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-This is a color science library for Python 3.7+ that provides:
+This is a color science library for Python 3.10+ that provides:
 - Accurate color space conversions (RGB, LAB, LCH, HSL, XYZ)
 - Perceptual color distance metrics (Delta E formulas)
 - CSS color and 3D printing filament databases
@@ -11,10 +11,10 @@ This is a color science library for Python 3.7+ that provides:
 ## Code Style and Standards
 
 ### General Python Guidelines
-- Use Python 3.7+ compatible syntax
+- Use Python 3.10+ syntax (union types with `|`, modern type hints)
 - Follow PEP 8 style conventions
 - Use `from __future__ import annotations` for forward references
-- Use type hints for all function signatures: `Tuple[int, int, int]`, `Optional[str]`, etc.
+- Use type hints for all function signatures: `Path | str | None`, `tuple[int, int, int]`, etc.
 - Write comprehensive docstrings for all public functions and classes
 - Use descriptive variable names that reflect color science terminology
 

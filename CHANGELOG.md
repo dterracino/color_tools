@@ -106,7 +106,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Technical Details
 
-- Python 3.7+ compatible
+- Python 3.10+ required (uses union type syntax `X | Y` and modern type hints)
 - No external dependencies (standard library only)
 - Portable package structure using relative imports
 - Immutable dataclasses for color and filament records
