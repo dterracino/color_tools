@@ -5,18 +5,21 @@ This is a quick reference guide to the comprehensive code review findings in `CO
 ## Critical Issues (Fix Immediately) 🔴
 
 ### 1. External Dependency Problem
+
 - **File**: `validation.py`
 - **Issue**: Module fails to import if `fuzzywuzzy` is not installed, despite claiming "no external dependencies"
 - **Impact**: Users cannot import the package
 - **Fix**: Make import conditional or use standard library alternative
 
 ### 2. Bare Except Clauses
+
 - **Files**: `palette.py` (line 585), `gamut.py` (line 71)
 - **Issue**: Catches all exceptions including system exits
 - **Impact**: Impossible to debug, hides critical errors
 - **Fix**: Use specific exception types `except (ValueError, TypeError):`
 
 ### 3. Module-Level Code Execution
+
 - **File**: `validation.py` (lines 15-16)
 - **Issue**: Loads full color palette on import
 - **Impact**: Slow imports, circular dependency risk
@@ -25,18 +28,22 @@ This is a quick reference guide to the comprehensive code review findings in `CO
 ## High Priority Issues 🟡
 
 ### 4. Python 3.7 Compatibility Broken
+
 - **Issue**: Using `float | None` syntax (Python 3.10+) but claiming 3.7+ support
 - **Fix**: Use `Optional[float]` from typing module
 
 ### 5. Poor Error Messages
+
 - **Issue**: Generic error messages without context
 - **Fix**: Include filter values and suggest solutions in error messages
 
 ### 6. Missing Input Validation
+
 - **Issue**: Functions accept invalid values without checking
 - **Fix**: Validate RGB values are 0-255, etc.
 
 ### 7. Inconsistent Error Handling
+
 - **Issue**: Some functions return None, others crash
 - **Fix**: Standardize on exceptions or Optional returns
 
@@ -51,6 +58,7 @@ This is a quick reference guide to the comprehensive code review findings in `CO
 These are easy fixes with high impact:
 
 1. **Add specific exception types** (30 minutes)
+
    ```python
    # Bad
    except:
@@ -62,6 +70,7 @@ These are easy fixes with high impact:
    ```
 
 2. **Fix Python 3.7 compatibility** (15 minutes)
+
    ```python
    # Bad
    def func(x: float | None) -> bool:
@@ -72,6 +81,7 @@ These are easy fixes with high impact:
    ```
 
 3. **Make validation import optional** (20 minutes)
+
    ```python
    def validate_color(...):
        try:
@@ -81,6 +91,7 @@ These are easy fixes with high impact:
    ```
 
 4. **Add input validation** (1 hour)
+
    ```python
    def rgb_to_lab(rgb: Tuple[int, int, int]):
        r, g, b = rgb

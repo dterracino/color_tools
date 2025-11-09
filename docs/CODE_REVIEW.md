@@ -25,17 +25,20 @@ from fuzzywuzzy import process  # Line 9
 ```
 
 **Problems**:
+
 - Module-level import will fail if `fuzzywuzzy` is not installed
 - The validation module cannot be imported even if user doesn't need it
 - Violates the stated design principle of using only Python standard library
 
-**Recommendation**: 
+**Recommendation**:
+
 - Move the import inside the function to make it optional
 - Add clear documentation about optional dependencies
 - Consider implementing a simple fuzzy matcher using standard library `difflib`
 - Add graceful degradation if the library is not available
 
 **Example Fix**:
+
 ```python
 def validate_color(...):
     try:
@@ -76,17 +79,20 @@ except:  # ⚠️ Catches everything!
 ```
 
 **Problems**:
+
 - Catches `KeyboardInterrupt`, `SystemExit`, and other critical exceptions
 - Makes debugging extremely difficult
 - Violates PEP 8 style guidelines
 - Silently hides programming errors
 
-**Recommendation**: 
+**Recommendation**:
+
 - Catch specific exceptions (e.g., `ValueError`, `TypeError`)
 - Log the exception for debugging
 - Only catch what you can handle
 
 **Example Fix**:
+
 ```python
 try:
     d = distance_fn(target_lab, rec.lab)
@@ -112,16 +118,19 @@ _color_names = [r.name for r in _palette.records]
 ```
 
 **Problems**:
+
 - Slows down all imports, even if validation is never used
 - Prevents lazy loading and can cause circular import issues
 - Makes testing harder
 - Wastes memory if validation functions aren't called
 
-**Recommendation**: 
+**Recommendation**:
+
 - Use lazy initialization with a function or `@lru_cache`
 - Initialize on first use instead of at import time
 
 **Example Fix**:
+
 ```python
 from functools import lru_cache
 
@@ -165,16 +174,19 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
 ```
 
 **Problems**:
+
 - Code will fail on Python 3.7, 3.8, and 3.9
 - Documentation promises compatibility but code breaks it
 - Inconsistent - some files use `Optional[...]` correctly
 
-**Recommendation**: 
+**Recommendation**:
+
 - Use `Optional[float]` from `typing` module for consistency
 - Test on Python 3.7 to verify compatibility
 - Update documentation if dropping Python 3.7 support
 
 **Example Fix**:
+
 ```python
 from typing import Optional
 
@@ -190,6 +202,7 @@ def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: Optional[float]
 **Issue**: Some error messages are unclear or provide insufficient context.
 
 **Examples**:
+
 ```python
 # cli.py, line 429
 print("Error: HSL to RGB conversion not yet implemented")  # Why not?
@@ -202,11 +215,13 @@ raise ValueError("No valid filaments found")  # Why invalid?
 ```
 
 **Recommendation**:
+
 - Provide actionable error messages with context
 - Include the values that caused the error
 - Suggest solutions when possible
 
 **Example Fix**:
+
 ```python
 # Better error message
 raise ValueError(
@@ -241,11 +256,13 @@ def rgb_to_xyz(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
 ```
 
 **Problems**:
+
 - Inconsistent API design
 - Some functions crash, others return None
 - Callers don't know which pattern to expect
 
-**Recommendation**: 
+**Recommendation**:
+
 - Be consistent: either raise exceptions or return Optional
 - Document the error handling behavior clearly
 - Add input validation where needed
@@ -264,12 +281,14 @@ def rgb_to_lab(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     # What if rgb = (300, -50, 999)?
 ```
 
-**Recommendation**: 
+**Recommendation**:
+
 - Add input validation for public API functions
 - Provide helpful error messages for invalid inputs
 - Consider adding a validation decorator
 
 **Example Fix**:
+
 ```python
 def rgb_to_lab(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     r, g, b = rgb
@@ -297,11 +316,13 @@ except (ValueError, TypeError):
 ```
 
 **Problems**:
+
 - Invalid color data gets silently converted to black
 - User doesn't know their data is corrupt
 - Debugging becomes difficult
 
-**Recommendation**: 
+**Recommendation**:
+
 - Log warnings for invalid data
 - Consider raising an exception instead of silently failing
 - At minimum, track which records have invalid data
@@ -321,15 +342,18 @@ def _rounded_key(nums: Tuple[float, ...], ndigits: int = 2) -> str:
 ```
 
 **Problems**:
+
 - String representation can vary
 - Less efficient than tuple keys
 - Potential for subtle bugs with formatting
 
-**Recommendation**: 
+**Recommendation**:
+
 - Use tuples of rounded values as keys directly
 - More Pythonic and efficient
 
 **Example Fix**:
+
 ```python
 def _rounded_key(nums: Tuple[float, ...], ndigits: int = 2) -> Tuple[float, ...]:
     return tuple(round(x, ndigits) for x in nums)
@@ -364,16 +388,19 @@ elif metric_l == "cmc11":
 **Issue**: The `main()` function is 453 lines long with multiple nested control structures.
 
 **Problems**:
+
 - Hard to test individual command handlers
 - Difficult to maintain
 - High cyclomatic complexity
 
-**Recommendation**: 
+**Recommendation**:
+
 - Extract command handlers into separate functions
 - Create a command pattern or use subcommand classes
 - Each command should have its own testable function
 
 **Example Refactoring**:
+
 ```python
 def handle_color_command(args, palette):
     """Handle the color subcommand."""
@@ -402,6 +429,7 @@ def main():
 **Issue**: Some inconsistencies in naming patterns.
 
 **Examples**:
+
 - `delta_e_2000` vs `de2000` vs `ciede2000` (multiple names for same thing)
 - `type_name` parameter vs `type` attribute in FilamentRecord
 - `dual_color_mode` uses "last" but docstring says "second"
@@ -417,6 +445,7 @@ def main():
 **Issue**: Some complex functions lack usage examples in docstrings.
 
 **Recommendation**: Add doctest examples to demonstrate usage:
+
 ```python
 def delta_e_2000(...) -> float:
     """
@@ -488,11 +517,13 @@ elif metric_l in ("cmc", "decmc"):
 **Current Structure**: Good separation of concerns with clear module boundaries.
 
 **Strengths**:
+
 - Clear separation: conversions, distance, gamut, palette, config, constants
 - CLI is properly isolated at the top of the dependency tree
 - Immutable data classes for color records
 
 **Suggestions**:
+
 - Consider adding a `utils` module for shared helper functions
 - `_ensure_list` and `_rounded_key` could be in a utilities module
 - Consider a `validators` module for input validation functions
@@ -506,11 +537,13 @@ elif metric_l in ("cmc", "decmc"):
 **Assessment**: Thread-safe configuration using `threading.local()` is well-designed.
 
 **Strengths**:
+
 - Proper thread-local storage
 - Clear getter/setter API
 - Separation from immutable constants
 
 **Suggestions**:
+
 - Add a `reset_config()` function for testing
 - Consider adding config validation
 - Document thread-safety guarantees more prominently
@@ -525,6 +558,7 @@ elif metric_l in ("cmc", "decmc"):
 **Issue**: Only one test file (`validation_test.py`) exists, and it's not automated.
 
 **Missing Tests**:
+
 - No unit tests for conversion functions
 - No tests for distance metrics
 - No tests for palette lookups
@@ -533,7 +567,8 @@ elif metric_l in ("cmc", "decmc"):
 - No tests for error handling
 - No tests for edge cases
 
-**Recommendation**: 
+**Recommendation**:
+
 - Create a comprehensive test suite using `pytest` or `unittest`
 - Add tests for each module
 - Test edge cases and error conditions
@@ -541,7 +576,8 @@ elif metric_l in ("cmc", "decmc"):
 - Set up CI/CD to run tests automatically
 
 **Suggested Structure**:
-```
+
+```text
 tests/
 ├── test_conversions.py
 ├── test_distance.py
@@ -560,7 +596,8 @@ tests/
 **Severity**: 🟢 Low  
 **Issue**: No benchmarks or performance tests exist.
 
-**Recommendation**: 
+**Recommendation**:
+
 - Add performance benchmarks for critical paths (nearest neighbor search)
 - Document expected performance characteristics
 - Consider adding performance regression tests
@@ -573,11 +610,13 @@ tests/
 
 **Severity**: 🟡 Medium  
 **Issues**:
+
 1. README claims Python 3.7+ but code uses Python 3.10+ syntax
 2. README claims "no external dependencies" but `validation` requires `fuzzywuzzy`
 3. Some CLI examples in README use syntax not shown in `--help`
 
-**Recommendation**: 
+**Recommendation**:
+
 - Audit documentation for accuracy
 - Update README to match actual requirements
 - Add a CHANGELOG to track breaking changes
@@ -589,7 +628,8 @@ tests/
 **Severity**: 🟢 Low  
 **Issue**: No generated API documentation (Sphinx, pdoc, etc.)
 
-**Recommendation**: 
+**Recommendation**:
+
 - Set up Sphinx documentation
 - Generate API docs from docstrings
 - Add more code examples and tutorials
@@ -603,11 +643,13 @@ tests/
 **Issue**: The hash verification system is clever but not well documented.
 
 **Current**:
+
 ```python
 _EXPECTED_HASH = "a58742b6833c94f54728512140c83a73c155d549f55e0428d0b279bc1ca6d8e8"
 ```
 
-**Recommendation**: 
+**Recommendation**:
+
 - Document how to regenerate the hash if constants need updating
 - Explain why this verification exists
 - Add a script to regenerate the hash
@@ -629,7 +671,8 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         data = json.load(f)  # No schema validation
 ```
 
-**Recommendation**: 
+**Recommendation**:
+
 - Add JSON schema validation
 - Handle malformed JSON gracefully
 - Validate that required fields exist
@@ -648,7 +691,8 @@ json_path = Path(args.json) if args.json else None
 # No validation that path is safe
 ```
 
-**Recommendation**: 
+**Recommendation**:
+
 - Validate user-provided paths
 - Use `pathlib.Path.resolve()` to get absolute paths
 - Check that paths don't escape intended directories
@@ -664,11 +708,13 @@ json_path = Path(args.json) if args.json else None
 **Assessment**: Nearest neighbor search is O(n) which is expected.
 
 **Current Performance**:
+
 - ~150 CSS colors: Fast enough
 - ~hundreds of filaments: Still acceptable
 - If database grows to thousands: May need optimization
 
 **Suggestions for Future**:
+
 - Document the O(n) complexity
 - Consider KD-tree or ball tree for large datasets
 - Add note in README about when filtering is important
@@ -687,11 +733,13 @@ def lab(self) -> Tuple[float, float, float]:
     return rgb_to_lab(self.rgb)  # Computed every time
 ```
 
-**Recommendation**: 
+**Recommendation**:
+
 - Consider caching LAB values using `@functools.cached_property` (Python 3.8+)
 - Or precompute during loading and store in record
 
 **Example**:
+
 ```python
 from functools import cached_property
 
@@ -726,6 +774,7 @@ def lab(self) -> Tuple[float, float, float]:
 ### 29. Type Checking
 
 **Recommendation**: Add `mypy` type checking to CI/CD pipeline.
+
 - Most type hints are present
 - Would catch the Python 3.10 syntax issues
 - Would enforce consistent Optional usage
@@ -735,6 +784,7 @@ def lab(self) -> Tuple[float, float, float]:
 ### 30. Code Formatting
 
 **Recommendation**: Use `black` for consistent code formatting.
+
 - Would eliminate style debates
 - Ensure consistent formatting across all files
 - Can be enforced in CI/CD
@@ -744,6 +794,7 @@ def lab(self) -> Tuple[float, float, float]:
 ### 31. Linting
 
 **Recommendation**: Add `flake8` or `ruff` linting.
+
 - Would catch bare except clauses
 - Would identify unused imports
 - Would enforce PEP 8 compliance
@@ -753,6 +804,7 @@ def lab(self) -> Tuple[float, float, float]:
 ### 32. Pre-commit Hooks
 
 **Recommendation**: Set up pre-commit hooks for:
+
 - `black` (formatting)
 - `isort` (import sorting)
 - `flake8` (linting)
@@ -797,6 +849,7 @@ def lab(self) -> Tuple[float, float, float]:
 The `color_tools` library has a solid foundation with good color science implementation and clean architecture. However, it needs attention in several areas:
 
 **Strengths**:
+
 - ✅ Good separation of concerns
 - ✅ Comprehensive color science implementation
 - ✅ Immutable data classes
@@ -804,6 +857,7 @@ The `color_tools` library has a solid foundation with good color science impleme
 - ✅ Well-documented functions
 
 **Areas for Improvement**:
+
 - ❌ External dependency handling
 - ❌ Error handling and validation
 - ❌ Test coverage
@@ -811,6 +865,7 @@ The `color_tools` library has a solid foundation with good color science impleme
 - ❌ Documentation accuracy
 
 **Recommended Next Steps**:
+
 1. Fix the critical issues (dependency, exception handling)
 2. Add a comprehensive test suite
 3. Update documentation to match reality
@@ -822,11 +877,13 @@ The `color_tools` library has a solid foundation with good color science impleme
 ## Appendix: Code Quality Metrics
 
 ### Estimated Lines of Code
+
 - Python code: ~2,500 lines
 - Comments/docstrings: ~800 lines
 - Test code: ~50 lines (needs improvement)
 
 ### Module Sizes
+
 - `cli.py`: 453 lines (consider refactoring)
 - `palette.py`: 609 lines (well organized)
 - `distance.py`: 375 lines (good)
@@ -834,6 +891,7 @@ The `color_tools` library has a solid foundation with good color science impleme
 - Others: <300 lines (good)
 
 ### Docstring Coverage
+
 - Estimated: ~85% (good but could be better)
 - Missing examples in some complex functions
 
