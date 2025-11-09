@@ -26,14 +26,25 @@ def hex_to_rgb(hex_code: str) -> Optional[Tuple[int, int, int]]:
     Converts a hex color string to an RGB tuple.
 
     Args:
-        hex_code: Hex color string in the format "#RRGGBB" or "RRGGBB".
+        hex_code: Hex color string in the format "#RGB", "RGB", "#RRGGBB" or "RRGGBB".
+                  3-character codes are expanded (e.g., "#24c" -> "#2244cc").
 
     Returns:
         rgb: Tuple of (R, G, B) where each component is 0-255.
         None if the hex code is invalid.
     """
     hex_clean = hex_code.lstrip('#')
-    if len(hex_clean) == 6:
+    if len(hex_clean) == 3:
+        # Expand 3-character hex to 6-character (e.g., "24c" -> "2244cc")
+        try:
+            return (
+                int(hex_clean[0] * 2, 16),
+                int(hex_clean[1] * 2, 16),
+                int(hex_clean[2] * 2, 16)
+            )
+        except ValueError:
+            return None
+    elif len(hex_clean) == 6:
         try:
             return (
                 int(hex_clean[0:2], 16),
