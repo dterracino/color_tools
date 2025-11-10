@@ -285,6 +285,9 @@ When adding any new feature to the project, follow this comprehensive checklist:
 
 #### 5. **Documentation**
 - [ ] Update `README.md` with usage examples if user-facing feature
+- [ ] **VERIFY:** Check all relative links in README.md - PyPI needs full GitHub URLs
+  - Bad: Relative links like `CHANGELOG.md` ❌
+  - Good: Full URLs like `https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md` ✅
 - [ ] Update `CHANGELOG.md` in "Unreleased" section:
   - Use appropriate category: Added, Changed, Deprecated, Removed, Fixed, Security
   - Include clear description of what changed and why
@@ -300,14 +303,15 @@ When adding any new feature to the project, follow this comprehensive checklist:
 - [ ] **Regenerate data file hashes** in `constants.py` if core data modified
 - [ ] Run `--verify-data` to confirm hash integrity
 
-#### 7. **Versioning**
+#### 7. **Versioning** ⚠️ CRITICAL - Update ALL three locations
 - [ ] Decide if version bump needed (follow Semantic Versioning):
   - **Major** (X.0.0): Breaking changes, incompatible API changes
   - **Minor** (x.X.0): New features, backward-compatible additions
   - **Patch** (x.x.X): Bug fixes, backward-compatible fixes
-- [ ] Update version in `pyproject.toml`
-- [ ] Update version in `color_tools/__init__.py` (`__version__`)
-- [ ] Update version in README.md if shown there
+- [ ] **REQUIRED:** Update version in `pyproject.toml`
+- [ ] **REQUIRED:** Update version in `color_tools/__init__.py` (`__version__`)
+- [ ] **REQUIRED:** Update version in `README.md` (line 5, Version badge)
+- [ ] **VERIFY:** Search entire codebase for old version number to catch any missed locations
 
 #### 8. **Package Metadata** (for significant changes)
 - [ ] Update `pyproject.toml` keywords if feature expands scope
