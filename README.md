@@ -47,11 +47,13 @@ pip install .
 
 The core module uses **only Python standard library** - no external dependencies required for basic functionality.
 
-**Optional dependency**: The `validation` module requires `fuzzywuzzy` for fuzzy color name matching:
+**Optional dependency**: The `validation` module supports optional `fuzzywuzzy` for enhanced fuzzy color name matching:
 
 ```bash
 pip install fuzzywuzzy
 ```
+
+**Note:** If `fuzzywuzzy` is not installed, the validation module automatically falls back to a built-in hybrid fuzzy matcher using exact/substring/Levenshtein matching. This provides good results without external dependencies, though `fuzzywuzzy` is recommended for optimal matching accuracy.
 
 ## Usage
 
@@ -115,6 +117,17 @@ print(f"Nearest filament: {filament.maker} {filament.type} - {filament.color}")
 # Filter filaments by criteria (supports maker synonyms)
 pla_filaments = filament_palette.filter(type_name="PLA", maker="Bambu")  # "Bambu" finds "Bambu Lab"
 print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
+
+# Validate color names against hex codes
+from color_tools.validation import validate_color
+
+result = validate_color("light blue", "#ADD8E6")
+if result.is_match:
+    print(f"✓ Valid! '{result.name_match}' matches {result.hex_value}")
+    print(f"  Confidence: {result.name_confidence:.0%}, Delta E: {result.delta_e:.2f}")
+else:
+    print(f"✗ No match: {result.message}")
+    print(f"  Suggested: '{result.name_match}' ({result.suggested_hex})")
 ```
 
 **Common Library Functions:**
@@ -125,7 +138,10 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 - `rgb_to_lch()`, `lch_to_rgb()` - RGB ↔ LCH conversion  
 - `rgb_to_hsl()`, `hsl_to_rgb()` - RGB ↔ HSL conversion (0-360, 0-100, 0-100 range)
 - `rgb_to_winhsl()` - RGB → Windows HSL (0-240, 0-240, 0-240 range)
-- `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion (supports both 3-char and 6-char hex codes)
+- `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion
+  - Supports 3-character shorthand (`#F00` or `F00` → `(255, 0, 0)`)
+  - Supports 6-character standard (`#FF0000` or `FF0000` → `(255, 0, 0)`)
+  - Works with or without `#` prefix
 - `lab_to_lch()`, `lch_to_lab()` - LAB ↔ LCH conversion
 - `rgb_to_xyz()`, `xyz_to_rgb()` - RGB ↔ XYZ conversion (CIE standard)
 - `xyz_to_lab()`, `lab_to_xyz()` - XYZ ↔ LAB conversion (for advanced use)
@@ -163,6 +179,13 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 
 - `set_dual_color_mode()` - Set how dual-color filaments are handled
 - `get_dual_color_mode()` - Get current dual-color mode
+
+**Validation:**
+
+- `validate_color()` - Validate if hex code matches a color name using fuzzy matching and Delta E
+  - Automatically uses `fuzzywuzzy` if installed, otherwise falls back to hybrid matcher
+  - Returns `ColorValidationRecord` with match confidence, suggested hex, and Delta E distance
+  - Example: `validate_color("light blue", "#ADD8E6")` → validates color name/hex pairing
 
 **Data Structures:**
 

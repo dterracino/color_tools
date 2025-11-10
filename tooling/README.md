@@ -78,5 +78,3 @@ python tooling/validation_test.py
 ## Historical Scripts
 
 The following scripts were used for one-time data conversions and are kept for reference:
-
-

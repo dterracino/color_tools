@@ -5,6 +5,34 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [Unreleased]
+
+## [3.2.0] - 2025-11-09
+
+### Added
+
+- **3-character hex code support**: `hex_to_rgb()` now accepts shorthand hex format
+  - Supports `#RGB` format (e.g., `#F00` → `#FF0000`, `#24c` → `#2244cc`)
+  - Works with or without `#` prefix (e.g., `F00` or `#F00`)
+  - Automatic expansion to 6-character format for processing
+  - Fully integrated with validation, CLI, and all color operations
+
+- **Hybrid fuzzy matching fallback** for validation module when fuzzywuzzy not installed
+  - Pure Python implementation using Levenshtein distance algorithm
+  - Three-strategy matching approach:
+    1. Exact match after normalization (100% confidence)
+    2. Substring matching (90-95% confidence based on coverage)
+    3. Levenshtein distance calculation (variable confidence)
+  - No external dependencies required for color name validation
+  - Optional `fuzzywuzzy` package still recommended for best results
+
+### Improved
+
+- **Enhanced RGB parsing error handling**: Better validation and error messages
+  - Added explicit type coercion for RGB values to catch non-numeric data
+  - Improved error messages in `_parse_color_records()` helper function
+  - Better handling of malformed color data in JSON files
+
 ## [3.1.0] - 2025-11-09
 
 ### Added

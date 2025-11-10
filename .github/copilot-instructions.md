@@ -251,24 +251,140 @@ filament_palette = FilamentPalette(filaments, synonyms)
 
 ## When Adding New Features
 
-### Adding Color Spaces
-1. Add conversion functions in `conversions.py`
-2. Update `__init__.py` exports
-3. Add CLI support in `cli.py` if needed
-4. Test with known reference values
+### General Feature Addition Checklist
 
-### Adding Distance Metrics
+When adding any new feature to the project, follow this comprehensive checklist:
+
+#### 1. **Implementation Phase**
+- [ ] Implement the core functionality in the appropriate module
+- [ ] Write comprehensive docstrings with examples
+- [ ] Add type hints for all function signatures
+- [ ] Follow code style guidelines (PEP 8, separation of concerns, DRY)
+- [ ] Handle edge cases and validate inputs
+- [ ] Use appropriate data structures (immutable where needed)
+
+#### 2. **API Exposure**
+- [ ] Export new functions/classes in `__init__.py` (if public API)
+- [ ] Organize exports in appropriate sections (conversions, distance, palette, etc.)
+- [ ] Add docstring examples to module `__doc__` if significant feature
+- [ ] Update type hints and ensure Pyright passes without errors
+
+#### 3. **CLI Integration** (if applicable)
+- [ ] Add command-line arguments in `cli.py`
+- [ ] Update help text and command descriptions
+- [ ] Add examples to argparse help strings
+- [ ] Test CLI with various input combinations
+
+#### 4. **Testing**
+- [ ] Create comprehensive unit tests in appropriate `test_*.py` file
+- [ ] Test with known reference values where applicable
+- [ ] Test edge cases and error conditions
+- [ ] Run all existing tests to ensure no regressions: `python -m unittest discover tests`
+- [ ] Verify test coverage for new code
+- [ ] Consider using `@test-specialist` agent for test design
+
+#### 5. **Documentation**
+- [ ] Update `README.md` with usage examples if user-facing feature
+- [ ] Update `CHANGELOG.md` in "Unreleased" section:
+  - Use appropriate category: Added, Changed, Deprecated, Removed, Fixed, Security
+  - Include clear description of what changed and why
+  - Add code examples for significant features
+- [ ] Update docstrings in relevant modules
+- [ ] Update this copilot-instructions.md if feature affects development practices
+
+#### 6. **Data Files** (if applicable)
+- [ ] Update JSON structure documentation in copilot-instructions.md
+- [ ] Modify dataclasses (ColorRecord, FilamentRecord) if needed
+- [ ] Update parsing functions (load_colors, load_filaments, etc.)
+- [ ] Update palette indices if field should be searchable
+- [ ] **Regenerate data file hashes** in `constants.py` if core data modified
+- [ ] Run `--verify-data` to confirm hash integrity
+
+#### 7. **Versioning**
+- [ ] Decide if version bump needed (follow Semantic Versioning):
+  - **Major** (X.0.0): Breaking changes, incompatible API changes
+  - **Minor** (x.X.0): New features, backward-compatible additions
+  - **Patch** (x.x.X): Bug fixes, backward-compatible fixes
+- [ ] Update version in `pyproject.toml`
+- [ ] Update version in `color_tools/__init__.py` (`__version__`)
+- [ ] Update version in README.md if shown there
+
+#### 8. **Package Metadata** (for significant changes)
+- [ ] Update `pyproject.toml` keywords if feature expands scope
+- [ ] Update classifiers if changing development status or adding topics
+- [ ] Verify all URLs are still valid (homepage, repository, changelog)
+
+#### 9. **Constants Integrity** (for color science changes)
+- [ ] **NEVER modify ColorConstants unless absolutely necessary**
+- [ ] If constants modified, regenerate hash verification
+- [ ] Run `python color_tools.py --verify-constants` to confirm
+- [ ] Document why constants were changed (should be rare!)
+
+#### 10. **Final Verification**
+- [ ] Run all unit tests: `python -m unittest discover tests`
+- [ ] Test CLI commands manually with new feature
+- [ ] Verify package can be imported: `python -c "import color_tools"`
+- [ ] Check for any Pyright errors: Review pyrightconfig.json settings
+- [ ] Test as library, CLI tool, and installed command if possible
+- [ ] Review changes for backward compatibility
+
+#### 11. **Pre-Release** (when ready to publish)
+- [ ] Move unreleased changes in CHANGELOG.md to new version section
+- [ ] Add release date to CHANGELOG.md
+- [ ] Tag release in git with version number
+- [ ] Build package: `python -m build`
+- [ ] Test installation from built package
+- [ ] Upload to PyPI (if appropriate): `twine upload dist/*`
+
+---
+
+### Feature-Specific Guides
+
+#### Adding Color Spaces
+1. Add conversion functions in `conversions.py`
+2. Follow the conversion chain pattern (RGB ↔ XYZ ↔ LAB ↔ LCH)
+3. Update `__init__.py` exports
+4. Add CLI support in `cli.py` if needed
+5. Test with known reference values from color science literature
+6. Update README with examples
+7. Follow general checklist above
+
+#### Adding Distance Metrics
 1. Implement in `distance.py` with proper docstring
 2. Explain the use case (when to use this metric)
-3. Export in `__init__.py`
-4. Add CLI support with appropriate flag
+3. Include mathematical formula in docstring
+4. Export in `__init__.py` in Distance Metrics section
+5. Add CLI support with appropriate flag (`--metric new-metric`)
+6. Test with published reference examples if available
+7. Follow general checklist above
 
-### Adding Database Fields
-1. Update JSON structure documentation
+#### Adding Database Fields
+1. Update JSON structure documentation in this file
 2. Modify ColorRecord or FilamentRecord dataclass
 3. Update load_colors() or load_filaments() parsing
 4. Update palette indices if field should be searchable
-5. Test with existing and new JSON files
+5. **Regenerate data file hashes in constants.py**
+6. Test with existing and new JSON files
+7. Update user-facing documentation about data format
+8. Follow general checklist above
+
+#### Adding CLI Commands
+1. Add command/subcommand in `cli.py`
+2. Follow existing patterns (color, filament, convert)
+3. Add comprehensive help text with examples
+4. Support JSON output mode if applicable (`--json` flag)
+5. Update README CLI section with new command examples
+6. Test all argument combinations
+7. Follow general checklist above
+
+#### Adding Palette Types
+1. Create new palette JSON file in `color_tools/data/palettes/`
+2. Follow existing JSON format (array of color objects)
+3. Add loading function or extend existing Palette class
+4. Consider whether to add to integrity verification
+5. Update README with new palette documentation
+6. Add examples of using the new palette
+7. Follow general checklist above
 
 ## Maintenance Notes
 
