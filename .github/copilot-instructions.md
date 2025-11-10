@@ -45,13 +45,17 @@ This is a color science library for Python 3.10+ that provides:
 
 ### Module Organization
 ```
-conversions.py  # Color space conversion functions
-distance.py     # Distance metrics (Delta E formulas)
-gamut.py        # sRGB gamut operations
-palette.py      # Color/filament databases and search
-constants.py    # Immutable color science constants
-config.py       # Thread-safe runtime configuration
-cli.py          # Command-line interface (imports from everywhere)
+conversions.py      # Color space conversion functions
+distance.py         # Distance metrics (Delta E formulas)
+gamut.py            # sRGB gamut operations
+palette.py          # Color/filament databases and search
+constants.py        # Immutable color science constants
+config.py           # Thread-safe runtime configuration
+matrices.py         # Transformation matrices (CVD, etc.)
+color_deficiency.py # Color vision deficiency simulation/correction
+naming.py           # Color name generation
+validation.py       # Color validation utilities
+cli.py              # Command-line interface (imports from everywhere)
 ```
 
 ## Critical Requirements
@@ -75,6 +79,130 @@ cli.py          # Command-line interface (imports from everywhere)
 - Use indexed lookups (O(1)) for name/RGB searches in palettes
 - Nearest neighbor search is O(n) but optimized with early filtering
 - Encourage filtering by maker/type before nearest neighbor searches
+
+## Hash Integrity System
+
+The project uses SHA-256 hashes to protect critical data from accidental or malicious modification.
+Three types of integrity verification are provided:
+
+### 1. ColorConstants Hash (constants.py)
+Protects color science constants (D65 white point, transformation matrices, Delta E coefficients, etc.)
+
+**When to regenerate:**
+- After adding new constants to `ColorConstants` class
+- After modifying any UPPERCASE constant value
+- After adding hash constants (like `MATRICES_EXPECTED_HASH`)
+
+**How to regenerate:**
+```bash
+# Generate new hash
+python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
+
+# Update _EXPECTED_HASH in constants.py with the output
+# Update the comment to note what changed
+```
+
+**Verification:**
+```bash
+python -m color_tools --verify-constants
+```
+
+### 2. Transformation Matrices Hash (matrices.py)
+Protects CVD transformation matrices (protanopia, deuteranopia, tritanopia simulation/correction)
+
+**When to regenerate:**
+- After modifying any of the 6 matrix values
+- When adding new transformation matrices to the verified set
+
+**How to regenerate:**
+```bash
+# Generate new hash
+python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_matrices_hash())"
+
+# Update MATRICES_EXPECTED_HASH in constants.py with the output
+```
+
+**⚠️ Important:** Adding utility functions to matrices.py does NOT require hash regeneration - only matrix constant values are hashed.
+
+**When adding NEW matrices to matrices.py:**
+1. Define the matrix constant in `matrices.py` (e.g., `NEW_MATRIX_NAME: Matrix3x3 = (...)`)
+2. Add it to the import list in `ColorConstants._compute_matrices_hash()` in `constants.py`
+3. Add it to the `matrices_dict` dictionary in that function
+4. Regenerate `MATRICES_EXPECTED_HASH` using the command above
+5. Update `_EXPECTED_HASH` for ColorConstants (you added a new constant to the file)
+6. Run tests to verify everything works
+
+**Verification:**
+```bash
+python -m color_tools --verify-matrices
+```
+
+### 3. Data File Hashes (JSON files)
+Protects core data files: colors.json, filaments.json, maker_synonyms.json, and palette files
+
+**When to regenerate:**
+- After modifying any core data file
+- After adding/updating palette files in data/palettes/
+- After fixing typos or updating color values in databases
+
+**How to regenerate:**
+```bash
+# For a single file
+python -c "import hashlib; print(hashlib.sha256(open('color_tools/data/colors.json', 'rb').read()).hexdigest())"
+
+# For all data files at once (recommended)
+cd color_tools/data
+python -c "
+import hashlib
+from pathlib import Path
+
+files = {
+    'colors.json': 'COLORS_JSON_HASH',
+    'filaments.json': 'FILAMENTS_JSON_HASH', 
+    'maker_synonyms.json': 'MAKER_SYNONYMS_JSON_HASH',
+    'palettes/cga4.json': 'CGA4_PALETTE_HASH',
+    'palettes/cga16.json': 'CGA16_PALETTE_HASH',
+    'palettes/ega16.json': 'EGA16_PALETTE_HASH',
+    'palettes/ega64.json': 'EGA64_PALETTE_HASH',
+    'palettes/vga.json': 'VGA_PALETTE_HASH',
+    'palettes/web.json': 'WEB_PALETTE_HASH',
+}
+
+for filepath, const_name in files.items():
+    hash_val = hashlib.sha256(Path(filepath).read_bytes()).hexdigest()
+    print(f'{const_name} = \"{hash_val}\"')
+"
+
+# Update the hash constants in constants.py with the output
+```
+
+**Verification:**
+```bash
+python -m color_tools --verify-data
+```
+
+### 4. Verify Everything
+```bash
+# Verify constants + matrices + data files
+python -m color_tools --verify-all
+```
+
+### Hash Regeneration Checklist
+When you modify protected data, follow this checklist:
+
+1. **Modify the data** (constants, matrices, or JSON files)
+2. **Regenerate hash(es)** using commands above
+3. **Update hash constant(s)** in `constants.py`
+4. **Update comment** explaining what changed
+5. **Run verification** to confirm it passes
+6. **Run all tests** to ensure nothing broke
+7. **Document in CHANGELOG** what was modified and why
+
+### Why Hash Verification?
+- **Prevents accidents**: Catches unintentional modifications
+- **Ensures correctness**: Color science constants are from international standards
+- **Debugging aid**: Quickly verify data integrity when investigating issues
+- **Quality assurance**: Data files match known-good versions
 
 ## Testing and Verification
 
@@ -104,16 +232,19 @@ python color_tools.py --verify-constants
 ## CLI Architecture
 
 ### Command Structure
-The CLI has three main commands:
+The CLI has five main commands:
 1. **color**: Search CSS colors by name or find nearest color
 2. **filament**: Search 3D printing filaments with filtering (maker, type, finish)
 3. **convert**: Convert between color spaces and check gamut
+4. **name**: Generate descriptive names for RGB colors
+5. **cvd**: Color vision deficiency simulation and correction
 
 ### Global Arguments
 - `--json DIR`: Path to directory containing all JSON data files (colors.json, filaments.json, maker_synonyms.json). Must be a directory. Default: package data directory
 - `--verify-constants`: Verify integrity of color science constants before proceeding
 - `--verify-data`: Verify integrity of core data files before proceeding
-- `--verify-all`: Verify integrity of both constants and data files before proceeding
+- `--verify-matrices`: Verify integrity of transformation matrices before proceeding
+- `--verify-all`: Verify integrity of constants, data files, and matrices before proceeding
 - `--version`: Show version number and exit
 
 ### Dual-Color Mode

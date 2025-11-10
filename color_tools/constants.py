@@ -168,8 +168,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated after regenerating palette file hashes with improved naming
-    _EXPECTED_HASH = "5489d9698ba2663cd2a4e9837b8b648bd93d58a6f56a54c3861d49d82df5b6f9"
+    # Updated after adding MATRICES_EXPECTED_HASH constant
+    _EXPECTED_HASH = "2ea2881e7c8fff4246c6abf3e791fa8b4b4e89ce910c24007b34adafa0ebc926"
     
     # ========================================================================
     # Data File Integrity Hashes
@@ -193,6 +193,14 @@ class ColorConstants:
     USER_COLORS_JSON_FILENAME = "user-colors.json"
     USER_FILAMENTS_JSON_FILENAME = "user-filaments.json"
     USER_SYNONYMS_JSON_FILENAME = "user-synonyms.json"
+    
+    # ========================================================================
+    # Transformation Matrices Integrity Hash
+    # ========================================================================
+    # SHA-256 hash of transformation matrices from matrices.py module
+    # This verifies the 6 CVD matrices haven't been modified
+    # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_matrices_hash())"
+    MATRICES_EXPECTED_HASH = "d177316ade5146a084bb5b92d693c3f9c62ec593fde9b6face567dbd8a633df5"
     
     @staticmethod
     def verify_data_file(filepath: Path, expected_hash: str) -> bool:
@@ -272,5 +280,63 @@ class ColorConstants:
                 errors.append(f"{palette_file} integrity check FAILED: {palette_path}")
         
         return (len(errors) == 0, errors)
+    
+    @classmethod
+    def _compute_matrices_hash(cls) -> str:
+        """
+        Compute SHA-256 hash of transformation matrices for integrity checking.
+        
+        This imports all matrices from matrices.py and creates a fingerprint.
+        If any matrix values are modified, the hash won't match.
+        
+        ⚠️  When adding new matrices to matrices.py:
+            1. Add the import here
+            2. Add to matrices_dict below
+            3. Regenerate MATRICES_EXPECTED_HASH
+            4. Update _EXPECTED_HASH (you added a new constant)
+        
+        Returns:
+            SHA-256 hash of all matrix values
+        """
+        from .matrices import (
+            PROTANOPIA_SIMULATION,
+            DEUTERANOPIA_SIMULATION,
+            TRITANOPIA_SIMULATION,
+            PROTANOPIA_CORRECTION,
+            DEUTERANOPIA_CORRECTION,
+            TRITANOPIA_CORRECTION,
+        )
+        
+        # Collect all matrices in a stable order
+        matrices_dict = {
+            "PROTANOPIA_SIMULATION": PROTANOPIA_SIMULATION,
+            "DEUTERANOPIA_SIMULATION": DEUTERANOPIA_SIMULATION,
+            "TRITANOPIA_SIMULATION": TRITANOPIA_SIMULATION,
+            "PROTANOPIA_CORRECTION": PROTANOPIA_CORRECTION,
+            "DEUTERANOPIA_CORRECTION": DEUTERANOPIA_CORRECTION,
+            "TRITANOPIA_CORRECTION": TRITANOPIA_CORRECTION,
+        }
+        
+        # Convert tuples to lists for JSON serialization
+        serializable = {}
+        for name, matrix in matrices_dict.items():
+            serializable[name] = [[float(val) for val in row] for row in matrix]
+        
+        # Create stable JSON representation
+        data = json.dumps(serializable, sort_keys=True)
+        return hashlib.sha256(data.encode()).hexdigest()
+    
+    @classmethod
+    def verify_matrices_integrity(cls) -> bool:
+        """
+        Verify that transformation matrices haven't been modified.
+        
+        Returns:
+            True if all matrices match expected values, False if tampered with.
+        """
+        if cls.MATRICES_EXPECTED_HASH == "TO_BE_COMPUTED":
+            # Hash hasn't been set yet - skip verification
+            return True
+        return cls._compute_matrices_hash() == cls.MATRICES_EXPECTED_HASH
 
 

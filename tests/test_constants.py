@@ -126,5 +126,29 @@ class TestConstantsIntegrity(unittest.TestCase):
         self.assertAlmostEqual(ColorConstants.D65_WHITE_Y, 100.0, places=2)
 
 
+class TestHashVerification(unittest.TestCase):
+    """Test hash-based integrity verification."""
+    
+    def test_constants_integrity(self):
+        """Test that ColorConstants haven't been tampered with."""
+        self.assertTrue(ColorConstants.verify_integrity())
+    
+    def test_matrices_integrity(self):
+        """Test that transformation matrices haven't been tampered with."""
+        self.assertTrue(ColorConstants.verify_matrices_integrity())
+    
+    def test_matrices_hash_generation(self):
+        """Test that matrices hash can be computed."""
+        hash_value = ColorConstants._compute_matrices_hash()
+        self.assertIsInstance(hash_value, str)
+        self.assertEqual(len(hash_value), 64)  # SHA-256 produces 64 hex chars
+    
+    def test_matrices_hash_matches_expected(self):
+        """Test that computed hash matches stored hash."""
+        computed = ColorConstants._compute_matrices_hash()
+        expected = ColorConstants.MATRICES_EXPECTED_HASH
+        self.assertEqual(computed, expected)
+
+
 if __name__ == '__main__':
     unittest.main()

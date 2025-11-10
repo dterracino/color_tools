@@ -113,6 +113,24 @@ from .naming import (
 )
 
 # ============================================================================
+# Color Vision Deficiency (Colorblindness Simulation and Correction)
+# ============================================================================
+
+from .color_deficiency import (
+    # Simulation functions - see how colors appear to CVD individuals
+    simulate_cvd,
+    simulate_protanopia,
+    simulate_deuteranopia,
+    simulate_tritanopia,
+    
+    # Correction functions - improve discriminability for CVD individuals
+    correct_cvd,
+    correct_protanopia,
+    correct_deuteranopia,
+    correct_tritanopia,
+)
+
+# ============================================================================
 # Configuration (Usually Don't Need These Directly)
 # ============================================================================
 
@@ -179,6 +197,19 @@ __all__ = [
     "load_filaments",
     "load_maker_synonyms",
     "load_palette",
+    
+    # Color naming
+    "generate_color_name",
+    
+    # Color vision deficiency
+    "simulate_cvd",
+    "simulate_protanopia",
+    "simulate_deuteranopia",
+    "simulate_tritanopia",
+    "correct_cvd",
+    "correct_protanopia",
+    "correct_deuteranopia",
+    "correct_tritanopia",
     
     # Config functions
     "set_dual_color_mode",

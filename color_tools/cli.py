@@ -21,6 +21,7 @@ from .config import set_dual_color_mode
 from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
 from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
+from .color_deficiency import simulate_cvd, correct_cvd
 
 
 def _get_program_name() -> str:
@@ -78,6 +79,10 @@ Examples:
   {prog_name} name --value 255 128 64
   {prog_name} name --value 200 100 50 --show-type
   
+  # Simulate color blindness
+  {prog_name} cvd --value 255 0 0 --type protanopia --mode simulate
+  {prog_name} cvd --value 0 255 0 --type deutan --mode correct
+  
   # Find nearest filament to an RGB color
   {prog_name} filament --nearest --value 255 0 0
   
@@ -120,9 +125,14 @@ Examples:
         help="Verify integrity of core data files (colors.json, filaments.json, maker_synonyms.json) before proceeding"
     )
     parser.add_argument(
+        "--verify-matrices",
+        action="store_true",
+        help="Verify integrity of transformation matrices before proceeding"
+    )
+    parser.add_argument(
         "--verify-all",
         action="store_true",
-        help="Verify integrity of both constants and data files before proceeding"
+        help="Verify integrity of constants, data files, and matrices before proceeding"
     )
     
     # Create subparsers for the three main commands
@@ -329,6 +339,34 @@ Examples:
         help="Show match type (exact/near/generated) in output"
     )
     
+    # ==================== CVD SUBCOMMAND ====================
+    cvd_parser = subparsers.add_parser(
+        "cvd",
+        help="Color vision deficiency simulation and correction",
+        description="Simulate how colors appear with color blindness or apply corrections"
+    )
+    
+    cvd_parser.add_argument(
+        "--value",
+        nargs=3,
+        type=int,
+        metavar=("R", "G", "B"),
+        required=True,
+        help="RGB color value (0-255 for each component)"
+    )
+    cvd_parser.add_argument(
+        "--type",
+        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
+        required=True,
+        help="Type of color vision deficiency (protanopia=red-blind, deuteranopia=green-blind, tritanopia=blue-blind)"
+    )
+    cvd_parser.add_argument(
+        "--mode",
+        choices=["simulate", "correct"],
+        default="simulate",
+        help="Mode: 'simulate' shows how colors appear to CVD individuals, 'correct' applies daltonization (default: simulate)"
+    )
+    
     # Parse arguments
     args = parser.parse_args()
     
@@ -336,6 +374,7 @@ Examples:
     if args.verify_all:
         args.verify_constants = True
         args.verify_data = True
+        args.verify_matrices = True
     
     # Verify constants integrity if requested
     if args.verify_constants:
@@ -346,6 +385,16 @@ Examples:
             print(f"Current hash:  {ColorConstants._compute_hash()}", file=sys.stderr)
             sys.exit(1)
         print("✓ ColorConstants integrity verified")
+    
+    # Verify matrices integrity if requested
+    if args.verify_matrices:
+        if not ColorConstants.verify_matrices_integrity():
+            print("ERROR: Transformation matrices integrity check FAILED!", file=sys.stderr)
+            print("The CVD transformation matrices have been modified.", file=sys.stderr)
+            print(f"Expected hash: {ColorConstants.MATRICES_EXPECTED_HASH}", file=sys.stderr)
+            print(f"Current hash:  {ColorConstants._compute_matrices_hash()}", file=sys.stderr)
+            sys.exit(1)
+        print("✓ Transformation matrices integrity verified")
     
     # Verify data files integrity if requested
     if args.verify_data:
@@ -361,7 +410,7 @@ Examples:
         print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 6 palettes)")
     
     # If only verifying (no other command), exit after success
-    if (args.verify_constants or args.verify_data) and not args.command:
+    if (args.verify_constants or args.verify_data or args.verify_matrices) and not args.command:
         sys.exit(0)
     
     # Handle no subcommand
@@ -582,6 +631,43 @@ Examples:
             print(f"{name} ({match_type})")
         else:
             print(name)
+        
+        sys.exit(0)
+    
+    # ==================== CVD COMMAND HANDLER ====================
+    elif args.command == "cvd":
+        # Validate RGB values
+        r, g, b = args.value
+        if not all(0 <= v <= 255 for v in [r, g, b]):
+            print("Error: RGB values must be in range 0-255")
+            sys.exit(2)
+        
+        rgb = (r, g, b)
+        
+        # Apply transformation based on mode
+        if args.mode == "simulate":
+            result = simulate_cvd(rgb, args.type)
+            action = "simulated for"
+        else:  # correct
+            result = correct_cvd(rgb, args.type)
+            action = "corrected for"
+        
+        # Format deficiency type name
+        deficiency_names = {
+            "protanopia": "protanopia (red-blind)",
+            "protan": "protanopia (red-blind)",
+            "deuteranopia": "deuteranopia (green-blind)",
+            "deutan": "deuteranopia (green-blind)",
+            "tritanopia": "tritanopia (blue-blind)",
+            "tritan": "tritanopia (blue-blind)"
+        }
+        deficiency = deficiency_names[args.type.lower()]
+        
+        # Output result
+        print(f"Input RGB:  ({r}, {g}, {b})")
+        print(f"Output RGB: ({result[0]}, {result[1]}, {result[2]})")
+        print(f"Mode: {args.mode}")
+        print(f"Type: {deficiency}")
         
         sys.exit(0)
 
