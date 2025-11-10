@@ -38,4 +38,45 @@ python tooling/generate_palettes.py
 
 **Safe to re-run:** Yes - regenerates all palette files from source definitions.
 
+### `demo_api.py`
+
+**Purpose:** Demonstration script showing how to use the public API with maker synonyms.
+
+Shows three different ways to work with the FilamentPalette and maker synonyms:
+
+1. Using `FilamentPalette.load_default()` (most convenient)
+2. Manual construction with `load_maker_synonyms()`
+3. Without synonyms for comparison
+
+**Usage:**
+
+```bash
+python tooling/demo_api.py
+```
+
+**Safe to re-run:** Yes - read-only demonstration.
+
+### `validation_test.py`
+
+**Purpose:** Manual test/demo script for the color validation module.
+
+Tests the `validation.validate_color()` function with various test cases including:
+
+- Exact color matches
+- Fuzzy name matching
+- Incorrect color matches
+- Invalid input handling
+
+**Usage:**
+
+```bash
+python tooling/validation_test.py
+```
+
+**Safe to re-run:** Yes - read-only demonstration.
+
+## Historical Scripts
+
+The following scripts were used for one-time data conversions and are kept for reference:
+
 

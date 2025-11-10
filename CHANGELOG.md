@@ -28,6 +28,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Pre-computes all color space conversions for fast loading
   - Palettes stored in `color_tools/data/palettes/` directory
 
+- **Comprehensive unit tests for custom palettes**:
+  - Tests for all 6 built-in palettes (cga4, cga16, ega16, ega64, vga, web)
+  - Error handling tests for invalid palette names
+  - Malformed JSON detection tests
+  - Edge case coverage for empty names, case sensitivity, etc.
+
+### Improved
+
+- **Enhanced error handling in palette loading**:
+  - `load_palette()` now provides helpful error messages listing available palettes
+  - Better validation of palette JSON structure with specific error messages
+  - Added `_parse_color_records()` helper function to avoid code duplication
+  - Improved error messages include file names and problematic data indices
+  - JSON decode errors are caught and re-raised with context
+
 ### Examples
 
 ```python

@@ -95,6 +95,12 @@ ega = load_palette('ega16')  # Standard EGA 16-color palette
 vga = load_palette('vga')    # VGA 256-color palette (Mode 13h)
 web = load_palette('web')    # Web-safe 216-color palette
 
+# Error handling - helpful messages if palette doesn't exist
+try:
+    palette = load_palette('unknown')
+except FileNotFoundError as e:
+    print(e)  # Lists all available palettes
+
 # Load filament palette and search
 filament_palette = FilamentPalette.load_default()
 filament, distance = filament_palette.nearest_filament((180, 100, 200))

@@ -1,4 +1,14 @@
-from .validation import validate_color
+#!/usr/bin/env python3
+"""Manual test/demo for color validation functionality."""
+
+import sys
+from pathlib import Path
+
+# Add parent directory to path so we can import the package
+parent_dir = Path(__file__).parent.parent
+sys.path.insert(0, str(parent_dir))
+
+from color_tools.validation import validate_color
 
 def run_tests():
     """Runs a series of tests for the color validation function."""
@@ -34,7 +44,7 @@ def run_tests():
         print(f"  Matched Name    : '{result.name_match}' (Confidence: {result.name_confidence:.2f})")
         print(f"  Input Hex       : {result.hex_value}")
         print(f"  Suggested Hex   : {result.suggested_hex}")
-        print(f"  Color Distance (ΔE): {result.delta_e:.2f}")
+        print(f"  Color Distance (Delta E): {result.delta_e:.2f}")
         print(f"  Message         : {result.message}\n")
 
 if __name__ == "__main__":

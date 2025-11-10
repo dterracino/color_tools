@@ -407,10 +407,22 @@ class TestLoadPalette(unittest.TestCase):
     
     def test_palette_name_case_sensitivity(self):
         """Test case sensitivity of palette names."""
-        # Palette names should be case-sensitive (file system dependent)
-        # On most systems, this should raise an error
-        with self.assertRaises(FileNotFoundError):
-            load_palette("CGA4")  # Capital letters
+        import platform
+        
+        # On case-insensitive file systems (Windows, macOS by default),
+        # "CGA4" may match "cga4.json". On case-sensitive systems (Linux),
+        # it should fail. Test for the appropriate behavior.
+        
+        try:
+            palette = load_palette("CGA4")  # Capital letters
+            # If it succeeds, we're on a case-insensitive file system
+            # Verify it actually loaded the palette
+            self.assertIsInstance(palette, Palette)
+            self.assertEqual(len(palette.records), 4)
+        except FileNotFoundError:
+            # If it fails, we're on a case-sensitive file system
+            # This is the expected behavior on Linux
+            pass
     
     def test_malformed_json_raises_value_error(self):
         """Test that malformed JSON file raises ValueError."""
