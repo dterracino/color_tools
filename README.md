@@ -23,27 +23,25 @@ A comprehensive Python library for color science operations, color space convers
 
 **Requirements:** Python 3.10+
 
-### For Development or Direct Use
+### Install from PyPI (Recommended)
+
+```bash
+pip install color-match-tools
+```
+
+This installs the package globally with the `color_tools` command available in your terminal.
+
+### For Development
 
 Clone this repository and install in development mode:
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/dterracino/color_tools.git
 cd color_tools
 pip install -e .
 ```
 
 This installs the package in "editable" mode, allowing you to modify the code while using it.
-
-### For Library Use Only
-
-If you just want to use it as a library without the CLI:
-
-```bash
-git clone <repository-url>
-cd color_tools
-pip install .
-```
 
 ### Dependencies
 

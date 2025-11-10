@@ -49,7 +49,7 @@ Changelog = "https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md"
 Documentation = "https://github.com/dterracino/color_tools/blob/main/README.md"
 
 [project.scripts]
-color-tools = "color_tools.cli:main"
+color_tools = "color_tools.cli:main"
 
 [tool.setuptools]
 packages = ["color_tools"]

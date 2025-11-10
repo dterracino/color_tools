@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Command name consistency**: Changed installed command from `color-tools` to `color_tools` (underscore) to match module name and `python -m color_tools` usage
+- **README installation instructions**: Updated to show PyPI installation as primary/recommended method with `pip install color-match-tools`
+
 ## [3.3.0] - 2025-11-10
 
 ### Added

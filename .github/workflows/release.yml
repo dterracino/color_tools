@@ -1,0 +1,54 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v3.3.0, v3.3.1, etc.
+
+permissions:
+  contents: write  # Required to create releases
+
+jobs:
+  release:
+    name: Create GitHub Release
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0  # Fetch all history for changelog extraction
+      
+      - name: Extract version from tag
+        id: get_version
+        run: echo "VERSION=${GITHUB_REF#refs/tags/}" >> $GITHUB_OUTPUT
+      
+      - name: Extract changelog for this version
+        id: changelog
+        run: |
+          # Extract the section for this version from CHANGELOG.md
+          VERSION="${{ steps.get_version.outputs.VERSION }}"
+          VERSION_NUM="${VERSION#v}"  # Remove 'v' prefix for changelog lookup
+          
+          # Find the section between this version and the next version marker
+          awk "/^## \[$VERSION_NUM\]/,/^## \[/" CHANGELOG.md | \
+            sed '/^## \['"$VERSION_NUM"'\]/d' | \
+            sed '/^## \[/,$d' | \
+            sed '/^$/d' > release_notes.md
+          
+          # If extraction failed or is empty, use tag message
+          if [ ! -s release_notes.md ]; then
+            echo "No changelog entry found, using git tag message"
+            git tag -l --format='%(contents)' "$VERSION" > release_notes.md
+          fi
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.get_version.outputs.VERSION }}
+          body_path: release_notes.md
+          draft: false
+          prerelease: false
+          generate_release_notes: false  # We provide our own from CHANGELOG
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
