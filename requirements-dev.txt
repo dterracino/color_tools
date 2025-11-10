@@ -1,0 +1,15 @@
+# Development dependencies
+# Includes all base requirements plus development tools
+
+# Base requirements (from requirements.txt)
+-r requirements.txt
+
+# Code coverage
+coverage>=7.0.0
+
+# Type checking and linting (from pyproject.toml dev dependencies)
+pyright>=1.1.0
+
+# Building and publishing
+build>=1.0.0
+twine>=4.0.0
