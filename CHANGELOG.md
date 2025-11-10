@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **GitHub Actions workflow for automated releases**: New `.github/workflows/release.yml` workflow automatically creates GitHub releases when version tags are pushed
+  - Extracts changelog content for release notes
+  - Creates release with source code archives
+  - Triggers on `v*.*.*` tag pattern
+- **Development dependencies file**: New `requirements-dev.txt` for development environment setup
+  - Includes all base requirements from `requirements.txt`
+  - Adds coverage, pyright, build, and twine for development and publishing
+- **Comprehensive validation test suite**: 45 new unit tests in `tests/test_validation.py`
+  - Tests for `validate_color()` function and supporting utilities
+  - Tests Levenshtein distance calculation
+  - Tests fuzzy matching fallback (when fuzzywuzzy not installed)
+  - Tests exact matches, fuzzy matches, mismatches, and edge cases
+  - Tests threshold behavior and invalid input handling
+  - All 256 tests passing (211 existing + 45 new)
+
 ### Changed
 
 - **Command name consistency**: Changed installed command from `color-tools` to `color_tools` (underscore) to match module name and `python -m color_tools` usage
