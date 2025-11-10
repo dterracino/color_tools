@@ -9,6 +9,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Intelligent color naming system** (`naming.py` module)
+  - `generate_color_name(rgb, palette_colors, near_threshold)` function generates descriptive color names
+  - Three-tier naming strategy:
+    1. Exact CSS color matches (e.g., "red", "blue", "papayawhip")
+    2. Near CSS matches with Delta E < 5 (e.g., "near darkgray")
+    3. Generated descriptive names based on HSL properties
+  - **Lightness modifiers** (5 levels): very light, light, medium, dark, very dark
+  - **Saturation modifiers** (6 levels):
+    - pale (light colors, S<35%), muted (dark colors, S<35%)
+    - dull (35% ≤ S < 50%)
+    - (no modifier for medium saturation 50-70%)
+    - bright (70% ≤ S < 85%)
+    - deep (85% ≤ S < 95%)
+    - vivid (S ≥ 95% - maximum saturation)
+  - **Hue boundary transitions** ("-ish" variants):
+    - Colors within ±8° of major hue boundaries get descriptive variants
+    - Examples: "reddish orange", "orangeish yellow", "yellowish green", "blueish purple"
+    - Only applied to colors with S ≥ 40% for meaningful descriptions
+  - **Special case colors**:
+    - Brown family: beige (light), tan (medium light), brown (darker)
+    - Gold: desaturated yellow with moderate saturation (30-50%)
+    - Pink: light reds with saturation
+    - Olive: dark muted yellow-green
+    - Navy: very dark blue
+    - Maroon: very dark red
+    - Teal: cyan-green range
+    - Lime: bright yellow-green
+  - Returns tuple of (name, match_type) where match_type is "exact", "near", or "generated"
+  - Collision avoidance: Falls back to generic hue names if generated name conflicts with CSS
+  - Exported as public API function for standalone use
+  - **New CLI command**: `name --value R G B` generates descriptive names from RGB values
+    - Examples: `name --value 255 128 64` → "light vivid orangeish red"
+    - `--show-type` flag shows match type (exact/near/generated)
+    - `--threshold` sets Delta E threshold for near matches (default: 5.0)
+
+- **Improved palette color names**: All 6 palette files renamed with intelligent descriptive names
+  - 110 colors improved across CGA, EGA, VGA, and Web palettes
+  - Examples: "very light vivid greenish teal", "medium dull gold", "dark deep teal"
+  - More variety and precision than generic numbering (e.g., "VGA 042" → "light vivid orange")
+
+- **Comprehensive test suite for naming**: 53 new unit tests in `tests/test_naming.py`
+  - Tests for lightness modifiers (5 levels)
+  - Tests for saturation modifiers (6 levels including dull and deep)
+  - Tests for "-ish" hue boundary transitions (8 boundaries)
+  - Tests for special case colors (brown family, gold, olive, navy, maroon, teal, lime, pink)
+  - Tests for complete name generation with collision avoidance
+  - All 211 tests passing (158 existing + 53 new)
+
 - **Unique filament IDs**: All filament records now include a unique `id` field
   - Generated from maker-type-finish-color using semantic slugification
   - IDs are stable, human-readable identifiers (e.g., "bambu-lab-pla-silk-plus-red")
@@ -22,6 +70,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Handles marketing variations and common misspellings
   - Field is optional - only populated when alternatives exist
   - Format: array of strings (e.g., `["Classic Red", "Premium PLA Red (EU)"]`)
+
+- **Palette file integrity protection**: Added SHA-256 hash verification for all 6 palette files
+  - CGA (4-color and 16-color), EGA (16-color and 64-color), VGA (256-color), Web (216-color)
+  - `--verify-data` now checks all 9 core files (3 data + 6 palettes)
+  - Updated CLI verification message to mention palettes
 
 ### Changed
 
@@ -49,6 +102,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Created PDF extraction tooling with improved parsing for Polymaker and Panchroma data sources
 - Enhanced slug generation with collision detection and special character handling
 - Added comprehensive database integrity tests (158 total tests, up from 142)
+- **Enhanced data integrity protection**: Added SHA-256 hash verification for all 6 palette files (CGA4, CGA16, EGA16, EGA64, VGA, Web)
+  - Palette files now protected against tampering alongside core data files
+  - `--verify-all` flag now validates 9 core files total (3 data + 6 palettes)
 
 ## [3.2.1] - 2025-11-09
 

@@ -1,6 +1,6 @@
 [
   {
-    "name": "EGA 000000",
+    "name": "black",
     "hex": "#000000",
     "rgb": [
       0,
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "name": "EGA 000055",
+    "name": "very dark vivid navy",
     "hex": "#000055",
     "rgb": [
       0,
@@ -48,7 +48,7 @@
     ]
   },
   {
-    "name": "EGA 0000AA",
+    "name": "very dark vivid navy",
     "hex": "#0000aa",
     "rgb": [
       0,
@@ -72,7 +72,7 @@
     ]
   },
   {
-    "name": "EGA 0000FF",
+    "name": "blue",
     "hex": "#0000ff",
     "rgb": [
       0,
@@ -96,7 +96,7 @@
     ]
   },
   {
-    "name": "EGA 005500",
+    "name": "dark vivid green",
     "hex": "#005500",
     "rgb": [
       0,
@@ -120,7 +120,7 @@
     ]
   },
   {
-    "name": "EGA 005555",
+    "name": "dark vivid cyan",
     "hex": "#005555",
     "rgb": [
       0,
@@ -144,7 +144,7 @@
     ]
   },
   {
-    "name": "EGA 0055AA",
+    "name": "dark vivid blue",
     "hex": "#0055aa",
     "rgb": [
       0,
@@ -168,7 +168,7 @@
     ]
   },
   {
-    "name": "EGA 0055FF",
+    "name": "medium vivid blue",
     "hex": "#0055ff",
     "rgb": [
       0,
@@ -192,7 +192,7 @@
     ]
   },
   {
-    "name": "EGA 00AA00",
+    "name": "light vivid green",
     "hex": "#00aa00",
     "rgb": [
       0,
@@ -216,7 +216,7 @@
     ]
   },
   {
-    "name": "EGA 00AA55",
+    "name": "light vivid teal",
     "hex": "#00aa55",
     "rgb": [
       0,
@@ -240,7 +240,7 @@
     ]
   },
   {
-    "name": "EGA 00AAAA",
+    "name": "light vivid cyan",
     "hex": "#00aaaa",
     "rgb": [
       0,
@@ -264,7 +264,7 @@
     ]
   },
   {
-    "name": "EGA 00AAFF",
+    "name": "light vivid blue",
     "hex": "#00aaff",
     "rgb": [
       0,
@@ -288,7 +288,7 @@
     ]
   },
   {
-    "name": "EGA 00FF00",
+    "name": "lime",
     "hex": "#00ff00",
     "rgb": [
       0,
@@ -312,7 +312,7 @@
     ]
   },
   {
-    "name": "EGA 00FF55",
+    "name": "very light vivid greenish teal",
     "hex": "#00ff55",
     "rgb": [
       0,
@@ -336,7 +336,7 @@
     ]
   },
   {
-    "name": "EGA 00FFAA",
+    "name": "very light vivid teal",
     "hex": "#00ffaa",
     "rgb": [
       0,
@@ -360,7 +360,7 @@
     ]
   },
   {
-    "name": "EGA 00FFFF",
+    "name": "cyan",
     "hex": "#00ffff",
     "rgb": [
       0,
@@ -384,7 +384,7 @@
     ]
   },
   {
-    "name": "EGA 550000",
+    "name": "very dark vivid maroon",
     "hex": "#550000",
     "rgb": [
       85,
@@ -408,7 +408,7 @@
     ]
   },
   {
-    "name": "EGA 550055",
+    "name": "very dark vivid purple",
     "hex": "#550055",
     "rgb": [
       85,
@@ -432,7 +432,7 @@
     ]
   },
   {
-    "name": "EGA 5500AA",
+    "name": "dark vivid purpleish navy",
     "hex": "#5500aa",
     "rgb": [
       85,
@@ -456,7 +456,7 @@
     ]
   },
   {
-    "name": "EGA 5500FF",
+    "name": "dark vivid indigo",
     "hex": "#5500ff",
     "rgb": [
       85,
@@ -480,7 +480,7 @@
     ]
   },
   {
-    "name": "EGA 555500",
+    "name": "dark vivid yellow",
     "hex": "#555500",
     "rgb": [
       85,
@@ -504,7 +504,7 @@
     ]
   },
   {
-    "name": "EGA 555555",
+    "name": "dark gray",
     "hex": "#555555",
     "rgb": [
       85,
@@ -528,7 +528,7 @@
     ]
   },
   {
-    "name": "EGA 5555AA",
+    "name": "medium muted blue",
     "hex": "#5555aa",
     "rgb": [
       85,
@@ -552,7 +552,7 @@
     ]
   },
   {
-    "name": "EGA 5555FF",
+    "name": "medium vivid blue",
     "hex": "#5555ff",
     "rgb": [
       85,
@@ -576,7 +576,7 @@
     ]
   },
   {
-    "name": "EGA 55AA00",
+    "name": "light vivid lime",
     "hex": "#55aa00",
     "rgb": [
       85,
@@ -600,7 +600,7 @@
     ]
   },
   {
-    "name": "EGA 55AA55",
+    "name": "light pale green",
     "hex": "#55aa55",
     "rgb": [
       85,
@@ -624,7 +624,7 @@
     ]
   },
   {
-    "name": "EGA 55AAAA",
+    "name": "light pale cyan",
     "hex": "#55aaaa",
     "rgb": [
       85,
@@ -648,7 +648,7 @@
     ]
   },
   {
-    "name": "EGA 55AAFF",
+    "name": "light vivid blue",
     "hex": "#55aaff",
     "rgb": [
       85,
@@ -672,7 +672,7 @@
     ]
   },
   {
-    "name": "EGA 55FF00",
+    "name": "very light vivid green",
     "hex": "#55ff00",
     "rgb": [
       85,
@@ -696,7 +696,7 @@
     ]
   },
   {
-    "name": "EGA 55FF55",
+    "name": "very light vivid green",
     "hex": "#55ff55",
     "rgb": [
       85,
@@ -720,7 +720,7 @@
     ]
   },
   {
-    "name": "EGA 55FFAA",
+    "name": "very light vivid teal",
     "hex": "#55ffaa",
     "rgb": [
       85,
@@ -744,7 +744,7 @@
     ]
   },
   {
-    "name": "EGA 55FFFF",
+    "name": "very light vivid cyan",
     "hex": "#55ffff",
     "rgb": [
       85,
@@ -768,7 +768,7 @@
     ]
   },
   {
-    "name": "EGA AA0000",
+    "name": "dark vivid red",
     "hex": "#aa0000",
     "rgb": [
       170,
@@ -792,7 +792,7 @@
     ]
   },
   {
-    "name": "EGA AA0055",
+    "name": "dark vivid magenta",
     "hex": "#aa0055",
     "rgb": [
       170,
@@ -816,7 +816,7 @@
     ]
   },
   {
-    "name": "EGA AA00AA",
+    "name": "medium vivid purple",
     "hex": "#aa00aa",
     "rgb": [
       170,
@@ -840,7 +840,7 @@
     ]
   },
   {
-    "name": "EGA AA00FF",
+    "name": "medium vivid violet",
     "hex": "#aa00ff",
     "rgb": [
       170,
@@ -864,7 +864,7 @@
     ]
   },
   {
-    "name": "EGA AA5500",
+    "name": "medium vivid orange",
     "hex": "#aa5500",
     "rgb": [
       170,
@@ -888,7 +888,7 @@
     ]
   },
   {
-    "name": "EGA AA5555",
+    "name": "medium muted red",
     "hex": "#aa5555",
     "rgb": [
       170,
@@ -912,7 +912,7 @@
     ]
   },
   {
-    "name": "EGA AA55AA",
+    "name": "medium muted purple",
     "hex": "#aa55aa",
     "rgb": [
       170,
@@ -936,7 +936,7 @@
     ]
   },
   {
-    "name": "EGA AA55FF",
+    "name": "medium vivid purpleish blue",
     "hex": "#aa55ff",
     "rgb": [
       170,
@@ -960,7 +960,7 @@
     ]
   },
   {
-    "name": "EGA AAAA00",
+    "name": "light vivid yellow",
     "hex": "#aaaa00",
     "rgb": [
       170,
@@ -984,7 +984,7 @@
     ]
   },
   {
-    "name": "EGA AAAA55",
+    "name": "light pale gold",
     "hex": "#aaaa55",
     "rgb": [
       170,
@@ -1008,7 +1008,7 @@
     ]
   },
   {
-    "name": "EGA AAAAAA",
+    "name": "near darkgray",
     "hex": "#aaaaaa",
     "rgb": [
       170,
@@ -1032,7 +1032,7 @@
     ]
   },
   {
-    "name": "EGA AAAAFF",
+    "name": "light vivid blue",
     "hex": "#aaaaff",
     "rgb": [
       170,
@@ -1056,7 +1056,7 @@
     ]
   },
   {
-    "name": "EGA AAFF00",
+    "name": "very light vivid greenish yellow",
     "hex": "#aaff00",
     "rgb": [
       170,
@@ -1080,7 +1080,7 @@
     ]
   },
   {
-    "name": "EGA AAFF55",
+    "name": "very light vivid lime",
     "hex": "#aaff55",
     "rgb": [
       170,
@@ -1104,7 +1104,7 @@
     ]
   },
   {
-    "name": "EGA AAFFAA",
+    "name": "very light vivid green",
     "hex": "#aaffaa",
     "rgb": [
       170,
@@ -1128,7 +1128,7 @@
     ]
   },
   {
-    "name": "EGA AAFFFF",
+    "name": "very light vivid cyan",
     "hex": "#aaffff",
     "rgb": [
       170,
@@ -1152,7 +1152,7 @@
     ]
   },
   {
-    "name": "EGA FF0000",
+    "name": "red",
     "hex": "#ff0000",
     "rgb": [
       255,
@@ -1176,7 +1176,7 @@
     ]
   },
   {
-    "name": "EGA FF0055",
+    "name": "medium vivid red",
     "hex": "#ff0055",
     "rgb": [
       255,
@@ -1200,7 +1200,7 @@
     ]
   },
   {
-    "name": "EGA FF00AA",
+    "name": "medium vivid magenta",
     "hex": "#ff00aa",
     "rgb": [
       255,
@@ -1224,7 +1224,7 @@
     ]
   },
   {
-    "name": "EGA FF00FF",
+    "name": "magenta",
     "hex": "#ff00ff",
     "rgb": [
       255,
@@ -1248,7 +1248,7 @@
     ]
   },
   {
-    "name": "EGA FF5500",
+    "name": "medium vivid redish orange",
     "hex": "#ff5500",
     "rgb": [
       255,
@@ -1272,7 +1272,7 @@
     ]
   },
   {
-    "name": "EGA FF5555",
+    "name": "light vivid pink",
     "hex": "#ff5555",
     "rgb": [
       255,
@@ -1296,7 +1296,7 @@
     ]
   },
   {
-    "name": "EGA FF55AA",
+    "name": "light vivid magenta",
     "hex": "#ff55aa",
     "rgb": [
       255,
@@ -1320,7 +1320,7 @@
     ]
   },
   {
-    "name": "EGA FF55FF",
+    "name": "light vivid purple",
     "hex": "#ff55ff",
     "rgb": [
       255,
@@ -1344,7 +1344,7 @@
     ]
   },
   {
-    "name": "EGA FFAA00",
+    "name": "light vivid yellow",
     "hex": "#ffaa00",
     "rgb": [
       255,
@@ -1368,7 +1368,7 @@
     ]
   },
   {
-    "name": "EGA FFAA55",
+    "name": "light vivid orange",
     "hex": "#ffaa55",
     "rgb": [
       255,
@@ -1392,7 +1392,7 @@
     ]
   },
   {
-    "name": "EGA FFAAAA",
+    "name": "light vivid pink",
     "hex": "#ffaaaa",
     "rgb": [
       255,
@@ -1416,7 +1416,7 @@
     ]
   },
   {
-    "name": "EGA FFAAFF",
+    "name": "very light vivid purple",
     "hex": "#ffaaff",
     "rgb": [
       255,
@@ -1440,7 +1440,7 @@
     ]
   },
   {
-    "name": "EGA FFFF00",
+    "name": "yellow",
     "hex": "#ffff00",
     "rgb": [
       255,
@@ -1464,7 +1464,7 @@
     ]
   },
   {
-    "name": "EGA FFFF55",
+    "name": "very light vivid yellow",
     "hex": "#ffff55",
     "rgb": [
       255,
@@ -1488,7 +1488,7 @@
     ]
   },
   {
-    "name": "EGA FFFFAA",
+    "name": "very light vivid yellow",
     "hex": "#ffffaa",
     "rgb": [
       255,
@@ -1512,7 +1512,7 @@
     ]
   },
   {
-    "name": "EGA FFFFFF",
+    "name": "white",
     "hex": "#ffffff",
     "rgb": [
       255,

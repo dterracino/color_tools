@@ -1,6 +1,6 @@
 [
   {
-    "name": "Black",
+    "name": "black",
     "hex": "#000000",
     "rgb": [
       0,
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "name": "Light Cyan",
+    "name": "very light vivid cyan",
     "hex": "#55ffff",
     "rgb": [
       85,
@@ -48,7 +48,7 @@
     ]
   },
   {
-    "name": "Light Magenta",
+    "name": "light vivid purple",
     "hex": "#ff55ff",
     "rgb": [
       255,
@@ -72,7 +72,7 @@
     ]
   },
   {
-    "name": "Bright White",
+    "name": "white",
     "hex": "#ffffff",
     "rgb": [
       255,

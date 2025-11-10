@@ -1,6 +1,6 @@
 [
   {
-    "name": "Black",
+    "name": "black",
     "hex": "#000000",
     "rgb": [
       0,
@@ -24,7 +24,7 @@
     ]
   },
   {
-    "name": "Blue",
+    "name": "very dark vivid navy",
     "hex": "#0000aa",
     "rgb": [
       0,
@@ -48,7 +48,7 @@
     ]
   },
   {
-    "name": "Green",
+    "name": "light vivid green",
     "hex": "#00aa00",
     "rgb": [
       0,
@@ -72,7 +72,7 @@
     ]
   },
   {
-    "name": "Cyan",
+    "name": "light vivid cyan",
     "hex": "#00aaaa",
     "rgb": [
       0,
@@ -96,7 +96,7 @@
     ]
   },
   {
-    "name": "Red",
+    "name": "dark vivid red",
     "hex": "#aa0000",
     "rgb": [
       170,
@@ -120,7 +120,7 @@
     ]
   },
   {
-    "name": "Magenta",
+    "name": "medium vivid purple",
     "hex": "#aa00aa",
     "rgb": [
       170,
@@ -144,7 +144,7 @@
     ]
   },
   {
-    "name": "Brown",
+    "name": "medium vivid orange",
     "hex": "#aa5500",
     "rgb": [
       170,
@@ -168,7 +168,7 @@
     ]
   },
   {
-    "name": "Light Gray",
+    "name": "near darkgray",
     "hex": "#aaaaaa",
     "rgb": [
       170,
@@ -192,7 +192,7 @@
     ]
   },
   {
-    "name": "Dark Gray",
+    "name": "dark gray",
     "hex": "#555555",
     "rgb": [
       85,
@@ -216,7 +216,7 @@
     ]
   },
   {
-    "name": "Light Blue",
+    "name": "medium vivid blue",
     "hex": "#5555ff",
     "rgb": [
       85,
@@ -240,7 +240,7 @@
     ]
   },
   {
-    "name": "Light Green",
+    "name": "very light vivid green",
     "hex": "#55ff55",
     "rgb": [
       85,
@@ -264,7 +264,7 @@
     ]
   },
   {
-    "name": "Light Cyan",
+    "name": "very light vivid cyan",
     "hex": "#55ffff",
     "rgb": [
       85,
@@ -288,7 +288,7 @@
     ]
   },
   {
-    "name": "Light Red",
+    "name": "light vivid pink",
     "hex": "#ff5555",
     "rgb": [
       255,
@@ -312,7 +312,7 @@
     ]
   },
   {
-    "name": "Light Magenta",
+    "name": "light vivid purple",
     "hex": "#ff55ff",
     "rgb": [
       255,
@@ -336,7 +336,7 @@
     ]
   },
   {
-    "name": "Yellow",
+    "name": "very light vivid yellow",
     "hex": "#ffff55",
     "rgb": [
       255,
@@ -360,7 +360,7 @@
     ]
   },
   {
-    "name": "White",
+    "name": "white",
     "hex": "#ffffff",
     "rgb": [
       255,

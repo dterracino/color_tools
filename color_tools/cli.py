@@ -74,6 +74,10 @@ Examples:
   # Find color by name
   {prog_name} color --name "coral"
   
+  # Generate descriptive name for an RGB color
+  {prog_name} name --value 255 128 64
+  {prog_name} name --value 200 100 50 --show-type
+  
   # Find nearest filament to an RGB color
   {prog_name} filament --nearest --value 255 0 0
   
@@ -297,6 +301,34 @@ Examples:
         help="Check if LAB/LCH color is in sRGB gamut (requires --value)"
     )
     
+    # ==================== NAME SUBCOMMAND ====================
+    name_parser = subparsers.add_parser(
+        "name",
+        help="Generate descriptive color names from RGB values",
+        description="Generate intelligent, descriptive names for colors using perceptual analysis"
+    )
+    
+    name_parser.add_argument(
+        "--value",
+        nargs=3,
+        type=int,
+        metavar=("R", "G", "B"),
+        required=True,
+        help="RGB color value (0-255 for each component)"
+    )
+    name_parser.add_argument(
+        "--threshold",
+        type=float,
+        default=5.0,
+        metavar="DELTA_E",
+        help="Delta E threshold for 'near' CSS color matches (default: 5.0)"
+    )
+    name_parser.add_argument(
+        "--show-type",
+        action="store_true",
+        help="Show match type (exact/near/generated) in output"
+    )
+    
     # Parse arguments
     args = parser.parse_args()
     
@@ -326,7 +358,7 @@ Examples:
             for error in errors:
                 print(f"  {error}", file=sys.stderr)
             sys.exit(1)
-        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json)")
+        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 6 palettes)")
     
     # If only verifying (no other command), exit after success
     if (args.verify_constants or args.verify_data) and not args.command:
@@ -532,4 +564,25 @@ Examples:
         # If we get here, no valid convert operation was specified
         convert_parser.print_help()
         sys.exit(0)
+    
+    # ==================== NAME COMMAND HANDLER ====================
+    elif args.command == "name":
+        from .naming import generate_color_name
+        
+        # Validate RGB values
+        r, g, b = args.value
+        if not all(0 <= v <= 255 for v in [r, g, b]):
+            print("Error: RGB values must be in range 0-255")
+            sys.exit(2)
+        
+        rgb = (r, g, b)
+        name, match_type = generate_color_name(rgb, near_threshold=args.threshold)
+        
+        if args.show_type:
+            print(f"{name} ({match_type})")
+        else:
+            print(name)
+        
+        sys.exit(0)
+
 

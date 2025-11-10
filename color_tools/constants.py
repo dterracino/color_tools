@@ -165,8 +165,11 @@ class ColorConstants:
     
     # This hash is computed once when the constants are known to be correct
     # Computed hash of all color science constants (SHA-256)
-    # Updated after adding other_names field to FilamentRecord
-    _EXPECTED_HASH = "3713f9c8973181329ffc3477ddfa07d342dedaacb254a76214a4cc8eba6f1f5b"
+    # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
+    # using the _compute_hash() method, NOT from the entire file contents.
+    # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
+    # Updated after regenerating palette file hashes with improved naming
+    _EXPECTED_HASH = "5489d9698ba2663cd2a4e9837b8b648bd93d58a6f56a54c3861d49d82df5b6f9"
     
     # ========================================================================
     # Data File Integrity Hashes
@@ -177,6 +180,14 @@ class ColorConstants:
     COLORS_JSON_HASH = "3ba4ebb50dc7d437e35855870f701f544c4222726d4891e54dcc90a231976abd"
     FILAMENTS_JSON_HASH = "2107cfdf636c25493636793d8a843d962cee6275db6a86d160bed0376747313a"
     MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
+    
+    # Palette file hashes
+    CGA4_PALETTE_HASH = "5b4333bd529d608ce41b4e67e0219e39fb9ac6b7545db7848a5330cebc291b57"
+    CGA16_PALETTE_HASH = "bf6e25e3a98fafa3ec3bfadb10316e607b454e9f01312477261f7fb90633e7f0"
+    EGA16_PALETTE_HASH = "bf6e25e3a98fafa3ec3bfadb10316e607b454e9f01312477261f7fb90633e7f0"
+    EGA64_PALETTE_HASH = "5f557a70e5d7348de3f0cdf1fefa1071475e3a1e5c053fcd3c97cc3fe46d3b10"
+    VGA_PALETTE_HASH = "8966324e8328e737e8cb4b0007362028b83cb727e066bf82adee3cee615874d6"
+    WEB_PALETTE_HASH = "10e9201e08719e5e6ece6584f1e2aadf519a33a7b5123928e77f85b5f3beaccb"
     
     # User data files (optional, not verified)
     USER_COLORS_JSON_FILENAME = "user-colors.json"
@@ -243,6 +254,22 @@ class ColorConstants:
         synonyms_path = data_dir / cls.MAKER_SYNONYMS_JSON_FILENAME
         if not cls.verify_data_file(synonyms_path, cls.MAKER_SYNONYMS_JSON_HASH):
             errors.append(f"maker_synonyms.json integrity check FAILED: {synonyms_path}")
+        
+        # Verify palette files
+        palettes_dir = data_dir / "palettes"
+        palette_checks = [
+            ("cga4.json", cls.CGA4_PALETTE_HASH),
+            ("cga16.json", cls.CGA16_PALETTE_HASH),
+            ("ega16.json", cls.EGA16_PALETTE_HASH),
+            ("ega64.json", cls.EGA64_PALETTE_HASH),
+            ("vga.json", cls.VGA_PALETTE_HASH),
+            ("web.json", cls.WEB_PALETTE_HASH),
+        ]
+        
+        for palette_file, expected_hash in palette_checks:
+            palette_path = palettes_dir / palette_file
+            if not cls.verify_data_file(palette_path, expected_hash):
+                errors.append(f"{palette_file} integrity check FAILED: {palette_path}")
         
         return (len(errors) == 0, errors)
 
