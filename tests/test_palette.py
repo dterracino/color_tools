@@ -724,24 +724,24 @@ class TestParseColorRecords(unittest.TestCase):
         self.assertIn("index 0", error_msg)
     
     def test_non_numeric_rgb_values_raises_value_error(self):
-        """Test that RGB values are accepted as-is (type validation happens later)."""
-        # Note: The parser doesn't validate RGB value types - it accepts whatever is in the array
-        # This is by design - RGB values are used as-is from the JSON
+        """Test that non-numeric RGB values raise ValueError with context."""
         data = [
             {
                 "name": "Red",
                 "hex": "#FF0000",
-                "rgb": ["not", "a", "number"],  # Strings are accepted
+                "rgb": ["not", "a", "number"],  # Invalid RGB values
                 "hsl": [0.0, 100.0, 50.0],
                 "lab": [53.24, 80.09, 67.20],
                 "lch": [53.24, 104.55, 39.99]
             }
         ]
-        # This should parse without error (validation happens elsewhere)
-        records = _parse_color_records(data, "test.json")
-        self.assertEqual(len(records), 1)
-        # RGB is stored as-is
-        self.assertEqual(records[0].rgb, ("not", "a", "number"))
+        # RGB values are now validated early to provide better error messages
+        with self.assertRaises(ValueError) as context:
+            _parse_color_records(data, "test.json")
+        
+        error_msg = str(context.exception)
+        self.assertIn("index 0", error_msg)
+        self.assertIn("test.json", error_msg)
     
     def test_non_numeric_hsl_values_raises_value_error(self):
         """Test that non-numeric HSL values raise ValueError."""
@@ -858,6 +858,39 @@ class TestParseColorRecords(unittest.TestCase):
         ]
         records = _parse_color_records(data, "test.json")
         self.assertEqual(records[0].hsl, (0.5, 99.9, 50.1))
+    
+    def test_rgb_validation_prevents_late_failure_in_nearest_color(self):
+        """
+        Test that RGB validation in _parse_color_records prevents late failures
+        in nearest_color with proper error context.
+        
+        This is a regression test for the issue where non-numeric RGB values
+        were not validated early, causing ValueError in nearest_color without
+        file/index context.
+        """
+        # Create data with invalid RGB values
+        data = [
+            {
+                "name": "Invalid Color",
+                "hex": "#FF0000",
+                "rgb": ["string", "values", "here"],  # Invalid!
+                "hsl": [0.0, 100.0, 50.0],
+                "lab": [53.24, 80.09, 67.20],
+                "lch": [53.24, 104.55, 39.99]
+            }
+        ]
+        
+        # Should fail early in _parse_color_records with context
+        with self.assertRaises(ValueError) as context:
+            _parse_color_records(data, "test_colors.json")
+        
+        # Error message should include file name and index
+        error_msg = str(context.exception)
+        self.assertIn("test_colors.json", error_msg)
+        self.assertIn("index 0", error_msg)
+        
+        # The old behavior would have allowed this to pass _parse_color_records
+        # and only fail later in Palette.nearest_color() without context
 
 
 if __name__ == '__main__':

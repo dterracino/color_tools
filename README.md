@@ -66,7 +66,13 @@ Color Tools can be used in three ways:
 Import and use color_tools functions in your Python code:
 
 ```python
-from color_tools import rgb_to_lab, delta_e_2000, Palette, FilamentPalette
+from color_tools import rgb_to_lab, delta_e_2000, Palette, FilamentPalette, hex_to_rgb
+
+# Convert hex to RGB (supports both 3-char and 6-char hex codes)
+rgb1 = hex_to_rgb("#FF8040")  # 6-character hex
+rgb2 = hex_to_rgb("#F80")     # 3-character hex (expanded to #FF8800)
+print(f"6-char hex RGB: {rgb1}")  # RGB: (255, 128, 64)
+print(f"3-char hex RGB: {rgb2}")  # RGB: (255, 136, 0)
 
 # Convert RGB to LAB color space
 lab = rgb_to_lab((255, 128, 64))
@@ -119,7 +125,7 @@ print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 - `rgb_to_lch()`, `lch_to_rgb()` - RGB ↔ LCH conversion  
 - `rgb_to_hsl()`, `hsl_to_rgb()` - RGB ↔ HSL conversion (0-360, 0-100, 0-100 range)
 - `rgb_to_winhsl()` - RGB → Windows HSL (0-240, 0-240, 0-240 range)
-- `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion
+- `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion (supports both 3-char and 6-char hex codes)
 - `lab_to_lch()`, `lch_to_lab()` - LAB ↔ LCH conversion
 - `rgb_to_xyz()`, `xyz_to_rgb()` - RGB ↔ XYZ conversion (CIE standard)
 - `xyz_to_lab()`, `lab_to_xyz()` - XYZ ↔ LAB conversion (for advanced use)

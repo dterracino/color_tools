@@ -42,6 +42,48 @@ class TestHexRGBConversions(unittest.TestCase):
         self.assertEqual(hex_to_rgb("#ff0000"), (255, 0, 0))
         self.assertEqual(hex_to_rgb("ff0000"), (255, 0, 0))
     
+    def test_hex_to_rgb_3char(self):
+        """Test 3-character hex to RGB conversion."""
+        # Basic 3-character hex codes
+        self.assertEqual(hex_to_rgb("#F00"), (255, 0, 0))
+        self.assertEqual(hex_to_rgb("#0F0"), (0, 255, 0))
+        self.assertEqual(hex_to_rgb("#00F"), (0, 0, 255))
+        self.assertEqual(hex_to_rgb("#FFF"), (255, 255, 255))
+        self.assertEqual(hex_to_rgb("#000"), (0, 0, 0))
+        
+        # 3-character hex without # prefix
+        self.assertEqual(hex_to_rgb("F00"), (255, 0, 0))
+        self.assertEqual(hex_to_rgb("0F0"), (0, 255, 0))
+        
+        # Lowercase 3-character hex
+        self.assertEqual(hex_to_rgb("#f00"), (255, 0, 0))
+        self.assertEqual(hex_to_rgb("abc"), (170, 187, 204))
+        
+        # Mixed case
+        self.assertEqual(hex_to_rgb("#AbC"), (170, 187, 204))
+        
+        # Specific example from issue: #24c -> #2244cc
+        self.assertEqual(hex_to_rgb("#24c"), (34, 68, 204))
+        self.assertEqual(hex_to_rgb("#24C"), (34, 68, 204))
+        self.assertEqual(hex_to_rgb("24c"), (34, 68, 204))
+        
+        # Verify expansion logic: each character is duplicated
+        # #rgb -> #rrggbb
+        self.assertEqual(hex_to_rgb("#123"), (17, 34, 51))  # 0x11, 0x22, 0x33
+        self.assertEqual(hex_to_rgb("#456"), (68, 85, 102))  # 0x44, 0x55, 0x66
+    
+    def test_hex_to_rgb_invalid(self):
+        """Test invalid hex codes return None."""
+        # Wrong length
+        self.assertIsNone(hex_to_rgb("#12"))
+        self.assertIsNone(hex_to_rgb("#12345"))
+        self.assertIsNone(hex_to_rgb("#1234567"))
+        
+        # Invalid characters
+        self.assertIsNone(hex_to_rgb("#GGG"))
+        self.assertIsNone(hex_to_rgb("#GGGGGG"))
+        self.assertIsNone(hex_to_rgb("#XYZ"))
+    
     def test_rgb_to_hex_basic(self):
         """Test basic RGB to hex conversion."""
         self.assertEqual(rgb_to_hex((255, 0, 0)), "#FF0000")
