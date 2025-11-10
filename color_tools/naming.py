@@ -361,8 +361,10 @@ def generate_color_name(
     if css_match:
         return (css_match.name, "exact")
     
-    # Step 2: Check for near match
-    nearest_css, distance = palette.nearest_color(rgb, space="rgb", metric="de2000")
+    # Step 2: Check for near match (using perceptual Delta E in LAB space)
+    # Convert RGB to LAB for perceptual distance calculation
+    lab = rgb_to_lab(rgb)
+    nearest_css, distance = palette.nearest_color(lab, space="lab", metric="de2000")
     if distance < near_threshold:
         # Check if this is a unique claim
         if is_unique_near_claim(rgb, nearest_css.name, palette_colors, near_threshold):
@@ -370,7 +372,7 @@ def generate_color_name(
     
     # Step 3: Generate descriptive name
     h, s, l_hsl = rgb_to_hsl(rgb)
-    lab = rgb_to_lab(rgb)
+    # LAB already calculated above for near-match check
     l_lab = lab[0]  # Use LAB L* for lightness (more perceptually uniform)
     
     # Check for achromatic (grays)
