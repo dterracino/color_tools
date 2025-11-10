@@ -1,258 +1,5 @@
 [
   {
-    "id": "bambu-lab-petg-hf-black",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Black",
-    "hex": "#000000",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-blue",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Blue",
-    "hex": "#002E96",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-cream",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Cream",
-    "hex": "#F9DFB9",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-dark-gray",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Dark Gray",
-    "hex": "#515151",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-forest-green",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Forest Green",
-    "hex": "#39541A",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-gray",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Gray",
-    "hex": "#ADB1B2",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-green",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Green",
-    "hex": "#00AE42",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-lake-blue",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Lake Blue",
-    "hex": "#1F79E5",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-lime-green",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Lime Green",
-    "hex": "#6EE53C",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-orange",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Orange",
-    "hex": "#F75403",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-peanut-brown",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Peanut Brown",
-    "hex": "#875718",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-red",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Red",
-    "hex": "#EB3A3A",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-white",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "White",
-    "hex": "#FFFFFF",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-hf-yellow",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "HF",
-    "color": "Yellow",
-    "hex": "#FFD00B",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-brown",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Brown",
-    "hex": "#C9A381",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-gray",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Gray",
-    "hex": "#8E8E8E",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-light-blue",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Light Blue",
-    "hex": "#61B0FF",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-olive",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Olive",
-    "hex": "#748C45",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-orange",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Orange",
-    "hex": "#FF911A",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-pink",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Pink",
-    "hex": "#F9C1BD",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-purple",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Purple",
-    "hex": "#D6ABFF",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-translucent-translucent-teal",
-    "maker": "Bambu Lab",
-    "type": "PETG",
-    "finish": "Translucent",
-    "color": "Translucent Teal",
-    "hex": "#77EDD7",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-cf-black",
-    "maker": "Bambu Lab",
-    "type": "PETG-CF",
-    "finish": null,
-    "color": "Black",
-    "hex": "#000000",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-cf-brick-red",
-    "maker": "Bambu Lab",
-    "type": "PETG-CF",
-    "finish": null,
-    "color": "Brick Red",
-    "hex": "#9F332A",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-cf-indigo-blue",
-    "maker": "Bambu Lab",
-    "type": "PETG-CF",
-    "finish": null,
-    "color": "Indigo Blue",
-    "hex": "#324585",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-cf-malachite-green",
-    "maker": "Bambu Lab",
-    "type": "PETG-CF",
-    "finish": null,
-    "color": "Malachite Green",
-    "hex": "#16B08E",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-cf-titan-gray",
-    "maker": "Bambu Lab",
-    "type": "PETG-CF",
-    "finish": null,
-    "color": "Titan Gray",
-    "hex": "#565656",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-petg-cf-violet-purple",
-    "maker": "Bambu Lab",
-    "type": "PETG-CF",
-    "finish": null,
-    "color": "Violet Purple",
-    "hex": "#583061",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-basic-bambu-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -261,7 +8,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-beige",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -270,7 +16,6 @@
     "td_value": 3.4
   },
   {
-    "id": "bambu-lab-pla-basic-black",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -279,7 +24,6 @@
     "td_value": 0.1
   },
   {
-    "id": "bambu-lab-pla-basic-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -288,7 +32,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-basic-blue-grey",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -297,7 +40,6 @@
     "td_value": 3.1
   },
   {
-    "id": "bambu-lab-pla-basic-bright-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -306,7 +48,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-bronze",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -315,7 +56,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-brown",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -324,7 +64,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-cobalt-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -333,7 +72,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-basic-cocoa-brown",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -342,7 +80,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-cyan",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -351,7 +88,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-basic-dark-gray",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -360,7 +96,6 @@
     "td_value": 0.1
   },
   {
-    "id": "bambu-lab-pla-basic-gold",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -369,7 +104,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-basic-gray",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -378,7 +112,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-hot-pink",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -387,7 +120,6 @@
     "td_value": 8
   },
   {
-    "id": "bambu-lab-pla-basic-indigo-purple",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -396,7 +128,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-basic-jade-white",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -405,7 +136,6 @@
     "td_value": 6.1
   },
   {
-    "id": "bambu-lab-pla-basic-light-gray",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -414,7 +144,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-basic-magenta",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -423,7 +152,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-basic-maroon-red",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -432,7 +160,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-basic-mistletoe-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -441,7 +168,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-basic-orange",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -450,7 +176,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-basic-pink",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -459,7 +184,6 @@
     "td_value": 8
   },
   {
-    "id": "bambu-lab-pla-basic-pumpkin-orange",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -468,7 +192,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-basic-purple",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -477,7 +200,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-basic-red",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -486,7 +208,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-basic-silver",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -495,7 +216,6 @@
     "td_value": 0.5
   },
   {
-    "id": "bambu-lab-pla-basic-sunflower-yellow",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -504,7 +224,6 @@
     "td_value": 6
   },
   {
-    "id": "bambu-lab-pla-basic-turquoise",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -513,7 +232,6 @@
     "td_value": 1.4
   },
   {
-    "id": "bambu-lab-pla-basic-yellow",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic",
@@ -522,7 +240,6 @@
     "td_value": 6
   },
   {
-    "id": "bambu-lab-pla-matte-apple-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -531,7 +248,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-matte-ash-gray",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -540,7 +256,6 @@
     "td_value": 1.5
   },
   {
-    "id": "bambu-lab-pla-matte-bone-white",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -549,7 +264,6 @@
     "td_value": 6.1
   },
   {
-    "id": "bambu-lab-pla-matte-caramel",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -558,7 +272,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-matte-dark-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -567,7 +280,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-dark-brown",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -576,7 +288,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-matte-dark-chocolate",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -585,7 +296,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-matte-dark-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -594,7 +304,6 @@
     "td_value": 0.1
   },
   {
-    "id": "bambu-lab-pla-matte-dark-red",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -603,7 +312,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-desert-tan",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -612,7 +320,6 @@
     "td_value": 1
   },
   {
-    "id": "bambu-lab-pla-matte-grass-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -621,7 +328,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-matte-ice-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -630,7 +336,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-ivory-white",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -639,7 +344,6 @@
     "td_value": 6.1
   },
   {
-    "id": "bambu-lab-pla-matte-latte-brown",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -648,7 +352,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-matte-lemon-yellow",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -657,7 +360,6 @@
     "td_value": 6
   },
   {
-    "id": "bambu-lab-pla-matte-lilac-purple",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -666,7 +368,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-matte-mandarin-orange",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -675,7 +376,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-matte-marine-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -684,7 +384,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-nardo-gray",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -693,7 +392,6 @@
     "td_value": 0.7
   },
   {
-    "id": "bambu-lab-pla-matte-plum",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -702,7 +400,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-sakura-pink",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -711,7 +408,6 @@
     "td_value": 8
   },
   {
-    "id": "bambu-lab-pla-matte-scarlet-red",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -720,7 +416,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-sky-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -729,7 +424,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-matte-terracotta",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Matte",
@@ -738,7 +432,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-silk-plus-baby-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -747,7 +440,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-silk-plus-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -756,7 +448,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-silk-plus-candy-green",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -765,7 +456,6 @@
     "td_value": 2
   },
   {
-    "id": "bambu-lab-pla-silk-plus-candy-red",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -774,7 +464,6 @@
     "td_value": 0.7
   },
   {
-    "id": "bambu-lab-pla-silk-plus-champagne",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -783,7 +472,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-silk-plus-gold",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -792,7 +480,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-silk-plus-mint",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -801,7 +488,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-silk-plus-pink",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -810,7 +496,6 @@
     "td_value": 8
   },
   {
-    "id": "bambu-lab-pla-silk-plus-purple",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -819,7 +504,6 @@
     "td_value": 3
   },
   {
-    "id": "bambu-lab-pla-silk-plus-rose-gold",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -828,7 +512,6 @@
     "td_value": 5
   },
   {
-    "id": "bambu-lab-pla-silk-plus-silver",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -837,7 +520,6 @@
     "td_value": 0.5
   },
   {
-    "id": "bambu-lab-pla-silk-plus-titan-gray",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -846,7 +528,6 @@
     "td_value": 4
   },
   {
-    "id": "bambu-lab-pla-silk-plus-white",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Silk+",
@@ -855,97 +536,6 @@
     "td_value": 6.1
   },
   {
-    "id": "bambu-lab-pla-translucent-blue",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Blue",
-    "hex": "#0047BB",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-cherry-pink",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Cherry Pink",
-    "hex": "#F5B6CD",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-ice-blue",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Ice Blue",
-    "hex": "#B8CDE9",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-lavender",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Lavender",
-    "hex": "#B8ACD6",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-light-jade",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Light Jade",
-    "hex": "#96D8AF",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-mellow-yellow",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Mellow Yellow",
-    "hex": "#F5DBAB",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-orange",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Orange",
-    "hex": "#F74E02",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-purple",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Purple",
-    "hex": "#8344B0",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-red",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Red",
-    "hex": "#B50011",
-    "td_value": null
-  },
-  {
-    "id": "bambu-lab-pla-translucent-teal",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Translucent",
-    "color": "Teal",
-    "hex": "#009FA1",
-    "td_value": null
-  },
-  {
-    "id": "elegoo-pla-basic-black",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -954,7 +544,6 @@
     "td_value": 0.6
   },
   {
-    "id": "elegoo-pla-basic-clear",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -963,7 +552,6 @@
     "td_value": 100.0
   },
   {
-    "id": "elegoo-pla-basic-galaxy-black",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -972,7 +560,6 @@
     "td_value": 0.5
   },
   {
-    "id": "elegoo-pla-basic-galaxy-purple",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -981,7 +568,6 @@
     "td_value": 5.5
   },
   {
-    "id": "elegoo-pla-basic-grey",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -990,7 +576,6 @@
     "td_value": 5
   },
   {
-    "id": "elegoo-pla-basic-peacock-blue",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -999,7 +584,6 @@
     "td_value": 1.9
   },
   {
-    "id": "elegoo-pla-basic-sky-blue",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -1008,7 +592,6 @@
     "td_value": 2.1
   },
   {
-    "id": "elegoo-pla-basic-white",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Basic",
@@ -1017,7 +600,6 @@
     "td_value": 5.2
   },
   {
-    "id": "elegoo-pla-silk-black-red",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Silk",
@@ -1026,7 +608,6 @@
     "td_value": 0.6
   },
   {
-    "id": "elegoo-pla-silk-coral-pink",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Silk",
@@ -1035,7 +616,6 @@
     "td_value": 2.0
   },
   {
-    "id": "elegoo-pla-silk-gold",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Silk",
@@ -1044,7 +624,6 @@
     "td_value": 2.7
   },
   {
-    "id": "elegoo-pla-silk-redgreen",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Silk",
@@ -1053,7 +632,6 @@
     "td_value": 0.8
   },
   {
-    "id": "elegoo-pla-silk-silver",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": "Silk",
@@ -1062,7 +640,6 @@
     "td_value": 0.5
   },
   {
-    "id": "elegoo-pla-pro-basic-purple",
     "maker": "Elegoo",
     "type": "PLA Pro",
     "finish": "Basic",
@@ -1071,7 +648,6 @@
     "td_value": 1.8
   },
   {
-    "id": "elegoo-pla-plus-basic-black",
     "maker": "Elegoo",
     "type": "PLA+",
     "finish": "Basic",
@@ -1080,7 +656,6 @@
     "td_value": 0.2
   },
   {
-    "id": "elegoo-pla-plus-basic-orange",
     "maker": "Elegoo",
     "type": "PLA+",
     "finish": "Basic",
@@ -1089,7 +664,6 @@
     "td_value": 5.0
   },
   {
-    "id": "elegoo-pla-plus-basic-purple",
     "maker": "Elegoo",
     "type": "PLA+",
     "finish": "Basic",
@@ -1098,1393 +672,1108 @@
     "td_value": 2.0
   },
   {
-    "id": "panchroma-cope-aqua-blue",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Aqua Blue",
     "hex": "#5EBDDB",
-    "td_value": null
+    "td_value": 2.3
   },
   {
-    "id": "panchroma-cope-beige",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Beige",
     "hex": "#C2AB72",
-    "td_value": null
+    "td_value": 1.5
   },
   {
-    "id": "panchroma-cope-black",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Black",
     "hex": "#080A0D",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "panchroma-cope-blue",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
-    "color": "Blue",
-    "hex": "#003776",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-cope-brown",
-    "maker": "Panchroma",
-    "type": "CoPE",
-    "finish": null,
     "color": "Brown",
     "hex": "#55331A",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-cope-cold-white",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Cold White",
     "hex": "#D9DFE5",
-    "td_value": null
+    "td_value": 1.5
   },
   {
-    "id": "panchroma-cope-cream",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Cream",
     "hex": "#EED1A8",
-    "td_value": null
+    "td_value": 2.8
   },
   {
-    "id": "panchroma-cope-dark-grey",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Dark Grey",
     "hex": "#485259",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-cope-green",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Green",
     "hex": "#06924D",
-    "td_value": null
+    "td_value": 1.3
   },
   {
-    "id": "panchroma-cope-jungle-green",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Jungle Green",
     "hex": "#4E742D",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "panchroma-cope-lime-green",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
-    "color": "Lime Green",
-    "hex": "#D5D701",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-cope-magenta",
-    "maker": "Panchroma",
-    "type": "CoPE",
-    "finish": null,
     "color": "Magenta",
     "hex": "#F24574",
-    "td_value": null
+    "td_value": 3.5
   },
   {
-    "id": "panchroma-cope-olive-drab-green",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Olive Drab Green",
     "hex": "#575B54",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "panchroma-cope-olive-green",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Olive Green",
     "hex": "#948902",
-    "td_value": null
+    "td_value": 0.2
   },
   {
-    "id": "panchroma-cope-orange",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Orange",
     "hex": "#F67405",
-    "td_value": null
+    "td_value": 4.6
   },
   {
-    "id": "panchroma-cope-pink",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Pink",
     "hex": "#F1A1AF",
-    "td_value": null
+    "td_value": 2.9
   },
   {
-    "id": "panchroma-cope-polymaker-teal",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Polymaker Teal",
     "hex": "#4CC0C7",
-    "td_value": null
+    "td_value": 1.1
   },
   {
-    "id": "panchroma-cope-purple",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Purple",
     "hex": "#6C47B2",
-    "td_value": null
+    "td_value": 0.9
   },
   {
-    "id": "panchroma-cope-red",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Red",
     "hex": "#E72F1D",
-    "td_value": null
+    "td_value": 2.7
   },
   {
-    "id": "panchroma-cope-steel-grey",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Steel Grey",
     "hex": "#616469",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "panchroma-cope-stone-blue",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Stone Blue",
     "hex": "#487BA2",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "panchroma-cope-tan",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Tan",
     "hex": "#A79E82",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-cope-white",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "White",
     "hex": "#EBF7FF",
-    "td_value": null
+    "td_value": 3.0
   },
   {
-    "id": "panchroma-cope-wine-red",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Wine Red",
     "hex": "#D60212",
-    "td_value": null
+    "td_value": 2.2
   },
   {
-    "id": "panchroma-cope-yellow",
     "maker": "Panchroma",
     "type": "CoPE",
-    "finish": null,
     "color": "Yellow",
     "hex": "#FFE800",
-    "td_value": null
+    "td_value": 3.5
   },
   {
-    "id": "panchroma-pla-celestial-celestial-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Celestial",
     "color": "Celestial Blue",
     "hex": "#6ADCF7",
-    "td_value": null
+    "td_value": 6.3
   },
   {
-    "id": "panchroma-pla-celestial-celestial-purple",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Celestial",
-    "color": "Celestial Purple",
-    "hex": "#9678C8",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-dual-matte-matte-camouflage-dark-green-brown",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Camouflage (Dark Green-Brown)",
-    "hex": "#5F6244-#795A4D",
-    "td_value": null
+    "hex": "#5F6244-#795A4D"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-chameleon-teal-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Chameleon (Teal-Yellow)",
-    "hex": "#61BCC3-#F3C432",
-    "td_value": null
+    "hex": "#61BCC3-#F3C432"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-flamingo-pink-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Flamingo (Pink-Red)",
-    "hex": "#EAADBD-#ED2F2E",
-    "td_value": null
+    "hex": "#EAADBD-#ED2F2E"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-foggy-orange-grey-orange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Foggy Orange (Grey-Orange)",
-    "hex": "#8A8C94-#F88B17",
-    "td_value": null
+    "hex": "#8A8C94-#F88B17"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-foggy-purple-grey-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Foggy Purple (Grey-Purple)",
-    "hex": "#8A8C94-#9572BF",
-    "td_value": null
+    "hex": "#8A8C94-#9572BF"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-glacier-blue-ice-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Glacier Blue (Ice-Blue)",
-    "hex": "#A4D0DF-#0163A6",
-    "td_value": null
+    "hex": "#A4D0DF-#0163A6"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-shadow-black-white-black",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Dual Matte",
-    "color": "Matte Shadow Black (White-Black)",
-    "hex": "#F4EFEB-#2F2E30",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-dual-matte-matte-shadow-orange-orange-black",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Shadow Orange (Orange-Black)",
-    "hex": "#F88B17-#2F2E30",
-    "td_value": null
+    "hex": "#F88B17-#2F2E30"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-shadow-red-black-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Shadow Red (Black-Red)",
-    "hex": "#2F2E30-#ED2F2E",
-    "td_value": null
+    "hex": "#2F2E30-#ED2F2E"
   },
   {
-    "id": "panchroma-pla-dual-matte-matte-sunrise-red-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Matte",
     "color": "Matte Sunrise (Red-Yellow)",
-    "hex": "#ED2F2E-#F3C432",
-    "td_value": null
+    "hex": "#ED2F2E-#F3C432"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-aubergine-lime-magenta",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Aubergine (Lime-Magenta)",
-    "hex": "#C4CF4C-#AA538E",
-    "td_value": null
+    "hex": "#C4CF4C-#AA538E"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-banquet-gold-magenta",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Banquet (Gold-Magenta)",
-    "hex": "#C49449-#AA538E",
-    "td_value": null
+    "hex": "#C49449-#AA538E"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-beluga-silver-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Beluga (Silver-Blue)",
-    "hex": "#BCC2C8-#4999C9",
-    "td_value": null
+    "hex": "#BCC2C8-#4999C9"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-caribbean-sea-blue-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Caribbean Sea (Blue-Green)",
-    "hex": "#4999C9-#55B687",
-    "td_value": null
+    "hex": "#4999C9-#55B687"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-chameleon-yellow-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Chameleon (Yellow-Blue)",
-    "hex": "#EEC810-#4999C9",
-    "td_value": null
+    "hex": "#EEC810-#4999C9"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-crown-gold-silver",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Crown (Gold-Silver)",
-    "hex": "#C49449-#BCC2C8",
-    "td_value": null
+    "hex": "#C49449-#BCC2C8"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-jadeite-green-chrome",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Jadeite (Green-Chrome)",
-    "hex": "#55B687-#85898B",
-    "td_value": null
+    "hex": "#55B687-#85898B"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-sovereign-gold-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Sovereign (Gold-Purple)",
-    "hex": "#C49449-#786BB0",
-    "td_value": null
+    "hex": "#C49449-#786BB0"
   },
   {
-    "id": "panchroma-pla-dual-silk-silk-sunset-gold-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Silk",
     "color": "Silk Sunset (Gold-Red)",
-    "hex": "#C49449-#CF6076",
-    "td_value": null
+    "hex": "#C49449-#CF6076"
   },
   {
-    "id": "panchroma-pla-dual-special-yin-yang",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Dual Special",
     "color": "Yin-Yang",
-    "hex": "#020203-#CFCCD6",
-    "td_value": null
+    "hex": "#020203-#CFCCD6"
   },
   {
-    "id": "panchroma-pla-galaxy-galaxy-black",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Galaxy",
     "color": "Galaxy Black",
     "hex": "#161617",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-galaxy-galaxy-dark-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Galaxy",
     "color": "Galaxy Dark Blue",
     "hex": "#18192D",
-    "td_value": null
+    "td_value": 0.4
   },
   {
-    "id": "panchroma-pla-galaxy-galaxy-dark-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Galaxy",
     "color": "Galaxy Dark Green",
     "hex": "#13484D",
-    "td_value": null
+    "td_value": 0.4
   },
   {
-    "id": "panchroma-pla-galaxy-galaxy-dark-grey",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Galaxy",
     "color": "Galaxy Dark Grey",
     "hex": "#4E5658",
-    "td_value": null
+    "td_value": 0.4
   },
   {
-    "id": "panchroma-pla-galaxy-galaxy-dark-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Galaxy",
     "color": "Galaxy Dark Red",
     "hex": "#451E14",
-    "td_value": null
+    "td_value": 0.2
   },
   {
-    "id": "panchroma-pla-glow-glow-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Glow",
     "color": "Glow Blue",
     "hex": "#F3EADB",
-    "td_value": null
+    "td_value": 22.5
   },
   {
-    "id": "panchroma-pla-glow-glow-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Glow",
     "color": "Glow Green",
     "hex": "#F2EADB",
-    "td_value": null
+    "td_value": 23.7
   },
   {
-    "id": "panchroma-pla-luminous-luminous-green",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Luminous",
-    "color": "Luminous Green",
-    "hex": "#BFEB8C",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-luminous-luminous-orange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Luminous",
     "color": "Luminous Orange",
     "hex": "#FEBE5F",
-    "td_value": null
+    "td_value": 11.7
   },
   {
-    "id": "panchroma-pla-luminous-luminous-pink",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Luminous",
     "color": "Luminous Pink",
     "hex": "#FE9176",
-    "td_value": null
+    "td_value": 11.8
   },
   {
-    "id": "panchroma-pla-luminous-luminous-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Luminous",
     "color": "Luminous Yellow",
     "hex": "#EEDC48",
-    "td_value": null
+    "td_value": 12.4
   },
   {
-    "id": "panchroma-pla-marble-marble-brick",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Marble",
     "color": "Marble Brick",
     "hex": "#CD7456",
-    "td_value": null
+    "td_value": 0.8
   },
   {
-    "id": "panchroma-pla-marble-marble-limestone",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Marble",
     "color": "Marble Limestone",
     "hex": "#BCBEBE",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "panchroma-pla-marble-marble-sandstone",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Marble",
     "color": "Marble Sandstone",
     "hex": "#C1BE97",
-    "td_value": null
+    "td_value": 1.7
   },
   {
-    "id": "panchroma-pla-marble-marble-white",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Marble",
-    "color": "Marble White",
-    "hex": "#D7D4DA",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-matte-matte-arctic-teal",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Arctic Teal",
     "hex": "#61BCC3",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "panchroma-pla-matte-matte-army-beige",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Beige",
     "hex": "#DBBAA5",
-    "td_value": null
+    "td_value": 0.7
   },
   {
-    "id": "panchroma-pla-matte-matte-army-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Blue",
     "hex": "#2E4462",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-matte-matte-army-brown",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Brown",
     "hex": "#795A4D",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-matte-matte-army-dark-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Dark Green",
     "hex": "#5F6244",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-matte-matte-army-light-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Light Green",
     "hex": "#AB8C02",
-    "td_value": null
+    "td_value": 0.8
   },
   {
-    "id": "panchroma-pla-matte-matte-army-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Purple",
     "hex": "#36364A",
-    "td_value": null
+    "td_value": 0.2
   },
   {
-    "id": "panchroma-pla-matte-matte-army-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Army Red",
     "hex": "#BF312E",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "panchroma-pla-matte-matte-ash-grey",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Ash Grey",
     "hex": "#485155",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-matte-matte-charcoal-black",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Charcoal Black",
     "hex": "#2F2E30",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-matte-matte-cotton-white",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Cotton White",
     "hex": "#F4EFEB",
-    "td_value": null
+    "td_value": 4.1
   },
   {
-    "id": "panchroma-pla-matte-matte-earth-brown",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Earth Brown",
     "hex": "#7C594A",
-    "td_value": null
+    "td_value": 0.2
   },
   {
-    "id": "panchroma-pla-matte-matte-electric-indigo",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Electric Indigo",
     "hex": "#6858A9",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "panchroma-pla-matte-matte-forest-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Forest Green",
     "hex": "#60AD70",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "panchroma-pla-matte-matte-lava-red",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Matte",
-    "color": "Matte Lava Red",
-    "hex": "#ED2F2E",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-matte-matte-lavender-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Lavender Purple",
     "hex": "#9572BF",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "panchroma-pla-matte-matte-lime-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Lime Green",
     "hex": "#D7D602",
-    "td_value": null
+    "td_value": 2.4
   },
   {
-    "id": "panchroma-pla-matte-matte-lotus-pink",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Lotus Pink",
     "hex": "#DD76C0",
-    "td_value": null
+    "td_value": 2.0
   },
   {
-    "id": "panchroma-pla-matte-matte-muted-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Muted Blue",
     "hex": "#5F778E",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "panchroma-pla-matte-matte-muted-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Muted Green",
     "hex": "#777E71",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "panchroma-pla-matte-matte-muted-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Muted Purple",
     "hex": "#7C5C78",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "panchroma-pla-matte-matte-muted-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Muted Red",
     "hex": "#D84B2E",
-    "td_value": null
+    "td_value": 1.4
   },
   {
-    "id": "panchroma-pla-matte-matte-muted-white",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Muted White",
     "hex": "#BBADA4",
-    "td_value": null
+    "td_value": 0.7
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-banana",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Pastel Banana",
     "hex": "#F7D475",
-    "td_value": null
+    "td_value": 3.6
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-candy",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Pastel Candy",
     "hex": "#F0D6D9",
-    "td_value": null
+    "td_value": 2.9
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-ice",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Pastel Ice",
     "hex": "#A4D0DF",
-    "td_value": null
+    "td_value": 1.8
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-mint",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Pastel Mint",
     "hex": "#D2DEBB",
-    "td_value": null
+    "td_value": 2.9
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-peach",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Pastel Peach",
     "hex": "#F6BF8B",
-    "td_value": null
+    "td_value": 3.3
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-peanut",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Pastel Peanut",
     "hex": "#BF9573",
-    "td_value": null
+    "td_value": 0.7
   },
   {
-    "id": "panchroma-pla-matte-matte-pastel-periwinkle",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Matte",
-    "color": "Matte Pastel Periwinkle",
-    "hex": "#ADB4E6",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-matte-matte-sakura-pink",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Sakura Pink",
     "hex": "#EAADBD",
-    "td_value": null
+    "td_value": 2.3
   },
   {
-    "id": "panchroma-pla-matte-matte-sapphire-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Sapphire Blue",
     "hex": "#0163A6",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "panchroma-pla-matte-matte-savannah-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Savannah Yellow",
     "hex": "#F3C432",
-    "td_value": null
+    "td_value": 3.5
   },
   {
-    "id": "panchroma-pla-matte-matte-sky-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Sky Blue",
     "hex": "#1AC5FC",
-    "td_value": null
+    "td_value": 1.3
   },
   {
-    "id": "panchroma-pla-matte-matte-sunrise-orange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Sunrise Orange",
     "hex": "#F88B17",
-    "td_value": null
+    "td_value": 2.9
   },
   {
-    "id": "panchroma-pla-matte-matte-wood-brown",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Matte",
     "color": "Matte Wood Brown",
     "hex": "#AB7449",
-    "td_value": null
+    "td_value": 0.2
   },
   {
-    "id": "panchroma-pla-metallic-metallic-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Metallic",
     "color": "Metallic Blue",
     "hex": "#2C3449",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-metallic-metallic-bronze",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Metallic",
     "color": "Metallic Bronze",
     "hex": "#926043",
-    "td_value": null
+    "td_value": 0.8
   },
   {
-    "id": "panchroma-pla-metallic-metallic-gold",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Metallic",
     "color": "Metallic Gold",
     "hex": "#DA9F1D",
-    "td_value": null
+    "td_value": 2.9
   },
   {
-    "id": "panchroma-pla-metallic-metallic-silver",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Metallic",
     "color": "Metallic Silver",
     "hex": "#7A838E",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "panchroma-pla-neon-neon-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Neon",
     "color": "Neon Green",
     "hex": "#00F263",
-    "td_value": null
+    "td_value": 4.9
   },
   {
-    "id": "panchroma-pla-neon-neon-magenta",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Neon",
     "color": "Neon Magenta",
     "hex": "#F21185",
-    "td_value": null
+    "td_value": 3.1
   },
   {
-    "id": "panchroma-pla-neon-neon-orange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Neon",
     "color": "Neon Orange",
     "hex": "#FF7800",
-    "td_value": null
+    "td_value": 7.0
   },
   {
-    "id": "panchroma-pla-neon-neon-pink",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Neon",
     "color": "Neon Pink",
     "hex": "#FF3670",
-    "td_value": null
+    "td_value": 3.8
   },
   {
-    "id": "panchroma-pla-neon-neon-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Neon",
     "color": "Neon Red",
     "hex": "#FE2D42",
-    "td_value": null
+    "td_value": 3.5
   },
   {
-    "id": "panchroma-pla-neon-neon-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Neon",
     "color": "Neon Yellow",
     "hex": "#E5DB2E",
-    "td_value": null
+    "td_value": 7.6
   },
   {
-    "id": "panchroma-pla-satin-satin-black",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Black",
     "hex": "#302E30",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-satin-satin-green",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Satin",
-    "color": "Satin Green",
-    "hex": "#5EAB71",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-satin-satin-grey",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Grey",
     "hex": "#797E89",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-satin-satin-orange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Orange",
     "hex": "#FE9217",
-    "td_value": null
+    "td_value": 3.3
   },
   {
-    "id": "panchroma-pla-satin-satin-polymaker-teal",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Polymaker Teal",
     "hex": "#61BBC1",
-    "td_value": null
+    "td_value": 0.2
   },
   {
-    "id": "panchroma-pla-satin-satin-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Purple",
     "hex": "#9272C1",
-    "td_value": null
+    "td_value": 0.9
   },
   {
-    "id": "panchroma-pla-satin-satin-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Red",
     "hex": "#DA1521",
-    "td_value": null
+    "td_value": 2.2
   },
   {
-    "id": "panchroma-pla-satin-satin-white",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin White",
     "hex": "#F5F0EC",
-    "td_value": null
+    "td_value": 3.8
   },
   {
-    "id": "panchroma-pla-satin-satin-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Satin",
     "color": "Satin Yellow",
     "hex": "#F4C131",
-    "td_value": null
+    "td_value": 3.9
   },
   {
-    "id": "panchroma-pla-silk-silk-black",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Black",
     "hex": "#363538",
-    "td_value": null
+    "td_value": 0.1
   },
   {
-    "id": "panchroma-pla-silk-silk-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Blue",
     "hex": "#4999C9",
-    "td_value": null
+    "td_value": 1.4
   },
   {
-    "id": "panchroma-pla-silk-silk-bronze",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Silk",
-    "color": "Silk Bronze",
-    "hex": "#AF6B4C",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-silk-silk-chrome",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Chrome",
     "hex": "#85898B",
-    "td_value": null
+    "td_value": 0.9
   },
   {
-    "id": "panchroma-pla-silk-silk-dark-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Dark Blue",
     "hex": "#23599A",
-    "td_value": null
+    "td_value": 0.7
   },
   {
-    "id": "panchroma-pla-silk-silk-gold",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Gold",
     "hex": "#C49449",
-    "td_value": null
+    "td_value": 3.6
   },
   {
-    "id": "panchroma-pla-silk-silk-green",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Green",
     "hex": "#55B687",
-    "td_value": null
+    "td_value": 1.2
   },
   {
-    "id": "panchroma-pla-silk-silk-gunmetal-grey",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Gunmetal Grey",
     "hex": "#676B6A",
-    "td_value": null
+    "td_value": 0.4
   },
   {
-    "id": "panchroma-pla-silk-silk-light-blue",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Light Blue",
     "hex": "#4CC1CB",
-    "td_value": null
+    "td_value": 2.2
   },
   {
-    "id": "panchroma-pla-silk-silk-lime",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Lime",
     "hex": "#C4CF4C",
-    "td_value": null
+    "td_value": 2.7
   },
   {
-    "id": "panchroma-pla-silk-silk-magenta",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Magenta",
     "hex": "#AA538E",
-    "td_value": null
+    "td_value": 2.2
   },
   {
-    "id": "panchroma-pla-silk-silk-orange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Orange",
     "hex": "#EB6232",
-    "td_value": null
+    "td_value": 3.2
   },
   {
-    "id": "panchroma-pla-silk-silk-periwinkle",
-    "maker": "Panchroma",
-    "type": "PLA",
-    "finish": "Silk",
-    "color": "Silk Periwinkle",
-    "hex": "#768EC7",
-    "td_value": null
-  },
-  {
-    "id": "panchroma-pla-silk-silk-purple",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Purple",
     "hex": "#786BB0",
-    "td_value": null
+    "td_value": 1.3
   },
   {
-    "id": "panchroma-pla-silk-silk-quartz-pink",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Quartz Pink",
     "hex": "#DBBBBB",
-    "td_value": null
+    "td_value": 4.4
   },
   {
-    "id": "panchroma-pla-silk-silk-red",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Red",
     "hex": "#C1443F",
-    "td_value": null
+    "td_value": 2.4
   },
   {
-    "id": "panchroma-pla-silk-silk-rose",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Rose",
     "hex": "#CF6076",
-    "td_value": null
+    "td_value": 2.4
   },
   {
-    "id": "panchroma-pla-silk-silk-rose-gold",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Rose Gold",
     "hex": "#CBB0B1",
-    "td_value": null
+    "td_value": 2.8
   },
   {
-    "id": "panchroma-pla-silk-silk-silver",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Silver",
     "hex": "#BCC2C8",
-    "td_value": null
+    "td_value": 1.5
   },
   {
-    "id": "panchroma-pla-silk-silk-teal",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Teal",
     "hex": "#66C2B6",
-    "td_value": null
+    "td_value": 1.9
   },
   {
-    "id": "panchroma-pla-silk-silk-white",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk White",
     "hex": "#DFE4E4",
-    "td_value": null
+    "td_value": 5.6
   },
   {
-    "id": "panchroma-pla-silk-silk-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Yellow",
     "hex": "#EEC810",
-    "td_value": null
+    "td_value": 3.8
   },
   {
-    "id": "panchroma-pla-starlight-starlight-aurora",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Aurora",
     "hex": "#314530",
-    "td_value": null
+    "td_value": 4.7
   },
   {
-    "id": "panchroma-pla-starlight-starlight-comet",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Comet",
     "hex": "#1F312A",
-    "td_value": null
+    "td_value": 2.6
   },
   {
-    "id": "panchroma-pla-starlight-starlight-jupiter",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Jupiter",
     "hex": "#774718",
-    "td_value": null
+    "td_value": 4.7
   },
   {
-    "id": "panchroma-pla-starlight-starlight-mars",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Mars",
     "hex": "#962E31",
-    "td_value": null
+    "td_value": 2.1
   },
   {
-    "id": "panchroma-pla-starlight-starlight-mercury",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Mercury",
     "hex": "#33322D",
-    "td_value": null
+    "td_value": 7.6
   },
   {
-    "id": "panchroma-pla-starlight-starlight-meteor",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Meteor",
     "hex": "#2F3117",
-    "td_value": null
+    "td_value": 3.9
   },
   {
-    "id": "panchroma-pla-starlight-starlight-nebula",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Nebula",
     "hex": "#462F32",
-    "td_value": null
+    "td_value": 3.6
   },
   {
-    "id": "panchroma-pla-starlight-starlight-neptune",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Neptune",
     "hex": "#113148",
-    "td_value": null
+    "td_value": 2.7
   },
   {
-    "id": "panchroma-pla-starlight-starlight-twilight",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Starlight",
     "color": "Starlight Twilight",
     "hex": "#1E3445",
-    "td_value": null
+    "td_value": 3.1
   },
   {
-    "id": "panchroma-pla-translucent-translucent-cyan",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Translucent",
     "color": "Translucent Cyan",
     "hex": "#08ABFB",
-    "td_value": null
+    "td_value": 8.0
   },
   {
-    "id": "panchroma-pla-translucent-translucent-grey",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Translucent",
     "color": "Translucent Grey",
     "hex": "#9199A4",
-    "td_value": null
+    "td_value": 11.5
   },
   {
-    "id": "panchroma-pla-translucent-translucent-magenta",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Translucent",
     "color": "Translucent Magenta",
     "hex": "#D93B90",
-    "td_value": null
+    "td_value": 7.8
   },
   {
-    "id": "panchroma-pla-translucent-translucent-natural",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Translucent",
     "color": "Translucent Natural",
     "hex": "#E8E6D0",
-    "td_value": null
+    "td_value": 21.0
   },
   {
-    "id": "panchroma-pla-translucent-translucent-yellow",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "Translucent",
     "color": "Translucent Yellow",
     "hex": "#F9ED3D",
-    "td_value": null
+    "td_value": 14.0
   },
   {
-    "id": "panchroma-pla-uv-shift-uv-shift-naturalorange",
     "maker": "Panchroma",
     "type": "PLA",
     "finish": "UV Shift",
     "color": "UV Shift Natural/Orange",
     "hex": "#F1DBBF",
-    "td_value": null
+    "td_value": 23.6
   },
   {
-    "id": "paramount-3d-abs-asa-autobot-blue",
     "maker": "Paramount 3D",
     "type": "ABS / ASA",
     "finish": null,
@@ -2493,7 +1782,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-abs-asa-black",
     "maker": "Paramount 3D",
     "type": "ABS / ASA",
     "finish": null,
@@ -2502,7 +1790,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-abs-asa-enzo-red",
     "maker": "Paramount 3D",
     "type": "ABS / ASA",
     "finish": null,
@@ -2511,7 +1798,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-abs-asa-mclaren-orange",
     "maker": "Paramount 3D",
     "type": "ABS / ASA",
     "finish": null,
@@ -2520,7 +1806,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-abs-asa-mid-century-modern-teal",
     "maker": "Paramount 3D",
     "type": "ABS / ASA",
     "finish": null,
@@ -2529,7 +1814,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-autobot-blue",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2538,7 +1822,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-black",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2547,7 +1830,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-black-carbon-fiber",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2556,7 +1838,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-castle-limestone-gray",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2565,7 +1846,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-decepticon-purple",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2574,7 +1854,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-iron-red",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2583,7 +1862,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-mclaren-orange",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2592,7 +1870,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-military-green",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2601,7 +1878,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-military-khaki",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2610,7 +1886,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-military-mbt-brown",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2619,7 +1894,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-stealth-gray",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2628,7 +1902,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-petg-white",
     "maker": "Paramount 3D",
     "type": "PETG",
     "finish": null,
@@ -2637,17 +1910,14 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-mid-century-teal",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
-    "color": "Mid Century Teal",
+    "color": "Atomic Age Teal",
     "hex": "#035453",
-    "td_value": null,
-    "other_names": ["Atomic Age Teal"]
+    "td_value": null
   },
   {
-    "id": "paramount-3d-pla-autobot-blue",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2656,7 +1926,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-battleship-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2665,7 +1934,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-black",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2674,7 +1942,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-black-cherry",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2683,7 +1950,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-british-racing-green",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2692,7 +1958,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-cadet-blue",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2701,7 +1966,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-caribbean-coral",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2710,7 +1974,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-castle-limestone-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2719,7 +1982,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-decepticon-purple",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2728,7 +1990,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-egg-yolk-yellow",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2737,7 +1998,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-enzo-red",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2746,7 +2006,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-fighter-jet-blue",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2755,7 +2014,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-game-cartridge-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2764,7 +2022,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-gold-krugerrand",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2773,7 +2030,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-graphite-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2782,7 +2038,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-great-depression-jadeite",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2791,7 +2046,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-hannibal-red",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2800,7 +2054,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-harajuku-pink",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2809,7 +2062,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-iron-red",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2818,7 +2070,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-ivory-pantone-7501c",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2827,7 +2078,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-karnak-sandstone",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2836,7 +2086,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-leviathan-blue-green",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2845,7 +2094,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-mclaren-orange",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2854,7 +2102,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-military-green",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2863,7 +2110,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-military-khaki",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2872,7 +2118,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-primordial-earth",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2881,7 +2126,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-prototype-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2890,7 +2134,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-silver-dollar",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2899,7 +2142,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-simpson-yellow",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2908,7 +2150,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-skin-dark-complexion",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2917,7 +2158,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-skin-fair-complexion",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2926,7 +2166,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-skin-ivory-complexion",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2935,7 +2174,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-skin-universal-beige",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2944,7 +2182,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-st-andrews-green",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2953,7 +2190,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-stealth-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2962,7 +2198,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-steel-gray",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2971,7 +2206,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-terra-cotta",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2980,7 +2214,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-volcano-orange-red",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2989,7 +2222,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-white",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -2998,7 +2230,6 @@
     "td_value": null
   },
   {
-    "id": "paramount-3d-pla-wood",
     "maker": "Paramount 3D",
     "type": "PLA",
     "finish": null,
@@ -3007,430 +2238,341 @@
     "td_value": null
   },
   {
-    "id": "polymaker-abs-polylite-black",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Black",
-    "hex": "#16161A",
-    "td_value": null
+    "hex": "#16161A"
   },
   {
-    "id": "polymaker-abs-polylite-blue",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Blue",
-    "hex": "#003276",
-    "td_value": null
+    "hex": "#003276"
   },
   {
-    "id": "polymaker-abs-polylite-dark-grey",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Dark Grey",
-    "hex": "#474648",
-    "td_value": null
+    "hex": "#474648"
   },
   {
-    "id": "polymaker-abs-polylite-dark-purple",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Dark Purple",
-    "hex": "#46394E",
-    "td_value": null
+    "hex": "#46394E"
   },
   {
-    "id": "polymaker-abs-polylite-galaxy-black",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Galaxy Black",
-    "hex": "#212721",
-    "td_value": null
+    "hex": "#212721"
   },
   {
-    "id": "polymaker-abs-polylite-galaxy-orange",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Galaxy Orange",
-    "hex": "#F57517",
-    "td_value": null
+    "hex": "#F57517"
   },
   {
-    "id": "polymaker-abs-polylite-galaxy-teal",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Galaxy Teal",
-    "hex": "#2DCCD3",
-    "td_value": null
+    "hex": "#2DCCD3"
   },
   {
-    "id": "polymaker-abs-polylite-gold",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Gold",
-    "hex": "#BD6200",
-    "td_value": null
+    "hex": "#BD6200"
   },
   {
-    "id": "polymaker-abs-polylite-green",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Green",
-    "hex": "#479161",
-    "td_value": null
+    "hex": "#479161"
   },
   {
-    "id": "polymaker-abs-polylite-grey",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Grey",
-    "hex": "#8C8D93",
-    "td_value": null
+    "hex": "#8C8D93"
   },
   {
-    "id": "polymaker-abs-polylite-light-blue",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Light Blue",
-    "hex": "#8EDBEB",
-    "td_value": null
+    "hex": "#8EDBEB"
   },
   {
-    "id": "polymaker-abs-polylite-lime",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Lime",
-    "hex": "#C4D100",
-    "td_value": null
+    "hex": "#C4D100"
   },
   {
-    "id": "polymaker-abs-polylite-metallic-blue",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Metallic Blue",
-    "hex": "#0D2441",
-    "td_value": null
+    "hex": "#0D2441"
   },
   {
-    "id": "polymaker-abs-polylite-metallic-green",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Metallic Green",
-    "hex": "#3D441E",
-    "td_value": null
+    "hex": "#3D441E"
   },
   {
-    "id": "polymaker-abs-polylite-natural",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Natural",
-    "hex": "#F7F5ED",
-    "td_value": null
+    "hex": "#F7F5ED"
   },
   {
-    "id": "polymaker-abs-polylite-neon-green",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Neon Green",
-    "hex": "#77F0A2",
-    "td_value": null
+    "hex": "#77F0A2"
   },
   {
-    "id": "polymaker-abs-polylite-neon-magenta",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Neon Magenta",
-    "hex": "#F6162E",
-    "td_value": null
+    "hex": "#F6162E"
   },
   {
-    "id": "polymaker-abs-polylite-neon-orange",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Neon Orange",
-    "hex": "#FE602B",
-    "td_value": null
+    "hex": "#FE602B"
   },
   {
-    "id": "polymaker-abs-polylite-neon-yellow",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Neon Yellow",
     "hex": "#FFC001",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-abs-polylite-orange",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Orange",
-    "hex": "#F57517",
-    "td_value": null
+    "hex": "#F57517"
   },
   {
-    "id": "polymaker-abs-polylite-pink",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Pink",
-    "hex": "#FFA7C4",
-    "td_value": null
+    "hex": "#FFA7C4"
   },
   {
-    "id": "polymaker-abs-polylite-purple",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Purple",
-    "hex": "#6545A5",
-    "td_value": null
+    "hex": "#6545A5"
   },
   {
-    "id": "polymaker-abs-polylite-red",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Red",
     "hex": "#F3442B",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-abs-polylite-teal",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Teal",
     "hex": "#01ACBA",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-abs-polylite-white",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "White",
-    "hex": "#F0EBE8",
-    "td_value": null
+    "hex": "#F0EBE8"
   },
   {
-    "id": "polymaker-abs-polylite-yellow",
     "maker": "Polymaker",
     "type": "ABS",
     "finish": "PolyLite",
     "color": "Yellow",
     "hex": "#EDA900",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-asa-polylite-army-green",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Army Green",
-    "hex": "#5C5E31",
-    "td_value": null
+    "hex": "#5C5E31"
   },
   {
-    "id": "polymaker-asa-polylite-black",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Black",
-    "hex": "#17161A",
-    "td_value": null
+    "hex": "#17161A"
   },
   {
-    "id": "polymaker-asa-polylite-blue",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Blue",
-    "hex": "#003576",
-    "td_value": null
+    "hex": "#003576"
   },
   {
-    "id": "polymaker-asa-polylite-dark-gray-green",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Dark Gray Green",
-    "hex": "#4C5F46",
-    "td_value": null
+    "hex": "#4C5F46"
   },
   {
-    "id": "polymaker-asa-polylite-dark-grey",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Dark Grey",
-    "hex": "#48474A",
-    "td_value": null
+    "hex": "#48474A"
   },
   {
-    "id": "polymaker-asa-polylite-dark-purple",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Dark Purple",
-    "hex": "#46394E",
-    "td_value": null
+    "hex": "#46394E"
   },
   {
-    "id": "polymaker-asa-polylite-galaxy-black",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Galaxy Black",
-    "hex": "#212721",
-    "td_value": null
+    "hex": "#212721"
   },
   {
-    "id": "polymaker-asa-polylite-galaxy-green",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Galaxy Green",
-    "hex": "#2E764C",
-    "td_value": null
+    "hex": "#2E764C"
   },
   {
-    "id": "polymaker-asa-polylite-galaxy-red",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Galaxy Red",
-    "hex": "#BF1A11",
-    "td_value": null
+    "hex": "#BF1A11"
   },
   {
-    "id": "polymaker-asa-polylite-green",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Green",
-    "hex": "#2E784D",
-    "td_value": null
+    "hex": "#2E784D"
   },
   {
-    "id": "polymaker-asa-polylite-grey",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Grey",
-    "hex": "#8D8E92",
-    "td_value": null
+    "hex": "#8D8E92"
   },
   {
-    "id": "polymaker-asa-polylite-jet-black",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Jet Black",
-    "hex": "#161618",
-    "td_value": null
+    "hex": "#161618"
   },
   {
-    "id": "polymaker-asa-polylite-natural",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Natural",
-    "hex": "#DFD3C3",
-    "td_value": null
+    "hex": "#DFD3C3"
   },
   {
-    "id": "polymaker-asa-polylite-olive-brown",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Olive Brown",
-    "hex": "#A79565",
-    "td_value": null
+    "hex": "#A79565"
   },
   {
-    "id": "polymaker-asa-polylite-orange",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Orange",
-    "hex": "#F37716",
-    "td_value": null
+    "hex": "#F37716"
   },
   {
-    "id": "polymaker-asa-polylite-polymaker-teal",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Polymaker Teal",
     "hex": "#0094A4",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-asa-polylite-pop-blue",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Pop Blue",
-    "hex": "#008DC3",
-    "td_value": null
+    "hex": "#008DC3"
   },
   {
-    "id": "polymaker-asa-polylite-pop-green",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Pop Green",
-    "hex": "#77D730",
-    "td_value": null
+    "hex": "#77D730"
   },
   {
-    "id": "polymaker-asa-polylite-pop-pink",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Pop Pink",
-    "hex": "#D83076",
-    "td_value": null
+    "hex": "#D83076"
   },
   {
-    "id": "polymaker-asa-polylite-purple",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Purple",
-    "hex": "#5F4793",
-    "td_value": null
+    "hex": "#5F4793"
   },
   {
-    "id": "polymaker-asa-polylite-red",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Red",
     "hex": "#D82B1C",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-asa-polylite-white",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
@@ -3439,1357 +2581,1288 @@
     "td_value": 1.2
   },
   {
-    "id": "polymaker-asa-polylite-yellow",
     "maker": "Polymaker",
     "type": "ASA",
     "finish": "PolyLite",
     "color": "Yellow",
     "hex": "#EEC000",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-copa-polymide-black",
-    "maker": "Polymaker",
-    "type": "CoPA",
-    "finish": "PolyMide",
-    "color": "Black",
-    "hex": "#161618",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-copa-polymide-natural",
-    "maker": "Polymaker",
-    "type": "CoPA",
-    "finish": "PolyMide",
-    "color": "Natural",
-    "hex": "#E8D795",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-cospla-polylite-version-a",
     "maker": "Polymaker",
     "type": "CosPLA",
     "finish": "PolyLite",
     "color": "Version A",
     "hex": "#A7A4A8",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-cospla-polylite-version-b",
     "maker": "Polymaker",
     "type": "CosPLA",
     "finish": "PolyLite",
     "color": "Version B",
     "hex": "#BCBABB",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-lw-pla-polylite-black",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Black",
-    "hex": "#2F2E30",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-bright-green",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Bright Green",
-    "hex": "#BDD901",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-bright-orange",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Bright Orange",
-    "hex": "#F07806",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-bright-red",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Bright Red",
-    "hex": "#D6001C",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-bright-yellow",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Bright Yellow",
-    "hex": "#F6BD01",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-grey",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Grey",
-    "hex": "#94918D",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-white",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "White",
-    "hex": "#EDD7BF",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-lw-pla-polylite-wood",
-    "maker": "Polymaker",
-    "type": "LW-PLA",
-    "finish": "PolyLite",
-    "color": "Wood",
-    "hex": "#A8754B",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pa12-cf10-black",
-    "maker": "Polymaker",
-    "type": "PA12-CF10",
-    "finish": null,
-    "color": "Black",
-    "hex": "#302F2F",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pa6-cf20-black",
-    "maker": "Polymaker",
-    "type": "PA6-CF20",
-    "finish": null,
-    "color": "Black",
-    "hex": "#312F2F",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pa6-gf25-grey",
-    "maker": "Polymaker",
-    "type": "PA6-GF25",
-    "finish": null,
-    "color": "Grey",
-    "hex": "#615D5C",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pa612-cf15-black",
-    "maker": "Polymaker",
-    "type": "PA612-CF15",
-    "finish": null,
-    "color": "Black",
-    "hex": "#302E2F",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pa612-esd-black",
-    "maker": "Polymaker",
-    "type": "PA612-ESD",
-    "finish": null,
-    "color": "Black",
-    "hex": "#161618",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pc-polylite-transparent",
     "maker": "Polymaker",
     "type": "PC",
     "finish": "PolyLite",
     "color": "Transparent",
-    "hex": "#DAD5D4",
-    "td_value": null
+    "hex": "#DAD5D4"
   },
   {
-    "id": "polymaker-pc-polymax-black",
     "maker": "Polymaker",
     "type": "PC",
     "finish": "PolyMax",
     "color": "Black",
-    "hex": "#151518",
-    "td_value": null
+    "hex": "#151518"
   },
   {
-    "id": "polymaker-pc-polymax-blue",
     "maker": "Polymaker",
     "type": "PC",
     "finish": "PolyMax",
     "color": "Blue",
-    "hex": "#005DAB",
-    "td_value": null
+    "hex": "#005DAB"
   },
   {
-    "id": "polymaker-pc-polymax-red",
     "maker": "Polymaker",
     "type": "PC",
     "finish": "PolyMax",
     "color": "Red",
     "hex": "#DA2A1E",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pc-abs-polymaker-black",
     "maker": "Polymaker",
-    "type": "PC-ABS",
-    "finish": "Polymaker",
+    "type": "PETG",
+    "finish": "None",
     "color": "Black",
-    "hex": "#181617",
-    "td_value": null
+    "hex": "#161618"
   },
   {
-    "id": "polymaker-pc-abs-polymaker-white",
-    "maker": "Polymaker",
-    "type": "PC-ABS",
-    "finish": "Polymaker",
-    "color": "White",
-    "hex": "#DDD6D4",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pc-fr-polymax-white",
-    "maker": "Polymaker",
-    "type": "PC-FR",
-    "finish": "PolyMax",
-    "color": "White",
-    "hex": "#DDD7D3",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pc-pbt-polymaker-black",
-    "maker": "Polymaker",
-    "type": "PC-PBT",
-    "finish": "Polymaker",
-    "color": "Black",
-    "hex": "#161619",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pc-pbt-polymaker-natural",
-    "maker": "Polymaker",
-    "type": "PC-PBT",
-    "finish": "Polymaker",
-    "color": "Natural",
-    "hex": "#EADAC2",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-petg-polylite-black",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Black",
-    "hex": "#161618",
-    "td_value": null
+    "hex": "#161618"
   },
   {
-    "id": "polymaker-petg-polylite-clear",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Clear",
-    "hex": "#DBD5D6",
-    "td_value": null
+    "hex": "#DBD5D6"
   },
   {
-    "id": "polymaker-petg-polylite-dark-blue",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Dark Blue",
     "hex": "#151C2F",
-    "td_value": null
+    "td_value": 7
   },
   {
-    "id": "polymaker-petg-polylite-dark-green",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Dark Green",
-    "hex": "#2C342D",
-    "td_value": null
+    "hex": "#2C342D"
   },
   {
-    "id": "polymaker-petg-polylite-dark-grey",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Dark Grey",
-    "hex": "#6C6D71",
-    "td_value": null
+    "hex": "#6C6D71"
   },
   {
-    "id": "polymaker-petg-polylite-dark-purple",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Dark Purple",
-    "hex": "#2E1A47",
-    "td_value": null
+    "hex": "#2E1A47"
   },
   {
-    "id": "polymaker-petg-polylite-electric-blue",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Electric Blue",
-    "hex": "#0076C1",
-    "td_value": null
+    "hex": "#0076C1"
   },
   {
-    "id": "polymaker-petg-polylite-gold",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Gold",
-    "hex": "#A85D00",
-    "td_value": null
+    "hex": "#A85D00"
   },
   {
-    "id": "polymaker-petg-polylite-green",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Green",
-    "hex": "#007A44",
-    "td_value": null
+    "hex": "#007A44"
   },
   {
-    "id": "polymaker-petg-polylite-grey",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Grey",
-    "hex": "#8C8D93",
-    "td_value": null
+    "hex": "#8C8D93"
   },
   {
-    "id": "polymaker-petg-polylite-lime",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Lime",
-    "hex": "#D8DB00",
-    "td_value": null
+    "hex": "#D8DB00"
   },
   {
-    "id": "polymaker-petg-polylite-magenta",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Magenta",
-    "hex": "#C1015B",
-    "td_value": null
+    "hex": "#C1015B"
   },
   {
-    "id": "polymaker-petg-polylite-orange",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Orange",
     "hex": "#F37715",
-    "td_value": null
+    "td_value": 55
   },
   {
-    "id": "polymaker-petg-polylite-pink",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Pink",
-    "hex": "#EE94A5",
-    "td_value": null
+    "hex": "#EE94A5"
   },
   {
-    "id": "polymaker-petg-polylite-purple",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Purple",
-    "hex": "#6347A5",
-    "td_value": null
+    "hex": "#6347A5"
   },
   {
-    "id": "polymaker-petg-polylite-red",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Red",
     "hex": "#D92B1C",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-petg-polylite-silver",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Silver",
     "hex": "#5F5E5F",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-petg-polylite-teal",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Teal",
     "hex": "#0091A5",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-petg-polylite-translucent-blue",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Translucent Blue",
-    "hex": "#01062F",
-    "td_value": null
+    "hex": "#01062F"
   },
   {
-    "id": "polymaker-petg-polylite-translucent-green",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Translucent Green",
-    "hex": "#005F2F",
-    "td_value": null
+    "hex": "#005F2F"
   },
   {
-    "id": "polymaker-petg-polylite-translucent-red",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "Translucent Red",
-    "hex": "#BE0017",
-    "td_value": null
+    "hex": "#BE0017"
   },
   {
-    "id": "polymaker-petg-polylite-white",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyLite",
     "color": "White",
-    "hex": "#EEEBEA",
-    "td_value": null
+    "hex": "#EEEBEA"
   },
   {
-    "id": "polymaker-petg-polymax-black",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyMax",
     "color": "Black",
-    "hex": "#181718",
-    "td_value": null
+    "hex": "#181718"
   },
   {
-    "id": "polymaker-petg-polymax-white",
     "maker": "Polymaker",
     "type": "PETG",
     "finish": "PolyMax",
     "color": "White",
-    "hex": "#EFECEB",
-    "td_value": null
+    "hex": "#EFECEB"
   },
   {
-    "id": "polymaker-petg-esd-black",
     "maker": "Polymaker",
-    "type": "PETG-ESD",
-    "finish": null,
+    "type": "PETG-CF",
+    "finish": "None",
     "color": "Black",
-    "hex": "#161618",
-    "td_value": null
+    "hex": "#302E2F"
   },
   {
-    "id": "polymaker-petg-rcf08-black",
-    "maker": "Polymaker",
-    "type": "PETG-rCF08",
-    "finish": null,
-    "color": "Black",
-    "hex": "#302E2F",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-galaxy-galaxy-red",
     "maker": "Polymaker",
     "type": "PLA",
-    "finish": "Galaxy",
-    "color": "Galaxy Red",
-    "hex": "#760007",
-    "td_value": null
+    "finish": "None",
+    "color": "3D Print General Flat Dark Earth",
+    "hex": "#90785E"
   },
   {
-    "id": "polymaker-pla-polylite-aqua-blue",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#161618",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#1C1C1C",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#2F2E30",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#302F31",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#181617",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#161619",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#161618",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Bright Green",
+    "hex": "#BDD901",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Bright Orange",
+    "hex": "#F07806",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Bright Red",
+    "hex": "#D6001C",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Bright Yellow",
+    "hex": "#F6BD01",
+    "td_value": 9.8
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Grey",
+    "hex": "#615D5C",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Grey",
+    "hex": "#94918D",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Hedgehog Makes - Galaxy Red",
+    "hex": "#760007"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "LM Sparkle Green",
+    "hex": "#434D43",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Natural",
+    "hex": "#EADAC2",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Natural",
+    "hex": "#E8D795",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "White",
+    "hex": "#EDD7BF",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "White",
+    "hex": "#DDD7D3",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "White",
+    "hex": "#DDD6D4",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "None",
+    "color": "Wood",
+    "hex": "#A8754B",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyCast",
+    "color": "Natural",
+    "hex": "#E9DFD3",
+    "td_value": 0.5
+  },
+  {
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Aqua Blue",
     "hex": "#5EBDDB",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-azure-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Azure Blue",
     "hex": "#0061D5",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-beige",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Beige",
     "hex": "#C2AB72",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-black",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Black",
     "hex": "#030305",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "polymaker-pla-polylite-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Blue",
     "hex": "#013178",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-cold-white",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Cold White",
     "hex": "#EAECF5",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-cream",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Cream",
     "hex": "#EED1A8",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-dark-gray-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Dark Gray Green",
     "hex": "#4C5F46",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-dark-grey",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Dark Grey",
     "hex": "#6E8393",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Green",
     "hex": "#30A45F",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-grey",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Grey",
     "hex": "#8B8E96",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-jungle-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Jungle Green",
     "hex": "#4E742D",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-lemon-yellow",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Lemon Yellow",
     "hex": "#EED230",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-polylite-lime-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Lime Green",
     "hex": "#D5D701",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-magenta",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Magenta",
     "hex": "#F24574",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-natural",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Natural",
     "hex": "#DFD3C3",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-olive-brown",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Olive Brown",
     "hex": "#A79565",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-olive-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Olive Green",
     "hex": "#948902",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-orange",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Orange",
     "hex": "#F36201",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-polymaker-teal",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Polymaker Teal",
     "hex": "#48B9C2",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-purple",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Purple",
     "hex": "#6447A5",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-red",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Red",
     "hex": "#D90102",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-stone-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Stone Blue",
     "hex": "#487BA2",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-white",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "White",
     "hex": "#DDD7D3",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polylite-wine-red",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Wine Red",
     "hex": "#D60212",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polylite-yellow",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyLite",
     "color": "Yellow",
     "hex": "#F3AA01",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-polymax-black",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Black",
     "hex": "#161619",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "polymaker-pla-polymax-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Blue",
     "hex": "#013178",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polymax-fde-beige",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "FDE Beige",
     "hex": "#90755D",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polymax-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Green",
     "hex": "#31A45F",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polymax-grey",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Grey",
     "hex": "#8D8E93",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polymax-orange",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Orange",
     "hex": "#FE8E1B",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polymax-pink",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Pink",
-    "hex": "#F02F63",
-    "td_value": null
+    "hex": "#F02F63"
   },
   {
-    "id": "polymaker-pla-polymax-polymaker-teal",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Polymaker Teal",
     "hex": "#4ABAC2",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polymax-purple",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Purple",
     "hex": "#6647A3",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polymax-red",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Red",
     "hex": "#ED2F20",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polymax-white",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "White",
     "hex": "#EBECED",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polymax-yellow",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyMax",
     "color": "Yellow",
     "hex": "#F0AB01",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-polysonic-black",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Beige",
+    "hex": "#EBD591",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Black",
+    "hex": "#161619",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Coral Red",
+    "hex": "#F04B2A",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Electric Blue",
+    "hex": "#007ABC",
+    "td_value": 9.8
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Green",
+    "hex": "#4CA743",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Green",
+    "hex": "#4CA743",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Orange",
+    "hex": "#F5741B",
+    "td_value": 0.3
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Pink",
+    "hex": "#F3A196"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Polymaker Teal",
+    "hex": "#77D3DD",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Slate Grey",
+    "hex": "#7DA1AA",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "White",
+    "hex": "#F4EEE8",
+    "td_value": 0.5
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySmooth",
+    "color": "Yellow",
+    "hex": "#F5BD00",
+    "td_value": 9.8
+  },
+  {
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Black",
     "hex": "#0C0E0C",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "polymaker-pla-polysonic-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Blue",
     "hex": "#00307E",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polysonic-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Green",
     "hex": "#2D9E59",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polysonic-grey",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Grey",
     "hex": "#73767D",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polysonic-polymaker-teal",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Polymaker Teal",
     "hex": "#50DAE4",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polysonic-red",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Red",
     "hex": "#E62216",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-polysonic-white",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "White",
     "hex": "#E2DEDB",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polysonic-yellow",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolySonic",
     "color": "Yellow",
     "hex": "#F4C032",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-pro-polylite-3d-print-general-flat-dark-earth",
     "maker": "Polymaker",
-    "type": "PLA Pro",
-    "finish": "PolyLite",
-    "color": "3D Print General Flat Dark Earth",
-    "hex": "#90785E",
-    "td_value": null
+    "type": "PLA",
+    "finish": "PolyWood",
+    "color": "Wood",
+    "hex": "#A8754B",
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-army-beige",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Army Beige",
     "hex": "#C28D5E",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-army-green",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Army Green",
     "hex": "#665A30",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-black",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Black",
     "hex": "#161619",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "polymaker-pla-pro-polylite-blue",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Blue",
     "hex": "#013276",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-blue-green",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Blue-Green",
     "hex": "#022B33",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-bronze",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Bronze",
     "hex": "#2D3449",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-cold-white",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Cold White",
     "hex": "#D6D5DC",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-gold",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Gold",
     "hex": "#A66301",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-green",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Green",
     "hex": "#31A45F",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-lm-sparkle-green",
-    "maker": "Polymaker",
-    "type": "PLA Pro",
-    "finish": "PolyLite",
-    "color": "LM Sparkle Green",
-    "hex": "#434D43",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-pro-polylite-light-blue",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Light Blue",
     "hex": "#A8D4E8",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-light-green",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Light Green",
     "hex": "#C0DDA3",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-light-red",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Light Red",
     "hex": "#DC605A",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-light-yellow",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Light Yellow",
     "hex": "#F4DA78",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-pro-polylite-magenta",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Magenta",
     "hex": "#EF2F64",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-metallic-black",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Metallic Black",
     "hex": "#0C0E0C",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-metallic-blue",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Metallic Blue",
     "hex": "#2D3449",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-metallic-magenta",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Metallic Magenta",
     "hex": "#743063",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-metallic-red",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Metallic Red",
     "hex": "#8D352C",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-orange",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Orange",
     "hex": "#FE8E1B",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-pink",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Pink",
-    "hex": "#EE92AA",
-    "td_value": null
+    "hex": "#EE92AA"
   },
   {
-    "id": "polymaker-pla-pro-polylite-polymaker-teal",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Polymaker Teal",
     "hex": "#5FC7CF",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-purple",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Purple",
     "hex": "#6547A5",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-red",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Red",
     "hex": "#ED2F20",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polylite-silver",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Silver",
     "hex": "#8A8D95",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polylite-yellow",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolyLite",
     "color": "Yellow",
     "hex": "#F0AB01",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-pro-polysonic-black",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Black",
     "hex": "#0C0E0C",
-    "td_value": null
+    "td_value": 0.6
   },
   {
-    "id": "polymaker-pla-pro-polysonic-blue",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Blue",
     "hex": "#003287",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polysonic-green",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Green",
     "hex": "#2D9E59",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polysonic-grey",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Grey",
     "hex": "#959FA1",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polysonic-orange",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Orange",
     "hex": "#F97429",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polysonic-polymaker-teal",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Polymaker Teal",
     "hex": "#50DAE4",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polysonic-purple",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Purple",
     "hex": "#6C5BB1",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polysonic-red",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Red",
     "hex": "#E20010",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-pla-pro-polysonic-white",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "White",
     "hex": "#E2DEDB",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-pro-polysonic-yellow",
     "maker": "Polymaker",
     "type": "PLA Pro",
     "finish": "PolySonic",
     "color": "Yellow",
     "hex": "#F4C032",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-pla-cf-polylite-black",
     "maker": "Polymaker",
     "type": "PLA-CF",
-    "finish": "PolyLite",
+    "finish": "None",
     "color": "Black",
-    "hex": "#302F31",
-    "td_value": null
+    "hex": "#312F2F",
+    "td_value": 0.6
   },
   {
-    "id": "polymaker-tpu90-polyflex-black",
+    "maker": "Polymaker",
+    "type": "PLA-CF",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#302F2F",
+    "td_value": 0.6
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA-CF",
+    "finish": "None",
+    "color": "Black",
+    "hex": "#302E2F",
+    "td_value": 0.6
+  },
+  {
     "maker": "Polymaker",
     "type": "TPU90",
     "finish": "PolyFlex",
     "color": "Black",
-    "hex": "#16161A",
-    "td_value": null
+    "hex": "#16161A"
   },
   {
-    "id": "polymaker-tpu90-polyflex-polymaker-teal",
     "maker": "Polymaker",
     "type": "TPU90",
     "finish": "PolyFlex",
     "color": "Polymaker Teal",
     "hex": "#01ACBA",
-    "td_value": null
+    "td_value": 0.5
   },
   {
-    "id": "polymaker-tpu90-polyflex-white",
     "maker": "Polymaker",
     "type": "TPU90",
     "finish": "PolyFlex",
     "color": "White",
-    "hex": "#F0EBE8",
-    "td_value": null
+    "hex": "#F0EBE8"
   },
   {
-    "id": "polymaker-tpu95-polyflex-black",
     "maker": "Polymaker",
     "type": "TPU95",
     "finish": "PolyFlex",
     "color": "Black",
-    "hex": "#16161A",
-    "td_value": null
+    "hex": "#16161A"
   },
   {
-    "id": "polymaker-tpu95-polyflex-blue",
     "maker": "Polymaker",
     "type": "TPU95",
     "finish": "PolyFlex",
     "color": "Blue",
-    "hex": "#003276",
-    "td_value": null
+    "hex": "#003276"
   },
   {
-    "id": "polymaker-tpu95-polyflex-orange",
     "maker": "Polymaker",
     "type": "TPU95",
     "finish": "PolyFlex",
     "color": "Orange",
-    "hex": "#F57517",
-    "td_value": null
+    "hex": "#F57517"
   },
   {
-    "id": "polymaker-tpu95-polyflex-red",
     "maker": "Polymaker",
     "type": "TPU95",
     "finish": "PolyFlex",
     "color": "Red",
     "hex": "#F3442B",
-    "td_value": null
+    "td_value": 0.3
   },
   {
-    "id": "polymaker-tpu95-polyflex-white",
     "maker": "Polymaker",
     "type": "TPU95",
     "finish": "PolyFlex",
     "color": "White",
-    "hex": "#F0EBE8",
-    "td_value": null
+    "hex": "#F0EBE8"
   },
   {
-    "id": "polymaker-tpu95-polyflex-yellow",
     "maker": "Polymaker",
     "type": "TPU95",
     "finish": "PolyFlex",
     "color": "Yellow",
     "hex": "#EDA900",
-    "td_value": null
+    "td_value": 9.8
   },
   {
-    "id": "polymaker-tpu95-hf-polyflex-black",
     "maker": "Polymaker",
     "type": "TPU95-HF",
     "finish": "PolyFlex",
     "color": "Black",
-    "hex": "#16161A",
-    "td_value": null
+    "hex": "#16161A"
   },
   {
-    "id": "polymaker-tpu95-hf-polyflex-clear",
     "maker": "Polymaker",
     "type": "TPU95-HF",
     "finish": "PolyFlex",
     "color": "Clear",
-    "hex": "#DBD5D6",
-    "td_value": null
+    "hex": "#DBD5D6"
   },
   {
-    "id": "polymaker-tpu95-hf-polyflex-white",
     "maker": "Polymaker",
     "type": "TPU95-HF",
     "finish": "PolyFlex",
     "color": "White",
-    "hex": "#F0EBE8",
-    "td_value": null
+    "hex": "#F0EBE8"
   },
   {
-    "id": "sunlu-apla-basic-dark-green",
     "maker": "Sunlu",
     "type": "APLA",
     "finish": "Basic",
@@ -4798,7 +3871,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-apla-basic-light-blue",
     "maker": "Sunlu",
     "type": "APLA",
     "finish": "Basic",
@@ -4807,7 +3879,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-elite-pla-basic-grey",
     "maker": "Sunlu",
     "type": "Elite PLA",
     "finish": "Basic",
@@ -4816,7 +3887,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-elite-pla-basic-transparent",
     "maker": "Sunlu",
     "type": "Elite PLA",
     "finish": "Basic",
@@ -4825,7 +3895,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-glow-pla-glow-red",
     "maker": "Sunlu",
     "type": "Glow PLA",
     "finish": "Glow",
@@ -4834,7 +3903,6 @@
     "td_value": 4
   },
   {
-    "id": "sunlu-high-speed-pla-basic-grey",
     "maker": "Sunlu",
     "type": "High Speed PLA",
     "finish": "Basic",
@@ -4843,7 +3911,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-high-speed-pla-basic-pink",
     "maker": "Sunlu",
     "type": "High Speed PLA",
     "finish": "Basic",
@@ -4852,7 +3919,6 @@
     "td_value": 8
   },
   {
-    "id": "sunlu-pla-basic-black",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4861,7 +3927,6 @@
     "td_value": 5
   },
   {
-    "id": "sunlu-pla-basic-blue",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4870,16 +3935,13 @@
     "td_value": 4
   },
   {
-    "id": "sunlu-pla-basic-carbon-fiber-black",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
     "color": "Carbon Fiber Black",
-    "hex": "#4B4C4C",
-    "td_value": null
+    "hex": "#4B4C4C"
   },
   {
-    "id": "sunlu-pla-basic-cherry-red",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4888,7 +3950,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-basic-green-mint",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4897,7 +3958,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-basic-grey",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4906,7 +3966,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-basic-ivory-tint",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4915,7 +3974,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-basic-meta-black",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4924,7 +3982,6 @@
     "td_value": 5
   },
   {
-    "id": "sunlu-pla-basic-orange",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4933,16 +3990,13 @@
     "td_value": 5
   },
   {
-    "id": "sunlu-pla-basic-recycled-black",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
     "color": "Recycled Black",
-    "hex": "#3D3E3F",
-    "td_value": null
+    "hex": "#3D3E3F"
   },
   {
-    "id": "sunlu-pla-basic-red",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4951,16 +4005,13 @@
     "td_value": 4
   },
   {
-    "id": "sunlu-pla-basic-silky-silver",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
     "color": "Silky Silver",
-    "hex": "#C6CBD0",
-    "td_value": null
+    "hex": "#C6CBD0"
   },
   {
-    "id": "sunlu-pla-basic-sky-blue",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4969,16 +4020,13 @@
     "td_value": 4
   },
   {
-    "id": "sunlu-pla-basic-sunny-orange",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
     "color": "Sunny Orange",
-    "hex": "#FF7235",
-    "td_value": null
+    "hex": "#FF7235"
   },
   {
-    "id": "sunlu-pla-basic-transparent",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4987,7 +4035,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-basic-white",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Basic",
@@ -4996,7 +4043,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-glow-glow-in-the-dark",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Glow",
@@ -5005,7 +4051,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-matte-black",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Matte",
@@ -5014,7 +4059,6 @@
     "td_value": 5
   },
   {
-    "id": "sunlu-pla-silk-silk-black",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Silk",
@@ -5023,7 +4067,6 @@
     "td_value": 5
   },
   {
-    "id": "sunlu-pla-silk-silk-green",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Silk",
@@ -5032,7 +4075,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-silk-silk-red",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Silk",
@@ -5041,25 +4083,20 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-transparent-transparent-orange",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Transparent",
     "color": "Transparent Orange",
-    "hex": "#DB7F42",
-    "td_value": null
+    "hex": "#DB7F42"
   },
   {
-    "id": "sunlu-pla-wood-wood",
     "maker": "Sunlu",
     "type": "PLA",
     "finish": "Wood",
     "color": "Wood",
-    "hex": "#D5BA95",
-    "td_value": null
+    "hex": "#D5BA95"
   },
   {
-    "id": "sunlu-pla-2-basic-grass-green",
     "maker": "Sunlu",
     "type": "PLA 2",
     "finish": "Basic",
@@ -5068,7 +4105,6 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-meta-meta-blue",
     "maker": "Sunlu",
     "type": "PLA Meta",
     "finish": "Meta",
@@ -5077,7 +4113,6 @@
     "td_value": 5.4
   },
   {
-    "id": "sunlu-pla-meta-meta-mint-green",
     "maker": "Sunlu",
     "type": "PLA Meta",
     "finish": "Meta",
@@ -5086,16 +4121,13 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-meta-meta-sakura-pink",
     "maker": "Sunlu",
     "type": "PLA Meta",
     "finish": "Meta",
     "color": "Sakura Pink",
-    "hex": "#F5B5C2",
-    "td_value": null
+    "hex": "#F5B5C2"
   },
   {
-    "id": "sunlu-pla-meta-meta-taro-purple",
     "maker": "Sunlu",
     "type": "PLA Meta",
     "finish": "Meta",
@@ -5104,7 +4136,6 @@
     "td_value": 5.4
   },
   {
-    "id": "sunlu-pla-plus-basic-beige",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
@@ -5113,7 +4144,6 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-plus-basic-black",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
@@ -5122,25 +4152,20 @@
     "td_value": 5
   },
   {
-    "id": "sunlu-pla-plus-basic-blue",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Blue",
-    "hex": "#0063A0",
-    "td_value": null
+    "hex": "#0063A0"
   },
   {
-    "id": "sunlu-pla-plus-basic-brown",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Brown",
-    "hex": "#8E6B4E",
-    "td_value": null
+    "hex": "#8E6B4E"
   },
   {
-    "id": "sunlu-pla-plus-basic-green",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
@@ -5149,16 +4174,13 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-plus-basic-light-gold",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Light Gold",
-    "hex": "#D3943D",
-    "td_value": null
+    "hex": "#D3943D"
   },
   {
-    "id": "sunlu-pla-plus-basic-mint-green",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
@@ -5167,52 +4189,41 @@
     "td_value": 0.6
   },
   {
-    "id": "sunlu-pla-plus-basic-orange",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Orange",
-    "hex": "#ED7432",
-    "td_value": null
+    "hex": "#ED7432"
   },
   {
-    "id": "sunlu-pla-plus-basic-pure-yellow",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Pure Yellow",
-    "hex": "#FFBD2C",
-    "td_value": null
+    "hex": "#FFBD2C"
   },
   {
-    "id": "sunlu-pla-plus-basic-purple",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Purple",
-    "hex": "#8887C5",
-    "td_value": null
+    "hex": "#8887C5"
   },
   {
-    "id": "sunlu-pla-plus-basic-red",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Red",
-    "hex": "#B34044",
-    "td_value": null
+    "hex": "#B34044"
   },
   {
-    "id": "sunlu-pla-plus-basic-skin",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
     "color": "Skin",
-    "hex": "#F7BEA1",
-    "td_value": null
+    "hex": "#F7BEA1"
   },
   {
-    "id": "sunlu-pla-plus-basic-white",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Basic",
@@ -5221,34 +4232,27 @@
     "td_value": 6.1
   },
   {
-    "id": "sunlu-pla-plus-silk-red-copper",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Silk",
     "color": "Red Copper",
-    "hex": "#CC937F",
-    "td_value": null
+    "hex": "#CC937F"
   },
   {
-    "id": "sunlu-pla-plus-silk-silk-brass",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Silk",
     "color": "Silk Brass",
-    "hex": "#F1A050",
-    "td_value": null
+    "hex": "#F1A050"
   },
   {
-    "id": "sunlu-pla-plus-silk-silk-candy-dandy",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Silk",
     "color": "Silk Candy Dandy",
-    "hex": "#ED8E93",
-    "td_value": null
+    "hex": "#ED8E93"
   },
   {
-    "id": "sunlu-pla-plus-silk-silk-white",
     "maker": "Sunlu",
     "type": "PLA+",
     "finish": "Silk",

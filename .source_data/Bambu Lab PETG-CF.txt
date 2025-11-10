@@ -1,0 +1,19 @@
+Bambu Lab PETG-CF
+
+Brick Red
+Hex:#9f332a
+
+Violet Purple
+Hex:#583061
+
+Indigo Blue
+Hex:#324585
+
+Malachite Green
+Hex:#16b08e
+
+Black
+Hex:#000000
+
+Titan Gray
+Hex:#565656

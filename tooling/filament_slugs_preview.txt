@@ -1,0 +1,1768 @@
+====================================================================================================
+FILAMENT SLUG PREVIEW
+====================================================================================================
+
+[  0] bambu-lab-pla-basic-bambu-green
+      Bambu Lab | PLA | Basic | Bambu Green | #00AE42
+
+[  1] bambu-lab-pla-basic-beige
+      Bambu Lab | PLA | Basic | Beige | #F7E6DE
+
+[  2] bambu-lab-pla-basic-black
+      Bambu Lab | PLA | Basic | Black | #000000
+
+[  3] bambu-lab-pla-basic-blue
+      Bambu Lab | PLA | Basic | Blue | #0A2989
+
+[  4] bambu-lab-pla-basic-blue-grey
+      Bambu Lab | PLA | Basic | Blue Grey | #5B6579
+
+[  5] bambu-lab-pla-basic-bright-green
+      Bambu Lab | PLA | Basic | Bright Green | #BECF00
+
+[  6] bambu-lab-pla-basic-bronze
+      Bambu Lab | PLA | Basic | Bronze | #847D48
+
+[  7] bambu-lab-pla-basic-brown
+      Bambu Lab | PLA | Basic | Brown | #9D432C
+
+[  8] bambu-lab-pla-basic-cobalt-blue
+      Bambu Lab | PLA | Basic | Cobalt Blue | #0056B8
+
+[  9] bambu-lab-pla-basic-cocoa-brown
+      Bambu Lab | PLA | Basic | Cocoa Brown | #6F5034
+
+[ 10] bambu-lab-pla-basic-cyan
+      Bambu Lab | PLA | Basic | Cyan | #0086D6
+
+[ 11] bambu-lab-pla-basic-dark-gray
+      Bambu Lab | PLA | Basic | Dark Gray | #545454
+
+[ 12] bambu-lab-pla-basic-gold
+      Bambu Lab | PLA | Basic | Gold | #E4BD68
+
+[ 13] bambu-lab-pla-basic-gray
+      Bambu Lab | PLA | Basic | Gray | #8E9089
+
+[ 14] bambu-lab-pla-basic-hot-pink
+      Bambu Lab | PLA | Basic | Hot Pink | #F5547C
+
+[ 15] bambu-lab-pla-basic-indigo-purple
+      Bambu Lab | PLA | Basic | Indigo Purple | #482960
+
+[ 16] bambu-lab-pla-basic-jade-white
+      Bambu Lab | PLA | Basic | Jade White | #FFFFFF
+
+[ 17] bambu-lab-pla-basic-light-gray
+      Bambu Lab | PLA | Basic | Light Gray | #D1D3D5
+
+[ 18] bambu-lab-pla-basic-magenta
+      Bambu Lab | PLA | Basic | Magenta | #EC008C
+
+[ 19] bambu-lab-pla-basic-maroon-red
+      Bambu Lab | PLA | Basic | Maroon Red | #9D2235
+
+[ 20] bambu-lab-pla-basic-mistletoe-green
+      Bambu Lab | PLA | Basic | Mistletoe Green | #3F8E43
+
+[ 21] bambu-lab-pla-basic-orange
+      Bambu Lab | PLA | Basic | Orange | #FF6A13
+
+[ 22] bambu-lab-pla-basic-pink
+      Bambu Lab | PLA | Basic | Pink | #F55A74
+
+[ 23] bambu-lab-pla-basic-pumpkin-orange
+      Bambu Lab | PLA | Basic | Pumpkin Orange | #FF9016
+
+[ 24] bambu-lab-pla-basic-purple
+      Bambu Lab | PLA | Basic | Purple | #5E43B7
+
+[ 25] bambu-lab-pla-basic-red
+      Bambu Lab | PLA | Basic | Red | #C12E1F
+
+[ 26] bambu-lab-pla-basic-silver
+      Bambu Lab | PLA | Basic | Silver | #A6A9AA
+
+[ 27] bambu-lab-pla-basic-sunflower-yellow
+      Bambu Lab | PLA | Basic | Sunflower Yellow | #FEC600
+
+[ 28] bambu-lab-pla-basic-turquoise
+      Bambu Lab | PLA | Basic | Turquoise | #00B1B7
+
+[ 29] bambu-lab-pla-basic-yellow
+      Bambu Lab | PLA | Basic | Yellow | #F4EE2A
+
+[ 30] bambu-lab-pla-matte-apple-green
+      Bambu Lab | PLA | Matte | Apple Green | #C2E189
+
+[ 31] bambu-lab-pla-matte-ash-gray
+      Bambu Lab | PLA | Matte | Ash Gray | #9B9EA0
+
+[ 32] bambu-lab-pla-matte-bone-white
+      Bambu Lab | PLA | Matte | Bone White | #CBC6B8
+
+[ 33] bambu-lab-pla-matte-caramel
+      Bambu Lab | PLA | Matte | Caramel | #AE835B
+
+[ 34] bambu-lab-pla-matte-dark-blue
+      Bambu Lab | PLA | Matte | Dark Blue | #042F56
+
+[ 35] bambu-lab-pla-matte-dark-brown
+      Bambu Lab | PLA | Matte | Dark Brown | #7D6556
+
+[ 36] bambu-lab-pla-matte-dark-chocolate
+      Bambu Lab | PLA | Matte | Dark Chocolate | #4D3324
+
+[ 37] bambu-lab-pla-matte-dark-green
+      Bambu Lab | PLA | Matte | Dark Green | #68724D
+
+[ 38] bambu-lab-pla-matte-dark-red
+      Bambu Lab | PLA | Matte | Dark Red | #BB3D43
+
+[ 39] bambu-lab-pla-matte-desert-tan
+      Bambu Lab | PLA | Matte | Desert Tan | #E8DBB7
+
+[ 40] bambu-lab-pla-matte-grass-green
+      Bambu Lab | PLA | Matte | Grass Green | #61C680
+
+[ 41] bambu-lab-pla-matte-ice-blue
+      Bambu Lab | PLA | Matte | Ice Blue | #A3D8E1
+
+[ 42] bambu-lab-pla-matte-ivory-white
+      Bambu Lab | PLA | Matte | Ivory White | #FFFFFF
+
+[ 43] bambu-lab-pla-matte-latte-brown
+      Bambu Lab | PLA | Matte | Latte Brown | #D3B7A7
+
+[ 44] bambu-lab-pla-matte-lemon-yellow
+      Bambu Lab | PLA | Matte | Lemon Yellow | #F7D959
+
+[ 45] bambu-lab-pla-matte-lilac-purple
+      Bambu Lab | PLA | Matte | Lilac Purple | #AE96D4
+
+[ 46] bambu-lab-pla-matte-mandarin-orange
+      Bambu Lab | PLA | Matte | Mandarin Orange | #F99963
+
+[ 47] bambu-lab-pla-matte-marine-blue
+      Bambu Lab | PLA | Matte | Marine Blue | #0078BF
+
+[ 48] bambu-lab-pla-matte-nardo-gray
+      Bambu Lab | PLA | Matte | Nardo Gray | #757575
+
+[ 49] bambu-lab-pla-matte-plum
+      Bambu Lab | PLA | Matte | Plum | #950051
+
+[ 50] bambu-lab-pla-matte-sakura-pink
+      Bambu Lab | PLA | Matte | Sakura Pink | #E8AFCF
+
+[ 51] bambu-lab-pla-matte-scarlet-red
+      Bambu Lab | PLA | Matte | Scarlet Red | #DE4343
+
+[ 52] bambu-lab-pla-matte-sky-blue
+      Bambu Lab | PLA | Matte | Sky Blue | #56B7E6
+
+[ 53] bambu-lab-pla-matte-terracotta
+      Bambu Lab | PLA | Matte | Terracotta | #B15533
+
+[ 54] bambu-lab-pla-silk-baby-blue
+      Bambu Lab | PLA | Silk+ | Baby Blue | #A8C6EE
+
+[ 55] bambu-lab-pla-silk-blue
+      Bambu Lab | PLA | Silk+ | Blue | #008BDA
+
+[ 56] bambu-lab-pla-silk-candy-green
+      Bambu Lab | PLA | Silk+ | Candy Green | #018814
+
+[ 57] bambu-lab-pla-silk-candy-red
+      Bambu Lab | PLA | Silk+ | Candy Red | #D02727
+
+[ 58] bambu-lab-pla-silk-champagne
+      Bambu Lab | PLA | Silk+ | Champagne | #F3CFB2
+
+[ 59] bambu-lab-pla-silk-gold
+      Bambu Lab | PLA | Silk+ | Gold | #F4A925
+
+[ 60] bambu-lab-pla-silk-mint
+      Bambu Lab | PLA | Silk+ | Mint | #96DCB9
+
+[ 61] bambu-lab-pla-silk-pink
+      Bambu Lab | PLA | Silk+ | Pink | #F7ADA6
+
+[ 62] bambu-lab-pla-silk-purple
+      Bambu Lab | PLA | Silk+ | Purple | #8671CB
+
+[ 63] bambu-lab-pla-silk-rose-gold
+      Bambu Lab | PLA | Silk+ | Rose Gold | #BA9594
+
+[ 64] bambu-lab-pla-silk-silver
+      Bambu Lab | PLA | Silk+ | Silver | #C8C8C8
+
+[ 65] bambu-lab-pla-silk-titan-gray
+      Bambu Lab | PLA | Silk+ | Titan Gray | #5F6367
+
+[ 66] bambu-lab-pla-silk-white
+      Bambu Lab | PLA | Silk+ | White | #FFFFFF
+
+[ 67] elegoo-pla-basic-black
+      Elegoo | PLA | Basic | Black | #282929
+
+[ 68] elegoo-pla-basic-clear
+      Elegoo | PLA | Basic | Clear | #BEBBC0
+
+[ 69] elegoo-pla-basic-galaxy-black
+      Elegoo | PLA | Basic | Galaxy Black | #32464F
+
+[ 70] elegoo-pla-basic-galaxy-purple
+      Elegoo | PLA | Basic | Galaxy Purple | #3A2F70
+
+[ 71] elegoo-pla-basic-grey
+      Elegoo | PLA | Basic | Grey | #B5B7B8
+
+[ 72] elegoo-pla-basic-peacock-blue
+      Elegoo | PLA | Basic | Peacock Blue | #20606C
+
+[ 73] elegoo-pla-basic-sky-blue
+      Elegoo | PLA | Basic | Sky Blue | #45C8D6
+
+[ 74] elegoo-pla-basic-white
+      Elegoo | PLA | Basic | White | #E0E7F0
+
+[ 75] elegoo-pla-silk-black-red
+      Elegoo | PLA | Silk | Black Red | #65516B
+
+[ 76] elegoo-pla-silk-coral-pink
+      Elegoo | PLA | Silk | Coral Pink | #DB6E6E
+
+[ 77] elegoo-pla-silk-gold
+      Elegoo | PLA | Silk | Gold | #E2AC02
+
+[ 78] elegoo-pla-silk-redgreen
+      Elegoo | PLA | Silk | Red/Green | #716C57
+
+[ 79] elegoo-pla-silk-silver
+      Elegoo | PLA | Silk | Silver | #93969C
+
+[ 80] elegoo-pla-pro-basic-purple
+      Elegoo | PLA Pro | Basic | Purple | #5D539D
+
+[ 81] elegoo-pla-basic-black-2
+      Elegoo | PLA+ | Basic | Black | #343132
+
+[ 82] elegoo-pla-basic-orange
+      Elegoo | PLA+ | Basic | Orange | #CC6A30
+
+[ 83] elegoo-pla-basic-purple
+      Elegoo | PLA+ | Basic | Purple | #6E45A8
+
+[ 84] panchroma-cope-aqua-blue
+      Panchroma | CoPE | None | Aqua Blue | #5EBDDB
+
+[ 85] panchroma-cope-beige
+      Panchroma | CoPE | None | Beige | #C2AB72
+
+[ 86] panchroma-cope-black
+      Panchroma | CoPE | None | Black | #080A0D
+
+[ 87] panchroma-cope-brown
+      Panchroma | CoPE | None | Brown | #55331A
+
+[ 88] panchroma-cope-cold-white
+      Panchroma | CoPE | None | Cold White | #D9DFE5
+
+[ 89] panchroma-cope-cream
+      Panchroma | CoPE | None | Cream | #EED1A8
+
+[ 90] panchroma-cope-dark-grey
+      Panchroma | CoPE | None | Dark Grey | #485259
+
+[ 91] panchroma-cope-green
+      Panchroma | CoPE | None | Green | #06924D
+
+[ 92] panchroma-cope-jungle-green
+      Panchroma | CoPE | None | Jungle Green | #4E742D
+
+[ 93] panchroma-cope-magenta
+      Panchroma | CoPE | None | Magenta | #F24574
+
+[ 94] panchroma-cope-olive-drab-green
+      Panchroma | CoPE | None | Olive Drab Green | #575B54
+
+[ 95] panchroma-cope-olive-green
+      Panchroma | CoPE | None | Olive Green | #948902
+
+[ 96] panchroma-cope-orange
+      Panchroma | CoPE | None | Orange | #F67405
+
+[ 97] panchroma-cope-pink
+      Panchroma | CoPE | None | Pink | #F1A1AF
+
+[ 98] panchroma-cope-polymaker-teal
+      Panchroma | CoPE | None | Polymaker Teal | #4CC0C7
+
+[ 99] panchroma-cope-purple
+      Panchroma | CoPE | None | Purple | #6C47B2
+
+[100] panchroma-cope-red
+      Panchroma | CoPE | None | Red | #E72F1D
+
+[101] panchroma-cope-steel-grey
+      Panchroma | CoPE | None | Steel Grey | #616469
+
+[102] panchroma-cope-stone-blue
+      Panchroma | CoPE | None | Stone Blue | #487BA2
+
+[103] panchroma-cope-tan
+      Panchroma | CoPE | None | Tan | #A79E82
+
+[104] panchroma-cope-white
+      Panchroma | CoPE | None | White | #EBF7FF
+
+[105] panchroma-cope-wine-red
+      Panchroma | CoPE | None | Wine Red | #D60212
+
+[106] panchroma-cope-yellow
+      Panchroma | CoPE | None | Yellow | #FFE800
+
+[107] panchroma-pla-celestial-celestial-blue
+      Panchroma | PLA | Celestial | Celestial Blue | #6ADCF7
+
+[108] panchroma-pla-dual-matte-matte-camouflage-dark-green-brown
+      Panchroma | PLA | Dual Matte | Matte Camouflage (Dark Green-Brown) | #5F6244-#795A4D
+
+[109] panchroma-pla-dual-matte-matte-chameleon-teal-yellow
+      Panchroma | PLA | Dual Matte | Matte Chameleon (Teal-Yellow) | #61BCC3-#F3C432
+
+[110] panchroma-pla-dual-matte-matte-flamingo-pink-red
+      Panchroma | PLA | Dual Matte | Matte Flamingo (Pink-Red) | #EAADBD-#ED2F2E
+
+[111] panchroma-pla-dual-matte-matte-foggy-orange-grey-orange
+      Panchroma | PLA | Dual Matte | Matte Foggy Orange (Grey-Orange) | #8A8C94-#F88B17
+
+[112] panchroma-pla-dual-matte-matte-foggy-purple-grey-purple
+      Panchroma | PLA | Dual Matte | Matte Foggy Purple (Grey-Purple) | #8A8C94-#9572BF
+
+[113] panchroma-pla-dual-matte-matte-glacier-blue-ice-blue
+      Panchroma | PLA | Dual Matte | Matte Glacier Blue (Ice-Blue) | #A4D0DF-#0163A6
+
+[114] panchroma-pla-dual-matte-matte-shadow-orange-orange-black
+      Panchroma | PLA | Dual Matte | Matte Shadow Orange (Orange-Black) | #F88B17-#2F2E30
+
+[115] panchroma-pla-dual-matte-matte-shadow-red-black-red
+      Panchroma | PLA | Dual Matte | Matte Shadow Red (Black-Red) | #2F2E30-#ED2F2E
+
+[116] panchroma-pla-dual-matte-matte-sunrise-red-yellow
+      Panchroma | PLA | Dual Matte | Matte Sunrise (Red-Yellow) | #ED2F2E-#F3C432
+
+[117] panchroma-pla-dual-silk-silk-aubergine-lime-magenta
+      Panchroma | PLA | Dual Silk | Silk Aubergine (Lime-Magenta) | #C4CF4C-#AA538E
+
+[118] panchroma-pla-dual-silk-silk-banquet-gold-magenta
+      Panchroma | PLA | Dual Silk | Silk Banquet (Gold-Magenta) | #C49449-#AA538E
+
+[119] panchroma-pla-dual-silk-silk-beluga-silver-blue
+      Panchroma | PLA | Dual Silk | Silk Beluga (Silver-Blue) | #BCC2C8-#4999C9
+
+[120] panchroma-pla-dual-silk-silk-caribbean-sea-blue-green
+      Panchroma | PLA | Dual Silk | Silk Caribbean Sea (Blue-Green) | #4999C9-#55B687
+
+[121] panchroma-pla-dual-silk-silk-chameleon-yellow-blue
+      Panchroma | PLA | Dual Silk | Silk Chameleon (Yellow-Blue) | #EEC810-#4999C9
+
+[122] panchroma-pla-dual-silk-silk-crown-gold-silver
+      Panchroma | PLA | Dual Silk | Silk Crown (Gold-Silver) | #C49449-#BCC2C8
+
+[123] panchroma-pla-dual-silk-silk-jadeite-green-chrome
+      Panchroma | PLA | Dual Silk | Silk Jadeite (Green-Chrome) | #55B687-#85898B
+
+[124] panchroma-pla-dual-silk-silk-sovereign-gold-purple
+      Panchroma | PLA | Dual Silk | Silk Sovereign (Gold-Purple) | #C49449-#786BB0
+
+[125] panchroma-pla-dual-silk-silk-sunset-gold-red
+      Panchroma | PLA | Dual Silk | Silk Sunset (Gold-Red) | #C49449-#CF6076
+
+[126] panchroma-pla-dual-special-yin-yang
+      Panchroma | PLA | Dual Special | Yin-Yang | #020203-#CFCCD6
+
+[127] panchroma-pla-galaxy-galaxy-black
+      Panchroma | PLA | Galaxy | Galaxy Black | #161617
+
+[128] panchroma-pla-galaxy-galaxy-dark-blue
+      Panchroma | PLA | Galaxy | Galaxy Dark Blue | #18192D
+
+[129] panchroma-pla-galaxy-galaxy-dark-green
+      Panchroma | PLA | Galaxy | Galaxy Dark Green | #13484D
+
+[130] panchroma-pla-galaxy-galaxy-dark-grey
+      Panchroma | PLA | Galaxy | Galaxy Dark Grey | #4E5658
+
+[131] panchroma-pla-galaxy-galaxy-dark-red
+      Panchroma | PLA | Galaxy | Galaxy Dark Red | #451E14
+
+[132] panchroma-pla-glow-glow-blue
+      Panchroma | PLA | Glow | Glow Blue | #F3EADB
+
+[133] panchroma-pla-glow-glow-green
+      Panchroma | PLA | Glow | Glow Green | #F2EADB
+
+[134] panchroma-pla-luminous-luminous-orange
+      Panchroma | PLA | Luminous | Luminous Orange | #FEBE5F
+
+[135] panchroma-pla-luminous-luminous-pink
+      Panchroma | PLA | Luminous | Luminous Pink | #FE9176
+
+[136] panchroma-pla-luminous-luminous-yellow
+      Panchroma | PLA | Luminous | Luminous Yellow | #EEDC48
+
+[137] panchroma-pla-marble-marble-brick
+      Panchroma | PLA | Marble | Marble Brick | #CD7456
+
+[138] panchroma-pla-marble-marble-limestone
+      Panchroma | PLA | Marble | Marble Limestone | #BCBEBE
+
+[139] panchroma-pla-marble-marble-sandstone
+      Panchroma | PLA | Marble | Marble Sandstone | #C1BE97
+
+[140] panchroma-pla-matte-matte-arctic-teal
+      Panchroma | PLA | Matte | Matte Arctic Teal | #61BCC3
+
+[141] panchroma-pla-matte-matte-army-beige
+      Panchroma | PLA | Matte | Matte Army Beige | #DBBAA5
+
+[142] panchroma-pla-matte-matte-army-blue
+      Panchroma | PLA | Matte | Matte Army Blue | #2E4462
+
+[143] panchroma-pla-matte-matte-army-brown
+      Panchroma | PLA | Matte | Matte Army Brown | #795A4D
+
+[144] panchroma-pla-matte-matte-army-dark-green
+      Panchroma | PLA | Matte | Matte Army Dark Green | #5F6244
+
+[145] panchroma-pla-matte-matte-army-light-green
+      Panchroma | PLA | Matte | Matte Army Light Green | #AB8C02
+
+[146] panchroma-pla-matte-matte-army-purple
+      Panchroma | PLA | Matte | Matte Army Purple | #36364A
+
+[147] panchroma-pla-matte-matte-army-red
+      Panchroma | PLA | Matte | Matte Army Red | #BF312E
+
+[148] panchroma-pla-matte-matte-ash-grey
+      Panchroma | PLA | Matte | Matte Ash Grey | #485155
+
+[149] panchroma-pla-matte-matte-charcoal-black
+      Panchroma | PLA | Matte | Matte Charcoal Black | #2F2E30
+
+[150] panchroma-pla-matte-matte-cotton-white
+      Panchroma | PLA | Matte | Matte Cotton White | #F4EFEB
+
+[151] panchroma-pla-matte-matte-earth-brown
+      Panchroma | PLA | Matte | Matte Earth Brown | #7C594A
+
+[152] panchroma-pla-matte-matte-electric-indigo
+      Panchroma | PLA | Matte | Matte Electric Indigo | #6858A9
+
+[153] panchroma-pla-matte-matte-forest-green
+      Panchroma | PLA | Matte | Matte Forest Green | #60AD70
+
+[154] panchroma-pla-matte-matte-lavender-purple
+      Panchroma | PLA | Matte | Matte Lavender Purple | #9572BF
+
+[155] panchroma-pla-matte-matte-lime-green
+      Panchroma | PLA | Matte | Matte Lime Green | #D7D602
+
+[156] panchroma-pla-matte-matte-lotus-pink
+      Panchroma | PLA | Matte | Matte Lotus Pink | #DD76C0
+
+[157] panchroma-pla-matte-matte-muted-blue
+      Panchroma | PLA | Matte | Matte Muted Blue | #5F778E
+
+[158] panchroma-pla-matte-matte-muted-green
+      Panchroma | PLA | Matte | Matte Muted Green | #777E71
+
+[159] panchroma-pla-matte-matte-muted-purple
+      Panchroma | PLA | Matte | Matte Muted Purple | #7C5C78
+
+[160] panchroma-pla-matte-matte-muted-red
+      Panchroma | PLA | Matte | Matte Muted Red | #D84B2E
+
+[161] panchroma-pla-matte-matte-muted-white
+      Panchroma | PLA | Matte | Matte Muted White | #BBADA4
+
+[162] panchroma-pla-matte-matte-pastel-banana
+      Panchroma | PLA | Matte | Matte Pastel Banana | #F7D475
+
+[163] panchroma-pla-matte-matte-pastel-candy
+      Panchroma | PLA | Matte | Matte Pastel Candy | #F0D6D9
+
+[164] panchroma-pla-matte-matte-pastel-ice
+      Panchroma | PLA | Matte | Matte Pastel Ice | #A4D0DF
+
+[165] panchroma-pla-matte-matte-pastel-mint
+      Panchroma | PLA | Matte | Matte Pastel Mint | #D2DEBB
+
+[166] panchroma-pla-matte-matte-pastel-peach
+      Panchroma | PLA | Matte | Matte Pastel Peach | #F6BF8B
+
+[167] panchroma-pla-matte-matte-pastel-peanut
+      Panchroma | PLA | Matte | Matte Pastel Peanut | #BF9573
+
+[168] panchroma-pla-matte-matte-sakura-pink
+      Panchroma | PLA | Matte | Matte Sakura Pink | #EAADBD
+
+[169] panchroma-pla-matte-matte-sapphire-blue
+      Panchroma | PLA | Matte | Matte Sapphire Blue | #0163A6
+
+[170] panchroma-pla-matte-matte-savannah-yellow
+      Panchroma | PLA | Matte | Matte Savannah Yellow | #F3C432
+
+[171] panchroma-pla-matte-matte-sky-blue
+      Panchroma | PLA | Matte | Matte Sky Blue | #1AC5FC
+
+[172] panchroma-pla-matte-matte-sunrise-orange
+      Panchroma | PLA | Matte | Matte Sunrise Orange | #F88B17
+
+[173] panchroma-pla-matte-matte-wood-brown
+      Panchroma | PLA | Matte | Matte Wood Brown | #AB7449
+
+[174] panchroma-pla-metallic-metallic-blue
+      Panchroma | PLA | Metallic | Metallic Blue | #2C3449
+
+[175] panchroma-pla-metallic-metallic-bronze
+      Panchroma | PLA | Metallic | Metallic Bronze | #926043
+
+[176] panchroma-pla-metallic-metallic-gold
+      Panchroma | PLA | Metallic | Metallic Gold | #DA9F1D
+
+[177] panchroma-pla-metallic-metallic-silver
+      Panchroma | PLA | Metallic | Metallic Silver | #7A838E
+
+[178] panchroma-pla-neon-neon-green
+      Panchroma | PLA | Neon | Neon Green | #00F263
+
+[179] panchroma-pla-neon-neon-magenta
+      Panchroma | PLA | Neon | Neon Magenta | #F21185
+
+[180] panchroma-pla-neon-neon-orange
+      Panchroma | PLA | Neon | Neon Orange | #FF7800
+
+[181] panchroma-pla-neon-neon-pink
+      Panchroma | PLA | Neon | Neon Pink | #FF3670
+
+[182] panchroma-pla-neon-neon-red
+      Panchroma | PLA | Neon | Neon Red | #FE2D42
+
+[183] panchroma-pla-neon-neon-yellow
+      Panchroma | PLA | Neon | Neon Yellow | #E5DB2E
+
+[184] panchroma-pla-satin-satin-black
+      Panchroma | PLA | Satin | Satin Black | #302E30
+
+[185] panchroma-pla-satin-satin-grey
+      Panchroma | PLA | Satin | Satin Grey | #797E89
+
+[186] panchroma-pla-satin-satin-orange
+      Panchroma | PLA | Satin | Satin Orange | #FE9217
+
+[187] panchroma-pla-satin-satin-polymaker-teal
+      Panchroma | PLA | Satin | Satin Polymaker Teal | #61BBC1
+
+[188] panchroma-pla-satin-satin-purple
+      Panchroma | PLA | Satin | Satin Purple | #9272C1
+
+[189] panchroma-pla-satin-satin-red
+      Panchroma | PLA | Satin | Satin Red | #DA1521
+
+[190] panchroma-pla-satin-satin-white
+      Panchroma | PLA | Satin | Satin White | #F5F0EC
+
+[191] panchroma-pla-satin-satin-yellow
+      Panchroma | PLA | Satin | Satin Yellow | #F4C131
+
+[192] panchroma-pla-silk-silk-black
+      Panchroma | PLA | Silk | Silk Black | #363538
+
+[193] panchroma-pla-silk-silk-blue
+      Panchroma | PLA | Silk | Silk Blue | #4999C9
+
+[194] panchroma-pla-silk-silk-chrome
+      Panchroma | PLA | Silk | Silk Chrome | #85898B
+
+[195] panchroma-pla-silk-silk-dark-blue
+      Panchroma | PLA | Silk | Silk Dark Blue | #23599A
+
+[196] panchroma-pla-silk-silk-gold
+      Panchroma | PLA | Silk | Silk Gold | #C49449
+
+[197] panchroma-pla-silk-silk-green
+      Panchroma | PLA | Silk | Silk Green | #55B687
+
+[198] panchroma-pla-silk-silk-gunmetal-grey
+      Panchroma | PLA | Silk | Silk Gunmetal Grey | #676B6A
+
+[199] panchroma-pla-silk-silk-light-blue
+      Panchroma | PLA | Silk | Silk Light Blue | #4CC1CB
+
+[200] panchroma-pla-silk-silk-lime
+      Panchroma | PLA | Silk | Silk Lime | #C4CF4C
+
+[201] panchroma-pla-silk-silk-magenta
+      Panchroma | PLA | Silk | Silk Magenta | #AA538E
+
+[202] panchroma-pla-silk-silk-orange
+      Panchroma | PLA | Silk | Silk Orange | #EB6232
+
+[203] panchroma-pla-silk-silk-purple
+      Panchroma | PLA | Silk | Silk Purple | #786BB0
+
+[204] panchroma-pla-silk-silk-quartz-pink
+      Panchroma | PLA | Silk | Silk Quartz Pink | #DBBBBB
+
+[205] panchroma-pla-silk-silk-red
+      Panchroma | PLA | Silk | Silk Red | #C1443F
+
+[206] panchroma-pla-silk-silk-rose
+      Panchroma | PLA | Silk | Silk Rose | #CF6076
+
+[207] panchroma-pla-silk-silk-rose-gold
+      Panchroma | PLA | Silk | Silk Rose Gold | #CBB0B1
+
+[208] panchroma-pla-silk-silk-silver
+      Panchroma | PLA | Silk | Silk Silver | #BCC2C8
+
+[209] panchroma-pla-silk-silk-teal
+      Panchroma | PLA | Silk | Silk Teal | #66C2B6
+
+[210] panchroma-pla-silk-silk-white
+      Panchroma | PLA | Silk | Silk White | #DFE4E4
+
+[211] panchroma-pla-silk-silk-yellow
+      Panchroma | PLA | Silk | Silk Yellow | #EEC810
+
+[212] panchroma-pla-starlight-starlight-aurora
+      Panchroma | PLA | Starlight | Starlight Aurora | #314530
+
+[213] panchroma-pla-starlight-starlight-comet
+      Panchroma | PLA | Starlight | Starlight Comet | #1F312A
+
+[214] panchroma-pla-starlight-starlight-jupiter
+      Panchroma | PLA | Starlight | Starlight Jupiter | #774718
+
+[215] panchroma-pla-starlight-starlight-mars
+      Panchroma | PLA | Starlight | Starlight Mars | #962E31
+
+[216] panchroma-pla-starlight-starlight-mercury
+      Panchroma | PLA | Starlight | Starlight Mercury | #33322D
+
+[217] panchroma-pla-starlight-starlight-meteor
+      Panchroma | PLA | Starlight | Starlight Meteor | #2F3117
+
+[218] panchroma-pla-starlight-starlight-nebula
+      Panchroma | PLA | Starlight | Starlight Nebula | #462F32
+
+[219] panchroma-pla-starlight-starlight-neptune
+      Panchroma | PLA | Starlight | Starlight Neptune | #113148
+
+[220] panchroma-pla-starlight-starlight-twilight
+      Panchroma | PLA | Starlight | Starlight Twilight | #1E3445
+
+[221] panchroma-pla-translucent-translucent-cyan
+      Panchroma | PLA | Translucent | Translucent Cyan | #08ABFB
+
+[222] panchroma-pla-translucent-translucent-grey
+      Panchroma | PLA | Translucent | Translucent Grey | #9199A4
+
+[223] panchroma-pla-translucent-translucent-magenta
+      Panchroma | PLA | Translucent | Translucent Magenta | #D93B90
+
+[224] panchroma-pla-translucent-translucent-natural
+      Panchroma | PLA | Translucent | Translucent Natural | #E8E6D0
+
+[225] panchroma-pla-translucent-translucent-yellow
+      Panchroma | PLA | Translucent | Translucent Yellow | #F9ED3D
+
+[226] panchroma-pla-uv-shift-uv-shift-naturalorange
+      Panchroma | PLA | UV Shift | UV Shift Natural/Orange | #F1DBBF
+
+[227] paramount-3d-abs-asa-autobot-blue
+      Paramount 3D | ABS / ASA | None | Autobot Blue | #1A4C8B
+
+[228] paramount-3d-abs-asa-black
+      Paramount 3D | ABS / ASA | None | Black | #2F3435
+
+[229] paramount-3d-abs-asa-enzo-red
+      Paramount 3D | ABS / ASA | None | Enzo Red | #B93A32
+
+[230] paramount-3d-abs-asa-mclaren-orange
+      Paramount 3D | ABS / ASA | None | McLaren Orange | #E5761F
+
+[231] paramount-3d-abs-asa-mid-century-modern-teal
+      Paramount 3D | ABS / ASA | None | Mid Century Modern Teal | #418689
+
+[232] paramount-3d-petg-autobot-blue
+      Paramount 3D | PETG | None | Autobot Blue | #203C7F
+
+[233] paramount-3d-petg-black
+      Paramount 3D | PETG | None | Black | #2B2929
+
+[234] paramount-3d-petg-black-carbon-fiber
+      Paramount 3D | PETG | None | Black Carbon Fiber | #353635
+
+[235] paramount-3d-petg-castle-limestone-gray
+      Paramount 3D | PETG | None | Castle Limestone Gray | #888D82
+
+[236] paramount-3d-petg-decepticon-purple
+      Paramount 3D | PETG | None | Decepticon Purple | #4D233D
+
+[237] paramount-3d-petg-iron-red
+      Paramount 3D | PETG | None | Iron Red | #77212E
+
+[238] paramount-3d-petg-mclaren-orange
+      Paramount 3D | PETG | None | McLaren Orange | #E5761F
+
+[239] paramount-3d-petg-military-green
+      Paramount 3D | PETG | None | Military Green | #595F34
+
+[240] paramount-3d-petg-military-khaki
+      Paramount 3D | PETG | None | Military Khaki | #988B79
+
+[241] paramount-3d-petg-military-mbt-brown
+      Paramount 3D | PETG | None | Military MBT Brown | #A46F44
+
+[242] paramount-3d-petg-stealth-gray
+      Paramount 3D | PETG | None | Stealth Gray | #5C5D5B
+
+[243] paramount-3d-petg-white
+      Paramount 3D | PETG | None | White | #E2EAEB
+
+[244] paramount-3d-pla-atomic-age-teal
+      Paramount 3D | PLA | None | Atomic Age Teal | #035453
+
+[245] paramount-3d-pla-autobot-blue
+      Paramount 3D | PLA | None | Autobot Blue | #1A4C8B
+
+[246] paramount-3d-pla-battleship-gray
+      Paramount 3D | PLA | None | Battleship Gray | #656D6D
+
+[247] paramount-3d-pla-black
+      Paramount 3D | PLA | None | Black | #353635
+
+[248] paramount-3d-pla-black-cherry
+      Paramount 3D | PLA | None | Black Cherry | #612E35
+
+[249] paramount-3d-pla-british-racing-green
+      Paramount 3D | PLA | None | British Racing Green | #264E36
+
+[250] paramount-3d-pla-cadet-blue
+      Paramount 3D | PLA | None | Cadet Blue | #305679
+
+[251] paramount-3d-pla-caribbean-coral
+      Paramount 3D | PLA | None | Caribbean Coral | #D15837
+
+[252] paramount-3d-pla-castle-limestone-gray
+      Paramount 3D | PLA | None | Castle Limestone Gray | #8B8A79
+
+[253] paramount-3d-pla-decepticon-purple
+      Paramount 3D | PLA | None | Decepticon Purple | #533146
+
+[254] paramount-3d-pla-egg-yolk-yellow
+      Paramount 3D | PLA | None | Egg Yolk Yellow | #CB8E16
+
+[255] paramount-3d-pla-enzo-red
+      Paramount 3D | PLA | None | Enzo Red | #AF4249
+
+[256] paramount-3d-pla-fighter-jet-blue
+      Paramount 3D | PLA | None | Fighter Jet Blue | #34414E
+
+[257] paramount-3d-pla-game-cartridge-gray
+      Paramount 3D | PLA | None | Game Cartridge Gray | #898F8D
+
+[258] paramount-3d-pla-gold-krugerrand
+      Paramount 3D | PLA | None | Gold Krugerrand | #D7B57F
+
+[259] paramount-3d-pla-graphite-gray
+      Paramount 3D | PLA | None | Graphite Gray | #5C5D5B
+
+[260] paramount-3d-pla-great-depression-jadeite
+      Paramount 3D | PLA | None | Great Depression Jadeite | #B7C9B1
+
+[261] paramount-3d-pla-hannibal-red
+      Paramount 3D | PLA | None | Hannibal Red | #7E392F
+
+[262] paramount-3d-pla-harajuku-pink
+      Paramount 3D | PLA | None | Harajuku Pink | #CF2D71
+
+[263] paramount-3d-pla-iron-red
+      Paramount 3D | PLA | None | Iron Red | #72262C
+
+[264] paramount-3d-pla-ivory-pantone-7501c
+      Paramount 3D | PLA | None | Ivory (Pantone 7501C) | #C8C09F
+
+[265] paramount-3d-pla-karnak-sandstone
+      Paramount 3D | PLA | None | Karnak Sandstone | #8D7960
+
+[266] paramount-3d-pla-leviathan-blue-green
+      Paramount 3D | PLA | None | Leviathan Blue / Green | #174950
+
+[267] paramount-3d-pla-mclaren-orange
+      Paramount 3D | PLA | None | McLaren Orange | #F4963A
+
+[268] paramount-3d-pla-military-green
+      Paramount 3D | PLA | None | Military Green | #414F3C
+
+[269] paramount-3d-pla-military-khaki
+      Paramount 3D | PLA | None | Military Khaki | #A68A6D
+
+[270] paramount-3d-pla-primordial-earth
+      Paramount 3D | PLA | None | Primordial Earth | #6D625B
+
+[271] paramount-3d-pla-prototype-gray
+      Paramount 3D | PLA | None | Prototype Gray | #8D8F8F
+
+[272] paramount-3d-pla-silver-dollar
+      Paramount 3D | PLA | None | Silver Dollar | #8B8D8D
+
+[273] paramount-3d-pla-simpson-yellow
+      Paramount 3D | PLA | None | Simpson Yellow | #D9CE52
+
+[274] paramount-3d-pla-skin-dark-complexion
+      Paramount 3D | PLA | None | Skin - Dark Complexion | #A17249
+
+[275] paramount-3d-pla-skin-fair-complexion
+      Paramount 3D | PLA | None | Skin - Fair Complexion | #DFD1BB
+
+[276] paramount-3d-pla-skin-ivory-complexion
+      Paramount 3D | PLA | None | Skin - Ivory Complexion | #D8CFB2
+
+[277] paramount-3d-pla-skin-universal-beige
+      Paramount 3D | PLA | None | Skin - Universal Beige | #DCC99E
+
+[278] paramount-3d-pla-st-andrews-green
+      Paramount 3D | PLA | None | St. Andrews Green | #4B6D41
+
+[279] paramount-3d-pla-stealth-gray
+      Paramount 3D | PLA | None | Stealth Gray | #353635
+
+[280] paramount-3d-pla-steel-gray
+      Paramount 3D | PLA | None | Steel Gray | #7A8387
+
+[281] paramount-3d-pla-terra-cotta
+      Paramount 3D | PLA | None | Terra Cotta | #A57461
+
+[282] paramount-3d-pla-volcano-orange-red
+      Paramount 3D | PLA | None | Volcano Orange Red | #D73C26
+
+[283] paramount-3d-pla-white
+      Paramount 3D | PLA | None | White | #EDF1FE
+
+[284] paramount-3d-pla-wood
+      Paramount 3D | PLA | None | Wood | #906F54
+
+[285] polymaker-abs-polylite-black
+      Polymaker | ABS | PolyLite | Black | #16161A
+
+[286] polymaker-abs-polylite-blue
+      Polymaker | ABS | PolyLite | Blue | #003276
+
+[287] polymaker-abs-polylite-dark-grey
+      Polymaker | ABS | PolyLite | Dark Grey | #474648
+
+[288] polymaker-abs-polylite-dark-purple
+      Polymaker | ABS | PolyLite | Dark Purple | #46394E
+
+[289] polymaker-abs-polylite-galaxy-black
+      Polymaker | ABS | PolyLite | Galaxy Black | #212721
+
+[290] polymaker-abs-polylite-galaxy-orange
+      Polymaker | ABS | PolyLite | Galaxy Orange | #F57517
+
+[291] polymaker-abs-polylite-galaxy-teal
+      Polymaker | ABS | PolyLite | Galaxy Teal | #2DCCD3
+
+[292] polymaker-abs-polylite-gold
+      Polymaker | ABS | PolyLite | Gold | #BD6200
+
+[293] polymaker-abs-polylite-green
+      Polymaker | ABS | PolyLite | Green | #479161
+
+[294] polymaker-abs-polylite-grey
+      Polymaker | ABS | PolyLite | Grey | #8C8D93
+
+[295] polymaker-abs-polylite-light-blue
+      Polymaker | ABS | PolyLite | Light Blue | #8EDBEB
+
+[296] polymaker-abs-polylite-lime
+      Polymaker | ABS | PolyLite | Lime | #C4D100
+
+[297] polymaker-abs-polylite-metallic-blue
+      Polymaker | ABS | PolyLite | Metallic Blue | #0D2441
+
+[298] polymaker-abs-polylite-metallic-green
+      Polymaker | ABS | PolyLite | Metallic Green | #3D441E
+
+[299] polymaker-abs-polylite-natural
+      Polymaker | ABS | PolyLite | Natural | #F7F5ED
+
+[300] polymaker-abs-polylite-neon-green
+      Polymaker | ABS | PolyLite | Neon Green | #77F0A2
+
+[301] polymaker-abs-polylite-neon-magenta
+      Polymaker | ABS | PolyLite | Neon Magenta | #F6162E
+
+[302] polymaker-abs-polylite-neon-orange
+      Polymaker | ABS | PolyLite | Neon Orange | #FE602B
+
+[303] polymaker-abs-polylite-neon-yellow
+      Polymaker | ABS | PolyLite | Neon Yellow | #FFC001
+
+[304] polymaker-abs-polylite-orange
+      Polymaker | ABS | PolyLite | Orange | #F57517
+
+[305] polymaker-abs-polylite-pink
+      Polymaker | ABS | PolyLite | Pink | #FFA7C4
+
+[306] polymaker-abs-polylite-purple
+      Polymaker | ABS | PolyLite | Purple | #6545A5
+
+[307] polymaker-abs-polylite-red
+      Polymaker | ABS | PolyLite | Red | #F3442B
+
+[308] polymaker-abs-polylite-teal
+      Polymaker | ABS | PolyLite | Teal | #01ACBA
+
+[309] polymaker-abs-polylite-white
+      Polymaker | ABS | PolyLite | White | #F0EBE8
+
+[310] polymaker-abs-polylite-yellow
+      Polymaker | ABS | PolyLite | Yellow | #EDA900
+
+[311] polymaker-asa-polylite-army-green
+      Polymaker | ASA | PolyLite | Army Green | #5C5E31
+
+[312] polymaker-asa-polylite-black
+      Polymaker | ASA | PolyLite | Black | #17161A
+
+[313] polymaker-asa-polylite-blue
+      Polymaker | ASA | PolyLite | Blue | #003576
+
+[314] polymaker-asa-polylite-dark-gray-green
+      Polymaker | ASA | PolyLite | Dark Gray Green | #4C5F46
+
+[315] polymaker-asa-polylite-dark-grey
+      Polymaker | ASA | PolyLite | Dark Grey | #48474A
+
+[316] polymaker-asa-polylite-dark-purple
+      Polymaker | ASA | PolyLite | Dark Purple | #46394E
+
+[317] polymaker-asa-polylite-galaxy-black
+      Polymaker | ASA | PolyLite | Galaxy Black | #212721
+
+[318] polymaker-asa-polylite-galaxy-green
+      Polymaker | ASA | PolyLite | Galaxy Green | #2E764C
+
+[319] polymaker-asa-polylite-galaxy-red
+      Polymaker | ASA | PolyLite | Galaxy Red | #BF1A11
+
+[320] polymaker-asa-polylite-green
+      Polymaker | ASA | PolyLite | Green | #2E784D
+
+[321] polymaker-asa-polylite-grey
+      Polymaker | ASA | PolyLite | Grey | #8D8E92
+
+[322] polymaker-asa-polylite-jet-black
+      Polymaker | ASA | PolyLite | Jet Black | #161618
+
+[323] polymaker-asa-polylite-natural
+      Polymaker | ASA | PolyLite | Natural | #DFD3C3
+
+[324] polymaker-asa-polylite-olive-brown
+      Polymaker | ASA | PolyLite | Olive Brown | #A79565
+
+[325] polymaker-asa-polylite-orange
+      Polymaker | ASA | PolyLite | Orange | #F37716
+
+[326] polymaker-asa-polylite-polymaker-teal
+      Polymaker | ASA | PolyLite | Polymaker Teal | #0094A4
+
+[327] polymaker-asa-polylite-pop-blue
+      Polymaker | ASA | PolyLite | Pop Blue | #008DC3
+
+[328] polymaker-asa-polylite-pop-green
+      Polymaker | ASA | PolyLite | Pop Green | #77D730
+
+[329] polymaker-asa-polylite-pop-pink
+      Polymaker | ASA | PolyLite | Pop Pink | #D83076
+
+[330] polymaker-asa-polylite-purple
+      Polymaker | ASA | PolyLite | Purple | #5F4793
+
+[331] polymaker-asa-polylite-red
+      Polymaker | ASA | PolyLite | Red | #D82B1C
+
+[332] polymaker-asa-polylite-white
+      Polymaker | ASA | PolyLite | White | #DBD7D6
+
+[333] polymaker-asa-polylite-yellow
+      Polymaker | ASA | PolyLite | Yellow | #EEC000
+
+[334] polymaker-cospla-polylite-version-a
+      Polymaker | CosPLA | PolyLite | Version A | #A7A4A8
+
+[335] polymaker-cospla-polylite-version-b
+      Polymaker | CosPLA | PolyLite | Version B | #BCBABB
+
+[336] polymaker-pc-polylite-transparent
+      Polymaker | PC | PolyLite | Transparent | #DAD5D4
+
+[337] polymaker-pc-polymax-black
+      Polymaker | PC | PolyMax | Black | #151518
+
+[338] polymaker-pc-polymax-blue
+      Polymaker | PC | PolyMax | Blue | #005DAB
+
+[339] polymaker-pc-polymax-red
+      Polymaker | PC | PolyMax | Red | #DA2A1E
+
+[340] polymaker-petg-none-black
+      Polymaker | PETG | None | Black | #161618
+
+[341] polymaker-petg-polylite-black
+      Polymaker | PETG | PolyLite | Black | #161618
+
+[342] polymaker-petg-polylite-clear
+      Polymaker | PETG | PolyLite | Clear | #DBD5D6
+
+[343] polymaker-petg-polylite-dark-blue
+      Polymaker | PETG | PolyLite | Dark Blue | #151C2F
+
+[344] polymaker-petg-polylite-dark-green
+      Polymaker | PETG | PolyLite | Dark Green | #2C342D
+
+[345] polymaker-petg-polylite-dark-grey
+      Polymaker | PETG | PolyLite | Dark Grey | #6C6D71
+
+[346] polymaker-petg-polylite-dark-purple
+      Polymaker | PETG | PolyLite | Dark Purple | #2E1A47
+
+[347] polymaker-petg-polylite-electric-blue
+      Polymaker | PETG | PolyLite | Electric Blue | #0076C1
+
+[348] polymaker-petg-polylite-gold
+      Polymaker | PETG | PolyLite | Gold | #A85D00
+
+[349] polymaker-petg-polylite-green
+      Polymaker | PETG | PolyLite | Green | #007A44
+
+[350] polymaker-petg-polylite-grey
+      Polymaker | PETG | PolyLite | Grey | #8C8D93
+
+[351] polymaker-petg-polylite-lime
+      Polymaker | PETG | PolyLite | Lime | #D8DB00
+
+[352] polymaker-petg-polylite-magenta
+      Polymaker | PETG | PolyLite | Magenta | #C1015B
+
+[353] polymaker-petg-polylite-orange
+      Polymaker | PETG | PolyLite | Orange | #F37715
+
+[354] polymaker-petg-polylite-pink
+      Polymaker | PETG | PolyLite | Pink | #EE94A5
+
+[355] polymaker-petg-polylite-purple
+      Polymaker | PETG | PolyLite | Purple | #6347A5
+
+[356] polymaker-petg-polylite-red
+      Polymaker | PETG | PolyLite | Red | #D92B1C
+
+[357] polymaker-petg-polylite-silver
+      Polymaker | PETG | PolyLite | Silver | #5F5E5F
+
+[358] polymaker-petg-polylite-teal
+      Polymaker | PETG | PolyLite | Teal | #0091A5
+
+[359] polymaker-petg-polylite-translucent-blue
+      Polymaker | PETG | PolyLite | Translucent Blue | #01062F
+
+[360] polymaker-petg-polylite-translucent-green
+      Polymaker | PETG | PolyLite | Translucent Green | #005F2F
+
+[361] polymaker-petg-polylite-translucent-red
+      Polymaker | PETG | PolyLite | Translucent Red | #BE0017
+
+[362] polymaker-petg-polylite-white
+      Polymaker | PETG | PolyLite | White | #EEEBEA
+
+[363] polymaker-petg-polymax-black
+      Polymaker | PETG | PolyMax | Black | #181718
+
+[364] polymaker-petg-polymax-white
+      Polymaker | PETG | PolyMax | White | #EFECEB
+
+[365] polymaker-petg-cf-none-black
+      Polymaker | PETG-CF | None | Black | #302E2F
+
+[366] polymaker-pla-none-3d-print-general-flat-dark-earth
+      Polymaker | PLA | None | 3D Print General Flat Dark Earth | #90785E
+
+[367] polymaker-pla-none-black
+      Polymaker | PLA | None | Black | #161618
+
+[368] polymaker-pla-none-black-2
+      Polymaker | PLA | None | Black | #1C1C1C
+
+[369] polymaker-pla-none-black-3
+      Polymaker | PLA | None | Black | #2F2E30
+
+[370] polymaker-pla-none-black-4
+      Polymaker | PLA | None | Black | #302F31
+
+[371] polymaker-pla-none-black-5
+      Polymaker | PLA | None | Black | #181617
+
+[372] polymaker-pla-none-black-6
+      Polymaker | PLA | None | Black | #161619
+
+[373] polymaker-pla-none-black-7
+      Polymaker | PLA | None | Black | #161618
+
+[374] polymaker-pla-none-bright-green
+      Polymaker | PLA | None | Bright Green | #BDD901
+
+[375] polymaker-pla-none-bright-orange
+      Polymaker | PLA | None | Bright Orange | #F07806
+
+[376] polymaker-pla-none-bright-red
+      Polymaker | PLA | None | Bright Red | #D6001C
+
+[377] polymaker-pla-none-bright-yellow
+      Polymaker | PLA | None | Bright Yellow | #F6BD01
+
+[378] polymaker-pla-none-grey
+      Polymaker | PLA | None | Grey | #615D5C
+
+[379] polymaker-pla-none-grey-2
+      Polymaker | PLA | None | Grey | #94918D
+
+[380] polymaker-pla-none-hedgehog-makes-galaxy-red
+      Polymaker | PLA | None | Hedgehog Makes - Galaxy Red | #760007
+
+[381] polymaker-pla-none-lm-sparkle-green
+      Polymaker | PLA | None | LM Sparkle Green | #434D43
+
+[382] polymaker-pla-none-natural
+      Polymaker | PLA | None | Natural | #EADAC2
+
+[383] polymaker-pla-none-natural-2
+      Polymaker | PLA | None | Natural | #E8D795
+
+[384] polymaker-pla-none-white
+      Polymaker | PLA | None | White | #EDD7BF
+
+[385] polymaker-pla-none-white-2
+      Polymaker | PLA | None | White | #DDD7D3
+
+[386] polymaker-pla-none-white-3
+      Polymaker | PLA | None | White | #DDD6D4
+
+[387] polymaker-pla-none-wood
+      Polymaker | PLA | None | Wood | #A8754B
+
+[388] polymaker-pla-polycast-natural
+      Polymaker | PLA | PolyCast | Natural | #E9DFD3
+
+[389] polymaker-pla-polylite-aqua-blue
+      Polymaker | PLA | PolyLite | Aqua Blue | #5EBDDB
+
+[390] polymaker-pla-polylite-azure-blue
+      Polymaker | PLA | PolyLite | Azure Blue | #0061D5
+
+[391] polymaker-pla-polylite-beige
+      Polymaker | PLA | PolyLite | Beige | #C2AB72
+
+[392] polymaker-pla-polylite-black
+      Polymaker | PLA | PolyLite | Black | #030305
+
+[393] polymaker-pla-polylite-blue
+      Polymaker | PLA | PolyLite | Blue | #013178
+
+[394] polymaker-pla-polylite-cold-white
+      Polymaker | PLA | PolyLite | Cold White | #EAECF5
+
+[395] polymaker-pla-polylite-cream
+      Polymaker | PLA | PolyLite | Cream | #EED1A8
+
+[396] polymaker-pla-polylite-dark-gray-green
+      Polymaker | PLA | PolyLite | Dark Gray Green | #4C5F46
+
+[397] polymaker-pla-polylite-dark-grey
+      Polymaker | PLA | PolyLite | Dark Grey | #6E8393
+
+[398] polymaker-pla-polylite-green
+      Polymaker | PLA | PolyLite | Green | #30A45F
+
+[399] polymaker-pla-polylite-grey
+      Polymaker | PLA | PolyLite | Grey | #8B8E96
+
+[400] polymaker-pla-polylite-jungle-green
+      Polymaker | PLA | PolyLite | Jungle Green | #4E742D
+
+[401] polymaker-pla-polylite-lemon-yellow
+      Polymaker | PLA | PolyLite | Lemon Yellow | #EED230
+
+[402] polymaker-pla-polylite-lime-green
+      Polymaker | PLA | PolyLite | Lime Green | #D5D701
+
+[403] polymaker-pla-polylite-magenta
+      Polymaker | PLA | PolyLite | Magenta | #F24574
+
+[404] polymaker-pla-polylite-natural
+      Polymaker | PLA | PolyLite | Natural | #DFD3C3
+
+[405] polymaker-pla-polylite-olive-brown
+      Polymaker | PLA | PolyLite | Olive Brown | #A79565
+
+[406] polymaker-pla-polylite-olive-green
+      Polymaker | PLA | PolyLite | Olive Green | #948902
+
+[407] polymaker-pla-polylite-orange
+      Polymaker | PLA | PolyLite | Orange | #F36201
+
+[408] polymaker-pla-polylite-polymaker-teal
+      Polymaker | PLA | PolyLite | Polymaker Teal | #48B9C2
+
+[409] polymaker-pla-polylite-purple
+      Polymaker | PLA | PolyLite | Purple | #6447A5
+
+[410] polymaker-pla-polylite-red
+      Polymaker | PLA | PolyLite | Red | #D90102
+
+[411] polymaker-pla-polylite-stone-blue
+      Polymaker | PLA | PolyLite | Stone Blue | #487BA2
+
+[412] polymaker-pla-polylite-white
+      Polymaker | PLA | PolyLite | White | #DDD7D3
+
+[413] polymaker-pla-polylite-wine-red
+      Polymaker | PLA | PolyLite | Wine Red | #D60212
+
+[414] polymaker-pla-polylite-yellow
+      Polymaker | PLA | PolyLite | Yellow | #F3AA01
+
+[415] polymaker-pla-polymax-black
+      Polymaker | PLA | PolyMax | Black | #161619
+
+[416] polymaker-pla-polymax-blue
+      Polymaker | PLA | PolyMax | Blue | #013178
+
+[417] polymaker-pla-polymax-fde-beige
+      Polymaker | PLA | PolyMax | FDE Beige | #90755D
+
+[418] polymaker-pla-polymax-green
+      Polymaker | PLA | PolyMax | Green | #31A45F
+
+[419] polymaker-pla-polymax-grey
+      Polymaker | PLA | PolyMax | Grey | #8D8E93
+
+[420] polymaker-pla-polymax-orange
+      Polymaker | PLA | PolyMax | Orange | #FE8E1B
+
+[421] polymaker-pla-polymax-pink
+      Polymaker | PLA | PolyMax | Pink | #F02F63
+
+[422] polymaker-pla-polymax-polymaker-teal
+      Polymaker | PLA | PolyMax | Polymaker Teal | #4ABAC2
+
+[423] polymaker-pla-polymax-purple
+      Polymaker | PLA | PolyMax | Purple | #6647A3
+
+[424] polymaker-pla-polymax-red
+      Polymaker | PLA | PolyMax | Red | #ED2F20
+
+[425] polymaker-pla-polymax-white
+      Polymaker | PLA | PolyMax | White | #EBECED
+
+[426] polymaker-pla-polymax-yellow
+      Polymaker | PLA | PolyMax | Yellow | #F0AB01
+
+[427] polymaker-pla-polysmooth-beige
+      Polymaker | PLA | PolySmooth | Beige | #EBD591
+
+[428] polymaker-pla-polysmooth-black
+      Polymaker | PLA | PolySmooth | Black | #161619
+
+[429] polymaker-pla-polysmooth-coral-red
+      Polymaker | PLA | PolySmooth | Coral Red | #F04B2A
+
+[430] polymaker-pla-polysmooth-electric-blue
+      Polymaker | PLA | PolySmooth | Electric Blue | #007ABC
+
+[431] polymaker-pla-polysmooth-green
+      Polymaker | PLA | PolySmooth | Green | #4CA743
+
+[432] polymaker-pla-polysmooth-green-2
+      Polymaker | PLA | PolySmooth | Green | #4CA743
+
+[433] polymaker-pla-polysmooth-orange
+      Polymaker | PLA | PolySmooth | Orange | #F5741B
+
+[434] polymaker-pla-polysmooth-pink
+      Polymaker | PLA | PolySmooth | Pink | #F3A196
+
+[435] polymaker-pla-polysmooth-polymaker-teal
+      Polymaker | PLA | PolySmooth | Polymaker Teal | #77D3DD
+
+[436] polymaker-pla-polysmooth-slate-grey
+      Polymaker | PLA | PolySmooth | Slate Grey | #7DA1AA
+
+[437] polymaker-pla-polysmooth-white
+      Polymaker | PLA | PolySmooth | White | #F4EEE8
+
+[438] polymaker-pla-polysmooth-yellow
+      Polymaker | PLA | PolySmooth | Yellow | #F5BD00
+
+[439] polymaker-pla-polysonic-black
+      Polymaker | PLA | PolySonic | Black | #0C0E0C
+
+[440] polymaker-pla-polysonic-blue
+      Polymaker | PLA | PolySonic | Blue | #00307E
+
+[441] polymaker-pla-polysonic-green
+      Polymaker | PLA | PolySonic | Green | #2D9E59
+
+[442] polymaker-pla-polysonic-grey
+      Polymaker | PLA | PolySonic | Grey | #73767D
+
+[443] polymaker-pla-polysonic-polymaker-teal
+      Polymaker | PLA | PolySonic | Polymaker Teal | #50DAE4
+
+[444] polymaker-pla-polysonic-red
+      Polymaker | PLA | PolySonic | Red | #E62216
+
+[445] polymaker-pla-polysonic-white
+      Polymaker | PLA | PolySonic | White | #E2DEDB
+
+[446] polymaker-pla-polysonic-yellow
+      Polymaker | PLA | PolySonic | Yellow | #F4C032
+
+[447] polymaker-pla-polywood-wood
+      Polymaker | PLA | PolyWood | Wood | #A8754B
+
+[448] polymaker-pla-pro-polylite-army-beige
+      Polymaker | PLA Pro | PolyLite | Army Beige | #C28D5E
+
+[449] polymaker-pla-pro-polylite-army-green
+      Polymaker | PLA Pro | PolyLite | Army Green | #665A30
+
+[450] polymaker-pla-pro-polylite-black
+      Polymaker | PLA Pro | PolyLite | Black | #161619
+
+[451] polymaker-pla-pro-polylite-blue
+      Polymaker | PLA Pro | PolyLite | Blue | #013276
+
+[452] polymaker-pla-pro-polylite-blue-green
+      Polymaker | PLA Pro | PolyLite | Blue-Green | #022B33
+
+[453] polymaker-pla-pro-polylite-bronze
+      Polymaker | PLA Pro | PolyLite | Bronze | #2D3449
+
+[454] polymaker-pla-pro-polylite-cold-white
+      Polymaker | PLA Pro | PolyLite | Cold White | #D6D5DC
+
+[455] polymaker-pla-pro-polylite-gold
+      Polymaker | PLA Pro | PolyLite | Gold | #A66301
+
+[456] polymaker-pla-pro-polylite-green
+      Polymaker | PLA Pro | PolyLite | Green | #31A45F
+
+[457] polymaker-pla-pro-polylite-light-blue
+      Polymaker | PLA Pro | PolyLite | Light Blue | #A8D4E8
+
+[458] polymaker-pla-pro-polylite-light-green
+      Polymaker | PLA Pro | PolyLite | Light Green | #C0DDA3
+
+[459] polymaker-pla-pro-polylite-light-red
+      Polymaker | PLA Pro | PolyLite | Light Red | #DC605A
+
+[460] polymaker-pla-pro-polylite-light-yellow
+      Polymaker | PLA Pro | PolyLite | Light Yellow | #F4DA78
+
+[461] polymaker-pla-pro-polylite-magenta
+      Polymaker | PLA Pro | PolyLite | Magenta | #EF2F64
+
+[462] polymaker-pla-pro-polylite-metallic-black
+      Polymaker | PLA Pro | PolyLite | Metallic Black | #0C0E0C
+
+[463] polymaker-pla-pro-polylite-metallic-blue
+      Polymaker | PLA Pro | PolyLite | Metallic Blue | #2D3449
+
+[464] polymaker-pla-pro-polylite-metallic-magenta
+      Polymaker | PLA Pro | PolyLite | Metallic Magenta | #743063
+
+[465] polymaker-pla-pro-polylite-metallic-red
+      Polymaker | PLA Pro | PolyLite | Metallic Red | #8D352C
+
+[466] polymaker-pla-pro-polylite-orange
+      Polymaker | PLA Pro | PolyLite | Orange | #FE8E1B
+
+[467] polymaker-pla-pro-polylite-pink
+      Polymaker | PLA Pro | PolyLite | Pink | #EE92AA
+
+[468] polymaker-pla-pro-polylite-polymaker-teal
+      Polymaker | PLA Pro | PolyLite | Polymaker Teal | #5FC7CF
+
+[469] polymaker-pla-pro-polylite-purple
+      Polymaker | PLA Pro | PolyLite | Purple | #6547A5
+
+[470] polymaker-pla-pro-polylite-red
+      Polymaker | PLA Pro | PolyLite | Red | #ED2F20
+
+[471] polymaker-pla-pro-polylite-silver
+      Polymaker | PLA Pro | PolyLite | Silver | #8A8D95
+
+[472] polymaker-pla-pro-polylite-yellow
+      Polymaker | PLA Pro | PolyLite | Yellow | #F0AB01
+
+[473] polymaker-pla-pro-polysonic-black
+      Polymaker | PLA Pro | PolySonic | Black | #0C0E0C
+
+[474] polymaker-pla-pro-polysonic-blue
+      Polymaker | PLA Pro | PolySonic | Blue | #003287
+
+[475] polymaker-pla-pro-polysonic-green
+      Polymaker | PLA Pro | PolySonic | Green | #2D9E59
+
+[476] polymaker-pla-pro-polysonic-grey
+      Polymaker | PLA Pro | PolySonic | Grey | #959FA1
+
+[477] polymaker-pla-pro-polysonic-orange
+      Polymaker | PLA Pro | PolySonic | Orange | #F97429
+
+[478] polymaker-pla-pro-polysonic-polymaker-teal
+      Polymaker | PLA Pro | PolySonic | Polymaker Teal | #50DAE4
+
+[479] polymaker-pla-pro-polysonic-purple
+      Polymaker | PLA Pro | PolySonic | Purple | #6C5BB1
+
+[480] polymaker-pla-pro-polysonic-red
+      Polymaker | PLA Pro | PolySonic | Red | #E20010
+
+[481] polymaker-pla-pro-polysonic-white
+      Polymaker | PLA Pro | PolySonic | White | #E2DEDB
+
+[482] polymaker-pla-pro-polysonic-yellow
+      Polymaker | PLA Pro | PolySonic | Yellow | #F4C032
+
+[483] polymaker-pla-cf-none-black
+      Polymaker | PLA-CF | None | Black | #312F2F
+
+[484] polymaker-pla-cf-none-black-2
+      Polymaker | PLA-CF | None | Black | #302F2F
+
+[485] polymaker-pla-cf-none-black-3
+      Polymaker | PLA-CF | None | Black | #302E2F
+
+[486] polymaker-tpu90-polyflex-black
+      Polymaker | TPU90 | PolyFlex | Black | #16161A
+
+[487] polymaker-tpu90-polyflex-polymaker-teal
+      Polymaker | TPU90 | PolyFlex | Polymaker Teal | #01ACBA
+
+[488] polymaker-tpu90-polyflex-white
+      Polymaker | TPU90 | PolyFlex | White | #F0EBE8
+
+[489] polymaker-tpu95-polyflex-black
+      Polymaker | TPU95 | PolyFlex | Black | #16161A
+
+[490] polymaker-tpu95-polyflex-blue
+      Polymaker | TPU95 | PolyFlex | Blue | #003276
+
+[491] polymaker-tpu95-polyflex-orange
+      Polymaker | TPU95 | PolyFlex | Orange | #F57517
+
+[492] polymaker-tpu95-polyflex-red
+      Polymaker | TPU95 | PolyFlex | Red | #F3442B
+
+[493] polymaker-tpu95-polyflex-white
+      Polymaker | TPU95 | PolyFlex | White | #F0EBE8
+
+[494] polymaker-tpu95-polyflex-yellow
+      Polymaker | TPU95 | PolyFlex | Yellow | #EDA900
+
+[495] polymaker-tpu95-hf-polyflex-black
+      Polymaker | TPU95-HF | PolyFlex | Black | #16161A
+
+[496] polymaker-tpu95-hf-polyflex-clear
+      Polymaker | TPU95-HF | PolyFlex | Clear | #DBD5D6
+
+[497] polymaker-tpu95-hf-polyflex-white
+      Polymaker | TPU95-HF | PolyFlex | White | #F0EBE8
+
+[498] sunlu-apla-basic-dark-green
+      Sunlu | APLA | Basic | Dark Green | #687D5F
+
+[499] sunlu-apla-basic-light-blue
+      Sunlu | APLA | Basic | Light Blue | #98CED1
+
+[500] sunlu-elite-pla-basic-grey
+      Sunlu | Elite PLA | Basic | Grey | #6C6E6F
+
+[501] sunlu-elite-pla-basic-transparent
+      Sunlu | Elite PLA | Basic | Transparent | #C5C5BC
+
+[502] sunlu-glow-pla-glow-red
+      Sunlu | Glow PLA | Glow | Red | #F25455
+
+[503] sunlu-high-speed-pla-basic-grey
+      Sunlu | High Speed PLA | Basic | Grey | #64686C
+
+[504] sunlu-high-speed-pla-basic-pink
+      Sunlu | High Speed PLA | Basic | Pink | #E683A7
+
+[505] sunlu-pla-basic-black
+      Sunlu | PLA | Basic | Black | #3C3C3C
+
+[506] sunlu-pla-basic-blue
+      Sunlu | PLA | Basic | Blue | #006AB8
+
+[507] sunlu-pla-basic-carbon-fiber-black
+      Sunlu | PLA | Basic | Carbon Fiber Black | #4B4C4C
+
+[508] sunlu-pla-basic-cherry-red
+      Sunlu | PLA | Basic | Cherry Red | #EA4A5D
+
+[509] sunlu-pla-basic-green-mint
+      Sunlu | PLA | Basic | Green Mint | #4CCB9A
+
+[510] sunlu-pla-basic-grey
+      Sunlu | PLA | Basic | Grey | #6B6E6E
+
+[511] sunlu-pla-basic-ivory-tint
+      Sunlu | PLA | Basic | Ivory Tint | #E9E4D1
+
+[512] sunlu-pla-basic-meta-black
+      Sunlu | PLA | Basic | Meta Black | #3E3F3F
+
+[513] sunlu-pla-basic-orange
+      Sunlu | PLA | Basic | Orange | #E77932
+
+[514] sunlu-pla-basic-recycled-black
+      Sunlu | PLA | Basic | Recycled Black | #3D3E3F
+
+[515] sunlu-pla-basic-red
+      Sunlu | PLA | Basic | Red | #AC3638
+
+[516] sunlu-pla-basic-silky-silver
+      Sunlu | PLA | Basic | Silky Silver | #C6CBD0
+
+[517] sunlu-pla-basic-sky-blue
+      Sunlu | PLA | Basic | Sky Blue | #0CB7CC
+
+[518] sunlu-pla-basic-sunny-orange
+      Sunlu | PLA | Basic | Sunny Orange | #FF7235
+
+[519] sunlu-pla-basic-transparent
+      Sunlu | PLA | Basic | Transparent | #C8C7BF
+
+[520] sunlu-pla-basic-white
+      Sunlu | PLA | Basic | White | #DEDFD9
+
+[521] sunlu-pla-glow-glow-in-the-dark
+      Sunlu | PLA | Glow | Glow in the Dark | #CBCAB8
+
+[522] sunlu-pla-matte-black
+      Sunlu | PLA | Matte | Black | #454546
+
+[523] sunlu-pla-silk-silk-black
+      Sunlu | PLA | Silk | Silk Black | #737272
+
+[524] sunlu-pla-silk-silk-green
+      Sunlu | PLA | Silk | Silk Green | #34C0A5
+
+[525] sunlu-pla-silk-silk-red
+      Sunlu | PLA | Silk | Silk Red | #CD5C62
+
+[526] sunlu-pla-transparent-transparent-orange
+      Sunlu | PLA | Transparent | Transparent Orange | #DB7F42
+
+[527] sunlu-pla-wood-wood
+      Sunlu | PLA | Wood | Wood | #D5BA95
+
+[528] sunlu-pla-2-basic-grass-green
+      Sunlu | PLA 2 | Basic | Grass Green | #008B73
+
+[529] sunlu-pla-meta-meta-blue
+      Sunlu | PLA Meta | Meta | Blue | #00B2CC
+
+[530] sunlu-pla-meta-meta-mint-green
+      Sunlu | PLA Meta | Meta | Mint Green | #00A491
+
+[531] sunlu-pla-meta-meta-sakura-pink
+      Sunlu | PLA Meta | Meta | Sakura Pink | #F5B5C2
+
+[532] sunlu-pla-meta-meta-taro-purple
+      Sunlu | PLA Meta | Meta | Taro Purple | #A69ED0
+
+[533] sunlu-pla-basic-beige
+      Sunlu | PLA+ | Basic | Beige | #DDBCAC
+
+[534] sunlu-pla-basic-black-2
+      Sunlu | PLA+ | Basic | Black | #3A3B3B
+
+[535] sunlu-pla-basic-blue-2
+      Sunlu | PLA+ | Basic | Blue | #0063A0
+
+[536] sunlu-pla-basic-brown
+      Sunlu | PLA+ | Basic | Brown | #8E6B4E
+
+[537] sunlu-pla-basic-green
+      Sunlu | PLA+ | Basic | Green | #4EE349
+
+[538] sunlu-pla-basic-light-gold
+      Sunlu | PLA+ | Basic | Light Gold | #D3943D
+
+[539] sunlu-pla-basic-mint-green
+      Sunlu | PLA+ | Basic | Mint Green | #00B39A
+
+[540] sunlu-pla-basic-orange-2
+      Sunlu | PLA+ | Basic | Orange | #ED7432
+
+[541] sunlu-pla-basic-pure-yellow
+      Sunlu | PLA+ | Basic | Pure Yellow | #FFBD2C
+
+[542] sunlu-pla-basic-purple
+      Sunlu | PLA+ | Basic | Purple | #8887C5
+
+[543] sunlu-pla-basic-red-2
+      Sunlu | PLA+ | Basic | Red | #B34044
+
+[544] sunlu-pla-basic-skin
+      Sunlu | PLA+ | Basic | Skin | #F7BEA1
+
+[545] sunlu-pla-basic-white-2
+      Sunlu | PLA+ | Basic | White | #E6E6E2
+
+[546] sunlu-pla-silk-red-copper
+      Sunlu | PLA+ | Silk | Red Copper | #CC937F
+
+[547] sunlu-pla-silk-silk-brass
+      Sunlu | PLA+ | Silk | Silk Brass | #F1A050
+
+[548] sunlu-pla-silk-silk-candy-dandy
+      Sunlu | PLA+ | Silk | Silk Candy Dandy | #ED8E93
+
+[549] sunlu-pla-silk-silk-white
+      Sunlu | PLA+ | Silk | Silk White | #EEEFE7
+
+[550] bambu-lab-petg-hf-yellow
+      Bambu Lab | PETG | HF | Yellow | #FFD00B
+
+[551] bambu-lab-petg-hf-orange
+      Bambu Lab | PETG | HF | Orange | #F75403
+
+[552] bambu-lab-petg-hf-green
+      Bambu Lab | PETG | HF | Green | #00AE42
+
+[553] bambu-lab-petg-hf-red
+      Bambu Lab | PETG | HF | Red | #EB3A3A
+
+[554] bambu-lab-petg-hf-blue
+      Bambu Lab | PETG | HF | Blue | #002E96
+
+[555] bambu-lab-petg-hf-black
+      Bambu Lab | PETG | HF | Black | #000000
+
+[556] bambu-lab-petg-hf-white
+      Bambu Lab | PETG | HF | White | #FFFFFF
+
+[557] bambu-lab-petg-hf-cream
+      Bambu Lab | PETG | HF | Cream | #F9DFB9
+
+[558] bambu-lab-petg-hf-lime-green
+      Bambu Lab | PETG | HF | Lime Green | #6EE53C
+
+[559] bambu-lab-petg-hf-forest-green
+      Bambu Lab | PETG | HF | Forest Green | #39541A
+
+[560] bambu-lab-petg-hf-lake-blue
+      Bambu Lab | PETG | HF | Lake Blue | #1F79E5
+
+[561] bambu-lab-petg-hf-peanut-brown
+      Bambu Lab | PETG | HF | Peanut Brown | #875718
+
+[562] bambu-lab-petg-hf-gray
+      Bambu Lab | PETG | HF | Gray | #ADB1B2
+
+[563] bambu-lab-petg-hf-dark-gray
+      Bambu Lab | PETG | HF | Dark Gray | #515151
+
+[564] bambu-lab-petg-cf-brick-red
+      Bambu Lab | PETG-CF | None | Brick Red | #9F332A
+
+[565] bambu-lab-petg-cf-violet-purple
+      Bambu Lab | PETG-CF | None | Violet Purple | #583061
+
+[566] bambu-lab-petg-cf-indigo-blue
+      Bambu Lab | PETG-CF | None | Indigo Blue | #324585
+
+[567] bambu-lab-petg-cf-malachite-green
+      Bambu Lab | PETG-CF | None | Malachite Green | #16B08E
+
+[568] bambu-lab-petg-cf-black
+      Bambu Lab | PETG-CF | None | Black | #000000
+
+[569] bambu-lab-petg-cf-titan-gray
+      Bambu Lab | PETG-CF | None | Titan Gray | #565656
+
+[570] bambu-lab-pla-translucent-teal
+      Bambu Lab | PLA | Translucent | Teal | #009FA1
+
+[571] bambu-lab-pla-translucent-light-jade
+      Bambu Lab | PLA | Translucent | Light Jade | #96D8AF
+
+[572] bambu-lab-pla-translucent-blue
+      Bambu Lab | PLA | Translucent | Blue | #0047BB
+
+[573] bambu-lab-pla-translucent-mellow-yellow
+      Bambu Lab | PLA | Translucent | Mellow Yellow | #F5DBAB
+
+[574] bambu-lab-pla-translucent-purple
+      Bambu Lab | PLA | Translucent | Purple | #8344B0
+
+[575] bambu-lab-pla-translucent-cherry-pink
+      Bambu Lab | PLA | Translucent | Cherry Pink | #F5B6CD
+
+[576] bambu-lab-pla-translucent-orange
+      Bambu Lab | PLA | Translucent | Orange | #F74E02
+
+[577] bambu-lab-pla-translucent-ice-blue
+      Bambu Lab | PLA | Translucent | Ice Blue | #B8CDE9
+
+[578] bambu-lab-pla-translucent-red
+      Bambu Lab | PLA | Translucent | Red | #B50011
+
+[579] bambu-lab-pla-translucent-lavender
+      Bambu Lab | PLA | Translucent | Lavender | #B8ACD6
+
+[580] bambu-lab-petg-translucent-translucent-gray
+      Bambu Lab | PETG | Translucent | Translucent Gray | #8E8E8E
+
+[581] bambu-lab-petg-translucent-translucent-light-blue
+      Bambu Lab | PETG | Translucent | Translucent Light Blue | #61B0FF
+
+[582] bambu-lab-petg-translucent-translucent-olive
+      Bambu Lab | PETG | Translucent | Translucent Olive | #748C45
+
+[583] bambu-lab-petg-translucent-translucent-brown
+      Bambu Lab | PETG | Translucent | Translucent Brown | #C9A381
+
+[584] bambu-lab-petg-translucent-translucent-teal
+      Bambu Lab | PETG | Translucent | Translucent Teal | #77EDD7
+
+[585] bambu-lab-petg-translucent-translucent-orange
+      Bambu Lab | PETG | Translucent | Translucent Orange | #FF911A
+
+[586] bambu-lab-petg-translucent-translucent-purple
+      Bambu Lab | PETG | Translucent | Translucent Purple | #D6ABFF
+
+[587] bambu-lab-petg-translucent-translucent-pink
+      Bambu Lab | PETG | Translucent | Translucent Pink | #F9C1BD
+

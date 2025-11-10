@@ -165,8 +165,8 @@ class ColorConstants:
     
     # This hash is computed once when the constants are known to be correct
     # Computed hash of all color science constants (SHA-256)
-    # Updated after adding data file hash constants
-    _EXPECTED_HASH = "a9bce61930e00638b28b8df7e544f4c15ea377b030877df040268ca2fc0e75a6"
+    # Updated after adding other_names field to FilamentRecord
+    _EXPECTED_HASH = "3713f9c8973181329ffc3477ddfa07d342dedaacb254a76214a4cc8eba6f1f5b"
     
     # ========================================================================
     # Data File Integrity Hashes
@@ -175,7 +175,7 @@ class ColorConstants:
     # These hashes are computed from the exact file contents (including whitespace)
     
     COLORS_JSON_HASH = "3ba4ebb50dc7d437e35855870f701f544c4222726d4891e54dcc90a231976abd"
-    FILAMENTS_JSON_HASH = "ecb0b4e8e4519ef0989902d5073e55b161071d85485c27f43d85fa16d6312294"
+    FILAMENTS_JSON_HASH = "2107cfdf636c25493636793d8a843d962cee6275db6a86d160bed0376747313a"
     MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
     
     # User data files (optional, not verified)

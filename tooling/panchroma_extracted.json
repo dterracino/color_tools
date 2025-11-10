@@ -1,0 +1,1388 @@
+[
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Translucent Cyan",
+    "hex": "#08ABFB",
+    "td_value": null,
+    "slug": "panchroma-pla-translucent-translucent-cyan"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Translucent Magenta",
+    "hex": "#D93B90",
+    "td_value": null,
+    "slug": "panchroma-pla-translucent-translucent-magenta"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Translucent Yellow",
+    "hex": "#F9ED3D",
+    "td_value": null,
+    "slug": "panchroma-pla-translucent-translucent-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Translucent Grey",
+    "hex": "#9199A4",
+    "td_value": null,
+    "slug": "panchroma-pla-translucent-translucent-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Neon",
+    "color": "Neon Pink",
+    "hex": "#FF3670",
+    "td_value": null,
+    "slug": "panchroma-pla-neon-neon-pink"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Neon",
+    "color": "Neon Green",
+    "hex": "#00F263",
+    "td_value": null,
+    "slug": "panchroma-pla-neon-neon-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Neon",
+    "color": "Neon Yellow",
+    "hex": "#E5DB2E",
+    "td_value": null,
+    "slug": "panchroma-pla-neon-neon-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Neon",
+    "color": "Neon Orange",
+    "hex": "#FF7800",
+    "td_value": null,
+    "slug": "panchroma-pla-neon-neon-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Neon",
+    "color": "Neon Magenta",
+    "hex": "#F21185",
+    "td_value": null,
+    "slug": "panchroma-pla-neon-neon-magenta"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Neon",
+    "color": "Neon Red",
+    "hex": "#FE2D42",
+    "td_value": null,
+    "slug": "panchroma-pla-neon-neon-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Metallic",
+    "color": "Metallic Gold",
+    "hex": "#DA9F1D",
+    "td_value": null,
+    "slug": "panchroma-pla-metallic-metallic-gold"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Metallic",
+    "color": "Metallic Silver",
+    "hex": "#7A838E",
+    "td_value": null,
+    "slug": "panchroma-pla-metallic-metallic-silver"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Metallic",
+    "color": "Metallic Bronze",
+    "hex": "#926043",
+    "td_value": null,
+    "slug": "panchroma-pla-metallic-metallic-bronze"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Celestial",
+    "color": "Celestial Blue",
+    "hex": "#6ADCF7",
+    "td_value": null,
+    "slug": "panchroma-pla-celestial-celestial-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Celestial",
+    "color": "Celestial Purple",
+    "hex": "#9678C8",
+    "td_value": null,
+    "slug": "panchroma-pla-celestial-celestial-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Mars",
+    "hex": "#962E31",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-mars"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Mercury",
+    "hex": "#33322D",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-mercury"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Meteor",
+    "hex": "#2F3117",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-meteor"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Nebula",
+    "hex": "#462F32",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-nebula"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Neptune",
+    "hex": "#113148",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-neptune"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Twilight",
+    "hex": "#1E3445",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-twilight"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "UV Shift",
+    "color": "UV Shift Natural/Orange",
+    "hex": "#F1DBBF",
+    "td_value": null,
+    "slug": "panchroma-pla-uv-shift-uv-shift-naturalorange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Black",
+    "hex": "#161617",
+    "td_value": null,
+    "slug": "panchroma-pla-galaxy-galaxy-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Dark Blue",
+    "hex": "#18192D",
+    "td_value": null,
+    "slug": "panchroma-pla-galaxy-galaxy-dark-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Dark Green",
+    "hex": "#13484D",
+    "td_value": null,
+    "slug": "panchroma-pla-galaxy-galaxy-dark-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Dark Red",
+    "hex": "#451E14",
+    "td_value": null,
+    "slug": "panchroma-pla-galaxy-galaxy-dark-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Dark Grey",
+    "hex": "#4E5658",
+    "td_value": null,
+    "slug": "panchroma-pla-galaxy-galaxy-dark-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Glow",
+    "color": "Glow Blue",
+    "hex": "#F3EADB",
+    "td_value": null,
+    "slug": "panchroma-pla-glow-glow-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Glow",
+    "color": "Glow Green",
+    "hex": "#F2EADB",
+    "td_value": null,
+    "slug": "panchroma-pla-glow-glow-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Luminous",
+    "color": "Luminous Green",
+    "hex": "#BFEB8C",
+    "td_value": null,
+    "slug": "panchroma-pla-luminous-luminous-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Luminous",
+    "color": "Luminous Orange",
+    "hex": "#FEBE5F",
+    "td_value": null,
+    "slug": "panchroma-pla-luminous-luminous-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Luminous",
+    "color": "Luminous Pink",
+    "hex": "#FE9176",
+    "td_value": null,
+    "slug": "panchroma-pla-luminous-luminous-pink"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Luminous",
+    "color": "Luminous Yellow",
+    "hex": "#EEDC48",
+    "td_value": null,
+    "slug": "panchroma-pla-luminous-luminous-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Metallic",
+    "color": "Metallic Blue",
+    "hex": "#2C3449",
+    "td_value": null,
+    "slug": "panchroma-pla-metallic-metallic-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Translucent Natural",
+    "hex": "#E8E6D0",
+    "td_value": null,
+    "slug": "panchroma-pla-translucent-translucent-natural"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Aurora",
+    "hex": "#314530",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-aurora"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Comet",
+    "hex": "#1F312A",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-comet"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Starlight",
+    "color": "Starlight Jupiter",
+    "hex": "#774718",
+    "td_value": null,
+    "slug": "panchroma-pla-starlight-starlight-jupiter"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Aubergine (Lime-Magenta)",
+    "hex": "#C4CF4C-#AA538E",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-aubergine-lime-magenta"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Banquet (Gold-Magenta)",
+    "hex": "#C49449-#AA538E",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-banquet-gold-magenta"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Beluga (Silver-Blue)",
+    "hex": "#BCC2C8-#4999C9",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-beluga-silver-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Black",
+    "hex": "#363538",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Blue",
+    "hex": "#4999C9",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Bronze",
+    "hex": "#AF6B4C",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-bronze"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Caribbean Sea (Blue-Green)",
+    "hex": "#4999C9-#55B687",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-caribbean-sea-blue-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Chameleon (Yellow-Blue)",
+    "hex": "#EEC810-#4999C9",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-chameleon-yellow-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Chrome",
+    "hex": "#85898B",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-chrome"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Crown (Gold-Silver)",
+    "hex": "#C49449-#BCC2C8",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-crown-gold-silver"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Dark Blue",
+    "hex": "#23599A",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-dark-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Gold",
+    "hex": "#C49449",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-gold"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Green",
+    "hex": "#55B687",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Gunmetal Grey",
+    "hex": "#676B6A",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-gunmetal-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Jadeite (Green-Chrome)",
+    "hex": "#55B687-#85898B",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-jadeite-green-chrome"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Light Blue",
+    "hex": "#4CC1CB",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-light-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Lime",
+    "hex": "#C4CF4C",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-lime"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Magenta",
+    "hex": "#AA538E",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-magenta"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Orange",
+    "hex": "#EB6232",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Periwinkle",
+    "hex": "#768EC7",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-periwinkle"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Purple",
+    "hex": "#786BB0",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Quartz Pink",
+    "hex": "#DBBBBB",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-quartz-pink"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Red",
+    "hex": "#C1443F",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Rose",
+    "hex": "#CF6076",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-rose"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Rose Gold",
+    "hex": "#CBB0B1",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-rose-gold"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Silver",
+    "hex": "#BCC2C8",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-silver"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Sovereign (Gold-Purple)",
+    "hex": "#C49449-#786BB0",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-sovereign-gold-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Silk",
+    "color": "Silk Sunset (Gold-Red)",
+    "hex": "#C49449-#CF6076",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-silk-silk-sunset-gold-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Teal",
+    "hex": "#66C2B6",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-teal"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk White",
+    "hex": "#DFE4E4",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Yellow",
+    "hex": "#EEC810",
+    "td_value": null,
+    "slug": "panchroma-pla-silk-silk-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Sky Blue",
+    "hex": "#1AC5FC",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-sky-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Lotus Pink",
+    "hex": "#DD76C0",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-lotus-pink"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Marble Sandstone",
+    "hex": "#C1BE97",
+    "td_value": null,
+    "slug": "panchroma-pla-marble-marble-sandstone"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Marble White",
+    "hex": "#D7D4DA",
+    "td_value": null,
+    "slug": "panchroma-pla-marble-marble-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Arctic Teal",
+    "hex": "#61BCC3",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-arctic-teal"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Beige",
+    "hex": "#DBBAA5",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-beige"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Blue",
+    "hex": "#2E4462",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Brown",
+    "hex": "#795A4D",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-brown"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Dark Green",
+    "hex": "#5F6244",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-dark-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Light Green",
+    "hex": "#AB8C02",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-light-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Purple",
+    "hex": "#36364A",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Red",
+    "hex": "#BF312E",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-army-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Ash Grey",
+    "hex": "#485155",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-ash-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Charcoal Black",
+    "hex": "#2F2E30",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-charcoal-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Cotton White",
+    "hex": "#F4EFEB",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-cotton-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Earth Brown",
+    "hex": "#7C594A",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-earth-brown"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Electric Indigo",
+    "hex": "#6858A9",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-electric-indigo"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Forest Green",
+    "hex": "#60AD70",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-forest-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Lava Red",
+    "hex": "#ED2F2E",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-lava-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Lavender Purple",
+    "hex": "#9572BF",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-lavender-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Lime Green",
+    "hex": "#D7D602",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-lime-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Muted Blue",
+    "hex": "#5F778E",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-muted-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Muted Green",
+    "hex": "#777E71",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-muted-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Muted Purple",
+    "hex": "#7C5C78",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-muted-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Muted Red",
+    "hex": "#D84B2E",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-muted-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Muted White",
+    "hex": "#BBADA4",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-muted-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Banana",
+    "hex": "#F7D475",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-banana"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Candy",
+    "hex": "#F0D6D9",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-candy"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Ice",
+    "hex": "#A4D0DF",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-ice"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Mint",
+    "hex": "#D2DEBB",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-mint"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Peach",
+    "hex": "#F6BF8B",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-peach"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Peanut",
+    "hex": "#BF9573",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-peanut"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pastel Periwinkle",
+    "hex": "#ADB4E6",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-pastel-periwinkle"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Sakura Pink",
+    "hex": "#EAADBD",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-sakura-pink"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Sapphire Blue",
+    "hex": "#0163A6",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-sapphire-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Savannah Yellow",
+    "hex": "#F3C432",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-savannah-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Sunrise Orange",
+    "hex": "#F88B17",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-sunrise-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Wood Brown",
+    "hex": "#AB7449",
+    "td_value": null,
+    "slug": "panchroma-pla-matte-matte-wood-brown"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Camouflage (Dark Green-Brown)",
+    "hex": "#5F6244-#795A4D",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-camouflage-dark-green-brown"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Chameleon (Teal-Yellow)",
+    "hex": "#61BCC3-#F3C432",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-chameleon-teal-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Flamingo (Pink-Red)",
+    "hex": "#EAADBD-#ED2F2E",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-flamingo-pink-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Foggy Orange (Grey-Orange)",
+    "hex": "#8A8C94-#F88B17",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-foggy-orange-grey-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Foggy Purple (Grey-Purple)",
+    "hex": "#8A8C94-#9572BF",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-foggy-purple-grey-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Glacier Blue (Ice-Blue)",
+    "hex": "#A4D0DF-#0163A6",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-glacier-blue-ice-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Shadow Black (White-Black)",
+    "hex": "#F4EFEB-#2F2E30",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-shadow-black-white-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Shadow Orange (Orange-Black)",
+    "hex": "#F88B17-#2F2E30",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-shadow-orange-orange-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Shadow Red (Black-Red)",
+    "hex": "#2F2E30-#ED2F2E",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-shadow-red-black-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Matte",
+    "color": "Matte Sunrise (Red-Yellow)",
+    "hex": "#ED2F2E-#F3C432",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-matte-matte-sunrise-red-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Marble Limestone",
+    "hex": "#BCBEBE",
+    "td_value": null,
+    "slug": "panchroma-pla-marble-marble-limestone"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Marble Brick",
+    "hex": "#CD7456",
+    "td_value": null,
+    "slug": "panchroma-pla-marble-marble-brick"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Green",
+    "hex": "#5EAB71",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Grey",
+    "hex": "#797E89",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Orange",
+    "hex": "#FE9217",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Polymaker Teal",
+    "hex": "#61BBC1",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-polymaker-teal"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Purple",
+    "hex": "#9272C1",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Red",
+    "hex": "#DA1521",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin White",
+    "hex": "#F5F0EC",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Yellow",
+    "hex": "#F4C131",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Satin",
+    "color": "Satin Black",
+    "hex": "#302E30",
+    "td_value": null,
+    "slug": "panchroma-pla-satin-satin-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "PLA",
+    "finish": "Dual Special",
+    "color": "Yin-Yang",
+    "hex": "#020203-#CFCCD6",
+    "td_value": null,
+    "slug": "panchroma-pla-dual-special-yin-yang"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Black",
+    "hex": "#080A0D",
+    "td_value": null,
+    "slug": "panchroma-cope-black"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "White",
+    "hex": "#EBF7FF",
+    "td_value": null,
+    "slug": "panchroma-cope-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#003776",
+    "td_value": null,
+    "slug": "panchroma-cope-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Red",
+    "hex": "#E72F1D",
+    "td_value": null,
+    "slug": "panchroma-cope-red"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FFE800",
+    "td_value": null,
+    "slug": "panchroma-cope-yellow"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#F67405",
+    "td_value": null,
+    "slug": "panchroma-cope-orange"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Green",
+    "hex": "#06924D",
+    "td_value": null,
+    "slug": "panchroma-cope-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#6C47B2",
+    "td_value": null,
+    "slug": "panchroma-cope-purple"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Polymaker Teal",
+    "hex": "#4CC0C7",
+    "td_value": null,
+    "slug": "panchroma-cope-polymaker-teal"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Steel Grey",
+    "hex": "#616469",
+    "td_value": null,
+    "slug": "panchroma-cope-steel-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#55331A",
+    "td_value": null,
+    "slug": "panchroma-cope-brown"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Aqua Blue",
+    "hex": "#5EBDDB",
+    "td_value": null,
+    "slug": "panchroma-cope-aqua-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Beige",
+    "hex": "#C2AB72",
+    "td_value": null,
+    "slug": "panchroma-cope-beige"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Cold White",
+    "hex": "#D9DFE5",
+    "td_value": null,
+    "slug": "panchroma-cope-cold-white"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Cream",
+    "hex": "#EED1A8",
+    "td_value": null,
+    "slug": "panchroma-cope-cream"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Dark Grey",
+    "hex": "#485259",
+    "td_value": null,
+    "slug": "panchroma-cope-dark-grey"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Jungle Green",
+    "hex": "#4E742D",
+    "td_value": null,
+    "slug": "panchroma-cope-jungle-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Lime Green",
+    "hex": "#D5D701",
+    "td_value": null,
+    "slug": "panchroma-cope-lime-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Magenta",
+    "hex": "#F24574",
+    "td_value": null,
+    "slug": "panchroma-cope-magenta"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Olive Drab Green",
+    "hex": "#575B54",
+    "td_value": null,
+    "slug": "panchroma-cope-olive-drab-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Olive Green",
+    "hex": "#948902",
+    "td_value": null,
+    "slug": "panchroma-cope-olive-green"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#F1A1AF",
+    "td_value": null,
+    "slug": "panchroma-cope-pink"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Stone Blue",
+    "hex": "#487BA2",
+    "td_value": null,
+    "slug": "panchroma-cope-stone-blue"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Tan",
+    "hex": "#A79E82",
+    "td_value": null,
+    "slug": "panchroma-cope-tan"
+  },
+  {
+    "maker": "Panchroma",
+    "type": "CoPE",
+    "finish": null,
+    "color": "Wine Red",
+    "hex": "#D60212",
+    "td_value": null,
+    "slug": "panchroma-cope-wine-red"
+  }
+]

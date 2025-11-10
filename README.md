@@ -10,7 +10,9 @@ A comprehensive Python library for color science operations, color space convers
 - **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC)
 - **Color Databases**:
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
-  - Extensive 3D printing filament database with manufacturer info
+  - Extensive 3D printing filament database (584 filaments) with manufacturer info
+  - Unique semantic IDs for all filaments (e.g., "bambu-lab-pla-silk-red")
+  - Alternative name support for regional variations and rebranding
   - Maker synonym support for flexible filament searches
   - **Retro/Classic Palettes**: CGA, EGA, VGA, and Web-safe color palettes
 - **Gamut Checking**: Verify if colors are representable in sRGB
@@ -203,6 +205,7 @@ print(color.lch)    # (67.3, 65.7, 46.3)
 
 # FilamentRecord - returned by FilamentPalette methods
 filament, distance = filament_palette.nearest_filament((255, 0, 0))
+print(filament.id)      # e.g., "polymaker-pla-polymax-red"
 print(filament.maker)   # e.g., "Polymaker"
 print(filament.type)    # e.g., "PLA"
 print(filament.finish)  # e.g., "PolyMax"
@@ -211,6 +214,7 @@ print(filament.hex)     # e.g., "#ED2F20"
 print(filament.rgb)     # e.g., (237, 47, 32)
 print(filament.lab)     # e.g., (48.2, 68.1, 54.3) - computed on demand
 print(filament.lch)     # e.g., (48.2, 87.4, 38.6) - computed on demand
+print(filament.other_names)  # e.g., ["Classic Red"] or None
 ```
 
 ### CLI Usage
@@ -547,15 +551,44 @@ Array of filament objects with manufacturer info and color data:
 ```json
 [
   {
+    "id": "bambu-lab-pla-basic-black",
     "maker": "Bambu Lab",
     "type": "PLA",
     "finish": "Basic", 
     "color": "Black",
     "hex": "#000000",
-    "td_value": null
+    "td_value": null,
+    "other_names": null
   }
 ]
 ```
+
+**Field Descriptions:**
+
+- **id** (string, required): Unique semantic identifier generated from maker-type-finish-color
+  - Example: `"bambu-lab-pla-silk-plus-red"`
+  - Format: lowercase, hyphen-separated, URL-safe (+ becomes -plus)
+  - Human-readable and stable (barring manufacturer rebranding)
+  
+- **maker** (string, required): Manufacturer name (canonical form)
+  
+- **type** (string, required): Filament material type (PLA, PETG, ABS, etc.)
+  
+- **finish** (string or null): Surface finish or product line (Silk, Matte, Basic, etc.)
+  
+- **color** (string, required): Color name as labeled by manufacturer
+  
+- **hex** (string, required): Hex color code
+  - Single color: `"#RRGGBB"`
+  - Dual color (silk/mixed): `"#RRGGBB-#RRGGBB"` (dash-separated)
+  
+- **td_value** (number or null): Translucency/transparency value (manufacturer-specific scale)
+  
+- **other_names** (array of strings or null, optional): Alternative names for this filament
+  - Regional variations: `["Premium Red (EU)", "Classic Red (US)"]`
+  - Historical names: `["Atomic Age Teal"]` (when manufacturer renames product)
+  - Marketing variations: `["Fire Red", "Ferrari Red"]`
+  - Only populated when alternatives exist
 
 ### maker_synonyms.json - Maker Name Synonyms
 

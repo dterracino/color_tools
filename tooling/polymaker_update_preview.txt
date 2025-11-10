@@ -1,0 +1,32 @@
+====================================================================================================
+POLYMAKER DATA UPDATE PREVIEW
+====================================================================================================
+
+Current count: 213
+New count: 198
+Net change: -15
+
+NEW FILAMENTS (sample of first 20):
+----------------------------------------------------------------------------------------------------
+  1. PETG-ESD - Black (#161618)
+  2. PETG-rCF08 - Black (#302E2F)
+  3. PA6-GF25 - Grey (#615D5C)
+  4. PA6-CF20 - Black (#312F2F)
+  5. PA12-CF10 - Black (#302F2F)
+  6. PA612-CF15 - Black (#302E2F)
+  7. PA612-ESD - Black (#161618)
+  8. PLA PolyLite - Black (#030305)
+  9. PLA PolyLite - White (#DDD7D3)
+ 10. PLA PolyLite - Grey (#8B8E96)
+ 11. PLA PolyLite - Red (#D90102)
+ 12. PLA PolyLite - Blue (#013178)
+ 13. PLA PolyLite - Green (#30A45F)
+ 14. PLA PolyLite - Yellow (#F3AA01)
+ 15. PLA PolyLite - Orange (#F36201)
+ 16. PLA PolyLite - Purple (#6447A5)
+ 17. PLA PolyLite - Polymaker Teal (#48B9C2)
+ 18. PLA PolyLite - Natural (#DFD3C3)
+ 19. PLA PolyLite - Magenta (#F24574)
+ 20. PLA PolyLite - Beige (#C2AB72)
+
+... and 178 more

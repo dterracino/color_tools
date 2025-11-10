@@ -1,0 +1,1784 @@
+[
+  {
+    "maker": "Polymaker",
+    "type": "PETG-ESD",
+    "finish": null,
+    "color": "Black",
+    "hex": "#161618",
+    "td_value": null,
+    "slug": "polymaker-petg-esd-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG-rCF08",
+    "finish": null,
+    "color": "Black",
+    "hex": "#302E2F",
+    "td_value": null,
+    "slug": "polymaker-petg-rcf08-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PA6-GF25",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#615D5C",
+    "td_value": null,
+    "slug": "polymaker-pa6-gf25-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PA6-CF20",
+    "finish": null,
+    "color": "Black",
+    "hex": "#312F2F",
+    "td_value": null,
+    "slug": "polymaker-pa6-cf20-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PA12-CF10",
+    "finish": null,
+    "color": "Black",
+    "hex": "#302F2F",
+    "td_value": null,
+    "slug": "polymaker-pa12-cf10-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PA612-CF15",
+    "finish": null,
+    "color": "Black",
+    "hex": "#302E2F",
+    "td_value": null,
+    "slug": "polymaker-pa612-cf15-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PA612-ESD",
+    "finish": null,
+    "color": "Black",
+    "hex": "#161618",
+    "td_value": null,
+    "slug": "polymaker-pa612-esd-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#030305",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "White",
+    "hex": "#DDD7D3",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Grey",
+    "hex": "#8B8E96",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Red",
+    "hex": "#D90102",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Blue",
+    "hex": "#013178",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Green",
+    "hex": "#30A45F",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Yellow",
+    "hex": "#F3AA01",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Orange",
+    "hex": "#F36201",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Purple",
+    "hex": "#6447A5",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Polymaker Teal",
+    "hex": "#48B9C2",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Natural",
+    "hex": "#DFD3C3",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-natural"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Magenta",
+    "hex": "#F24574",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-magenta"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Beige",
+    "hex": "#C2AB72",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-beige"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Cream",
+    "hex": "#EED1A8",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-cream"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Wine Red",
+    "hex": "#D60212",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-wine-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Olive Green",
+    "hex": "#948902",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-olive-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Jungle Green",
+    "hex": "#4E742D",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-jungle-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Lime Green",
+    "hex": "#D5D701",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-lime-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Lemon Yellow",
+    "hex": "#EED230",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-lemon-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Stone Blue",
+    "hex": "#487BA2",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-stone-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Aqua Blue",
+    "hex": "#5EBDDB",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-aqua-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Azure Blue",
+    "hex": "#0061D5",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-azure-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Olive Brown",
+    "hex": "#A79565",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-olive-brown"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Dark Gray Green",
+    "hex": "#4C5F46",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-dark-gray-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Cold White",
+    "hex": "#EAECF5",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-cold-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyLite",
+    "color": "Dark Grey",
+    "hex": "#6E8393",
+    "td_value": null,
+    "slug": "polymaker-pla-polylite-dark-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Red",
+    "hex": "#760007",
+    "td_value": null,
+    "slug": "polymaker-pla-galaxy-galaxy-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Black",
+    "hex": "#161619",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "White",
+    "hex": "#EBECED",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Grey",
+    "hex": "#8D8E93",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Red",
+    "hex": "#ED2F20",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Blue",
+    "hex": "#013178",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Green",
+    "hex": "#31A45F",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Yellow",
+    "hex": "#F0AB01",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Orange",
+    "hex": "#FE8E1B",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Purple",
+    "hex": "#6647A3",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Polymaker Teal",
+    "hex": "#4ABAC2",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "Pink",
+    "hex": "#F02F63",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-pink"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyMax",
+    "color": "FDE Beige",
+    "hex": "#90755D",
+    "td_value": null,
+    "slug": "polymaker-pla-polymax-fde-beige"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#161619",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Red",
+    "hex": "#ED2F20",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Blue",
+    "hex": "#013276",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Army Green",
+    "hex": "#665A30",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-army-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Silver",
+    "hex": "#8A8D95",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-silver"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Green",
+    "hex": "#31A45F",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Yellow",
+    "hex": "#F0AB01",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Orange",
+    "hex": "#FE8E1B",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Purple",
+    "hex": "#6547A5",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Polymaker Teal",
+    "hex": "#5FC7CF",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Pink",
+    "hex": "#EE92AA",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-pink"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Army Beige",
+    "hex": "#C28D5E",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-army-beige"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Light Blue",
+    "hex": "#A8D4E8",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-light-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Light Green",
+    "hex": "#C0DDA3",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-light-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Light Yellow",
+    "hex": "#F4DA78",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-light-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Magenta",
+    "hex": "#EF2F64",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-magenta"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Light Red",
+    "hex": "#DC605A",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-light-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Gold",
+    "hex": "#A66301",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-gold"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Bronze",
+    "hex": "#2D3449",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-bronze"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Metallic Blue",
+    "hex": "#2D3449",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-metallic-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Blue-Green",
+    "hex": "#022B33",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-blue-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "3D Print General Flat Dark Earth",
+    "hex": "#90785E",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-3d-print-general-flat-dark-earth"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "LM Sparkle Green",
+    "hex": "#434D43",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-lm-sparkle-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "CosPLA",
+    "finish": "PolyLite",
+    "color": "Version A",
+    "hex": "#A7A4A8",
+    "td_value": null,
+    "slug": "polymaker-cospla-polylite-version-a"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "CosPLA",
+    "finish": "PolyLite",
+    "color": "Version B",
+    "hex": "#BCBABB",
+    "td_value": null,
+    "slug": "polymaker-cospla-polylite-version-b"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Metallic Red",
+    "hex": "#8D352C",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-metallic-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Metallic Magenta",
+    "hex": "#743063",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-metallic-magenta"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Cold White",
+    "hex": "#D6D5DC",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-cold-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolyLite",
+    "color": "Metallic Black",
+    "hex": "#0C0E0C",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polylite-metallic-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#2F2E30",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "White",
+    "hex": "#EDD7BF",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Grey",
+    "hex": "#94918D",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Wood",
+    "hex": "#A8754B",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-wood"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Bright Orange",
+    "hex": "#F07806",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-bright-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Bright Green",
+    "hex": "#BDD901",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-bright-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Bright Yellow",
+    "hex": "#F6BD01",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-bright-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "LW-PLA",
+    "finish": "PolyLite",
+    "color": "Bright Red",
+    "hex": "#D6001C",
+    "td_value": null,
+    "slug": "polymaker-lw-pla-polylite-bright-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA-CF",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#302F31",
+    "td_value": null,
+    "slug": "polymaker-pla-cf-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "White",
+    "hex": "#E2DEDB",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Black",
+    "hex": "#0C0E0C",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Grey",
+    "hex": "#73767D",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Blue",
+    "hex": "#00307E",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Red",
+    "hex": "#E62216",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Yellow",
+    "hex": "#F4C032",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Polymaker Teal",
+    "hex": "#50DAE4",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolySonic",
+    "color": "Green",
+    "hex": "#2D9E59",
+    "td_value": null,
+    "slug": "polymaker-pla-polysonic-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "White",
+    "hex": "#E2DEDB",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Black",
+    "hex": "#0C0E0C",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Grey",
+    "hex": "#959FA1",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Blue",
+    "hex": "#003287",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Red",
+    "hex": "#E20010",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Yellow",
+    "hex": "#F4C032",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Orange",
+    "hex": "#F97429",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Purple",
+    "hex": "#6C5BB1",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Polymaker Teal",
+    "hex": "#50DAE4",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA Pro",
+    "finish": "PolySonic",
+    "color": "Green",
+    "hex": "#2D9E59",
+    "td_value": null,
+    "slug": "polymaker-pla-pro-polysonic-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#161618",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "White",
+    "hex": "#EEEBEA",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Grey",
+    "hex": "#8C8D93",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Red",
+    "hex": "#D92B1C",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Green",
+    "hex": "#007A44",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Purple",
+    "hex": "#6347A5",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Orange",
+    "hex": "#F37715",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Teal",
+    "hex": "#0091A5",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Clear",
+    "hex": "#DBD5D6",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-clear"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Silver",
+    "hex": "#5F5E5F",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-silver"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Gold",
+    "hex": "#A85D00",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-gold"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Translucent Red",
+    "hex": "#BE0017",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-translucent-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Translucent Blue",
+    "hex": "#01062F",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-translucent-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Translucent Green",
+    "hex": "#005F2F",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-translucent-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Dark Blue",
+    "hex": "#151C2F",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-dark-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Dark Green",
+    "hex": "#2C342D",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-dark-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Magenta",
+    "hex": "#C1015B",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-magenta"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Pink",
+    "hex": "#EE94A5",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-pink"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Lime",
+    "hex": "#D8DB00",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-lime"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Electric Blue",
+    "hex": "#0076C1",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-electric-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Dark Grey",
+    "hex": "#6C6D71",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-dark-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyLite",
+    "color": "Dark Purple",
+    "hex": "#2E1A47",
+    "td_value": null,
+    "slug": "polymaker-petg-polylite-dark-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyMax",
+    "color": "Black",
+    "hex": "#181718",
+    "td_value": null,
+    "slug": "polymaker-petg-polymax-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PETG",
+    "finish": "PolyMax",
+    "color": "White",
+    "hex": "#EFECEB",
+    "td_value": null,
+    "slug": "polymaker-petg-polymax-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC",
+    "finish": "PolyLite",
+    "color": "Transparent",
+    "hex": "#DAD5D4",
+    "td_value": null,
+    "slug": "polymaker-pc-polylite-transparent"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC",
+    "finish": "PolyMax",
+    "color": "Black",
+    "hex": "#151518",
+    "td_value": null,
+    "slug": "polymaker-pc-polymax-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC",
+    "finish": "PolyMax",
+    "color": "Red",
+    "hex": "#DA2A1E",
+    "td_value": null,
+    "slug": "polymaker-pc-polymax-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC",
+    "finish": "PolyMax",
+    "color": "Blue",
+    "hex": "#005DAB",
+    "td_value": null,
+    "slug": "polymaker-pc-polymax-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC-FR",
+    "finish": "PolyMax",
+    "color": "White",
+    "hex": "#DDD7D3",
+    "td_value": null,
+    "slug": "polymaker-pc-fr-polymax-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC-ABS",
+    "finish": "Polymaker",
+    "color": "Black",
+    "hex": "#181617",
+    "td_value": null,
+    "slug": "polymaker-pc-abs-polymaker-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC-ABS",
+    "finish": "Polymaker",
+    "color": "White",
+    "hex": "#DDD6D4",
+    "td_value": null,
+    "slug": "polymaker-pc-abs-polymaker-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC-PBT",
+    "finish": "Polymaker",
+    "color": "Black",
+    "hex": "#161619",
+    "td_value": null,
+    "slug": "polymaker-pc-pbt-polymaker-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PC-PBT",
+    "finish": "Polymaker",
+    "color": "Natural",
+    "hex": "#EADAC2",
+    "td_value": null,
+    "slug": "polymaker-pc-pbt-polymaker-natural"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95",
+    "finish": "PolyFlex",
+    "color": "Black",
+    "hex": "#16161A",
+    "td_value": null,
+    "slug": "polymaker-tpu95-polyflex-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95",
+    "finish": "PolyFlex",
+    "color": "White",
+    "hex": "#F0EBE8",
+    "td_value": null,
+    "slug": "polymaker-tpu95-polyflex-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95",
+    "finish": "PolyFlex",
+    "color": "Red",
+    "hex": "#F3442B",
+    "td_value": null,
+    "slug": "polymaker-tpu95-polyflex-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95",
+    "finish": "PolyFlex",
+    "color": "Yellow",
+    "hex": "#EDA900",
+    "td_value": null,
+    "slug": "polymaker-tpu95-polyflex-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95",
+    "finish": "PolyFlex",
+    "color": "Blue",
+    "hex": "#003276",
+    "td_value": null,
+    "slug": "polymaker-tpu95-polyflex-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95",
+    "finish": "PolyFlex",
+    "color": "Orange",
+    "hex": "#F57517",
+    "td_value": null,
+    "slug": "polymaker-tpu95-polyflex-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU90",
+    "finish": "PolyFlex",
+    "color": "Black",
+    "hex": "#16161A",
+    "td_value": null,
+    "slug": "polymaker-tpu90-polyflex-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU90",
+    "finish": "PolyFlex",
+    "color": "White",
+    "hex": "#F0EBE8",
+    "td_value": null,
+    "slug": "polymaker-tpu90-polyflex-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU90",
+    "finish": "PolyFlex",
+    "color": "Polymaker Teal",
+    "hex": "#01ACBA",
+    "td_value": null,
+    "slug": "polymaker-tpu90-polyflex-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95-HF",
+    "finish": "PolyFlex",
+    "color": "Black",
+    "hex": "#16161A",
+    "td_value": null,
+    "slug": "polymaker-tpu95-hf-polyflex-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95-HF",
+    "finish": "PolyFlex",
+    "color": "White",
+    "hex": "#F0EBE8",
+    "td_value": null,
+    "slug": "polymaker-tpu95-hf-polyflex-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "TPU95-HF",
+    "finish": "PolyFlex",
+    "color": "Clear",
+    "hex": "#DBD5D6",
+    "td_value": null,
+    "slug": "polymaker-tpu95-hf-polyflex-clear"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#16161A",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "White",
+    "hex": "#F0EBE8",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Grey",
+    "hex": "#8C8D93",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Red",
+    "hex": "#F3442B",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Green",
+    "hex": "#479161",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Yellow",
+    "hex": "#EDA900",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Blue",
+    "hex": "#003276",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Purple",
+    "hex": "#6545A5",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Orange",
+    "hex": "#F57517",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Teal",
+    "hex": "#01ACBA",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Dark Grey",
+    "hex": "#474648",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-dark-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Pink",
+    "hex": "#FFA7C4",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-pink"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Lime",
+    "hex": "#C4D100",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-lime"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Light Blue",
+    "hex": "#8EDBEB",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-light-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Gold",
+    "hex": "#BD6200",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-gold"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Galaxy Orange",
+    "hex": "#F57517",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-galaxy-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Galaxy Teal",
+    "hex": "#2DCCD3",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-galaxy-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Neon Magenta",
+    "hex": "#F6162E",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-neon-magenta"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Neon Orange",
+    "hex": "#FE602B",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-neon-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Neon Yellow",
+    "hex": "#FFC001",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-neon-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Neon Green",
+    "hex": "#77F0A2",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-neon-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Metallic Blue",
+    "hex": "#0D2441",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-metallic-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Metallic Green",
+    "hex": "#3D441E",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-metallic-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Dark Purple",
+    "hex": "#46394E",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-dark-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Galaxy Black",
+    "hex": "#212721",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-galaxy-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ABS",
+    "finish": "PolyLite",
+    "color": "Natural",
+    "hex": "#F7F5ED",
+    "td_value": null,
+    "slug": "polymaker-abs-polylite-natural"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Black",
+    "hex": "#17161A",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "White",
+    "hex": "#DBD7D6",
+    "td_value": 1.2,
+    "slug": "polymaker-asa-polylite-white"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Grey",
+    "hex": "#8D8E92",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Red",
+    "hex": "#D82B1C",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Blue",
+    "hex": "#003576",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Natural",
+    "hex": "#DFD3C3",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-natural"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Orange",
+    "hex": "#F37716",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-orange"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Purple",
+    "hex": "#5F4793",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Army Green",
+    "hex": "#5C5E31",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-army-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Polymaker Teal",
+    "hex": "#0094A4",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-polymaker-teal"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Green",
+    "hex": "#2E784D",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Yellow",
+    "hex": "#EEC000",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-yellow"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Galaxy Red",
+    "hex": "#BF1A11",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-galaxy-red"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Galaxy Green",
+    "hex": "#2E764C",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-galaxy-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Dark Grey",
+    "hex": "#48474A",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-dark-grey"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Pop Blue",
+    "hex": "#008DC3",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-pop-blue"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Pop Pink",
+    "hex": "#D83076",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-pop-pink"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Pop Green",
+    "hex": "#77D730",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-pop-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Jet Black",
+    "hex": "#161618",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-jet-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Olive Brown",
+    "hex": "#A79565",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-olive-brown"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Dark Gray Green",
+    "hex": "#4C5F46",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-dark-gray-green"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Dark Purple",
+    "hex": "#46394E",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-dark-purple"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "ASA",
+    "finish": "PolyLite",
+    "color": "Galaxy Black",
+    "hex": "#212721",
+    "td_value": null,
+    "slug": "polymaker-asa-polylite-galaxy-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "CoPA",
+    "finish": "PolyMide",
+    "color": "Black",
+    "hex": "#161618",
+    "td_value": null,
+    "slug": "polymaker-copa-polymide-black"
+  },
+  {
+    "maker": "Polymaker",
+    "type": "CoPA",
+    "finish": "PolyMide",
+    "color": "Natural",
+    "hex": "#E8D795",
+    "td_value": null,
+    "slug": "polymaker-copa-polymide-natural"
+  }
+]

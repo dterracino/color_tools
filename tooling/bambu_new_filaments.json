@@ -1,0 +1,306 @@
+[
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Yellow",
+    "hex": "#FFD00B",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Orange",
+    "hex": "#F75403",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Green",
+    "hex": "#00AE42",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Red",
+    "hex": "#EB3A3A",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Blue",
+    "hex": "#002E96",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Cream",
+    "hex": "#F9DFB9",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Lime Green",
+    "hex": "#6EE53C",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Forest Green",
+    "hex": "#39541A",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Lake Blue",
+    "hex": "#1F79E5",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Peanut Brown",
+    "hex": "#875718",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Gray",
+    "hex": "#ADB1B2",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "HF",
+    "color": "Dark Gray",
+    "hex": "#515151",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Brick Red",
+    "hex": "#9F332A",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Violet Purple",
+    "hex": "#583061",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Indigo Blue",
+    "hex": "#324585",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Malachite Green",
+    "hex": "#16B08E",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Titan Gray",
+    "hex": "#565656",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Teal",
+    "hex": "#009FA1",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Light Jade",
+    "hex": "#96D8AF",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Blue",
+    "hex": "#0047BB",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Mellow Yellow",
+    "hex": "#F5DBAB",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Purple",
+    "hex": "#8344B0",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Cherry Pink",
+    "hex": "#F5B6CD",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Orange",
+    "hex": "#F74E02",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Ice Blue",
+    "hex": "#B8CDE9",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Red",
+    "hex": "#B50011",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Lavender",
+    "hex": "#B8ACD6",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Gray",
+    "hex": "#8E8E8E",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Light Blue",
+    "hex": "#61B0FF",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Olive",
+    "hex": "#748C45",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Brown",
+    "hex": "#C9A381",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Teal",
+    "hex": "#77EDD7",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Orange",
+    "hex": "#FF911A",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Purple",
+    "hex": "#D6ABFF",
+    "td_value": null
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Pink",
+    "hex": "#F9C1BD",
+    "td_value": null
+  }
+]

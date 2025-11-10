@@ -7,6 +7,49 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Unique filament IDs**: All filament records now include a unique `id` field
+  - Generated from maker-type-finish-color using semantic slugification
+  - IDs are stable, human-readable identifiers (e.g., "bambu-lab-pla-silk-plus-red")
+  - Special character handling: `+` converted to `-plus` for URL-safe slugs
+  - Zero ID collisions across entire database (584 unique IDs)
+  - `id` field positioned as first field in FilamentRecord for clarity
+
+- **Alternative filament names**: New optional `other_names` field for filament records
+  - Supports regional variations (e.g., US vs EU names)
+  - Tracks historical names when manufacturers rebrand products
+  - Handles marketing variations and common misspellings
+  - Field is optional - only populated when alternatives exist
+  - Format: array of strings (e.g., `["Classic Red", "Premium PLA Red (EU)"]`)
+
+### Changed
+
+- **Database restructuring and data corrections** (reduced from 588 to 584 filaments)
+  - Removed 6 exact duplicate groups from database
+  - **Polymaker data corrected**: 213 → 198 entries (-15)
+    - Fixed incorrectly imported filament types (now includes specialized types like PC-ABS, PA6-CF20, LW-PLA, PC-PBT, CoPA)
+    - Re-extracted from source PDF with improved parsing
+    - Eliminated duplicate entries with wrong type labels
+  - **Panchroma data corrected**: 143 → 154 entries (+11)
+    - Fixed dual-color hex format from comma-separated to dash-separated (e.g., `#ABC, #DEF` → `#ABC-#DEF`)
+    - Re-extracted from source PDF with improved parsing
+    - Added missing filament colors
+    - Fixed color name spacing issues in parentheses
+  - **Bambu Lab expansion**: Added 38 new filament colors
+    - 14 PETG HF colors (Yellow, Orange, Green, Red, Blue, Black, White, Cream, Lime Green, Forest Green, Lake Blue, Peanut Brown, Gray, Dark Gray)
+    - 6 PETG-CF colors (Brick Red, Violet Purple, Indigo Blue, Malachite Green, Black, Titan Gray)
+    - 10 PLA Translucent colors (Teal, Light Jade, Blue, Mellow Yellow, Purple, Cherry Pink, Orange, Ice Blue, Red, Lavender)
+    - 8 PETG Translucent colors (Translucent Gray, Light Blue, Olive, Brown, Teal, Orange, Purple, Pink)
+
+### Technical
+
+- Updated `FilamentRecord` dataclass to include `id` as first field and optional `other_names` field
+- Regenerated filaments.json integrity hash after data corrections and field additions
+- Created PDF extraction tooling with improved parsing for Polymaker and Panchroma data sources
+- Enhanced slug generation with collision detection and special character handling
+- Added comprehensive database integrity tests (158 total tests, up from 142)
+
 ## [3.2.1] - 2025-11-09
 
 ### Fixed

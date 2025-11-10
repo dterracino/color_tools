@@ -56,6 +56,7 @@ class TestFilamentRecord(unittest.TestCase):
     def test_filament_record_creation(self):
         """Test creating a FilamentRecord."""
         filament = FilamentRecord(
+            id="test-maker-pla-matte-red",
             maker="Test Maker",
             type="PLA",
             finish="Matte",
@@ -63,6 +64,7 @@ class TestFilamentRecord(unittest.TestCase):
             hex="#FF0000",
             td_value=0.5
         )
+        self.assertEqual(filament.id, "test-maker-pla-matte-red")
         self.assertEqual(filament.maker, "Test Maker")
         self.assertEqual(filament.type, "PLA")
         self.assertEqual(filament.color, "Red")
@@ -72,6 +74,7 @@ class TestFilamentRecord(unittest.TestCase):
     def test_filament_record_immutable(self):
         """Test that FilamentRecord is immutable (frozen)."""
         filament = FilamentRecord(
+            id="test-maker-pla-matte-red",
             maker="Test Maker",
             type="PLA",
             finish="Matte",

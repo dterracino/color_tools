@@ -52,12 +52,14 @@ class FilamentRecord:
     Some silk filaments have TWO colors twisted together (e.g., "#AABBCC-#DDEEFF"),
     and we can extract either the first, last, or perceptually blend them.
     """
+    id: str  # Unique identifier slug (e.g., "bambu-lab-pla-silk-plus-red")
     maker: str
     type: str
     finish: Optional[str]
     color: str
     hex: str
     td_value: Optional[float] = None  # Translucency/transparency value
+    other_names: Optional[List[str]] = None  # Alternative names (regional, historical, etc.)
     
     @property
     def rgb(self) -> Tuple[int, int, int]:
@@ -291,12 +293,14 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
     records: List[FilamentRecord] = []
     for f in data:
         records.append(FilamentRecord(
+            id=f["id"],
             maker=f["maker"],
             type=f["type"],
             finish=f.get("finish"),  # finish can be None
             color=f["color"],
             hex=f["hex"],
             td_value=f.get("td_value"),  # td_value can be None
+            other_names=f.get("other_names"),  # other_names can be None
         ))
     
     # Load optional user filaments from same directory
@@ -310,12 +314,14 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
         
         for f in user_data:
             records.append(FilamentRecord(
+                id=f.get("id", ""),  # User files may not have IDs yet
                 maker=f["maker"],
                 type=f["type"],
                 finish=f.get("finish"),
                 color=f["color"],
                 hex=f["hex"],
                 td_value=f.get("td_value"),
+                other_names=f.get("other_names"),
             ))
     
     return records
