@@ -1,0 +1,9 @@
+# Image processing requirements
+# Install with: pip install -r requirements-image.txt
+# Or via extras: pip install color-match-tools[image]
+
+# Base requirements
+-r requirements.txt
+
+# Image processing
+Pillow>=10.0.0

@@ -25,31 +25,93 @@ A comprehensive Python library for color science operations, color space convers
 
 ### Install from PyPI (Recommended)
 
+**Base package (zero dependencies):**
+
 ```bash
 pip install color-match-tools
 ```
 
-This installs the package globally with the `color_tools` command available in your terminal.
+**With enhanced fuzzy matching:**
+
+```bash
+pip install color-match-tools[fuzzy]
+```
+
+Adds fuzzywuzzy for better color name validation (validation module has built-in fallback).
+
+**With image processing support:**
+
+```bash
+pip install color-match-tools[image]
+```
+
+Adds Pillow for image color analysis, k-means clustering, and Hueforge optimization.
+
+**With MCP server support (planned):**
+
+```bash
+pip install color-match-tools[mcp]
+```
+
+Adds MCP SDK for LLM integration via Claude Desktop or VS Code.
+
+**With all optional features:**
+
+```bash
+pip install color-match-tools[all]
+```
+
+Installs everything: fuzzy matching + image processing + MCP server.
+
+All variants install the `color-tools` command globally in your terminal.
 
 ### For Development
 
-Clone this repository and install in development mode:
+Clone this repository and install in development mode with all optional features:
 
 ```bash
 git clone https://github.com/dterracino/color_tools.git
 cd color_tools
+pip install -r requirements-dev.txt
 pip install -e .
 ```
 
-This installs the package in "editable" mode, allowing you to modify the code while using it.
+This installs:
+
+- Base package in "editable" mode (modify code while using it)
+- All optional dependencies (image processing, MCP server)
+- Development tools (coverage, pyright, build, twine)
+
+**Minimal development setup (base only):**
+
+```bash
+pip install -r requirements.txt
+pip install -e .
+```
 
 ### Dependencies
 
-The core module uses **only Python standard library** - no external dependencies required for basic functionality.
+The core module uses **only Python standard library** - **zero external dependencies** required!
 
-**Optional dependency**: The `validation` module supports optional `fuzzywuzzy` for enhanced fuzzy color name matching:
+**Optional dependencies:**
+
+- `[fuzzy]`: fuzzywuzzy >= 0.18.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
+- `[image]`: Pillow >= 10.0.0 for image processing features
+- `[mcp]`: mcp >= 1.0.0 for LLM integration (planned)
+- `[all]`: All of the above (fuzzy + image + mcp)
+
+**Requirements files (for development/manual installation):**
+
+- `requirements.txt`: Base package (currently empty - zero dependencies)
+- `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
+- `requirements-image.txt`: Base + Pillow
+- `requirements-mcp.txt`: Base + MCP SDK
+- `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
+
+The validation module works without fuzzywuzzy using a built-in Levenshtein distance implementation. Install fuzzywuzzy for better fuzzy matching performance:
 
 ```bash
+pip install color-match-tools[fuzzy]  # OR
 pip install fuzzywuzzy
 ```
 

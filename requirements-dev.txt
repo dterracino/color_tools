@@ -1,8 +1,18 @@
 # Development dependencies
-# Includes all base requirements plus development tools
+# Includes all optional features and development tools
+# Install with: pip install -r requirements-dev.txt
 
-# Base requirements (from requirements.txt)
+# Base requirements
 -r requirements.txt
+
+# Optional fuzzy matching for validation module
+-r requirements-fuzzy.txt
+
+# Optional image processing features
+-r requirements-image.txt
+
+# Optional MCP server features
+-r requirements-mcp.txt
 
 # Code coverage
 coverage>=7.0.0

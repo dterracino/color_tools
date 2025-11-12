@@ -32,13 +32,35 @@ classifiers = [
 dependencies = []
 
 [project.optional-dependencies]
+# Enhanced fuzzy matching for validation module
+fuzzy = [
+    "fuzzywuzzy>=0.18.0",
+    "python-Levenshtein>=0.12.0",  # Accelerates fuzzywuzzy
+]
+
+# Image processing features (requires Pillow)
+image = [
+    "Pillow>=10.0.0",
+]
+
+# MCP server for LLM integration
+mcp = [
+    "mcp>=1.0.0",
+]
+
+# Development tools
 dev = [
     "pyright>=1.1.0",
     "build>=1.0.0",
     "twine>=4.0.0",
 ]
-test = [
+
+# Everything (all optional features)
+all = [
     "fuzzywuzzy>=0.18.0",
+    "python-Levenshtein>=0.12.0",
+    "Pillow>=10.0.0",
+    "mcp>=1.0.0",
 ]
 
 [project.urls]
@@ -52,7 +74,7 @@ Documentation = "https://github.com/dterracino/color_tools/blob/main/README.md"
 color_tools = "color_tools.cli:main"
 
 [tool.setuptools]
-packages = ["color_tools"]
+packages = ["color_tools", "color_tools.image", "color_tools.mcp"]
 
 [tool.setuptools.package-data]
-color_tools = ["data/*.json"]
+color_tools = ["data/*.json", "data/palettes/*.json"]

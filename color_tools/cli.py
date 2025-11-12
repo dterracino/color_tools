@@ -1,10 +1,13 @@
 """
 Command-line interface for color_tools.
 
-Provides three main commands:
+Provides main commands:
 - color: Search and query CSS colors
 - filament: Search and query 3D printing filaments
 - convert: Convert between color spaces and check gamut
+- name: Generate descriptive color names
+- cvd: Color vision deficiency simulation/correction
+- image: Image color analysis and manipulation
 
 This is the "top" of the dependency tree - it imports from everywhere
 but nothing imports from it (except __main__.py).
@@ -22,6 +25,13 @@ from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
 from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
 from .color_deficiency import simulate_cvd, correct_cvd
+
+# Image analysis is optional (requires Pillow)
+try:
+    from .image import extract_unique_colors, redistribute_luminance, format_color_change_report
+    IMAGE_AVAILABLE = True
+except ImportError:
+    IMAGE_AVAILABLE = False
 
 
 def _get_program_name() -> str:
@@ -82,6 +92,9 @@ Examples:
   # Simulate color blindness
   {prog_name} cvd --value 255 0 0 --type protanopia --mode simulate
   {prog_name} cvd --value 0 255 0 --type deutan --mode correct
+  
+  # Extract and redistribute luminance from image
+  {prog_name} image --file photo.jpg --redistribute-luminance --colors 8
   
   # Find nearest filament to an RGB color
   {prog_name} filament --nearest --value 255 0 0
@@ -366,6 +379,32 @@ Examples:
         default="simulate",
         help="Mode: 'simulate' shows how colors appear to CVD individuals, 'correct' applies daltonization (default: simulate)"
     )
+    
+    # ==================== IMAGE SUBCOMMAND ====================
+    if IMAGE_AVAILABLE:
+        image_parser = subparsers.add_parser(
+            "image",
+            help="Image color analysis and manipulation",
+            description="Extract colors from images and redistribute luminance values"
+        )
+        
+        image_parser.add_argument(
+            "--file",
+            type=str,
+            required=True,
+            help="Path to image file"
+        )
+        image_parser.add_argument(
+            "--redistribute-luminance",
+            action="store_true",
+            help="Extract colors and redistribute their luminance values evenly"
+        )
+        image_parser.add_argument(
+            "--colors",
+            type=int,
+            default=10,
+            help="Number of unique colors to extract (default: 10)"
+        )
     
     # Parse arguments
     args = parser.parse_args()
@@ -670,5 +709,37 @@ Examples:
         print(f"Type: {deficiency}")
         
         sys.exit(0)
+    
+    # ==================== IMAGE COMMAND HANDLER ====================
+    elif args.command == "image":
+        if not IMAGE_AVAILABLE:
+            print("Error: Image processing requires Pillow", file=sys.stderr)
+            print("Install with: pip install -r requirements-image.txt", file=sys.stderr)
+            sys.exit(1)
+        
+        # Check if file exists
+        image_path = Path(args.file)
+        if not image_path.exists():
+            print(f"Error: Image file not found: {image_path}", file=sys.stderr)
+            sys.exit(1)
+        
+        if args.redistribute_luminance:
+            # Extract unique colors
+            print(f"Extracting {args.colors} unique colors from {image_path.name}...")
+            colors = extract_unique_colors(str(image_path), n_colors=args.colors)
+            print(f"Extracted {len(colors)} colors\n")
+            
+            # Redistribute luminance
+            changes = redistribute_luminance(colors)
+            
+            # Display report
+            report = format_color_change_report(changes)
+            print(report)
+        else:
+            print("Error: No operation specified. Use --redistribute-luminance", file=sys.stderr)
+            sys.exit(1)
+        
+        sys.exit(0)
+
 
 

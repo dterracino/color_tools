@@ -1,0 +1,10 @@
+# Optional fuzzy matching dependencies for validation module
+# Install with: pip install -r requirements-fuzzy.txt
+# Or via extras: pip install color-match-tools[fuzzy]
+
+# Base requirements
+-r requirements.txt
+
+# Enhanced fuzzy matching for color name validation
+fuzzywuzzy>=0.18.0
+python-Levenshtein>=0.12.0  # Accelerates fuzzywuzzy

@@ -1,2 +1,6 @@
-fuzzywuzzy
-python-Levenshtein
+# Base package has ZERO dependencies (pure Python stdlib)
+# For optional dependencies, use:
+#   pip install color-match-tools[fuzzy]  # Enhanced fuzzy matching
+#   pip install color-match-tools[image]  # Image processing
+#   pip install color-match-tools[mcp]    # MCP server
+#   pip install color-match-tools[all]    # Everything
