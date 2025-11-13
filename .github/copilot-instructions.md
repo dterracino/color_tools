@@ -1,5 +1,29 @@
 # GitHub Copilot Instructions for color_tools
 
+## CRITICAL: When You Don't Know Something
+
+**If you are uncertain about how something works, or don't have complete knowledge:**
+
+1. **STOP** - Do not proceed with implementation
+2. **SAY SO EXPLICITLY** - "I don't know how [X] works. Let me research this first."
+3. **RESEARCH** - Use available tools (fetch_webpage, get_vscode_api, github_repo) to learn
+4. **PRESENT FINDINGS** - Share what you learned and the implications
+5. **LET THE USER DECIDE** - Present options, don't make assumptions about what they want
+
+**NEVER:**
+- Implement solutions based on assumptions or guesses
+- Pretend to know something you don't
+- Waste the user's time with code that won't work because you guessed wrong
+- Proceed confidently when you should be asking questions
+
+**Example good response:**
+"I'm not certain how MCP servers integrate with VS Code. Let me research the documentation first before we implement anything."
+
+**Example bad response:**
+*Confidently implementing 500 lines of code based on an incorrect assumption*
+
+The user's time is valuable. Uncertainty is acceptable. Wasting time on wrong solutions is not.
+
 ## Project Overview
 
 This is a color science library for Python 3.10+ that provides:

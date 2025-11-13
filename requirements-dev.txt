@@ -11,9 +11,6 @@
 # Optional image processing features
 -r requirements-image.txt
 
-# Optional MCP server features
--r requirements-mcp.txt
-
 # Code coverage
 coverage>=7.0.0
 

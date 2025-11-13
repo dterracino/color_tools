@@ -47,21 +47,13 @@ pip install color-match-tools[image]
 
 Adds Pillow for image color analysis, k-means clustering, and Hueforge optimization.
 
-**With MCP server support (planned):**
-
-```bash
-pip install color-match-tools[mcp]
-```
-
-Adds MCP SDK for LLM integration via Claude Desktop or VS Code.
-
 **With all optional features:**
 
 ```bash
 pip install color-match-tools[all]
 ```
 
-Installs everything: fuzzy matching + image processing + MCP server.
+Installs everything: fuzzy matching + image processing.
 
 All variants install the `color-tools` command globally in your terminal.
 
@@ -79,7 +71,7 @@ pip install -e .
 This installs:
 
 - Base package in "editable" mode (modify code while using it)
-- All optional dependencies (image processing, MCP server)
+- All optional dependencies (fuzzy matching, image processing)
 - Development tools (coverage, pyright, build, twine)
 
 **Minimal development setup (base only):**
@@ -97,15 +89,13 @@ The core module uses **only Python standard library** - **zero external dependen
 
 - `[fuzzy]`: fuzzywuzzy >= 0.18.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
 - `[image]`: Pillow >= 10.0.0 for image processing features
-- `[mcp]`: mcp >= 1.0.0 for LLM integration (planned)
-- `[all]`: All of the above (fuzzy + image + mcp)
+- `[all]`: All of the above (fuzzy + image)
 
 **Requirements files (for development/manual installation):**
 
 - `requirements.txt`: Base package (currently empty - zero dependencies)
 - `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
 - `requirements-image.txt`: Base + Pillow
-- `requirements-mcp.txt`: Base + MCP SDK
 - `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
 
 The validation module works without fuzzywuzzy using a built-in Levenshtein distance implementation. Install fuzzywuzzy for better fuzzy matching performance:

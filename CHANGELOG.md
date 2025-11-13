@@ -12,14 +12,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Optional dependency system**: Reorganized dependencies into optional extras for better modularity
   - `[fuzzy]`: Enhanced fuzzy matching for validation module (fuzzywuzzy + python-Levenshtein)
   - `[image]`: Image processing features (Pillow)
-  - `[mcp]`: MCP server for LLM integration (mcp SDK)
   - `[all]`: All optional features combined
   - Base package has **zero external dependencies** (pure Python stdlib)
 - **Requirements files structure**: Created separate requirements files for each optional feature
   - `requirements.txt`: Base package (empty - zero dependencies)
   - `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
   - `requirements-image.txt`: Base + Pillow
-  - `requirements-mcp.txt`: Base + MCP SDK
   - `requirements-dev.txt`: All optional features + development tools
   - Each optional file includes `-r requirements.txt` for future-proofing
 - **GitHub Actions workflow for automated releases**: New `.github/workflows/release.yml` workflow automatically creates GitHub releases when version tags are pushed
@@ -41,7 +39,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Users can choose enhanced fuzzy matching via `pip install color-match-tools[fuzzy]`
 - **Command name consistency**: Changed installed command from `color-tools` to `color_tools` (underscore) to match module name and `python -m color_tools` usage
 - **README installation instructions**: Updated to show PyPI installation as primary/recommended method with `pip install color-match-tools`
-  - Documented all optional extras: `[fuzzy]`, `[image]`, `[mcp]`, `[all]`
+  - Documented all optional extras: `[fuzzy]`, `[image]`, `[all]`
   - Documented all requirements files and their purposes
 
 ## [3.3.0] - 2025-11-10
