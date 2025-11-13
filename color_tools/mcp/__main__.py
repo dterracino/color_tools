@@ -19,13 +19,8 @@ def main():
         sys.exit(1)
     
     try:
-        print("Starting color_tools MCP server...")
+        print("Starting color_tools MCP server...", file=sys.stderr)
         run_server()
-    except NotImplementedError as e:
-        print(f"Error: {e}", file=sys.stderr)
-        print("\nThe MCP server is planned but not yet implemented.", file=sys.stderr)
-        print("See color_tools/mcp/README.md for details.", file=sys.stderr)
-        sys.exit(1)
     except KeyboardInterrupt:
         print("\nServer stopped by user")
         sys.exit(0)

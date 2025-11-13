@@ -41,7 +41,6 @@ def run_server():
     
     Raises:
         ImportError: If MCP SDK is not installed
-        NotImplementedError: Server not yet implemented
     """
     if not MCP_AVAILABLE:
         raise ImportError(
@@ -49,10 +48,10 @@ def run_server():
             "Install with: pip install color-match-tools[mcp]"
         )
     
-    raise NotImplementedError(
-        "MCP server is not yet implemented. "
-        "See color_tools/mcp/README.md for planned features."
-    )
+    # Import and run the actual server
+    from .server import run_server as _run_server
+    import asyncio
+    asyncio.run(_run_server())
 
 
 __all__ = [
