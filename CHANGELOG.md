@@ -9,38 +9,67 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Optional dependency system**: Reorganized dependencies into optional extras for better modularity
-  - `[fuzzy]`: Enhanced fuzzy matching for validation module (fuzzywuzzy + python-Levenshtein)
-  - `[image]`: Image processing features (Pillow)
-  - `[all]`: All optional features combined
-  - Base package has **zero external dependencies** (pure Python stdlib)
-- **Requirements files structure**: Created separate requirements files for each optional feature
-  - `requirements.txt`: Base package (empty - zero dependencies)
-  - `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
-  - `requirements-image.txt`: Base + Pillow
-  - `requirements-dev.txt`: All optional features + development tools
-  - Each optional file includes `-r requirements.txt` for future-proofing
-- **GitHub Actions workflow for automated releases**: New `.github/workflows/release.yml` workflow automatically creates GitHub releases when version tags are pushed
-  - Extracts changelog content for release notes
-  - Creates release with source code archives
-  - Triggers on `v*.*.*` tag pattern
-- **Comprehensive validation test suite**: 45 new unit tests in `tests/test_validation.py`
-  - Tests for `validate_color()` function and supporting utilities
-  - Tests Levenshtein distance calculation
-  - Tests fuzzy matching fallback (when fuzzywuzzy not installed)
-  - Tests exact matches, fuzzy matches, mismatches, and edge cases
-  - Tests threshold behavior and invalid input handling
-  - All 256 tests passing (211 existing + 45 new)
+- **General-purpose image analysis functions** in `image/basic.py` module:
+  - `count_unique_colors(image_path)` - Count total unique RGB colors in an image using numpy
+  - `get_color_histogram(image_path)` - Get histogram mapping RGB colors to pixel counts
+  - `get_dominant_color(image_path)` - Get the most common color in an image
+  - All functions work with any image format (PNG, JPEG, GIF, etc.)
+  - Efficient numpy-based implementation for large images
+  - Clean Python types returned (int tuples, not numpy types)
+
+  ```python
+  from color_tools.image import count_unique_colors, get_dominant_color
+  
+  # Count colors
+  total = count_unique_colors("photo.jpg")
+  print(f"Found {total} unique colors")
+  
+  # Get dominant color and match to CSS color
+  from color_tools import Palette
+  dominant = get_dominant_color("photo.jpg")
+  palette = Palette.load_default()
+  nearest, distance = palette.nearest_color(dominant)
+  print(f"Dominant color matches CSS '{nearest.name}'")
+  ```
+
+- **Image quality analysis functions** in `image/basic.py` module:
+  - `analyze_brightness(image_path)` - Analyze image brightness with dark/normal/bright assessment
+  - `analyze_contrast(image_path)` - Analyze image contrast using standard deviation with low/normal assessment
+  - `analyze_noise_level(image_path)` - Estimate noise level using scikit-image with clean/noisy assessment
+  - `analyze_dynamic_range(image_path)` - Analyze dynamic range and provide gamma correction suggestions
+  - All functions return structured dictionaries with raw values and human-readable assessments
+  - Based on proven thresholds from image processing applications
+
+  ```python
+  from color_tools.image import analyze_brightness, analyze_contrast, analyze_noise_level
+  
+  # Analyze image quality
+  brightness = analyze_brightness("photo.jpg")
+  print(f"Brightness: {brightness['mean_brightness']:.1f} ({brightness['assessment']})")
+  
+  contrast = analyze_contrast("photo.jpg") 
+  print(f"Contrast: {contrast['contrast_std']:.1f} ({contrast['assessment']})")
+  
+  noise = analyze_noise_level("photo.jpg")
+  print(f"Noise: {noise['noise_sigma']:.2f} ({noise['assessment']})")
+  ```
+
+- **Image module architecture improvements**:
+  - Separated general-purpose functions (`basic.py`) from HueForge-specific tools (`analysis.py`)
+  - Clear separation of concerns following project architectural principles
+  - Updated module docstrings to document both categories of functions
+- **numpy dependency**: Added to `[image]` extra and `requirements-image.txt`
+  - Required for efficient color counting and histogram operations
+  - Minimum version: numpy>=1.24.0
+- **scikit-image dependency**: Added to `[image]` extra and `requirements-image.txt`
+  - Required for advanced noise analysis using `restoration.estimate_sigma()`
+  - Minimum version: scikit-image>=0.20.0
+  - Graceful fallback if not available
 
 ### Changed
 
-- **Dependency architecture**: Moved fuzzywuzzy from base dependencies to optional `[fuzzy]` extra
-  - validation.py has graceful fallback with built-in Levenshtein implementation
-  - Users can choose enhanced fuzzy matching via `pip install color-match-tools[fuzzy]`
-- **Command name consistency**: Changed installed command from `color-tools` to `color_tools` (underscore) to match module name and `python -m color_tools` usage
-- **README installation instructions**: Updated to show PyPI installation as primary/recommended method with `pip install color-match-tools`
-  - Documented all optional extras: `[fuzzy]`, `[image]`, `[all]`
-  - Documented all requirements files and their purposes
+- **Image extra now includes numpy and scikit-image**: `pip install color-match-tools[image]` now installs Pillow, numpy, and scikit-image
+- **Image module documentation**: Updated `image/__init__.py` to show examples of both general and HueForge-specific functions
 
 ## [3.3.0] - 2025-11-10
 

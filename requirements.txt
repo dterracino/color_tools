@@ -2,5 +2,5 @@
 # For optional dependencies, use:
 #   pip install color-match-tools[fuzzy]  # Enhanced fuzzy matching
 #   pip install color-match-tools[image]  # Image processing
-#   pip install color-match-tools[mcp]    # MCP server
+#   pip install color-match-tools[dev]    # Development tools
 #   pip install color-match-tools[all]    # Everything
