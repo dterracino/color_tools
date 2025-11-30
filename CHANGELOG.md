@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.0] - 2025-11-30
+
+### Added
+
+- **Universal Hex Color Support** - Complete hex color input support across all CLI commands for improved real-world usability:
+  - **`--hex` argument** - Added to `color`, `filament`, `name`, `cvd`, and `convert` commands as convenient alternative to `--value`
+  - **Enhanced format support** - Accepts 6-digit hex (`#FF5733`, `FF5733`) and 3-digit shortcuts (`#24c`, `24c`) using existing robust `hex_to_rgb()` function  
+  - **Smart defaults** - When using `--hex`, automatically implies RGB color space (no need to specify `--from rgb` in convert command)
+  - **Mutual exclusivity validation** - Prevents conflicting `--hex` and `--value` usage with clear error messages
+  - **DRY implementation** - Leverages existing `conversions.hex_to_rgb()` function to avoid code duplication
+  - **LAB/LCH validation** - Added bounds checking with helpful error messages for LAB/LCH input values
+  - **Examples across help** - Updated CLI help and examples to showcase hex usage patterns
+
 ### Added
 
 - **Unified Image Transformation System** - Complete image processing architecture leveraging all existing color_tools infrastructure:

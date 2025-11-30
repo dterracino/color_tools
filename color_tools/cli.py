@@ -33,6 +33,63 @@ try:
 except ImportError:
     IMAGE_AVAILABLE = False
 
+def _parse_hex(hex_string: str) -> tuple[int, int, int]:
+    """
+    Parse a hex color string into RGB values using existing conversion function.
+    
+    Args:
+        hex_string: Hex color string ("#FF0000", "FF0000", "#24c", "24c")
+        
+    Returns:
+        RGB tuple (r, g, b) with values 0-255
+        
+    Raises:
+        ValueError: If hex string is invalid
+    """
+    from .conversions import hex_to_rgb
+    
+    result = hex_to_rgb(hex_string)
+    if result is None:
+        raise ValueError(f"Invalid hex color code: '{hex_string}'. Expected format: #RGB, RGB, #RRGGBB, or RRGGBB")
+    
+    return result
+
+def _is_valid_lab(lab_tuple) -> bool:
+    """
+    Validate if a Lab tuple is within the standard 8-bit Lab range.
+    Lab tuple format: (L*, a*, b*)
+    """
+    if not isinstance(lab_tuple, (tuple, list)) or len(lab_tuple) != 3:
+        return False
+
+    L, a, b = lab_tuple
+
+    # Type check
+    if not all(isinstance(v, (int, float)) for v in (L, a, b)):
+        return False
+
+    return (ColorConstants.NORMALIZED_MIN <= L <= ColorConstants.XYZ_SCALE_FACTOR) and \
+           (ColorConstants.AB_MIN <= a <= ColorConstants.AB_MAX) and \
+           (ColorConstants.AB_MIN <= b <= ColorConstants.AB_MAX)
+
+def _is_valid_lch(lch_tuple) -> bool:
+    """
+    Validate if an LCh(ab) tuple is within the standard range.
+    LCh tuple format: (L*, C*, h°)
+    """
+    if not isinstance(lch_tuple, (tuple, list)) or len(lch_tuple) != 3:
+        return False
+
+    L, C, h = lch_tuple
+
+    # Type check
+    if not all(isinstance(v, (int, float)) for v in (L, C, h)):
+        return False
+
+    return (ColorConstants.NORMALIZED_MIN <= L <= ColorConstants.XYZ_SCALE_FACTOR) and \
+           (ColorConstants.CHROMA_MIN <= C <= ColorConstants.CHROMA_MAX) and \
+           (ColorConstants.NORMALIZED_MIN <= h < ColorConstants.HUE_CIRCLE_DEGREES)
+
 def handle_image_command(args):
     """Handle all image processing commands."""
     if not IMAGE_AVAILABLE:
@@ -197,24 +254,26 @@ def main():
         epilog=f"""
 Examples:
   # Find nearest CSS color to an RGB value
-  {prog_name} color --nearest --value 128 64 200
+  {prog_name} color --nearest --value 128 64 200 --space rgb
+  {prog_name} color --nearest --hex "#8040C8"
   
   # Find color by name
   {prog_name} color --name "coral"
   
   # Generate descriptive name for an RGB color
   {prog_name} name --value 255 128 64
-  {prog_name} name --value 200 100 50 --show-type
+  {prog_name} name --hex "#FF8040"
   
   # Simulate color blindness
   {prog_name} cvd --value 255 0 0 --type protanopia --mode simulate
-  {prog_name} cvd --value 0 255 0 --type deutan --mode correct
+  {prog_name} cvd --hex "#FF0000" --type deutan --mode correct
   
   # Extract and redistribute luminance from image
   {prog_name} image --file photo.jpg --redistribute-luminance --colors 8
   
   # Find nearest filament to an RGB color
   {prog_name} filament --nearest --value 255 0 0
+  {prog_name} filament --nearest --hex "#FF0000"
   
   # Find all PLA filaments from two different makers
   {prog_name} filament --type PLA --maker "Bambu Lab" "Sunlu"
@@ -293,6 +352,12 @@ Examples:
         help="Color value tuple (RGB: r g b | HSL: h s l | LAB: L a b | LCH: L C h)"
     )
     color_parser.add_argument(
+        "--hex",
+        type=str,
+        metavar="COLOR",
+        help="Hex color value (e.g., '#FF8040' or 'FF8040') - shortcut for RGB input"
+    )
+    color_parser.add_argument(
         "--space", 
         choices=["rgb", "hsl", "lab", "lch"], 
         default="lab",
@@ -341,6 +406,12 @@ Examples:
         type=int, 
         metavar=("R", "G", "B"),
         help="RGB color value (0-255 for each component)"
+    )
+    filament_parser.add_argument(
+        "--hex",
+        type=str,
+        metavar="COLOR",
+        help="Hex color value (e.g., '#FF8040' or 'FF8040') - shortcut for RGB input"
     )
     filament_parser.add_argument(
         "--metric",
@@ -433,12 +504,18 @@ Examples:
         nargs=3, 
         type=float, 
         metavar=("V1", "V2", "V3"),
-        help="Color value tuple"
+        help="Color value tuple (mutually exclusive with --hex)"
+    )
+    convert_parser.add_argument(
+        "--hex",
+        type=str,
+        metavar="COLOR",
+        help="Hex color code (e.g., FF5733 or #FF5733) - automatically uses RGB space (mutually exclusive with --value)"
     )
     convert_parser.add_argument(
         "--check-gamut", 
         action="store_true", 
-        help="Check if LAB/LCH color is in sRGB gamut (requires --value)"
+        help="Check if LAB/LCH color is in sRGB gamut (requires --value or --hex)"
     )
     
     # ==================== NAME SUBCOMMAND ====================
@@ -453,8 +530,13 @@ Examples:
         nargs=3,
         type=int,
         metavar=("R", "G", "B"),
-        required=True,
         help="RGB color value (0-255 for each component)"
+    )
+    name_parser.add_argument(
+        "--hex",
+        type=str,
+        metavar="COLOR",
+        help="Hex color value (e.g., '#FF8040' or 'FF8040') - shortcut for RGB input"
     )
     name_parser.add_argument(
         "--threshold",
@@ -481,8 +563,13 @@ Examples:
         nargs=3,
         type=int,
         metavar=("R", "G", "B"),
-        required=True,
         help="RGB color value (0-255 for each component)"
+    )
+    cvd_parser.add_argument(
+        "--hex",
+        type=str,
+        metavar="COLOR",
+        help="Hex color value (e.g., '#FF8040' or 'FF8040') - shortcut for RGB input"
     )
     cvd_parser.add_argument(
         "--type",
@@ -610,7 +697,7 @@ Examples:
             for error in errors:
                 print(f"  {error}", file=sys.stderr)
             sys.exit(1)
-        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 6 palettes)")
+        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 14 palettes)")
     
     # If only verifying (no other command), exit after success
     if (args.verify_constants or args.verify_data or args.verify_matrices) and not args.command:
@@ -635,6 +722,11 @@ Examples:
     
     # ==================== COLOR COMMAND HANDLER ====================
     if args.command == "color":
+        # Validate mutual exclusivity of --value and --hex
+        if args.value is not None and args.hex is not None:
+            print("Error: Cannot specify both --value and --hex", file=sys.stderr)
+            sys.exit(2)
+        
         # Load color palette (either custom retro palette or default CSS colors)
         if args.palette:
             palette = load_palette(args.palette)
@@ -655,16 +747,40 @@ Examples:
             sys.exit(0)
         
         if args.nearest:
-            if not args.value:
-                print("Error: --nearest requires --value")
+            if args.value is None and args.hex is None:
+                print("Error: --nearest requires either --value or --hex", file=sys.stderr)
                 sys.exit(2)
             
-            val = tuple(args.value)
+            # Handle hex input
+            if args.hex is not None:
+                try:
+                    rgb_val = _parse_hex(args.hex)
+                    val = tuple(float(x) for x in rgb_val)
+                    space = "rgb"  # --hex always implies RGB space
+                except ValueError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    sys.exit(2)
+            else:
+                # Handle --value input
+                val = tuple(args.value)
+                space = args.space
+                
+                # Validate LAB/LCH ranges if applicable
+                if space == "lab" and not _is_valid_lab(val):
+                    print(f"Error: LAB values appear out of range: {val}", file=sys.stderr)
+                    print(f"Expected: L* (0-{ColorConstants.XYZ_SCALE_FACTOR}), a* ({ColorConstants.AB_MIN}-{ColorConstants.AB_MAX}), b* ({ColorConstants.AB_MIN}-{ColorConstants.AB_MAX})", file=sys.stderr)
+                    print("Tip: Use --space rgb or --hex for RGB input", file=sys.stderr)
+                    sys.exit(2)
+                elif space == "lch" and not _is_valid_lch(val):
+                    print(f"Error: LCH values appear out of range: {val}", file=sys.stderr)
+                    print(f"Expected: L* (0-{ColorConstants.XYZ_SCALE_FACTOR}), C* ({ColorConstants.CHROMA_MIN}-{ColorConstants.CHROMA_MAX}), h° (0-{ColorConstants.HUE_CIRCLE_DEGREES})", file=sys.stderr)
+                    print("Tip: Use --space rgb or --hex for RGB input", file=sys.stderr)
+                    sys.exit(2)
             
-            # Use the specified color space directly
+            # Use the determined color space
             rec, d = palette.nearest_color(
                 val,
-                space=args.space,
+                space=space,
                 metric=args.metric,
                 cmc_l=args.cmc_l,
                 cmc_c=args.cmc_c,
@@ -713,11 +829,25 @@ Examples:
             sys.exit(0)
         
         if args.nearest:
-            if not args.value:
-                print("Error: --nearest requires --value with RGB components")
+            # Validate mutual exclusivity of --value and --hex
+            if args.value is not None and args.hex is not None:
+                print("Error: Cannot specify both --value and --hex", file=sys.stderr)
                 sys.exit(2)
             
-            rgb_val = tuple(args.value)
+            if args.value is None and args.hex is None:
+                print("Error: --nearest requires either --value or --hex", file=sys.stderr)
+                sys.exit(2)
+            
+            # Handle hex input
+            if args.hex is not None:
+                try:
+                    rgb_val = _parse_hex(args.hex)
+                except ValueError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    sys.exit(2)
+            else:
+                # Handle --value input (RGB values)
+                rgb_val = tuple(args.value)
             
             try:
                 rec, d = filament_palette.nearest_filament(
@@ -761,17 +891,32 @@ Examples:
     # ==================== CONVERT COMMAND HANDLER ====================
     elif args.command == "convert":
         if args.check_gamut:
-            if not args.value:
-                print("Error: --check-gamut requires --value")
+            # Validate mutual exclusivity of --value and --hex
+            if args.value is not None and args.hex is not None:
+                print("Error: Cannot specify both --value and --hex", file=sys.stderr)
                 sys.exit(2)
             
-            val = tuple(args.value)
+            if args.value is None and args.hex is None:
+                print("Error: --check-gamut requires either --value or --hex", file=sys.stderr)
+                sys.exit(2)
             
-            # Assume LAB unless otherwise specified
-            if args.from_space == "lch":
-                lab = lch_to_lab(val)
+            # Handle hex input (convert to LAB for gamut checking)
+            if args.hex is not None:
+                try:
+                    rgb_val = _parse_hex(args.hex)
+                    lab = rgb_to_lab(rgb_val)
+                except ValueError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    sys.exit(2)
             else:
-                lab = val
+                # Handle --value input
+                val = tuple(args.value)
+                
+                # Assume LAB unless otherwise specified
+                if args.from_space == "lch":
+                    lab = lch_to_lab(val)
+                else:
+                    lab = val
             
             in_gamut = is_in_srgb_gamut(lab)
             print(f"LAB({lab[0]:.2f}, {lab[1]:.2f}, {lab[2]:.2f}) is {'IN' if in_gamut else 'OUT OF'} sRGB gamut")
@@ -785,9 +930,34 @@ Examples:
             
             sys.exit(0)
         
-        if args.from_space and args.to_space and args.value:
-            val = tuple(args.value)
-            from_space = args.from_space
+        # Color space conversion
+        if args.to_space:
+            # Validate mutual exclusivity of --value and --hex
+            if args.value is not None and args.hex is not None:
+                print("Error: Cannot specify both --value and --hex", file=sys.stderr)
+                sys.exit(2)
+            
+            if args.value is None and args.hex is None:
+                print("Error: Color conversion requires either --value or --hex", file=sys.stderr)
+                sys.exit(2)
+            
+            # Handle hex input
+            if args.hex is not None:
+                try:
+                    rgb_val = _parse_hex(args.hex)
+                    val = tuple(float(x) for x in rgb_val)
+                    from_space = "rgb"  # --hex always implies RGB space
+                except ValueError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    sys.exit(2)
+            else:
+                # Handle --value input - --from is required
+                if args.from_space is None:
+                    print("Error: --from is required when using --value", file=sys.stderr)
+                    sys.exit(2)
+                val = tuple(args.value)
+                from_space = args.from_space
+            
             to_space = args.to_space
             
             # Convert to RGB as intermediate (everything goes through RGB)
@@ -821,11 +991,29 @@ Examples:
     elif args.command == "name":
         from .naming import generate_color_name
         
-        # Validate RGB values
-        r, g, b = args.value
-        if not all(0 <= v <= 255 for v in [r, g, b]):
-            print("Error: RGB values must be in range 0-255")
+        # Validate mutual exclusivity of --value and --hex
+        if args.value is not None and args.hex is not None:
+            print("Error: Cannot specify both --value and --hex", file=sys.stderr)
             sys.exit(2)
+        
+        if args.value is None and args.hex is None:
+            print("Error: Name command requires either --value or --hex", file=sys.stderr)
+            sys.exit(2)
+        
+        # Handle hex input
+        if args.hex is not None:
+            try:
+                r, g, b = _parse_hex(args.hex)
+            except ValueError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                sys.exit(2)
+        else:
+            # Handle --value input
+            r, g, b = args.value
+            # Validate RGB values
+            if not all(0 <= v <= 255 for v in [r, g, b]):
+                print("Error: RGB values must be in range 0-255")
+                sys.exit(2)
         
         rgb = (r, g, b)
         name, match_type = generate_color_name(rgb, near_threshold=args.threshold)
@@ -839,11 +1027,29 @@ Examples:
     
     # ==================== CVD COMMAND HANDLER ====================
     elif args.command == "cvd":
-        # Validate RGB values
-        r, g, b = args.value
-        if not all(0 <= v <= 255 for v in [r, g, b]):
-            print("Error: RGB values must be in range 0-255")
+        # Validate mutual exclusivity of --value and --hex
+        if args.value is not None and args.hex is not None:
+            print("Error: Cannot specify both --value and --hex", file=sys.stderr)
             sys.exit(2)
+        
+        if args.value is None and args.hex is None:
+            print("Error: CVD command requires either --value or --hex", file=sys.stderr)
+            sys.exit(2)
+        
+        # Handle hex input
+        if args.hex is not None:
+            try:
+                r, g, b = _parse_hex(args.hex)
+            except ValueError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                sys.exit(2)
+        else:
+            # Handle --value input
+            r, g, b = args.value
+            # Validate RGB values
+            if not all(0 <= v <= 255 for v in [r, g, b]):
+                print("Error: RGB values must be in range 0-255")
+                sys.exit(2)
         
         rgb = (r, g, b)
         

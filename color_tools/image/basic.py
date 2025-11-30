@@ -55,10 +55,11 @@ Example:
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Union
+from pathlib import Path
+from typing import TYPE_CHECKING, Union, Callable
 
 if TYPE_CHECKING:
-    from pathlib import Path
+    import PIL.Image
 
 # --- Analysis Thresholds ---
 THRESHOLD_LOW_CONTRAST = 40.0      # Standard Deviation of pixel brightness
@@ -655,10 +656,10 @@ def analyze_dynamic_range(image_path: str | Path) -> dict[str, Union[int, float,
 
 def transform_image(
     image_path: Path | str,
-    transform_func: callable,
+    transform_func: Callable[[tuple[int, int, int]], tuple[int, int, int]],
     preserve_alpha: bool = True,
     output_path: Path | str | None = None
-) -> PIL.Image.Image:
+) -> 'PIL.Image.Image':
     """
     Apply a color transformation function to every pixel of an image.
     
@@ -751,8 +752,8 @@ def transform_image(
     transformed = PIL.Image.fromarray(np_image, mode=working_image.mode)
     
     # Save if output path provided
-    if output_path:
-        output_path = Path(output_path)
+    if output_path is not None:
+        output_path = Path(output_path) if not isinstance(output_path, Path) else output_path
         output_path.parent.mkdir(parents=True, exist_ok=True)
         transformed.save(output_path)
     
@@ -763,7 +764,7 @@ def simulate_cvd_image(
     image_path: Path | str,
     deficiency_type: str,
     output_path: Path | str | None = None
-) -> PIL.Image.Image:
+) -> 'PIL.Image.Image':
     """
     Simulate color vision deficiency for an entire image.
     
@@ -801,7 +802,7 @@ def correct_cvd_image(
     image_path: Path | str,
     deficiency_type: str,
     output_path: Path | str | None = None
-) -> PIL.Image.Image:
+) -> 'PIL.Image.Image':
     """
     Apply color vision deficiency correction to an entire image.
     
@@ -839,7 +840,7 @@ def quantize_image_to_palette(
     metric: str = 'de2000',
     dither: bool = False,
     output_path: Path | str | None = None
-) -> PIL.Image.Image:
+) -> 'PIL.Image.Image':
     """
     Convert an image to use only colors from a specified palette.
     
@@ -917,6 +918,7 @@ def quantize_image_to_palette(
         )
     
     # Load image
+    from pathlib import Path
     image_path = Path(image_path) 
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
@@ -962,8 +964,8 @@ def quantize_image_to_palette(
     dithered = PIL.Image.fromarray(np_image, mode='RGB')
     
     # Save if requested
-    if output_path:
-        output_path = Path(output_path)
+    if output_path is not None:
+        output_path = Path(output_path) if not isinstance(output_path, Path) else output_path
         output_path.parent.mkdir(parents=True, exist_ok=True)
         dithered.save(output_path)
     

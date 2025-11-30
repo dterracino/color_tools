@@ -120,6 +120,12 @@ class ColorConstants:
     XYZ_SCALE_FACTOR = 100.0            # XYZ typically scaled 0-100
     WIN_HSL_MAX = 240.0                 # Windows uses 0-240 for HSL
     
+    # LAB color space value ranges (8-bit precision)
+    AB_MIN = -128.0                     # Minimum a*/b* value
+    AB_MAX = 127.0                      # Maximum a*/b* value
+    CHROMA_MIN = 0.0                    # Minimum LCH chroma value
+    CHROMA_MAX = 181.0                  # Maximum LCH chroma value (theoretical 8-bit sRGB gamut)
+    
     # ===== Data File Paths =====
     # Default filenames for color and filament databases
     COLORS_JSON_FILENAME = "colors.json"
@@ -168,8 +174,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated after adding MATRICES_EXPECTED_HASH constant
-    _EXPECTED_HASH = "2ea2881e7c8fff4246c6abf3e791fa8b4b4e89ce910c24007b34adafa0ebc926"
+    # Updated after adding new palette hash constants for all 14 palette files
+    _EXPECTED_HASH = "274b1e30a5c5573c0491cd69bc9cdf7b9c1b4ce4500d6a45edc80cd0711a9c72"
     
     # ========================================================================
     # Data File Integrity Hashes
@@ -184,8 +190,16 @@ class ColorConstants:
     # Palette file hashes
     CGA4_PALETTE_HASH = "5b4333bd529d608ce41b4e67e0219e39fb9ac6b7545db7848a5330cebc291b57"
     CGA16_PALETTE_HASH = "bf6e25e3a98fafa3ec3bfadb10316e607b454e9f01312477261f7fb90633e7f0"
+    COMMODORE64_PALETTE_HASH = "1ef8d4dc3c2664fbf01db7f2033505bf1c3234825c213b18f4e35b077ebf189a"
     EGA16_PALETTE_HASH = "bf6e25e3a98fafa3ec3bfadb10316e607b454e9f01312477261f7fb90633e7f0"
     EGA64_PALETTE_HASH = "5f557a70e5d7348de3f0cdf1fefa1071475e3a1e5c053fcd3c97cc3fe46d3b10"
+    GAMEBOY_PALETTE_HASH = "8a770e7147cd748d74e733d832082082fed045d9a27fe29d6960ae44fc049143"
+    GAMEBOY_DMG_PALETTE_HASH = "c26b8c1a4eb8159448ad61eb6a9486800b076ecb7e26273ffcfeb2207118c664"
+    GAMEBOY_GBL_PALETTE_HASH = "ddfb2d32e3d815a6f24b4ebfb8bccde56872cae228677ad829e93c30c1eb4d72"
+    GAMEBOY_MGB_PALETTE_HASH = "22bf260f2130cc4ccb911972bc85393915ecc84108b422be08e8028226051125"
+    NES_PALETTE_HASH = "21a45bcfda7a2cf6aa18fcaefda4535c4ed28781dcb3d54665628d5f5ebd7d7c"
+    SMS_PALETTE_HASH = "fb432cc7575c4c7f47b8814ee789ae54f4200f22531faebb5d8d2665212b6894"
+    TURBOGRAFX16_PALETTE_HASH = "3a162c482c29a9235ad0cfc2648e4aec55a366afb4b1065daa3e063466fec700"
     VGA_PALETTE_HASH = "8966324e8328e737e8cb4b0007362028b83cb727e066bf82adee3cee615874d6"
     WEB_PALETTE_HASH = "10e9201e08719e5e6ece6584f1e2aadf519a33a7b5123928e77f85b5f3beaccb"
     
@@ -268,8 +282,16 @@ class ColorConstants:
         palette_checks = [
             ("cga4.json", cls.CGA4_PALETTE_HASH),
             ("cga16.json", cls.CGA16_PALETTE_HASH),
+            ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
             ("ega16.json", cls.EGA16_PALETTE_HASH),
             ("ega64.json", cls.EGA64_PALETTE_HASH),
+            ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),
+            ("gameboy_dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
+            ("gameboy_gbl.json", cls.GAMEBOY_GBL_PALETTE_HASH),
+            ("gameboy_mgb.json", cls.GAMEBOY_MGB_PALETTE_HASH),
+            ("nes.json", cls.NES_PALETTE_HASH),
+            ("sms.json", cls.SMS_PALETTE_HASH),
+            ("turbografx16.json", cls.TURBOGRAFX16_PALETTE_HASH),
             ("vga.json", cls.VGA_PALETTE_HASH),
             ("web.json", cls.WEB_PALETTE_HASH),
         ]
