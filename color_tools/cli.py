@@ -384,8 +384,8 @@ Examples:
     color_parser.add_argument(
         "--palette",
         type=str,
-        choices=["cga4", "cga16", "ega16", "ega64", "vga", "web"],
-        help="Use a retro palette instead of CSS colors (cga4, cga16, ega16, ega64, vga, web)"
+        choices=["cga4", "cga16", "commodore64", "ega16", "ega64", "gameboy", "gameboy_dmg", "gameboy_gbl", "gameboy_mgb", "nes", "sms", "vga", "virtualboy", "web"],
+        help="Use a retro palette instead of CSS colors. Available: cga4, cga16, commodore64, ega16, ega64, gameboy, gameboy_dmg, gameboy_gbl, gameboy_mgb, nes, sms, vga, virtualboy, web"
     )
     
     # ==================== FILAMENT SUBCOMMAND ====================
