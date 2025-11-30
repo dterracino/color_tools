@@ -28,39 +28,156 @@ from .color_deficiency import simulate_cvd, correct_cvd
 
 # Image analysis is optional (requires Pillow)
 try:
-    from .image import extract_unique_colors, redistribute_luminance, format_color_change_report
+    from .image import extract_unique_colors, redistribute_luminance, format_color_change_report, simulate_cvd_image, correct_cvd_image, quantize_image_to_palette
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
 
+def handle_image_command(args):
+    """Handle all image processing commands."""
+    if not IMAGE_AVAILABLE:
+        print("Error: Image processing requires Pillow", file=sys.stderr)
+        print("Install with: pip install color-match-tools[image]", file=sys.stderr)
+        sys.exit(1)
+    
+    # Handle --list-palettes first (doesn not require file)
+    if args.list_palettes:
+        try:
+            palettes_dir = Path(__file__).parent / "data" / "palettes"
+            available = sorted([p.stem for p in palettes_dir.glob("*.json")])
+            print("Available retro palettes:")
+            for palette_name in available:
+                try:
+                    pal = load_palette(palette_name)
+                    print(f"  {palette_name:<15} - {len(pal.records)} colors")
+                except Exception:
+                    print(f"  {palette_name:<15} - (error loading)")
+        except Exception as e:
+            print(f"Error listing palettes: {e}", file=sys.stderr)
+            sys.exit(1)
+        sys.exit(0)
+    
+    # Check if file is provided and exists for operations that need it
+    if not args.file:
+        print("Error: --file is required for this operation", file=sys.stderr)
+        sys.exit(1)
+    
+    image_path = Path(args.file)
+    if not image_path.exists():
+        print(f"Error: Image file not found: {image_path}", file=sys.stderr)
+        sys.exit(1)
+    
+    # Determine output path
+    output_path = args.output
+    
+    # Count active operations
+    operations = [
+        args.redistribute_luminance,
+        args.cvd_simulate is not None,
+        args.cvd_correct is not None,
+        args.quantize_palette is not None
+    ]
+    active_count = sum(operations)
+    
+    if active_count == 0:
+        print("Error: No operation specified. Choose one of:", file=sys.stderr)
+        print("  --redistribute-luminance    (HueForge color analysis)", file=sys.stderr)
+        print("  --cvd-simulate TYPE         (colorblindness simulation)", file=sys.stderr)
+        print("  --cvd-correct TYPE          (colorblindness correction)", file=sys.stderr)
+        print("  --quantize-palette NAME     (convert to retro palette)", file=sys.stderr)
+        print("  --list-palettes             (show available palettes)", file=sys.stderr)
+        sys.exit(1)
+    elif active_count > 1:
+        print("Error: Only one operation allowed at a time", file=sys.stderr)
+        sys.exit(1)
+    
+    # Execute the requested operation
+    try:
+        if args.redistribute_luminance:
+            # HueForge luminance redistribution (existing functionality)
+            print(f"Extracting {args.colors} unique colors from {image_path.name}...")
+            colors = extract_unique_colors(str(image_path), n_colors=args.colors)
+            print(f"Extracted {len(colors)} colors")
+            
+            # Redistribute luminance
+            changes = redistribute_luminance(colors)
+            
+            # Display report
+            report = format_color_change_report(changes)
+            print(report)
+        
+        elif args.cvd_simulate:
+            # CVD simulation
+            print(f"Simulating {args.cvd_simulate} for {image_path.name}...")
+            sim_image = simulate_cvd_image(str(image_path), args.cvd_simulate, output_path)
+            
+            if output_path:
+                print(f"CVD simulation saved to: {output_path}")
+            else:
+                # Generate default output name
+                default_output = image_path.with_name(f"{image_path.stem}_{args.cvd_simulate}_sim{image_path.suffix}")
+                sim_image.save(default_output)
+                print(f"CVD simulation saved to: {default_output}")
+        
+        elif args.cvd_correct:
+            # CVD correction
+            print(f"Applying {args.cvd_correct} correction to {image_path.name}...")
+            corrected_image = correct_cvd_image(str(image_path), args.cvd_correct, output_path)
+            
+            if output_path:
+                print(f"CVD correction saved to: {output_path}")
+            else:
+                # Generate default output name
+                default_output = image_path.with_name(f"{image_path.stem}_{args.cvd_correct}_corrected{image_path.suffix}")
+                corrected_image.save(default_output)
+                print(f"CVD correction saved to: {default_output}")
+        
+        elif args.quantize_palette:
+            # Palette quantization
+            dither_text = " with dithering" if args.dither else ""
+            print(f"Converting {image_path.name} to {args.quantize_palette} palette{dither_text}...")
+            print(f"Using {args.metric} distance metric")
+            
+            # Load palette info for reporting
+            try:
+                palette_info = load_palette(args.quantize_palette)
+                print(f"Target palette: {len(palette_info.records)} colors")
+            except Exception as e:
+                print(f"Warning: Could not load palette info: {e}", file=sys.stderr)
+            
+            quantized_image = quantize_image_to_palette(
+                str(image_path), 
+                args.quantize_palette,
+                metric=args.metric,
+                dither=args.dither,
+                output_path=output_path
+            )
+            
+            if output_path:
+                print(f"Quantized image saved to: {output_path}")
+            else:
+                # Generate default output name
+                dither_suffix = "_dithered" if args.dither else ""
+                default_output = image_path.with_name(f"{image_path.stem}_{args.quantize_palette}{dither_suffix}{image_path.suffix}")
+                quantized_image.save(default_output)
+                print(f"Quantized image saved to: {default_output}")
+            
+    except Exception as e:
+        print(f"Error processing image: {e}", file=sys.stderr)
+        sys.exit(1)
+
 
 def _get_program_name() -> str:
-    """
-    Determine the appropriate program name based on how the script was invoked.
-    
-    Returns:
-        A user-friendly program name for help text
-    """
-    argv0 = sys.argv[0]
-    
-    # Case 1: Running as a module (python -m color_tools)
-    if argv0.endswith('__main__.py') or '__main__' in argv0:
-        return "python -m color_tools"
-    
-    # Case 2: Running the script directly (python color_tools.py)
-    elif argv0.endswith('color_tools.py'):
-        return "python color_tools.py"
-    
-    # Case 3: Installed as a console script (color-tools)
-    elif 'color_tools' in argv0 or 'color-tools' in argv0:
-        # Extract just the command name without path
-        from pathlib import Path
-        return Path(argv0).name
-    
-    # Case 4: Unknown/fallback - use the basename
-    else:
-        from pathlib import Path
-        return Path(argv0).name
+    """Determine the proper program name based on how we were invoked."""
+    try:
+        # If we're running as a module, show that
+        if sys.argv[0].endswith("__main__.py") or sys.argv[0].endswith("-m"):
+            return "python -m color_tools"
+        # If we have an installed command name, use that
+        return Path(sys.argv[0]).name
+    except (IndexError, AttributeError):
+        # Fallback
+        return "color-tools"
 
 
 def main():
@@ -385,25 +502,72 @@ Examples:
         image_parser = subparsers.add_parser(
             "image",
             help="Image color analysis and manipulation",
-            description="Extract colors from images and redistribute luminance values"
+            description="Extract colors, redistribute luminance, simulate colorblindness, and convert to retro palettes"
         )
         
         image_parser.add_argument(
             "--file",
             type=str,
-            required=True,
-            help="Path to image file"
+            required=False,
+            help="Path to input image file"
         )
+        image_parser.add_argument(
+            "--output",
+            type=str,
+            help="Path to save output image (optional)"
+        )
+        
+        # HueForge operations
         image_parser.add_argument(
             "--redistribute-luminance",
             action="store_true",
-            help="Extract colors and redistribute their luminance values evenly"
+            help="Extract colors and redistribute their luminance values evenly for HueForge"
         )
         image_parser.add_argument(
             "--colors",
             type=int,
             default=10,
             help="Number of unique colors to extract (default: 10)"
+        )
+        
+        # CVD operations
+        image_parser.add_argument(
+            "--cvd-simulate",
+            type=str,
+            choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
+            help="Simulate color vision deficiency (protanopia, deuteranopia, or tritanopia)"
+        )
+        image_parser.add_argument(
+            "--cvd-correct",
+            type=str,
+            choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
+            help="Apply CVD correction to improve discriminability for specified deficiency"
+        )
+        
+        # Palette quantization
+        image_parser.add_argument(
+            "--quantize-palette",
+            type=str,
+            help="Convert image to specified retro palette (e.g., cga4, ega16, vga, gameboy, commodore64)"
+        )
+        image_parser.add_argument(
+            "--metric",
+            type=str,
+            choices=["de2000", "de94", "de76", "cmc", "euclidean", "hsl_euclidean"],
+            default="de2000",
+            help="Color distance metric for palette quantization (default: de2000)"
+        )
+        image_parser.add_argument(
+            "--dither",
+            action="store_true",
+            help="Apply Floyd-Steinberg dithering for palette quantization (reduces banding)"
+        )
+        
+        # List available palettes
+        image_parser.add_argument(
+            "--list-palettes",
+            action="store_true",
+            help="List all available retro palettes"
         )
     
     # Parse arguments
@@ -712,34 +876,5 @@ Examples:
     
     # ==================== IMAGE COMMAND HANDLER ====================
     elif args.command == "image":
-        if not IMAGE_AVAILABLE:
-            print("Error: Image processing requires Pillow", file=sys.stderr)
-            print("Install with: pip install -r requirements-image.txt", file=sys.stderr)
-            sys.exit(1)
-        
-        # Check if file exists
-        image_path = Path(args.file)
-        if not image_path.exists():
-            print(f"Error: Image file not found: {image_path}", file=sys.stderr)
-            sys.exit(1)
-        
-        if args.redistribute_luminance:
-            # Extract unique colors
-            print(f"Extracting {args.colors} unique colors from {image_path.name}...")
-            colors = extract_unique_colors(str(image_path), n_colors=args.colors)
-            print(f"Extracted {len(colors)} colors\n")
-            
-            # Redistribute luminance
-            changes = redistribute_luminance(colors)
-            
-            # Display report
-            report = format_color_change_report(changes)
-            print(report)
-        else:
-            print("Error: No operation specified. Use --redistribute-luminance", file=sys.stderr)
-            sys.exit(1)
-        
+        handle_image_command(args)
         sys.exit(0)
-
-
-

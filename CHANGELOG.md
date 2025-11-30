@@ -7,6 +7,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Unified Image Transformation System** - Complete image processing architecture leveraging all existing color_tools infrastructure:
+  - **`transform_image(image_path, transform_func, preserve_alpha=True, output_path=None)`** - Universal function for applying color transformations to entire images
+  - **`simulate_cvd_image(image_path, deficiency_type, output_path=None)`** - Simulate color vision deficiency (protanopia, deuteranopia, tritanopia) for entire images using scientifically-validated matrices
+  - **`correct_cvd_image(image_path, deficiency_type, output_path=None)`** - Apply CVD correction to improve discriminability for colorblind viewers using Daltonization algorithm  
+  - **`quantize_image_to_palette(image_path, palette_name, metric='de2000', dither=False, output_path=None)`** - Convert images to retro palettes (CGA, EGA, VGA, Game Boy, Web Safe) with all 6 distance metrics and optional Floyd-Steinberg dithering
+  - **Infrastructure Integration** - All functions reuse existing color deficiency matrices, palette system, and distance metrics
+  - **Comprehensive format support** - RGB, RGBA, grayscale, palette mode images with alpha preservation
+  - **Performance optimized** - Numpy-based processing with memory efficiency for large images
+
+  ```python
+  from color_tools.image import simulate_cvd_image, quantize_image_to_palette
+  
+  # Test accessibility - see how deuteranopes view your chart
+  sim_image = simulate_cvd_image("infographic.png", "deuteranopia") 
+  sim_image.save("colorblind_view.png")
+  
+  # Create retro CGA-style artwork with dithering
+  retro = quantize_image_to_palette("photo.jpg", "cga4", dither=True)
+  retro.save("retro_cga.png")
+  
+  # Convert to Game Boy aesthetic using perceptually accurate CIEDE2000
+  gameboy = quantize_image_to_palette("artwork.png", "gameboy", metric="de2000")
+  gameboy.save("gameboy_style.png")
+  ```
+
+- **Complete documentation** for the transformation system in `image/README.md` with usage examples, supported palettes, distance metrics, and architecture details
+- **Comprehensive CLI support** - Full command-line interface for all image transformations:
+  - `python -m color_tools image --list-palettes` - List all available retro palettes including custom additions
+  - `python -m color_tools image --cvd-simulate TYPE --file image.jpg` - Simulate colorblindness (protanopia, deuteranopia, tritanopia)
+  - `python -m color_tools image --cvd-correct TYPE --file image.jpg` - Apply CVD correction for improved discriminability
+  - `python -m color_tools image --quantize-palette NAME --file image.jpg` - Convert to retro palette with 6 distance metrics and optional dithering
+  - Dynamic palette discovery automatically supports new JSON palettes in data/palettes/
+  - Smart output naming with optional `--output` parameter for custom paths
+  - Comprehensive error handling and operation validation
+
 ## [3.4.0] - 2025-11-28
 
 ### Added

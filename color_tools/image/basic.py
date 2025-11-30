@@ -7,6 +7,16 @@ separate from the HueForge-specific tools in analysis.py.
 Functions in this module require Pillow and numpy:
     pip install color-match-tools[image]
 
+TODO - Dominant Color Enhancements:
+1. Refactor get_dominant_color() -> get_dominant_colors(n_colors=5) 
+   - Return list of N most dominant colors in frequency order
+   - get_dominant_color() becomes wrapper for get_dominant_colors(1)[0]
+2. Add accent color detection for perceptual dominance:
+   - Problem: Images with gray background + colorful accent (accent is perceptually 
+     dominant but statistically minor)
+   - Solutions: Saturation weighting, exclude neutrals, dual analysis
+   - Proposed: get_accent_colors() function with saturation filtering
+
 Public API:
 -----------
     count_unique_colors - Count total unique RGB colors in an image
@@ -635,3 +645,326 @@ def analyze_dynamic_range(image_path: str | Path) -> dict[str, Union[int, float,
             'range_assessment': range_assessment,
             'gamma_suggestion': gamma_suggestion
         }
+
+
+# =============================================================================
+# Image Transformation Functions
+# =============================================================================
+# These functions apply color transformations to entire images, leveraging
+# existing color_tools infrastructure for CVD simulation and palette quantization.
+
+def transform_image(
+    image_path: Path | str,
+    transform_func: callable,
+    preserve_alpha: bool = True,
+    output_path: Path | str | None = None
+) -> PIL.Image.Image:
+    """
+    Apply a color transformation function to every pixel of an image.
+    
+    This is the core function that handles image loading, pixel iteration,
+    transformation application, and optional saving. It's used by both
+    CVD simulation and palette quantization functions.
+    
+    Args:
+        image_path: Path to input image file
+        transform_func: Function that takes RGB tuple (r, g, b) and returns RGB tuple
+        preserve_alpha: If True, preserve alpha channel in RGBA images
+        output_path: Optional path to save transformed image
+    
+    Returns:
+        PIL Image with transformed colors
+    
+    Raises:
+        ImportError: If Pillow is not installed
+        FileNotFoundError: If input image doesn't exist
+        ValueError: If image format is unsupported
+    
+    Example:
+        >>> # Define a transformation (invert colors)
+        >>> def invert_rgb(rgb):
+        ...     r, g, b = rgb
+        ...     return (255-r, 255-g, 255-b)
+        >>> 
+        >>> # Apply to image
+        >>> transformed = transform_image("photo.jpg", invert_rgb)
+        >>> transformed.save("inverted.jpg")
+    """
+    try:
+        import PIL.Image
+        import numpy as np
+    except ImportError:
+        raise ImportError(
+            "transform_image requires Pillow and numpy. "
+            "Install with: pip install color-match-tools[image]"
+        )
+    
+    # Load and prepare image
+    image_path = Path(image_path)
+    if not image_path.exists():
+        raise FileNotFoundError(f"Image not found: {image_path}")
+    
+    original = PIL.Image.open(image_path)
+    
+    # Handle different image modes
+    has_alpha = original.mode in ('RGBA', 'LA') or 'transparency' in original.info
+    
+    if original.mode == 'P':  # Palette mode
+        # Convert palette to RGB for processing
+        if has_alpha and preserve_alpha:
+            working_image = original.convert('RGBA')
+        else:
+            working_image = original.convert('RGB')
+    elif original.mode in ('L', 'LA'):  # Grayscale
+        if has_alpha and preserve_alpha:
+            working_image = original.convert('RGBA')
+        else:
+            working_image = original.convert('RGB')
+    elif original.mode == 'RGBA':
+        working_image = original
+    elif original.mode == 'RGB':
+        working_image = original
+    else:
+        # Convert other modes to RGB
+        working_image = original.convert('RGB')
+    
+    # Convert to numpy array for efficient processing
+    np_image = np.array(working_image)
+    
+    # Apply transformation to each pixel
+    if working_image.mode == 'RGBA' and preserve_alpha:
+        # Process RGB, preserve alpha
+        for y in range(np_image.shape[0]):
+            for x in range(np_image.shape[1]):
+                r, g, b, a = np_image[y, x]
+                new_r, new_g, new_b = transform_func((r, g, b))
+                np_image[y, x] = [new_r, new_g, new_b, a]
+    else:
+        # Process RGB only
+        for y in range(np_image.shape[0]):
+            for x in range(np_image.shape[1]):
+                r, g, b = np_image[y, x][:3]  # Handle both RGB and RGBA
+                new_r, new_g, new_b = transform_func((r, g, b))
+                np_image[y, x][:3] = [new_r, new_g, new_b]
+    
+    # Convert back to PIL Image
+    transformed = PIL.Image.fromarray(np_image, mode=working_image.mode)
+    
+    # Save if output path provided
+    if output_path:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        transformed.save(output_path)
+    
+    return transformed
+
+
+def simulate_cvd_image(
+    image_path: Path | str,
+    deficiency_type: str,
+    output_path: Path | str | None = None
+) -> PIL.Image.Image:
+    """
+    Simulate color vision deficiency for an entire image.
+    
+    This shows how an image would appear to someone with a specific type
+    of color blindness. Useful for testing image accessibility.
+    
+    Args:
+        image_path: Path to input image
+        deficiency_type: Type of CVD to simulate
+            - 'protanopia' or 'protan': Red-blind
+            - 'deuteranopia' or 'deutan': Green-blind  
+            - 'tritanopia' or 'tritan': Blue-blind
+        output_path: Optional path to save simulated image
+    
+    Returns:
+        PIL Image showing CVD simulation
+    
+    Example:
+        >>> # See how image appears to someone with deuteranopia
+        >>> sim_image = simulate_cvd_image("colorful.jpg", "deuteranopia")
+        >>> sim_image.save("deuteranopia_sim.jpg")
+        >>> 
+        >>> # Test accessibility of an infographic
+        >>> simulate_cvd_image("chart.png", "protanopia", "chart_protan.png")
+    """
+    from color_tools.color_deficiency import simulate_cvd
+    
+    def cvd_transform(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
+        return simulate_cvd(rgb, deficiency_type)
+    
+    return transform_image(image_path, cvd_transform, output_path=output_path)
+
+
+def correct_cvd_image(
+    image_path: Path | str,
+    deficiency_type: str,
+    output_path: Path | str | None = None
+) -> PIL.Image.Image:
+    """
+    Apply color vision deficiency correction to an entire image.
+    
+    This shifts colors to improve discriminability for individuals with
+    color blindness. The corrected image should be viewed by people with
+    the specified deficiency type.
+    
+    Args:
+        image_path: Path to input image
+        deficiency_type: Type of CVD to correct for
+            - 'protanopia' or 'protan': Red-blind
+            - 'deuteranopia' or 'deutan': Green-blind  
+            - 'tritanopia' or 'tritan': Blue-blind
+        output_path: Optional path to save corrected image
+    
+    Returns:
+        PIL Image with CVD correction applied
+    
+    Example:
+        >>> # Enhance image for deuteranopia viewers
+        >>> corrected = correct_cvd_image("chart.jpg", "deuteranopia")
+        >>> corrected.save("chart_deutan_enhanced.jpg")
+    """
+    from color_tools.color_deficiency import correct_cvd
+    
+    def cvd_correction(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
+        return correct_cvd(rgb, deficiency_type)
+    
+    return transform_image(image_path, cvd_correction, output_path=output_path)
+
+
+def quantize_image_to_palette(
+    image_path: Path | str,
+    palette_name: str,
+    metric: str = 'de2000',
+    dither: bool = False,
+    output_path: Path | str | None = None
+) -> PIL.Image.Image:
+    """
+    Convert an image to use only colors from a specified palette.
+    
+    This maps each pixel to the nearest color in the target palette using
+    perceptually-accurate color distance metrics. Perfect for creating
+    retro-style graphics or testing designs with limited color sets.
+    
+    Args:
+        image_path: Path to input image
+        palette_name: Name of palette to use:
+            - 'cga4': IBM CGA 4-color palette (1981)
+            - 'ega16': IBM EGA 16-color palette (1984)  
+            - 'ega64': IBM EGA 64-color palette (full)
+            - 'vga': IBM VGA 256-color palette (1987)
+            - 'web': Web-safe 216-color palette (1990s)
+            - 'gameboy': Game Boy 4-shade green palette
+        metric: Color distance metric for matching:
+            - 'de2000': CIEDE2000 (most perceptually accurate)
+            - 'de94': CIE94 (good balance)
+            - 'de76': CIE76 (simple LAB distance)
+            - 'cmc': CMC l:c (textile industry standard)
+            - 'euclidean': Simple RGB distance (fastest)
+            - 'hsl_euclidean': HSL distance with hue wraparound
+        dither: Apply Floyd-Steinberg dithering to reduce banding
+        output_path: Optional path to save quantized image
+    
+    Returns:
+        PIL Image using only palette colors
+    
+    Example:
+        >>> # Convert photo to CGA 4-color palette
+        >>> retro = quantize_image_to_palette("photo.jpg", "cga4")
+        >>> retro.save("retro_cga.png")
+        >>> 
+        >>> # Create EGA-style artwork with dithering
+        >>> quantize_image_to_palette(
+        ...     "artwork.png", 
+        ...     "ega16", 
+        ...     metric="de2000",
+        ...     dither=True,
+        ...     output_path="ega_dithered.png"
+        ... )
+    """
+    from color_tools.palette import load_palette
+    
+    # Load target palette
+    try:
+        palette = load_palette(palette_name)
+    except FileNotFoundError:
+        # Dynamically discover available palettes
+        from pathlib import Path
+        palettes_dir = Path(__file__).parent.parent / "data" / "palettes"
+        available = sorted([p.stem for p in palettes_dir.glob("*.json")])
+        raise ValueError(
+            f"Unknown palette '{palette_name}'. Available palettes: {available}"
+        )
+    
+    # Create color mapping function
+    def palette_transform(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
+        color_record, _ = palette.nearest_color(rgb, metric=metric)
+        return color_record.rgb
+    
+    # Apply basic transformation
+    if not dither:
+        return transform_image(image_path, palette_transform, output_path=output_path)
+    
+    # Apply with Floyd-Steinberg dithering
+    try:
+        import PIL.Image
+        import numpy as np
+    except ImportError:
+        raise ImportError(
+            "Dithering requires Pillow and numpy. "
+            "Install with: pip install color-match-tools[image]"
+        )
+    
+    # Load image
+    image_path = Path(image_path) 
+    if not image_path.exists():
+        raise FileNotFoundError(f"Image not found: {image_path}")
+    
+    original = PIL.Image.open(image_path).convert('RGB')
+    np_image = np.array(original, dtype=np.float32)
+    height, width = np_image.shape[:2]
+    
+    # Floyd-Steinberg error diffusion matrix
+    # Current pixel gets 0/16, distribute error:
+    # [ ] [*] [ ]
+    # [3] [5] [1]  (all /16)
+    error_weights = [
+        (1, 0, 7/16),   # Right
+        (-1, 1, 3/16),  # Down-left  
+        (0, 1, 5/16),   # Down
+        (1, 1, 1/16)    # Down-right
+    ]
+    
+    # Process each pixel with error diffusion
+    for y in range(height):
+        for x in range(width):
+            # Get current pixel color
+            old_rgb = tuple(np.clip(np_image[y, x], 0, 255).astype(int))
+            
+            # Find nearest palette color
+            color_record, _ = palette.nearest_color(old_rgb, metric=metric)
+            new_rgb = color_record.rgb
+            
+            # Set new color
+            np_image[y, x] = new_rgb
+            
+            # Calculate and diffuse quantization error
+            error = np_image[y, x] - np.array(old_rgb, dtype=np.float32)
+            
+            for dx, dy, weight in error_weights:
+                nx, ny = x + dx, y + dy
+                if 0 <= nx < width and 0 <= ny < height:
+                    np_image[ny, nx] += error * weight
+    
+    # Convert back to PIL Image
+    np_image = np.clip(np_image, 0, 255).astype(np.uint8)
+    dithered = PIL.Image.fromarray(np_image, mode='RGB')
+    
+    # Save if requested
+    if output_path:
+        output_path = Path(output_path)
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        dithered.save(output_path)
+    
+    return dithered

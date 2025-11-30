@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TurboGrafx-16 Palette Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 p-6">
+
+    <div class="max-w-6xl mx-auto">
+        <header class="mb-8 flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-orange-400 to-yellow-400">
+                    PC Engine / TG-16 Palette
+                </h1>
+                <p class="text-slate-400 mt-1">512 Colors • 9-bit RGB • Full LAB/LCH Data</p>
+            </div>
+            <button onclick="downloadJSON()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-3 px-6 rounded-lg shadow-lg transform transition hover:scale-105 flex items-center gap-2">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                </svg>
+                Download JSON
+            </button>
+        </header>
+
+        <!-- Status / Stats -->
+        <div id="status" class="mb-6 text-sm text-slate-400 bg-slate-800 p-4 rounded border border-slate-700 hidden">
+            Generating...
+        </div>
+
+        <!-- Palette Grid -->
+        <div id="grid" class="grid grid-cols-8 sm:grid-cols-16 md:grid-cols-32 gap-1">
+            <!-- Colors injected here -->
+        </div>
+    </div>
+
+    <script>
+        // --- Color Math Functions (Ported from Python) ---
+
+        function srgbToLinear(x) {
+            if (x <= 0.04045) {
+                return x / 12.92;
+            } else {
+                return Math.pow((x + 0.055) / 1.055, 2.4);
+            }
+        }
+
+        function rgbToXyz(r, g, b) {
+            // Normalize and convert to linear
+            let rn = srgbToLinear(r / 255.0);
+            let gn = srgbToLinear(g / 255.0);
+            let bn = srgbToLinear(b / 255.0);
+
+            // sRGB to XYZ Matrix (D65)
+            let x = rn * 0.4124564 + gn * 0.3575761 + bn * 0.1804375;
+            let y = rn * 0.2126729 + gn * 0.7151522 + bn * 0.0721750;
+            let z = rn * 0.0193339 + gn * 0.1191920 + bn * 0.9503041;
+
+            return [x * 100.0, y * 100.0, z * 100.0];
+        }
+
+        function xyzToLab(x, y, z) {
+            // Reference White D65
+            let ref_x = 95.047;
+            let ref_y = 100.000;
+            let ref_z = 108.883;
+
+            x /= ref_x;
+            y /= ref_y;
+            z /= ref_z;
+
+            function func(t) {
+                if (t > 0.008856) {
+                    return Math.pow(t, 1/3);
+                } else {
+                    return (7.787 * t) + (16 / 116);
+                }
+            }
+
+            let fx = func(x);
+            let fy = func(y);
+            let fz = func(z);
+
+            let l_val = (116 * fy) - 16;
+            let a_val = 500 * (fx - fy);
+            let b_val = 200 * (fy - fz);
+
+            return [
+                parseFloat(l_val.toFixed(1)), 
+                parseFloat(a_val.toFixed(1)), 
+                parseFloat(b_val.toFixed(1))
+            ];
+        }
+
+        function labToLch(l, a, b) {
+            let c = Math.sqrt(a**2 + b**2);
+            let h = Math.atan2(b, a) * (180 / Math.PI); // degrees
+
+            if (h < 0) {
+                h += 360;
+            }
+
+            return [
+                parseFloat(l.toFixed(1)),
+                parseFloat(c.toFixed(1)),
+                parseFloat(h.toFixed(1))
+            ];
+        }
+
+        function rgbToHsl(r, g, b) {
+            r /= 255, g /= 255, b /= 255;
+            let max = Math.max(r, g, b), min = Math.min(r, g, b);
+            let h, s, l = (max + min) / 2;
+
+            if (max == min) {
+                h = s = 0; // achromatic
+            } else {
+                let d = max - min;
+                s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                    case r: h = (g - b) / d + (g < b ? 6 : 0); break;
+                    case g: h = (b - r) / d + 2; break;
+                    case b: h = (r - g) / d + 4; break;
+                }
+                h /= 6;
+            }
+
+            return [
+                parseFloat((h * 360).toFixed(1)), 
+                parseFloat((s * 100).toFixed(1)), 
+                parseFloat((l * 100).toFixed(1))
+            ];
+        }
+
+        // --- Main Logic ---
+
+        let fullPalette = [];
+        const levels = [0, 36, 72, 108, 144, 180, 216, 252];
+
+        function generatePalette() {
+            const grid = document.getElementById('grid');
+            const status = document.getElementById('status');
+            
+            fullPalette = [];
+            grid.innerHTML = '';
+            
+            let index = 0;
+
+            // Loop R, G, B
+            for (let r of levels) {
+                for (let g of levels) {
+                    for (let b of levels) {
+                        
+                        // 1. Hex
+                        const toHex = (c) => {
+                            const hex = c.toString(16).toUpperCase();
+                            return hex.length == 1 ? "0" + hex : hex;
+                        };
+                        const hexVal = `#${toHex(r)}${toHex(g)}${toHex(b)}`;
+
+                        // 2. Color Conversions
+                        const xyz = rgbToXyz(r, g, b);
+                        const lab = xyzToLab(xyz[0], xyz[1], xyz[2]);
+                        const lch = labToLch(lab[0], lab[1], lab[2]);
+                        const hsl = rgbToHsl(r, g, b);
+
+                        // 3. Object Construction
+                        const colorObj = {
+                            "name": `tg16_${index.toString().padStart(3, '0')}`,
+                            "hex": hexVal,
+                            "rgb": [r, g, b],
+                            "hsl": hsl,
+                            "lab": lab,
+                            "lch": lch
+                        };
+                        
+                        fullPalette.push(colorObj);
+
+                        // 4. Render Grid Item
+                        const div = document.createElement('div');
+                        div.className = "w-full aspect-square cursor-pointer hover:scale-125 transition-transform border border-black/10 relative group";
+                        div.style.backgroundColor = hexVal;
+                        div.title = `${colorObj.name}\n${hexVal}`;
+                        
+                        // Tooltip
+                        div.innerHTML = `
+                            <div class="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block bg-black text-white text-xs p-2 rounded z-10 whitespace-nowrap shadow-xl pointer-events-none">
+                                ${colorObj.name} <br> ${hexVal}
+                            </div>
+                        `;
+
+                        grid.appendChild(div);
+                        index++;
+                    }
+                }
+            }
+            
+            status.innerHTML = `Generated ${fullPalette.length} colors successfully. ready to download.`;
+            status.classList.remove('hidden');
+        }
+
+        function downloadJSON() {
+            if (fullPalette.length === 0) generatePalette();
+
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(fullPalette, null, 2));
+            const downloadAnchorNode = document.createElement('a');
+            downloadAnchorNode.setAttribute("href", dataStr);
+            downloadAnchorNode.setAttribute("download", "tg16_complete_palette.json");
+            document.body.appendChild(downloadAnchorNode); // required for firefox
+            downloadAnchorNode.click();
+            downloadAnchorNode.remove();
+        }
+
+        // Run on load
+        window.onload = generatePalette;
+
+    </script>
+</body>
+</html>

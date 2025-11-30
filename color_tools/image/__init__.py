@@ -18,6 +18,14 @@ General Functions (basic.py):
     analyze_contrast - Analyze image contrast using standard deviation
     analyze_noise_level - Estimate noise level using scikit-image
     analyze_dynamic_range - Analyze dynamic range and gamma suggestions
+    transform_image - Apply color transformation function to entire image
+    simulate_cvd_image - Simulate color vision deficiency for entire image
+    correct_cvd_image - Apply CVD correction to improve discriminability
+    quantize_image_to_palette - Convert image to retro palette (CGA, EGA, VGA, etc.)
+    transform_image - Apply color transformation function to entire image
+    simulate_cvd_image - Simulate color vision deficiency for entire image
+    correct_cvd_image - Apply CVD correction to improve discriminability
+    quantize_image_to_palette - Convert image to retro palette (CGA, EGA, VGA, etc.)
 
 HueForge Functions (analysis.py):
     extract_unique_colors - Extract dominant colors using k-means (simplified API)
@@ -32,22 +40,28 @@ Data Classes:
 
 Example:
 --------
-    >>> from color_tools.image import count_unique_colors, is_indexed_mode, analyze_brightness
+    >>> from color_tools.image import (
+    ...     count_unique_colors, analyze_brightness,
+    ...     simulate_cvd_image, quantize_image_to_palette
+    ... )
     >>> 
     >>> # Count colors in an image
     >>> total = count_unique_colors("photo.jpg")
     >>> print(f"Found {total} unique colors")
     Found 42387 unique colors
     >>> 
-    >>> # Check if indexed mode
-    >>> if is_indexed_mode("icon.gif"):
-    ...     print("Uses color palette")
-    Uses color palette
-    >>> 
     >>> # Analyze image quality
     >>> brightness = analyze_brightness("photo.jpg")
     >>> print(f"Brightness: {brightness['mean_brightness']:.1f} ({brightness['assessment']})")
     Brightness: 127.3 (normal)
+    >>> 
+    >>> # Test accessibility with CVD simulation
+    >>> sim_image = simulate_cvd_image("chart.png", "deuteranopia")
+    >>> sim_image.save("chart_colorblind_view.png")
+    >>> 
+    >>> # Create retro-style artwork
+    >>> retro = quantize_image_to_palette("photo.jpg", "cga4", dither=True)
+    >>> retro.save("retro_cga.png")
     >>> 
     >>> # Extract dominant colors for Hueforge
     >>> from color_tools.image import extract_color_clusters, redistribute_luminance
@@ -86,6 +100,10 @@ try:
         analyze_contrast,
         analyze_noise_level,
         analyze_dynamic_range,
+        transform_image,
+        simulate_cvd_image,
+        correct_cvd_image,
+        quantize_image_to_palette,
     )
     IMAGE_AVAILABLE = True
 except ImportError:
@@ -114,6 +132,12 @@ except ImportError:
     analyze_contrast = _not_available
     analyze_noise_level = _not_available
     analyze_dynamic_range = _not_available
+    
+    # Image transformation functions
+    transform_image = _not_available
+    simulate_cvd_image = _not_available
+    correct_cvd_image = _not_available
+    quantize_image_to_palette = _not_available
     
     # Dummy classes for type hints - use Any to avoid type conflicts
     from typing import Any

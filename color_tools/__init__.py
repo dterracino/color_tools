@@ -15,6 +15,15 @@ Quick Start:
     >>> nearest, distance = palette.nearest_color(lab)
     >>> print(f"Nearest color: {nearest.name}")
 
+Image Processing (requires pip install color-match-tools[image]):
+    >>> from color_tools.image import simulate_cvd_image, quantize_image_to_palette
+    >>> 
+    >>> # Test accessibility - simulate colorblindness
+    >>> sim_image = simulate_cvd_image("chart.png", "deuteranopia")
+    >>> 
+    >>> # Create retro artwork - convert to CGA palette
+    >>> retro_image = quantize_image_to_palette("photo.jpg", "cga4", dither=True)
+
 Three Ways to Use:
     1. As a library: from color_tools import rgb_to_lab
     2. As a CLI tool: python -m color_tools color --name coral

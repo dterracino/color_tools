@@ -15,6 +15,10 @@ A comprehensive Python library for color science operations, color space convers
   - Alternative name support for regional variations and rebranding
   - Maker synonym support for flexible filament searches
   - **Retro/Classic Palettes**: CGA, EGA, VGA, and Web-safe color palettes
+- **Image Transformations** *(with [image] extra)*:
+  - **Color Vision Deficiency (CVD)**: Simulate and correct for colorblindness (protanopia, deuteranopia, tritanopia)
+  - **Palette Quantization**: Convert images to retro palettes (CGA, EGA, VGA, Game Boy) with dithering support
+  - **Unified Architecture**: All transformations leverage existing color science infrastructure
 - **Gamut Checking**: Verify if colors are representable in sRGB
 - **Thread-Safe**: Configurable runtime settings per thread
 - **Color Science Integrity**: Built-in verification of color constants
@@ -45,7 +49,7 @@ Adds fuzzywuzzy for better color name validation (validation module has built-in
 pip install color-match-tools[image]
 ```
 
-Adds Pillow for image color analysis, k-means clustering, and Hueforge optimization.
+Adds Pillow for image transformations (CVD simulation/correction, palette quantization), color analysis, k-means clustering, and Hueforge optimization.
 
 **With all optional features:**
 
@@ -180,6 +184,21 @@ if result.is_match:
 else:
     print(f"✗ No match: {result.message}")
     print(f"  Suggested: '{result.name_match}' ({result.suggested_hex})")
+
+# Image transformations (requires [image] extra)
+from color_tools.image import simulate_cvd_image, quantize_image_to_palette
+
+# Test accessibility - see how colorblind users view your image
+sim_image = simulate_cvd_image("chart.png", "deuteranopia")
+sim_image.save("colorblind_simulation.png")
+
+# Convert to retro CGA palette with dithering
+retro_image = quantize_image_to_palette("photo.jpg", "cga4", dither=True)
+retro_image.save("retro_cga4.png")
+
+# Convert to Game Boy aesthetic
+gameboy_image = quantize_image_to_palette("artwork.png", "gameboy")
+gameboy_image.save("gameboy_style.png")
 ```
 
 **Common Library Functions:**
@@ -454,6 +473,65 @@ python -m color_tools convert --check-gamut --from lch --value 70 80 120
 - `--to {rgb,hsl,lab,lch}`: Target color space
 - `--value V1 V2 V3`: Color value tuple
 - `--check-gamut`: Check if LAB/LCH color is in sRGB gamut
+
+### Image Command *(requires [image] extra)*
+
+Process images with color transformations, CVD simulation/correction, and retro palette conversion.
+
+#### List Available Palettes
+
+```bash
+# Show all available retro palettes
+python -m color_tools image --list-palettes
+```
+
+#### Color Vision Deficiency (CVD) Operations
+
+```bash
+# Simulate how colorblind users see an image
+python -m color_tools image --file photo.jpg --cvd-simulate protanopia
+python -m color_tools image --file chart.png --cvd-simulate deuteranopia --output colorblind_view.png
+
+# Apply CVD correction for improved discriminability
+python -m color_tools image --file infographic.png --cvd-correct deutan
+python -m color_tools image --file artwork.jpg --cvd-correct tritan --output corrected.png
+```
+
+#### Retro Palette Conversion
+
+```bash
+# Convert to classic CGA 4-color palette
+python -m color_tools image --file photo.jpg --quantize-palette cga4
+
+# Convert to Game Boy palette with dithering for smoother gradients
+python -m color_tools image --file artwork.png --quantize-palette gameboy --dither
+
+# Use different distance metrics for palette matching
+python -m color_tools image --file image.jpg --quantize-palette vga --metric de94
+python -m color_tools image --file photo.png --quantize-palette commodore64 --metric cmc --dither
+```
+
+#### HueForge Color Analysis
+
+```bash
+# Extract and redistribute luminance (existing functionality)
+python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
+```
+
+**Image Command Arguments:**
+
+- `--file FILE`: Path to input image file
+- `--output OUTPUT`: Path to save output image (optional, auto-generates if not provided)
+- `--redistribute-luminance`: Extract colors and redistribute luminance for HueForge
+- `--colors N`: Number of unique colors to extract (default: 10)
+- `--cvd-simulate TYPE`: Simulate color vision deficiency (protanopia, deuteranopia, tritanopia)
+- `--cvd-correct TYPE`: Apply CVD correction for specified deficiency
+- `--quantize-palette NAME`: Convert to specified retro palette
+- `--metric {de2000,de94,de76,cmc,euclidean,hsl_euclidean}`: Color distance metric (default: de2000)
+- `--dither`: Apply Floyd-Steinberg dithering for palette quantization
+- `--list-palettes`: List all available retro palettes
+
+**Available Palettes:** cga4, cga16, ega16, ega64, vga, web, gameboy_dmg, gameboy_gbl, gameboy_mgb, commodore64 (plus any custom palettes in data/palettes/)
 
 ### Global Arguments
 

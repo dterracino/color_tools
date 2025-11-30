@@ -388,13 +388,17 @@ def load_palette(name: str) -> 'Palette':
     """
     Load a named retro palette from the palettes directory.
     
-    Available palettes:
+    Palettes are automatically discovered from JSON files in the 
+    color_tools/data/palettes/ directory.
+    
+    Common palettes include:
     - cga4: CGA 4-color palette (Palette 1, high intensity) - classic gaming!
     - cga16: CGA 16-color palette (full RGBI)
     - ega16: EGA 16-color palette (standard/default)
     - ega64: EGA 64-color palette (full 6-bit RGB)
     - vga: VGA 256-color palette (Mode 13h)
     - web: Web-safe 216-color palette (6x6x6 RGB cube)
+    - gameboy: Game Boy 4-shade green palette
     
     Args:
         name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web')

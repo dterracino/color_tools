@@ -150,6 +150,132 @@ color-tools image --file photo.jpg --redistribute-luminance --colors 10
 # - Hueforge layer assignments
 ```
 
+## Unified Image Transformation System
+
+### Overview
+
+The image module provides a **unified transformation architecture** that leverages all existing `color_tools` infrastructure for applying color transformations to entire images. This system reuses the color deficiency functions, palette system, and perceptually-accurate distance metrics.
+
+### Core Architecture
+
+**`transform_image(image_path, transform_func, preserve_alpha=True, output_path=None)`**
+
+Universal function that:
+
+- Handles image loading (supports RGB, RGBA, grayscale, palette modes)
+- Applies any color transformation function to every pixel
+- Preserves alpha channels when requested  
+- Efficiently processes large images with numpy
+- Saves results with automatic directory creation
+
+All specialized transformation functions use this core system.
+
+### Image Transformation Functions
+
+#### 1. Color Vision Deficiency (CVD) Support
+
+**`simulate_cvd_image(image_path, deficiency_type, output_path=None)`**
+
+Simulates how images appear to individuals with color blindness:
+
+- **Protanopia** (`'protanopia'` or `'protan'`): Red-blind (~1% males)
+- **Deuteranopia** (`'deuteranopia'` or `'deutan'`): Green-blind (~1% males)  
+- **Tritanopia** (`'tritanopia'` or `'tritan'`): Blue-blind (~0.001% population)
+
+Uses scientifically-validated transformation matrices from Viénot, Brettel, and Mollon (1999).
+
+**`correct_cvd_image(image_path, deficiency_type, output_path=None)`**
+
+Applies color correction to improve discriminability for CVD viewers using Daltonization algorithm.
+
+#### 2. Palette Quantization
+
+**`quantize_image_to_palette(image_path, palette_name, metric='de2000', dither=False, output_path=None)`**
+
+Converts images to retro/limited palettes with perceptually-accurate color matching:
+
+**Supported Palettes:**
+
+- **`cga4`**: IBM CGA 4-color palette (1981)
+- **`ega16`**: IBM EGA 16-color palette (1984)  
+- **`ega64`**: IBM EGA 64-color palette (full)
+- **`vga`**: IBM VGA 256-color palette (1987)
+- **`web`**: Web-safe 216-color palette (1990s)
+- **`gameboy`**: Game Boy 4-shade green palette
+
+**Distance Metrics:**
+
+- **`de2000`**: CIEDE2000 (most perceptually accurate)
+- **`de94`**: CIE94 (good balance of accuracy/performance)
+- **`de76`**: CIE76 (simple LAB distance)
+- **`cmc`**: CMC l:c (textile industry standard)
+- **`euclidean`**: Simple RGB distance (fastest)
+- **`hsl_euclidean`**: HSL distance with hue wraparound
+
+**Dithering:** Optional Floyd-Steinberg error diffusion reduces banding artifacts.
+
+### Infrastructure Integration
+
+The transformation system **reuses all existing color_tools components:**
+
+- **Color deficiency matrices** from `color_tools.matrices`
+- **CVD simulation/correction** from `color_tools.color_deficiency`  
+- **Palette loading** from `color_tools.palette.load_palette()`
+- **Color matching** from `palette.nearest_color()` with all 6 distance metrics
+- **Error handling** with helpful dependency messages
+
+### Usage Examples
+
+```python
+from color_tools.image import (
+    simulate_cvd_image, 
+    correct_cvd_image,
+    quantize_image_to_palette,
+    transform_image
+)
+
+# Test accessibility - see how deuteranopes view your chart
+sim_image = simulate_cvd_image("infographic.png", "deuteranopia") 
+sim_image.save("colorblind_view.png")
+
+# Enhance image for protanopia viewers
+corrected = correct_cvd_image("chart.jpg", "protanopia")
+corrected.save("enhanced_for_colorblind.jpg")
+
+# Create retro CGA-style artwork with dithering
+retro = quantize_image_to_palette(
+    "photo.jpg", 
+    "cga4", 
+    metric="de2000",
+    dither=True
+)
+retro.save("retro_cga.png")
+
+# Convert to Game Boy aesthetic  
+gameboy = quantize_image_to_palette("artwork.png", "gameboy")
+gameboy.save("gameboy_style.png")
+
+# Custom transformations
+def sepia_tone(rgb):
+    r, g, b = rgb
+    sr = int(0.393*r + 0.769*g + 0.189*b)
+    sg = int(0.349*r + 0.686*g + 0.168*b) 
+    sb = int(0.272*r + 0.534*g + 0.131*b)
+    return (min(255,sr), min(255,sg), min(255,sb))
+
+sepia_image = transform_image("photo.jpg", sepia_tone)
+sepia_image.save("sepia.jpg")
+```
+
+### Performance Considerations
+
+- **Pixel-by-pixel processing** for accuracy (not vectorized)
+- **Memory efficient** - processes images in-place where possible
+- **Large image support** - no artificial size limits
+- **Progress indication** - processing time scales with image dimensions
+
+The system prioritizes **accuracy** and **infrastructure reuse** over raw speed.
+
 ## Planned Features (Not Yet Implemented)
 
 ### Phase 1: Pre-processing
@@ -331,6 +457,46 @@ def _check_pillow():
 The CLI also handles missing Pillow gracefully and shows installation instructions.
 
 ## Future Enhancements
+
+### High Priority
+
+- **Color Temperature Adjustment & Chromatic Adaptation**
+  - Implement von Kries chromatic adaptation method for simulating different lighting conditions
+  - **Technical approach:**
+    1. RGB → XYZ conversion (✅ already implemented)
+    2. XYZ → LMS (cone response) space conversion
+    3. Apply von Kries scaling based on source/target illuminants
+    4. LMS → XYZ → RGB conversion
+  - **Standard illuminants to support:**
+    - **D65** (6500K - daylight, sRGB standard)
+    - **D50** (5000K - horizon light, ICC standard)
+    - **A** (2856K - incandescent bulb)
+    - **F2** (4230K - cool white fluorescent)
+    - **F7** (6500K - broad-band daylight fluorescent)
+    - **F11** (4000K - narrow-band white fluorescent)
+  - **Functions to implement:**
+    - `adjust_color_temperature(rgb, source_temp, target_temp)` - Single color adaptation
+    - `adapt_image_temperature(image_path, source_temp, target_temp, output_path=None)` - Full image adaptation
+    - Support both Kelvin values (e.g., 5500K) and standard illuminant names (e.g., 'D65')
+  - **Use cases:**
+    - Photography: Adjust white balance after capture
+    - 3D printing: Simulate filament appearance under different workshop lighting
+    - Accessibility: Test how colors appear under various lighting conditions
+    - Color matching: Ensure consistent appearance across different environments
+  - **Integration points:**
+    - Add illuminant data to `ColorConstants` class
+    - Extend unified image transformation system
+    - CLI: `python -m color_tools image --adjust-temperature 3200K 6500K --file photo.jpg`
+
+### Medium Priority
+
+- **Advanced Palette Operations**
+  - **Palette interpolation:** Generate intermediate palettes between two existing ones
+  - **Adaptive palette generation:** Create custom palettes from image analysis
+  - **Palette similarity metrics:** Compare palettes using Delta E distance
+  - **Temporal palette animation:** Smooth transitions between different palettes for video
+
+### Lower Priority  
 
 - **Multiple distance metrics:** Allow RGB, LAB, or Delta E 2000 for clustering
 - **Configurable k-means iterations:** User control over convergence
