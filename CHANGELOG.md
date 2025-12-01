@@ -7,6 +7,52 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Multiple Result Support** - Both color and filament commands now support finding multiple nearest matches:
+  - **`--count N` argument** - Returns top N closest matches (default: 1, max: 50) for both colors and filaments
+  - **Enhanced output format** - Numbered list with distances and full details for easy comparison
+  - **Backward compatibility** - Single result behavior preserved when `--count` is omitted or equals 1
+  - **Consistent interface** - Same parameter works for both `color` and `filament` commands
+
+  ```bash
+  # Find top 5 CSS colors closest to purple
+  python -m color_tools color --nearest --hex 8040C0 --count 5
+  
+  # Find top 3 filaments for custom blue, including alternatives
+  python -m color_tools filament --nearest --hex 2121ff --count 3
+  ```
+
+- **Wildcard Filter Support** - Filament searches now support ignoring specific filters using `*` wildcard:
+  - **`*` wildcard syntax** - Use `*` as special value to disable individual filters completely  
+  - **Flexible filtering** - Ignore maker (`--maker "*"`), type (`--type "*"`), or finish (`--finish "*"`) constraints individually
+  - **Mixed filtering** - Combine wildcard and specific filters (e.g., `--maker "*" --type PLA` searches all makers but only PLA)
+  - **Complete bypass** - Use all wildcards to search entire filament database without restrictions
+  - **Exploration friendly** - Perfect for discovering alternatives when preferred brand is unavailable
+
+  ```bash
+  # Search all makers for closest blue filament
+  python -m color_tools filament --nearest --hex 2121ff --maker "*"
+  
+  # Find top 3 PLA filaments from any maker, any finish
+  python -m color_tools filament --nearest --hex FF4500 --count 3 --maker "*" --finish "*"
+  
+  # Search all types but only from Bambu Lab
+  python -m color_tools filament --nearest --hex 00FF00 --type "*" --maker "Bambu Lab"
+  ```
+
+### Changed
+
+- **Simplified palette architecture** - Reverted to clean, simple JSON array format for better maintainability:
+  - **Removed metadata complexity** - Eliminated unnecessary metadata fields that created technical debt
+  - **Focused on fixed palettes** - Removed problematic dynamic palette systems (Genesis, TurboGrafx-16) that don't map to fixed color quantization
+  - **Retained working palettes** - Kept all functional fixed palettes: CGA, EGA, VGA, Game Boy variants, Commodore 64, NES, SMS, VirtualBoy, Web Safe
+  - **Maintained compatibility** - No breaking changes to palette loading or color matching APIs
+  - **Performance optimized** - Simpler format improves loading speed and reduces memory usage
+
+- **Enhanced error handling** - Improved validation and error messages for multiple result parameters
+- **Updated CLI help** - Added examples and clarifications for new `--count` and wildcard features
+
 ## [3.5.0] - 2025-11-30
 
 ### Added

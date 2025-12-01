@@ -387,6 +387,13 @@ Examples:
         choices=["cga4", "cga16", "commodore64", "ega16", "ega64", "gameboy", "gameboy_dmg", "gameboy_gbl", "gameboy_mgb", "nes", "sms", "vga", "virtualboy", "web"],
         help="Use a retro palette instead of CSS colors. Available: cga4, cga16, commodore64, ega16, ega64, gameboy, gameboy_dmg, gameboy_gbl, gameboy_mgb, nes, sms, vga, virtualboy, web"
     )
+    color_parser.add_argument(
+        "--count",
+        type=int,
+        default=1,
+        metavar="N",
+        help="Number of nearest colors to return (default: 1, max: 50)"
+    )
     
     # ==================== FILAMENT SUBCOMMAND ====================
     filament_parser = subparsers.add_parser(
@@ -430,6 +437,13 @@ Examples:
         type=float, 
         default=ColorConstants.CMC_C_DEFAULT, 
         help="CMC chroma parameter (default: 1.0)"
+    )
+    filament_parser.add_argument(
+        "--count",
+        type=int,
+        default=1,
+        metavar="N",
+        help="Number of nearest filaments to return (default: 1, max: 50)"
     )
     
     # List operations
@@ -778,19 +792,39 @@ Examples:
                     sys.exit(2)
             
             # Use the determined color space
-            rec, d = palette.nearest_color(
-                val,
-                space=space,
-                metric=args.metric,
-                cmc_l=args.cmc_l,
-                cmc_c=args.cmc_c,
-            )
-            print(f"Nearest color: {rec.name} (distance={d:.2f})")
-            print(f"Hex:  {rec.hex}")
-            print(f"RGB:  {rec.rgb}")
-            print(f"HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
-            print(f"LAB:  ({rec.lab[0]:.2f}, {rec.lab[1]:.2f}, {rec.lab[2]:.2f})")
-            print(f"LCH:  ({rec.lch[0]:.2f}, {rec.lch[1]:.2f}, {rec.lch[2]:.1f}°)")
+            if args.count > 1:
+                # Multiple results
+                results = palette.nearest_colors(
+                    val,
+                    space=space,
+                    metric=args.metric,
+                    count=args.count,
+                    cmc_l=args.cmc_l,
+                    cmc_c=args.cmc_c,
+                )
+                print(f"Top {len(results)} nearest colors:")
+                for i, (rec, d) in enumerate(results, 1):
+                    print(f"\n{i}. {rec.name} (distance={d:.2f})")
+                    print(f"   Hex:  {rec.hex}")
+                    print(f"   RGB:  {rec.rgb}")
+                    print(f"   HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
+                    print(f"   LAB:  ({rec.lab[0]:.2f}, {rec.lab[1]:.2f}, {rec.lab[2]:.2f})")
+                    print(f"   LCH:  ({rec.lch[0]:.2f}, {rec.lch[1]:.2f}, {rec.lch[2]:.1f}°)")
+            else:
+                # Single result (backward compatibility)
+                rec, d = palette.nearest_color(
+                    val,
+                    space=space,
+                    metric=args.metric,
+                    cmc_l=args.cmc_l,
+                    cmc_c=args.cmc_c,
+                )
+                print(f"Nearest color: {rec.name} (distance={d:.2f})")
+                print(f"Hex:  {rec.hex}")
+                print(f"RGB:  {rec.rgb}")
+                print(f"HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
+                print(f"LAB:  ({rec.lab[0]:.2f}, {rec.lab[1]:.2f}, {rec.lab[2]:.2f})")
+                print(f"LCH:  ({rec.lch[0]:.2f}, {rec.lch[1]:.2f}, {rec.lch[2]:.1f}°)")
             sys.exit(0)
         
         # If we get here, no valid color operation was specified
@@ -850,17 +884,40 @@ Examples:
                 rgb_val = tuple(args.value)
             
             try:
-                rec, d = filament_palette.nearest_filament(
-                    rgb_val,
-                    metric=args.metric,
-                    maker=args.maker,
-                    type_name=args.type,
-                    finish=args.finish,
-                    cmc_l=args.cmc_l,
-                    cmc_c=args.cmc_c,
-                )
-                print(f"Nearest filament: (distance={d:.2f})")
-                print(f"  {rec}")
+                # Handle "*" wildcard filters (convert ["*"] to "*" for the API)
+                maker_filter = "*" if args.maker == ["*"] else args.maker
+                type_filter = "*" if args.type == ["*"] else args.type  
+                finish_filter = "*" if args.finish == ["*"] else args.finish
+                
+                if args.count > 1:
+                    # Multiple results
+                    results = filament_palette.nearest_filaments(
+                        rgb_val,
+                        metric=args.metric,
+                        count=args.count,
+                        maker=maker_filter,
+                        type_name=type_filter,
+                        finish=finish_filter,
+                        cmc_l=args.cmc_l,
+                        cmc_c=args.cmc_c,
+                    )
+                    print(f"Top {len(results)} nearest filaments:")
+                    for i, (rec, d) in enumerate(results, 1):
+                        print(f"\n{i}. (distance={d:.2f})")
+                        print(f"   {rec}")
+                else:
+                    # Single result (backward compatibility)
+                    rec, d = filament_palette.nearest_filament(
+                        rgb_val,
+                        metric=args.metric,
+                        maker=maker_filter,
+                        type_name=type_filter,
+                        finish=finish_filter,
+                        cmc_l=args.cmc_l,
+                        cmc_c=args.cmc_c,
+                    )
+                    print(f"Nearest filament: (distance={d:.2f})")
+                    print(f"  {rec}")
             except ValueError as e:
                 print(f"Error: {e}")
                 sys.exit(1)

@@ -597,6 +597,91 @@ class Palette:
                 best_rec, best_d = r, d
         return best_rec, best_d  # type: ignore
 
+    def nearest_colors(
+        self,
+        value: Tuple[float, float, float],
+        space: str = "lab",
+        metric: str = "de2000",
+        count: int = 5,
+        *,
+        cmc_l: float = ColorConstants.CMC_L_DEFAULT,
+        cmc_c: float = ColorConstants.CMC_C_DEFAULT,
+    ) -> List[Tuple[ColorRecord, float]]:
+        """
+        Find the nearest N colors by space/metric.
+        
+        Similar to nearest_color but returns multiple results sorted by distance.
+        
+        Args:
+            value: Color in the specified space (RGB, HSL, LAB, or LCH)
+            space: Color space - 'rgb', 'hsl', 'lab', or 'lch' (default: 'lab')
+            metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'
+            count: Number of results to return (default: 5, max: 50)
+            cmc_l, cmc_c: Parameters for CMC metric (default 2:1 for acceptability)
+        
+        Returns:
+            List of (color_record, distance) tuples sorted by distance (closest first)
+        """
+        # Limit count to reasonable maximum
+        count = min(count, 50)
+        count = max(count, 1)
+        
+        results: List[Tuple[ColorRecord, float]] = []
+
+        # RGB space - use simple Euclidean distance
+        if space.lower() == "rgb":
+            for r in self.records:
+                d = euclidean(tuple(map(float, value)), tuple(map(float, r.rgb)))
+                results.append((r, d))
+            results.sort(key=lambda x: x[1])
+            return results[:count]
+
+        # HSL space - use circular hue distance
+        if space.lower() == "hsl":
+            for r in self.records:
+                d = hsl_euclidean(value, r.hsl)
+                results.append((r, d))
+            results.sort(key=lambda x: x[1])
+            return results[:count]
+
+        # LCH space - use Euclidean distance with hue wraparound
+        if space.lower() == "lch":
+            for r in self.records:
+                d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
+                results.append((r, d))
+            results.sort(key=lambda x: x[1])
+            return results[:count]
+
+        # LAB space - choose the appropriate Delta E metric
+        metric_l = metric.lower()
+        if metric_l in ("de2000", "ciede2000"):
+            fn = delta_e_2000
+        elif metric_l in ("de94", "cie94"):
+            fn = delta_e_94
+        elif metric_l in ("de76", "cie76", "euclidean"):
+            fn = delta_e_76
+        elif metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
+            # CMC has special handling for l:c ratios
+            fn = None  # Will handle specially below
+        else:
+            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'.")
+
+        for r in self.records:
+            if metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
+                # Allow shorthands
+                l, c = cmc_l, cmc_c
+                if metric_l == "cmc21":
+                    l, c = ColorConstants.CMC_L_DEFAULT, ColorConstants.CMC_C_DEFAULT
+                elif metric_l == "cmc11":
+                    l, c = ColorConstants.CMC_C_DEFAULT, ColorConstants.CMC_C_DEFAULT
+                d = delta_e_cmc(value, r.lab, l=l, c=c)
+            else:
+                d = fn(value, r.lab)  # type: ignore
+            results.append((r, d))
+        
+        results.sort(key=lambda x: x[1])
+        return results[:count]
+
 
 class FilamentPalette:
     """
@@ -848,9 +933,9 @@ class FilamentPalette:
         Args:
             target_rgb: Target RGB color tuple.
             metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'.
-            maker: Optional maker name or list of names to filter by.
-            type_name: Optional filament type or list of types to filter by.
-            finish: Optional filament finish or list of finishes to filter by.
+            maker: Optional maker name or list of names to filter by. Use "*" to ignore filter.
+            type_name: Optional filament type or list of types to filter by. Use "*" to ignore filter.
+            finish: Optional filament finish or list of finishes to filter by. Use "*" to ignore filter.
             cmc_l, cmc_c: Parameters for CMC metric.
         
         Returns:
@@ -858,8 +943,13 @@ class FilamentPalette:
         """
         target_lab = rgb_to_lab(target_rgb)
         
+        # Handle "*" wildcard filters (ignore filter if "*" is passed)
+        maker_filter = None if maker == "*" else maker
+        type_filter = None if type_name == "*" else type_name
+        finish_filter = None if finish == "*" else finish
+        
         # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker, type_name=type_name, finish=finish)
+        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter)
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
@@ -895,6 +985,82 @@ class FilamentPalette:
             raise ValueError("No valid filaments found")
             
         return best_rec, best_d
+
+    def nearest_filaments(
+        self,
+        target_rgb: Tuple[int, int, int],
+        metric: str = "de2000",
+        count: int = 5,
+        *,
+        maker: Optional[Union[str, List[str]]] = None,
+        type_name: Optional[Union[str, List[str]]] = None,
+        finish: Optional[Union[str, List[str]]] = None,
+        cmc_l: float = ColorConstants.CMC_L_DEFAULT,
+        cmc_c: float = ColorConstants.CMC_C_DEFAULT,
+    ) -> List[Tuple[FilamentRecord, float]]:
+        """
+        Find nearest N filaments by color similarity, with optional filters.
+        
+        Similar to nearest_filament but returns multiple results sorted by distance.
+        
+        Args:
+            target_rgb: Target RGB color tuple.
+            metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'.
+            count: Number of results to return (default: 5, max: 50)
+            maker: Optional maker name or list of names to filter by. Use "*" to ignore filter.
+            type_name: Optional filament type or list of types to filter by. Use "*" to ignore filter.
+            finish: Optional filament finish or list of finishes to filter by. Use "*" to ignore filter.
+            cmc_l, cmc_c: Parameters for CMC metric.
+        
+        Returns:
+            List of (filament_record, distance) tuples sorted by distance (closest first).
+        """
+        # Limit count to reasonable maximum
+        count = min(count, 50)
+        count = max(count, 1)
+        
+        target_lab = rgb_to_lab(target_rgb)
+        
+        # Handle "*" wildcard filters (ignore filter if "*" is passed)
+        maker_filter = None if maker == "*" else maker
+        type_filter = None if type_name == "*" else type_name
+        finish_filter = None if finish == "*" else finish
+        
+        # Apply filters by calling our powerful filter() method first!
+        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter)
+        
+        if not candidates:
+            raise ValueError("No filaments match the specified filters")
+
+        # Choose distance function
+        metric_l = metric.lower()
+        if metric_l in ("de2000", "ciede2000"):
+            distance_fn = delta_e_2000
+        elif metric_l in ("de94", "cie94"):
+            distance_fn = delta_e_94
+        elif metric_l in ("de76", "cie76"):
+            distance_fn = delta_e_76
+        elif metric_l == "euclidean":
+            distance_fn = lambda lab1, lab2: euclidean(lab1, lab2)
+        elif metric_l in ("cmc", "decmc"):
+            distance_fn = lambda lab1, lab2: delta_e_cmc(lab1, lab2, l=cmc_l, c=cmc_c)
+        else:
+            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'.")
+
+        results: List[Tuple[FilamentRecord, float]] = []
+        for rec in candidates:
+            try:
+                d = distance_fn(target_lab, rec.lab)
+                results.append((rec, d))
+            except:
+                # Skip filaments with invalid colors
+                continue
+        
+        if not results:
+            raise ValueError("No valid filaments found")
+        
+        results.sort(key=lambda x: x[1])
+        return results[:count]
 
     @property
     def makers(self) -> List[str]:

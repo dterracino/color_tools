@@ -174,8 +174,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated after updating Genesis palette hash after metadata correction
-    _EXPECTED_HASH = "fb5c1f50f4118e8ad84235cb6535b96b023b9bc95f7e689e34df9f12c064cb90"
+    # Updated after removing Genesis and TurboGrafx-16 palette constants and reverting to simple palette format
+    _EXPECTED_HASH = "878cc0747e186e0c87a5913a2997b1814834f2f49f06dfd4c28f04172b0e8ee0"
     
     # ========================================================================
     # Data File Integrity Hashes

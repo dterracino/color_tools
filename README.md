@@ -307,6 +307,9 @@ python -m color_tools color --name "steelblue"
 # Find nearest CSS color to RGB(128, 64, 200) using CIEDE2000
 python -m color_tools color --nearest --value 128 64 200 --space rgb
 
+# Find top 3 nearest colors
+python -m color_tools color --nearest --value 128 64 200 --space rgb --count 3
+
 # Find nearest using LAB values with CIE94 metric
 python -m color_tools color --nearest --value 50 25 -30 --space lab --metric de94
 
@@ -329,6 +332,7 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--metric {euclidean,de76,de94,de2000,cmc,cmc21,cmc11}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
+- `--count N`: Return top N nearest colors instead of just one (default: 1, max: 50)
 - `--palette {cga4,cga16,ega16,ega64,vga,web}`: Use retro/classic palette instead of CSS colors
 
 #### Custom Palettes
@@ -367,6 +371,9 @@ Search and query the 3D printing filament database.
 ```bash
 # Find nearest filament to red color
 python -m color_tools filament --nearest --value 255 0 0
+
+# Find top 5 nearest filaments 
+python -m color_tools filament --nearest --value 255 0 0 --count 5
 
 # Use different color distance metrics
 python -m color_tools filament --nearest --value 100 150 200 --metric cmc
@@ -415,6 +422,11 @@ python -m color_tools filament --type PLA "PLA+" PETG
 
 # Filter by multiple finishes
 python -m color_tools filament --finish Basic "Silk+" Matte
+
+# Use wildcard (*) to bypass individual filters while keeping others
+python -m color_tools filament --maker "*" --type "PLA"        # All makers, only PLA
+python -m color_tools filament --maker "Bambu" --type "*"      # Only Bambu, all types
+python -m color_tools filament --finish "*" --color "Black"    # All finishes, only Black
 ```
 
 **Filament Command Arguments:**
@@ -426,6 +438,7 @@ python -m color_tools filament --finish Basic "Silk+" Matte
 - `--metric {euclidean,de76,de94,de2000,cmc}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
+- `--count N`: Return top N nearest filaments instead of just one (default: 1, max: 50)
 - `--dual-color-mode {first,last,mix}`: Handle dual-color filaments (default: first)
 
 **Filtering and Listing:**
@@ -433,12 +446,25 @@ python -m color_tools filament --finish Basic "Silk+" Matte
 - `--list-makers`: List all filament manufacturers
 - `--list-types`: List all filament types (PLA, PETG, etc.)
 - `--list-finishes`: List all finish types (Matte, Glossy, etc.)
-- `--maker NAME [NAME ...]`: Filter by one or more manufacturers (e.g., --maker "Bambu" "Polymaker"). Supports maker synonyms (e.g., "Bambu" finds "Bambu Lab").
-- `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+")
-- `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+")
+- `--maker NAME [NAME ...]`: Filter by one or more manufacturers (e.g., --maker "Bambu" "Polymaker"). Supports maker synonyms (e.g., "Bambu" finds "Bambu Lab"). Use "*" to bypass this filter.
+- `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+"). Use "*" to bypass this filter.
+- `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+"). Use "*" to bypass this filter.
 - `--color NAME`: Filter by color name
 
-**Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments.
+**Combining Multiple Results with Filtering:**
+
+```bash
+# Find top 3 PLA filaments from any maker nearest to blue
+python -m color_tools filament --nearest --value 33 33 255 --type "PLA" --maker "*" --count 3
+
+# Find top 5 Bambu filaments of any type nearest to purple  
+python -m color_tools filament --nearest --value 128 0 128 --maker "Bambu" --type "*" --count 5
+
+# Find top 10 matte finish filaments from any maker/type nearest to green
+python -m color_tools filament --nearest --value 0 255 0 --finish "Matte" --maker "*" --type "*" --count 10
+```
+
+**Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments. Use "*" as a wildcard to bypass individual filters while keeping others active.
 
 ### Convert Command
 
@@ -603,11 +629,17 @@ Cylindrical representation of LAB:
 # I have RGB(180, 100, 200) and want to find matching filaments
 python -m color_tools filament --nearest --value 180 100 200
 
+# Find top 3 alternatives in case my preferred filament is unavailable
+python -m color_tools filament --nearest --value 180 100 200 --count 3
+
 # Use CMC color difference (textile industry standard)
 python -m color_tools filament --nearest --value 180 100 200 --metric cmc
 
 # Use different distance metric
 python -m color_tools filament --nearest --value 180 100 200 --metric de94
+
+# Find alternatives from any maker but only PLA type
+python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --maker "*" --count 5
 ```
 
 ### Color Space Analysis
@@ -631,6 +663,9 @@ python -m color_tools convert --check-gamut --value 50 80 60
 # Find the CSS color name closest to my LAB measurement
 python -m color_tools color --nearest --value 65.2 25.8 -15.4 --space lab
 
+# Find top 3 nearest CSS colors for broader options
+python -m color_tools color --nearest --value 65.2 25.8 -15.4 --space lab --count 3
+
 # Find nearest color using LCH (perceptually uniform cylindrical space)
 python -m color_tools color --nearest --value 67.3 65.7 46.3 --space lch
 ```
@@ -646,6 +681,12 @@ python -m color_tools filament --finish Basic Matte "Silk+"
 
 # Search across multiple manufacturers and types
 python -m color_tools filament --maker "Bambu Lab" "Sunlu" --type PLA PETG
+
+# Search all types from a specific maker (wildcard type filter)
+python -m color_tools filament --maker "Polymaker" --type "*"
+
+# Search specific type from any maker (wildcard maker filter)  
+python -m color_tools filament --type "PLA+" --maker "*"
 
 # List all available filament types from a specific maker
 python -m color_tools filament --maker "Polymaker" | grep -o 'type: [^,]*' | sort -u
