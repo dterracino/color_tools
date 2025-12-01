@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.5.0] - 2025-12-01
+
 ### Added
 
 - **Enhanced Hash Update Tooling** - Completely automated hash integrity management system:
@@ -60,22 +62,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   # Search all types but only from Bambu Lab
   python -m color_tools filament --nearest --hex 00FF00 --type "*" --maker "Bambu Lab"
   ```
-
-### Changed
-
-- **Simplified palette architecture** - Reverted to clean, simple JSON array format for better maintainability:
-  - **Removed metadata complexity** - Eliminated unnecessary metadata fields that created technical debt
-  - **Focused on fixed palettes** - Removed problematic dynamic palette systems (Genesis, TurboGrafx-16) that don't map to fixed color quantization
-  - **Retained working palettes** - Kept all functional fixed palettes: CGA, EGA, VGA, Game Boy variants, Commodore 64, NES, SMS, VirtualBoy, Web Safe
-  - **Maintained compatibility** - No breaking changes to palette loading or color matching APIs
-  - **Performance optimized** - Simpler format improves loading speed and reduces memory usage
-
-- **Enhanced error handling** - Improved validation and error messages for multiple result parameters
-- **Updated CLI help** - Added examples and clarifications for new `--count` and wildcard features
-
-## [3.5.0] - 2025-11-30
-
-### Added
 
 - **Universal Hex Color Support** - Complete hex color input support across all CLI commands for improved real-world usability:
   - **`--hex` argument** - Added to `color`, `filament`, `name`, `cvd`, and `convert` commands as convenient alternative to `--value`
@@ -186,6 +172,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Simplified palette architecture** - Reverted to clean, simple JSON array format for better maintainability:
+  - **Removed metadata complexity** - Eliminated unnecessary metadata fields that created technical debt
+  - **Focused on fixed palettes** - Removed problematic dynamic palette systems (Genesis, TurboGrafx-16) that don't map to fixed color quantization
+  - **Retained working palettes** - Kept all functional fixed palettes: CGA, EGA, VGA, Game Boy variants, Commodore 64, NES, SMS, VirtualBoy, Web Safe
+  - **Maintained compatibility** - No breaking changes to palette loading or color matching APIs
+  - **Performance optimized** - Simpler format improves loading speed and reduces memory usage
+
+- **Enhanced error handling** - Improved validation and error messages for multiple result parameters
+- **Updated CLI help** - Added examples and clarifications for new `--count` and wildcard features
 - **Image extra now includes numpy and scikit-image**: `pip install color-match-tools[image]` now installs Pillow, numpy, and scikit-image
 - **Image module documentation**: Updated `image/__init__.py` to show examples of both general and HueForge-specific functions
 
