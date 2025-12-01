@@ -200,6 +200,7 @@ class ColorConstants:
     NES_PALETTE_HASH = "6cf3c65a403ce432e0cca9d12fe53ea44f9b64e303c7c8ecfcf233c524bfe1f1"
     SMS_PALETTE_HASH = "94feeac3b2f6c2af5739a9221a0ca7cee5f91c47ada0b1eae7ed8624f8517966"
     VGA_PALETTE_HASH = "8966324e8328e737e8cb4b0007362028b83cb727e066bf82adee3cee615874d6"
+    VIRTUALBOY_PALETTE_HASH = "11458f869e1d4a311af3550864fd9c40ac7197fd318e3cb73e34cf83a04b33f2"
     WEB_PALETTE_HASH = "10e9201e08719e5e6ece6584f1e2aadf519a33a7b5123928e77f85b5f3beaccb"
     
     # User data files (optional, not verified)
@@ -291,6 +292,7 @@ class ColorConstants:
             ("nes.json", cls.NES_PALETTE_HASH),
             ("sms.json", cls.SMS_PALETTE_HASH),
             ("vga.json", cls.VGA_PALETTE_HASH),
+            ("virtualboy.json", cls.VIRTUALBOY_PALETTE_HASH),
             ("web.json", cls.WEB_PALETTE_HASH),
         ]
         
