@@ -14,6 +14,7 @@ import hashlib
 from pathlib import Path
 import sys
 import re
+import subprocess
 
 def generate_data_file_hashes():
     """Generate hashes for main data files."""
@@ -131,20 +132,39 @@ def update_constants_file(new_hashes):
         print(f"ERROR: {constants_file} not found!")
         return False
     
-    # Read current file content
-    content = constants_file.read_text()
+    # Read current file content with UTF-8 encoding
+    try:
+        content = constants_file.read_text(encoding='utf-8')
+    except UnicodeDecodeError:
+        # Fallback to other encodings if UTF-8 fails
+        for encoding in ['utf-8-sig', 'latin1', 'cp1252']:
+            try:
+                content = constants_file.read_text(encoding=encoding)
+                break
+            except UnicodeDecodeError:
+                continue
+        else:
+            print(f"ERROR: Could not read {constants_file} with any encoding!")
+            return False
     
     # Update each hash value
     updated_content = content
     for const_name, new_hash in new_hashes.items():
-        # Pattern to match hash constant declarations
-        pattern = rf'^{re.escape(const_name)}\s*=\s*"[a-f0-9]+"'
-        replacement = f'{const_name} = "{new_hash}"'
+        # Pattern to match hash constant declarations with more flexible whitespace
+        pattern = rf'^(\s*{re.escape(const_name)}\s*=\s*)"[a-f0-9]+"'
+        replacement = rf'\1"{new_hash}"'
         
+        old_content = updated_content
         updated_content = re.sub(pattern, replacement, updated_content, flags=re.MULTILINE)
+        
+        # Debug: Check if replacement actually happened
+        if updated_content == old_content:
+            print(f"⚠️  Warning: {const_name} was not found or updated")
+        else:
+            print(f"✓ Updated {const_name}")
     
-    # Write back to file
-    constants_file.write_text(updated_content)
+    # Write back to file with UTF-8 encoding
+    constants_file.write_text(updated_content, encoding='utf-8')
     print(f"✅ Updated {constants_file}")
     return True
 
@@ -257,28 +277,55 @@ def main():
             return
         
         print()
-        print("🔄 Updating constants.py...")
+        print("🔄 Step 1/2: Updating individual hash values...")
         
         # Collect all hashes and update the file
         all_hashes = collect_all_hashes()
         if update_constants_file(all_hashes):
+            print("✅ Individual hash values updated successfully!")
             print()
-            print("✅ Hash values updated successfully!")
-            print()
-            print("FINAL STEP: Generate new ColorConstants hash")
+            print("🔄 Step 2/2: Generating final ColorConstants hash...")
             
-            # Generate the ColorConstants hash
+            # Generate the ColorConstants hash and update it too
             try:
-                # Reload the module to get updated constants
-                if 'color_tools.constants' in sys.modules:
-                    del sys.modules['color_tools.constants']
+                # Use subprocess to calculate hash in fresh Python process
+                # This avoids any module caching issues completely
+                import subprocess
                 
-                from color_tools.constants import ColorConstants
-                constants_hash = ColorConstants._compute_hash()
-                print(f"_EXPECTED_HASH = \"{constants_hash}\"")
-                print()
-                print("Copy this value into constants.py to complete the update.")
-                print("Then verify: python -m color_tools --verify-all")
+                script_dir = Path(__file__).parent
+                parent_dir = script_dir.parent
+                
+                cmd = [
+                    sys.executable, 
+                    '-c',
+                    'import sys; sys.path.insert(0, "."); from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())'
+                ]
+                
+                print("🔄 Calculating ColorConstants hash in fresh process...")
+                result = subprocess.run(cmd, cwd=str(parent_dir), capture_output=True, text=True, encoding='utf-8')
+                
+                if result.returncode == 0:
+                    constants_hash = result.stdout.strip()
+                    print(f"🔄 Generated new ColorConstants hash: {constants_hash}")
+                    
+                    # Update the _EXPECTED_HASH value in the file
+                    final_hash = {"_EXPECTED_HASH": constants_hash}
+                    print(f"🔄 Updating _EXPECTED_HASH with: {constants_hash}")
+                    
+                    if update_constants_file(final_hash):
+                        print("✅ ColorConstants hash updated successfully!")
+                        print()
+                        print("🎉 COMPLETE! All hash values have been updated automatically.")
+                        print()
+                        print("Final verification:")
+                        print("   python -m color_tools --verify-all")
+                    else:
+                        print("⚠️  Could not update ColorConstants hash automatically.")
+                        print(f"   Manually update _EXPECTED_HASH = \"{constants_hash}\" in constants.py")
+                else:
+                    print(f"⚠️  Error calculating ColorConstants hash: {result.stderr}")
+                    print("   Run script again with --constants-only to get the final hash.")
+                    
             except Exception as e:
                 print(f"⚠️  Could not generate ColorConstants hash: {e}")
                 print("Run the script again with --constants-only to get the final hash.")

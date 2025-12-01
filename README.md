@@ -104,6 +104,35 @@ The core module uses **only Python standard library** - **zero external dependen
 
 The validation module works without fuzzywuzzy using a built-in Levenshtein distance implementation. Install fuzzywuzzy for better fuzzy matching performance:
 
+### Hash Update Tooling (Maintainers)
+
+For project maintainers, automated tooling is available to manage data integrity hashes:
+
+```bash
+# Automated hash update after modifying data files
+python tooling/update_hashes.py --autoupdate
+
+# Manual mode for review and control
+python tooling/update_hashes.py
+
+# Update only ColorConstants hash (after manual changes)
+python tooling/update_hashes.py --constants-only
+```
+
+The automated tooling provides:
+- **Complete automation** - Updates all hash values with safety confirmations
+- **Two-step process** - Updates individual hashes first, then ColorConstants hash
+- **Debug output** - Shows exactly which constants were modified
+- **Safety features** - Requires explicit confirmation before modifying files
+
+**When to use hash tooling:**
+- After modifying any JSON data files (`colors.json`, `filaments.json`, etc.)
+- After updating palette files in `data/palettes/`
+- After adding new constants to `ColorConstants` class
+- After modifying transformation matrices in `matrices.py`
+
+See [Hash_Update_Guide.md](https://github.com/dterracino/color_tools/blob/main/docs/Hash_Update_Guide.md) for detailed workflows and troubleshooting.
+
 ```bash
 pip install color-match-tools[fuzzy]  # OR
 pip install fuzzywuzzy
@@ -872,6 +901,6 @@ python -m color_tools --verify-constants
 
 1. **Accidental modification** - restore from git: `git checkout constants.py`
 2. **Malicious tampering** - investigate and restore from a known good backup
-3. **Development changes** - if you're a maintainer who legitimately needs to update constants, you'll need to regenerate the integrity hash (contact project maintainers)
+3. **Development changes** - if you're a maintainer who legitimately needs to update constants or data files, use the automated hash update tooling: `python tooling/update_hashes.py --autoupdate`
 
 The integrity check uses SHA-256 hashing to ensure the mathematical foundation remains scientifically accurate and unchanged.

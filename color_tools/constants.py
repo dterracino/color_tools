@@ -174,8 +174,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated after removing Genesis and TurboGrafx-16 palette constants and reverting to simple palette format
-    _EXPECTED_HASH = "878cc0747e186e0c87a5913a2997b1814834f2f49f06dfd4c28f04172b0e8ee0"
+    # Updated after compacting JSON file arrays to save 97KB space
+    _EXPECTED_HASH = "e0eb015f431486304d9c226bfefacf9c32cc63724fc0efe48a25f39a07a13e6a"
     
     # ========================================================================
     # Data File Integrity Hashes
@@ -183,25 +183,25 @@ class ColorConstants:
     # SHA-256 hashes of core data files for integrity verification
     # These hashes are computed from the exact file contents (including whitespace)
     
-    COLORS_JSON_HASH = "3ba4ebb50dc7d437e35855870f701f544c4222726d4891e54dcc90a231976abd"
+    COLORS_JSON_HASH = "fa483b1362c7fea1f5fbcad0ea716a4819e22ebc3748dd2bd31bb6ab2c87c37a"
     FILAMENTS_JSON_HASH = "2107cfdf636c25493636793d8a843d962cee6275db6a86d160bed0376747313a"
     MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
     
     # Palette file hashes
-    CGA4_PALETTE_HASH = "5b4333bd529d608ce41b4e67e0219e39fb9ac6b7545db7848a5330cebc291b57"
-    CGA16_PALETTE_HASH = "bf6e25e3a98fafa3ec3bfadb10316e607b454e9f01312477261f7fb90633e7f0"
-    COMMODORE64_PALETTE_HASH = "0d5372208ce627081215a42b5a0ba8eafd5539c5efbd3135f8ed26bdf9b9d5f9"
-    EGA16_PALETTE_HASH = "bf6e25e3a98fafa3ec3bfadb10316e607b454e9f01312477261f7fb90633e7f0"
-    EGA64_PALETTE_HASH = "5f557a70e5d7348de3f0cdf1fefa1071475e3a1e5c053fcd3c97cc3fe46d3b10"
-    GAMEBOY_PALETTE_HASH = "60ddbe6229c1b61855f9db204ae7421a7bc08ad1fc0228a26a2f527add45253f"
-    GAMEBOY_DMG_PALETTE_HASH = "4b7df93870476ea49df088dc4dc0cf1f682acc70cb3bbc613e632e0052d37782"
-    GAMEBOY_GBL_PALETTE_HASH = "105425ac4382b3a7b20bee8ef870a434ac96d4d7aceeb32fdd7ab38f0ace955f"
-    GAMEBOY_MGB_PALETTE_HASH = "7ae309c5fc52d6895fe2f289133742e2800a0172e3a5566d83e1fec3cba89c5d"
-    NES_PALETTE_HASH = "6cf3c65a403ce432e0cca9d12fe53ea44f9b64e303c7c8ecfcf233c524bfe1f1"
-    SMS_PALETTE_HASH = "94feeac3b2f6c2af5739a9221a0ca7cee5f91c47ada0b1eae7ed8624f8517966"
-    VGA_PALETTE_HASH = "8966324e8328e737e8cb4b0007362028b83cb727e066bf82adee3cee615874d6"
-    VIRTUALBOY_PALETTE_HASH = "11458f869e1d4a311af3550864fd9c40ac7197fd318e3cb73e34cf83a04b33f2"
-    WEB_PALETTE_HASH = "10e9201e08719e5e6ece6584f1e2aadf519a33a7b5123928e77f85b5f3beaccb"
+    CGA4_PALETTE_HASH = "62624dbeef28b664feca10afe3901b52b2335395134aba88ea21f955f0d17b7d"
+    CGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
+    COMMODORE64_PALETTE_HASH = "c4502abaed781535de55f3042cca4d7b3653c5eeb4cec3ecb30f591bfbfdfcca"
+    EGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
+    EGA64_PALETTE_HASH = "2159e51f89cca4a4fb43a2d80bea030f3d7cd0cc5e1eacd25eb95f0ce2027e7f"
+    GAMEBOY_PALETTE_HASH = "e2911baed15b4d56a27313b6be506c3a1f57bee3b01ecd2ca5995b512822da9b"
+    GAMEBOY_DMG_PALETTE_HASH = "042d7cfd7b94f8719aa01603ddf5b0d9c73ae59b04e27295132ddac13142e968"
+    GAMEBOY_GBL_PALETTE_HASH = "f2b6a573b09c1efa3529e79f281dcb0ed4e5c788cb10e51526c60e6e5d928231"
+    GAMEBOY_MGB_PALETTE_HASH = "7c556e05e13adcfce0e7aec06ded6c7871acee63771e520319afa67e07080027"
+    NES_PALETTE_HASH = "3021573a00b158fb6cf694e6546b236c2ec6862d52e08cc860f32d983e1f0a59"
+    SMS_PALETTE_HASH = "95010c348c2f77a209544170da29ee7f5bfccacbcd32ed33c36cb7ef269f72e8"
+    VGA_PALETTE_HASH = "9eb6055508d5523ceafbb4abe3d2921f09bc61b20485da1052e4d4fd653a5d00"
+    VIRTUALBOY_PALETTE_HASH = "218854f6dc6506649e6ff14f92f56ff996b7c01a36c916b0374880c8524c40a9"
+    WEB_PALETTE_HASH = "ba4ad53ece01d2f1338ae13221aa04e5c342519d7750d948458074001a465e7d"
     
     # User data files (optional, not verified)
     USER_COLORS_JSON_FILENAME = "user-colors.json"

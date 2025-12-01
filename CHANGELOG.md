@@ -10,6 +10,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Enhanced Hash Update Tooling** - Completely automated hash integrity management system:
+  - **Automatic hash update script** - `python tooling/update_hashes.py --autoupdate` now updates all hash values in one command with confirmation prompts
+  - **Two-step automation** - Updates individual hash values first, then generates and updates final ColorConstants hash automatically
+  - **Safety features** - Requires explicit user confirmation before modifying any files, with ability to cancel at any time
+  - **Comprehensive verification** - Includes debugging output showing which constants were updated and proper subprocess-based hash calculation to avoid module caching
+  - **JSON array compacting** - `tooling/compact_color_arrays.py` script reformats JSON files for better readability, saving ~97KB space
+  - **Complete documentation** - New `docs/Hash_Update_Guide.md` with manual and automatic workflows
+
+  ```bash
+  # Complete automated hash update workflow
+  python tooling/update_hashes.py --autoupdate
+  
+  # Manual mode for review
+  python tooling/update_hashes.py
+  
+  # Final step only (after manual updates)
+  python tooling/update_hashes.py --constants-only
+  ```
+
 - **Multiple Result Support** - Both color and filament commands now support finding multiple nearest matches:
   - **`--count N` argument** - Returns top N closest matches (default: 1, max: 50) for both colors and filaments
   - **Enhanced output format** - Numbered list with distances and full details for easy comparison
