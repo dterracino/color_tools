@@ -206,7 +206,7 @@ print(f"Nearest color: {nearest.name} ({nearest.hex})")
 
 To create a custom palette, add a JSON file to the `data/palettes/` directory:
 
-**Example: my_palette.json**
+#### Example: my_palette.json
 
 ```json
 [

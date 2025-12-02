@@ -169,6 +169,7 @@ print(f'_EXPECTED_HASH = \"{ColorConstants._compute_hash()}\"')
 A helper script `tooling/update_hashes.py` is available to automate hash generation:
 
 #### Manual Mode (Default)
+
 ```bash
 # Generate all hashes and show values to copy
 python tooling/update_hashes.py
@@ -177,12 +178,14 @@ python tooling/update_hashes.py
 This will display all hash values that you need to copy into `constants.py` manually.
 
 #### Automatic Update Mode
+
 ```bash
 # Automatically update constants.py with new hashes
 python tooling/update_hashes.py --autoupdate
 ```
 
 This will:
+
 - Generate all hash values
 - Ask for confirmation before modifying files
 - Automatically update `constants.py` with new hash values  
@@ -190,11 +193,13 @@ This will:
 - Provide verification commands
 
 **Safety features:**
+
 - Requires explicit confirmation before modifying files
 - Can be cancelled at any time (no files modified)
 - Shows exactly what will be updated before proceeding
 
 #### Constants-Only Mode
+
 ```bash
 # Only generate the final ColorConstants hash
 python tooling/update_hashes.py --constants-only
@@ -205,6 +210,7 @@ Use this for the final step after manually updating hash values in `constants.py
 #### Script Capabilities
 
 The script will:
+
 - Scan for all data files and generate their hashes
 - Generate transformation matrices hash  
 - Generate ColorConstants hash
