@@ -8,7 +8,7 @@ version = "3.5.0"
 description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
 readme = "README.md"
 requires-python = ">=3.10"
-license = { file = "LICENSE" }
+license = { text = "MIT" }
 authors = [
     { name = "David Terracino", email = "dterracino@gmail.com" }
 ]
