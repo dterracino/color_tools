@@ -477,7 +477,8 @@ These arguments work with all commands:
 - `--json DIR`: Path to directory containing all JSON data files (colors.json, filaments.json, maker_synonyms.json). Must be a directory, not a file. Default: uses package data directory
 - `--verify-constants`: Verify integrity of color science constants before proceeding
 - `--verify-data`: Verify integrity of core data files before proceeding
-- `--verify-all`: Verify integrity of both constants and data files before proceeding
+- `--verify-matrices`: Verify integrity of transformation matrices before proceeding
+- `--verify-all`: Verify integrity of constants, data files, and matrices before proceeding
 - `--version`: Show version number and exit
 
 ---
@@ -550,6 +551,7 @@ python -m color_tools filament --maker "Polymaker" --type "*"
 python -m color_tools filament --type "PLA+" --maker "*"
 
 # List all available filament types from a specific maker
+# (Note: This uses Unix tools; on Windows, use PowerShell or view the full output)
 python -m color_tools filament --maker "Polymaker" | grep -o 'type: [^,]*' | sort -u
 ```
 
