@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **Updated license format** - Changed to SPDX license identifier (`MIT`) in `pyproject.toml` to eliminate PyPI warnings and improve machine readability
+
 ## [3.5.0] - 2025-12-01
 
 ### Added
