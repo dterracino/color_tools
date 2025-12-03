@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "color-match-tools"
-version = "3.6.1"
+version = "3.6.2"
 description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -86,8 +86,8 @@ color_tools = "color_tools.cli:main"
 include-package-data = false
 
 [tool.setuptools.packages.find]
-include = ["color_tools*"]
-exclude = ["color_tools.data*"]
+include = ["color_tools", "color_tools.*"]
+exclude = ["color_tools.data*", "tests*", "test_*"]
 
 [tool.setuptools.package-data]
 color_tools = ["data/*.json", "data/palettes/*.json"]

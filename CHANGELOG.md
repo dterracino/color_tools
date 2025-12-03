@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.2] - 2025-12-03
+
+### Fixed
+
+- **Distribution cleanup** - Removed test files from PyPI packages:
+  - **Excluded tests directory** - Test files are no longer included in source distributions (sdist) or wheels uploaded to PyPI
+  - **Added MANIFEST.in** - Explicit control over which files are included in distributions
+  - **Cleaner package installs** - End users now get only the essential package code and data files, reducing download size and eliminating development artifacts
+
 ## [3.6.1] - 2025-12-03
 
 ### Fixed

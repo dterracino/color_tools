@@ -1,0 +1,6 @@
+include LICENSE
+include README.md
+include pyproject.toml
+recursive-include color_tools *.py *.json
+recursive-exclude tests *
+global-exclude *.pyc __pycache__ .DS_Store
