@@ -8,9 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.0] - 2025-12-03
+
+### Added
+
+- **Comprehensive API Documentation** - Professional Sphinx-based documentation system:
+  - **Full API reference** - Complete documentation for all public functions and classes with parameter descriptions and examples
+  - **Module examples** - Added practical usage examples to distance.py, conversions.py, and palette.py module docstrings
+  - **Autosummary integration** - Automatic generation of module pages with cross-references and search functionality
+  - **Read the Docs theme** - Professional styling with color science themed custom CSS
+  - **Build automation** - PowerShell script for easy documentation regeneration (`docs/build-docs.ps1`)
+
 ### Changed
 
 - **Updated license format** - Changed to SPDX license identifier (`MIT`) in `pyproject.toml` to eliminate PyPI warnings and improve machine readability
+
+### Fixed
+
+- **API Export Cleanup** - Improved public API consistency and maintainability:
+  - **Added missing export** - `hue_diff_deg` function now properly exported in main `__all__` list
+  - **Private helper functions** - Made internal conversion helpers private: `srgb_to_linear` → `_srgb_to_linear`, `linear_to_srgb` → `_linear_to_srgb`, `rgb_to_rawhsl` → `_rgb_to_rawhsl`  
+  - **Complete image exports** - Added missing image transformation functions (`transform_image`, `simulate_cvd_image`, `correct_cvd_image`, `quantize_image_to_palette`) to `color_tools.image.__all__`
+  - **Type safety** - Fixed CLI type annotation issues with tuple handling for better type checking
 
 ## [3.5.0] - 2025-12-01
 

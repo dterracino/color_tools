@@ -151,8 +151,9 @@ def clamp_to_gamut(lab: Tuple[float, float, float]) -> Tuple[float, float, float
     to 0-255, then convert back to LAB to see what we got.
     
     **Pros:** Fast!
+    
     **Cons:** Can change hue (not just chroma). A pure red might become
-              a slightly orange-red after clamping.
+    a slightly orange-red after clamping.
     
     For most applications, `find_nearest_in_gamut()` is better because it
     preserves hue. This function exists for when you need speed over accuracy.

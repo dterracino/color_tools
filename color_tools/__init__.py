@@ -30,7 +30,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "3.5.0"
+__version__ = "3.6.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -81,6 +81,7 @@ from .distance import (
     # Simple distance functions
     euclidean,
     hsl_euclidean,
+    hue_diff_deg,
 )
 
 # ============================================================================
@@ -191,6 +192,7 @@ __all__ = [
     "delta_e_cmc",
     "euclidean",
     "hsl_euclidean",
+    "hue_diff_deg",
     
     # Gamut operations
     "is_in_srgb_gamut",

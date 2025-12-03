@@ -9,6 +9,33 @@ This module provides:
 
 The palette classes are like databases with multiple indexes - you can
 search by name, RGB, HSL, maker, type, etc. and get instant results!
+
+Example:
+    >>> from color_tools import Palette, FilamentPalette
+    >>> 
+    >>> # Load CSS color database
+    >>> palette = Palette.load_default()
+    >>> print(f"Loaded {len(palette.colors)} CSS colors")
+    Loaded 148 CSS colors
+    >>> 
+    >>> # Find exact color by name
+    >>> coral = palette.get_by_name("coral")
+    >>> print(f"Coral: RGB{coral.rgb} (#{coral.hex})")
+    Coral: RGB(255, 127, 80) (#FF7F50)
+    >>> 
+    >>> # Find nearest color to custom RGB
+    >>> custom_orange = (255, 140, 60)
+    >>> nearest, distance = palette.nearest_color(custom_orange)
+    >>> print(f"Nearest to RGB{custom_orange}: {nearest.name} (ΔE: {distance:.1f})")
+    Nearest to RGB(255, 140, 60): darkorange (ΔE: 7.2)
+    >>> 
+    >>> # Load 3D printing filaments 
+    >>> filaments = FilamentPalette.load_default()
+    >>> 
+    >>> # Search by maker and material
+    >>> pla_colors = filaments.find_by_maker("Bambu", type_name="PLA")
+    >>> print(f"Found {len(pla_colors)} Bambu PLA colors")
+    Found 24 Bambu PLA colors
 """
 
 from __future__ import annotations

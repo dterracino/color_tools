@@ -313,6 +313,7 @@ def format_color_change_report(changes: List[ColorChange]) -> str:
         1. RGB(100, 50, 30) → RGB(98, 48, 28)
            L: 24.3 → 33.3  |  C: 28.5 → 28.5  |  H: 31.2 → 31.2
            ΔE (CIEDE2000): 9.12
+        
         ...
     """
     lines = [

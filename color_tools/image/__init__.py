@@ -2,41 +2,10 @@
 Image processing module for color_tools.
 
 This module provides image color analysis and manipulation tools:
-- General image analysis (basic.py)
+- General image analysis (basic.py)  
 - HueForge 3D printing optimization (analysis.py)
 
 Requires Pillow: pip install color-match-tools[image]
-
-Public API:
------------
-General Functions (basic.py):
-    count_unique_colors - Count total unique RGB colors in an image
-    get_color_histogram - Get histogram mapping RGB colors to pixel counts
-    get_dominant_color - Get the most common color in an image
-    is_indexed_mode - Check if image uses indexed color mode (palette)
-    analyze_brightness - Analyze image brightness with assessment
-    analyze_contrast - Analyze image contrast using standard deviation
-    analyze_noise_level - Estimate noise level using scikit-image
-    analyze_dynamic_range - Analyze dynamic range and gamma suggestions
-    transform_image - Apply color transformation function to entire image
-    simulate_cvd_image - Simulate color vision deficiency for entire image
-    correct_cvd_image - Apply CVD correction to improve discriminability
-    quantize_image_to_palette - Convert image to retro palette (CGA, EGA, VGA, etc.)
-    transform_image - Apply color transformation function to entire image
-    simulate_cvd_image - Simulate color vision deficiency for entire image
-    correct_cvd_image - Apply CVD correction to improve discriminability
-    quantize_image_to_palette - Convert image to retro palette (CGA, EGA, VGA, etc.)
-
-HueForge Functions (analysis.py):
-    extract_unique_colors - Extract dominant colors using k-means (simplified API)
-    extract_color_clusters - Extract color clusters with full data (pixel assignments)
-    redistribute_luminance - Redistribute L values evenly for Hueforge
-    format_color_change_report - Generate human-readable color change report
-    l_value_to_hueforge_layer - Convert L value to Hueforge layer number
-
-Data Classes:
-    ColorCluster - Cluster with centroid and pixel assignments
-    ColorChange - Before/after color change with Delta E
 
 Example:
 --------
@@ -164,4 +133,9 @@ __all__ = [
     'analyze_contrast', 
     'analyze_noise_level',
     'analyze_dynamic_range',
+    # Image transformation functions
+    'transform_image',
+    'simulate_cvd_image',
+    'correct_cvd_image',
+    'quantize_image_to_palette',
 ]

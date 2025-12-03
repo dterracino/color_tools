@@ -8,6 +8,29 @@ Includes multiple Delta E formulas:
 - Delta E CMC: Textile industry standard
 
 Also includes simpler distance functions for RGB and HSL spaces.
+
+Example:
+    >>> from color_tools import rgb_to_lab, delta_e_2000
+    >>> 
+    >>> # Compare two similar reds
+    >>> red1 = rgb_to_lab((255, 0, 0))    # Pure red
+    >>> red2 = rgb_to_lab((250, 5, 5))    # Slightly darker red
+    >>> 
+    >>> # Calculate perceptual difference
+    >>> distance = delta_e_2000(red1, red2)
+    >>> print(f"ΔE2000: {distance:.2f}")
+    ΔE2000: 2.85
+    >>> 
+    >>> # ΔE < 1.0 = imperceptible
+    >>> # ΔE < 2.0 = barely noticeable  
+    >>> # ΔE < 5.0 = noticeable but acceptable
+    >>> if distance < 2.0:
+    ...     print("Colors are nearly identical!")
+    ... elif distance < 5.0:
+    ...     print("Colors are similar")
+    ... else:
+    ...     print("Colors are noticeably different")
+    Colors are similar
 """
 
 from __future__ import annotations

@@ -765,18 +765,22 @@ Examples:
                 print("Error: --nearest requires either --value or --hex", file=sys.stderr)
                 sys.exit(2)
             
+            # Determine the color value and space
+            val: tuple[float, float, float]
+            space: str
+            
             # Handle hex input
             if args.hex is not None:
                 try:
                     rgb_val = _parse_hex(args.hex)
-                    val = tuple(float(x) for x in rgb_val)
+                    val = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                     space = "rgb"  # --hex always implies RGB space
                 except ValueError as e:
                     print(f"Error: {e}", file=sys.stderr)
                     sys.exit(2)
             else:
                 # Handle --value input
-                val = tuple(args.value)
+                val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
                 space = args.space
                 
                 # Validate LAB/LCH ranges if applicable
@@ -967,7 +971,7 @@ Examples:
                     sys.exit(2)
             else:
                 # Handle --value input
-                val = tuple(args.value)
+                val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
                 
                 # Assume LAB unless otherwise specified
                 if args.from_space == "lch":
@@ -998,11 +1002,15 @@ Examples:
                 print("Error: Color conversion requires either --value or --hex", file=sys.stderr)
                 sys.exit(2)
             
+            # Determine the color value and space
+            val: tuple[float, float, float]
+            from_space: str
+            
             # Handle hex input
             if args.hex is not None:
                 try:
                     rgb_val = _parse_hex(args.hex)
-                    val = tuple(float(x) for x in rgb_val)
+                    val = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                     from_space = "rgb"  # --hex always implies RGB space
                 except ValueError as e:
                     print(f"Error: {e}", file=sys.stderr)
@@ -1012,7 +1020,7 @@ Examples:
                 if args.from_space is None:
                     print("Error: --from is required when using --value", file=sys.stderr)
                     sys.exit(2)
-                val = tuple(args.value)
+                val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
                 from_space = args.from_space
             
             to_space = args.to_space

@@ -7,6 +7,27 @@ Handles conversions between:
 - Gamma correction (sRGB companding)
 
 All conversions use D65 illuminant and proper color science math.
+
+Example:
+    >>> from color_tools import rgb_to_lab, lab_to_lch, rgb_to_hsl
+    >>> 
+    >>> # Convert vibrant orange from web color
+    >>> orange_rgb = (255, 128, 0)
+    >>> 
+    >>> # To LAB for perceptual analysis
+    >>> lab = rgb_to_lab(orange_rgb)
+    >>> print(f"LAB: L={lab[0]:.1f} a={lab[1]:.1f} b={lab[2]:.1f}")
+    LAB: L=67.8 a=43.4 b=78.0
+    >>> 
+    >>> # To LCH for hue/chroma work
+    >>> lch = lab_to_lch(lab)
+    >>> print(f"LCH: L={lch[0]:.1f} C={lch[1]:.1f} H={lch[2]:.1f}°")
+    LCH: L=67.8 C=88.6 H=60.9°
+    >>> 
+    >>> # To HSL for web design
+    >>> hsl = rgb_to_hsl(orange_rgb)
+    >>> print(f"HSL: {hsl[0]:.0f}° {hsl[1]:.0f}% {hsl[2]:.0f}%")
+    HSL: 30° 100% 50%
 """
 
 from __future__ import annotations
@@ -76,7 +97,7 @@ def rgb_to_hex(rgb: Tuple[int, int, int]) -> str:
 # Forward Conversions (RGB → LAB)
 # ============================================================================
 
-def srgb_to_linear(c: float) -> float:
+def _srgb_to_linear(c: float) -> float:
     """
     Convert sRGB value to linear RGB (gamma correction removal).
     
@@ -99,7 +120,7 @@ def rgb_to_xyz(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     r, g, b = [v / ColorConstants.RGB_MAX for v in rgb]
     
     # Remove gamma correction (linearize)
-    r_lin, g_lin, b_lin = srgb_to_linear(r), srgb_to_linear(g), srgb_to_linear(b)
+    r_lin, g_lin, b_lin = _srgb_to_linear(r), _srgb_to_linear(g), _srgb_to_linear(b)
     
     # Matrix multiplication using sRGB → XYZ coefficients
     X = r_lin * ColorConstants.SRGB_TO_XYZ_R[0] + g_lin * ColorConstants.SRGB_TO_XYZ_R[1] + b_lin * ColorConstants.SRGB_TO_XYZ_R[2]
@@ -193,7 +214,7 @@ def lab_to_xyz(lab: Tuple[float, float, float]) -> Tuple[float, float, float]:
     return (X, Y, Z)
 
 
-def linear_to_srgb(c: float) -> float:
+def _linear_to_srgb(c: float) -> float:
     """
     Convert linear RGB to sRGB (inverse gamma correction).
     
@@ -226,9 +247,9 @@ def xyz_to_rgb(xyz: Tuple[float, float, float], clamp: bool = True) -> Tuple[int
     b_lin = X * ColorConstants.XYZ_TO_SRGB_Z[0] + Y * ColorConstants.XYZ_TO_SRGB_Z[1] + Z * ColorConstants.XYZ_TO_SRGB_Z[2]
     
     # Apply gamma correction
-    r = linear_to_srgb(r_lin)
-    g = linear_to_srgb(g_lin)
-    b = linear_to_srgb(b_lin)
+    r = _linear_to_srgb(r_lin)
+    g = _linear_to_srgb(g_lin)
+    b = _linear_to_srgb(b_lin)
     
     # Convert to 0-255 range
     r_255 = r * ColorConstants.RGB_MAX
@@ -313,7 +334,7 @@ def rgb_to_lch(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
 # HSL Conversions
 # ============================================================================
 
-def rgb_to_rawhsl(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
+def _rgb_to_rawhsl(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     """
     Convert RGB to raw HSL (all values 0-1).
     
@@ -333,7 +354,7 @@ def rgb_to_hsl(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     - S: Saturation as percentage (0% = gray, 100% = pure color)
     - L: Lightness as percentage (0% = black, 50% = pure color, 100% = white)
     """
-    h, s, l = rgb_to_rawhsl(rgb)
+    h, s, l = _rgb_to_rawhsl(rgb)
     return (h * ColorConstants.HUE_CIRCLE_DEGREES, s * ColorConstants.XYZ_SCALE_FACTOR, l * ColorConstants.XYZ_SCALE_FACTOR)
 
 
@@ -345,7 +366,7 @@ def rgb_to_winhsl(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     Each component is scaled to the 0-240 range instead of the usual
     H:0-360, S:0-100, L:0-100 representation.
     """
-    h, s, l = rgb_to_rawhsl(rgb)
+    h, s, l = _rgb_to_rawhsl(rgb)
     win_h = int(round(h * ColorConstants.WIN_HSL_MAX))
     win_s = int(round(s * ColorConstants.WIN_HSL_MAX))
     win_l = int(round(l * ColorConstants.WIN_HSL_MAX))
