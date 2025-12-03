@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [3.6.1] - 2025-12-03
+
+### Fixed
+
+- **Package build optimization** - Eliminated setuptools warnings and cleaned up distribution:
+  - **Removed importable data packages** - Data directories (`color_tools.data` and `color_tools.data.palettes`) are no longer treated as importable Python packages, eliminating setuptools warnings about package discovery ambiguity
+  - **Explicit data configuration** - Switched to explicit `package-data` configuration with `include-package-data = false` for precise control over included files
+  - **Build artifact cleanup** - Removed unnecessary `__init__.py` files from data directories and cleaned up empty `MANIFEST.in` file
+  - **Zero-warning builds** - Package now builds cleanly without any setuptools warnings while maintaining full functionality
+  - **Maintained data access** - All JSON data files (colors, filaments, palettes) remain accessible through the proper API without architectural changes
+
 ## [3.6.0] - 2025-12-03
 
 ### Added

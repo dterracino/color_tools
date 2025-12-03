@@ -1,10 +1,32 @@
 # publish.ps1 - Build and publish color_tools to PyPI
 # This script handles the complete build and upload process
+#
+# API Key Setup Options:
+# Option 1: Set environment variable directly
+#   $env:TWINE_PASSWORD = "your-api-key-here"
+#   .\publish.ps1
+#
+# Option 2: Load from .env file automatically  
+#   Get-Content .env | ForEach-Object {
+#       if ($_ -match '^([^=]+)=(.*)$') {
+#           [Environment]::SetEnvironmentVariable($matches[1], $matches[2], "Process")
+#       }
+#   }
+#   $env:TWINE_PASSWORD = $env:PYPI_API_KEY
+#   .\publish.ps1
+#
+# Option 3: Let twine prompt for password (paste API key when asked)
+#   .\publish.ps1
+#
+# Option 4: Configure twine once (most secure)
+#   python -m twine configure
+#   .\publish.ps1
 
 param(
     [switch]$TestPyPI,
     [switch]$SkipTests,
-    [switch]$SkipClean
+    [switch]$SkipClean,
+    [switch]$BuildOnly
 )
 
 # Color output helpers
@@ -59,11 +81,16 @@ try {
     if ($LASTEXITCODE -eq 0) {
         Write-Success "Version: $version"
         
-        # Confirm with user
-        $confirm = Read-Host "`nPublish version $version to PyPI? (y/N)"
-        if ($confirm -ne 'y' -and $confirm -ne 'Y') {
-            Write-Warning "Publish cancelled by user"
-            exit 0
+        # Skip confirmation if BuildOnly
+        if (-not $BuildOnly) {
+            # Confirm with user
+            $confirm = Read-Host "`nPublish version $version to PyPI? (y/N)"
+            if ($confirm -ne 'y' -and $confirm -ne 'Y') {
+                Write-Warning "Publish cancelled by user"
+                exit 0
+            }
+        } else {
+            Write-Warning "Build-only mode - will not upload to PyPI"
         }
     } else {
         Write-Error "Failed to get version number"
@@ -98,50 +125,58 @@ try {
 }
 
 # Step 5: Upload to PyPI
-Write-Step "Uploading to PyPI"
+if (-not $BuildOnly) {
+    Write-Step "Uploading to PyPI"
 
-if ($TestPyPI) {
-    Write-Warning "Uploading to TestPyPI (test.pypi.org)"
-    $repository = "--repository testpypi"
-} else {
-    Write-Host "Uploading to PyPI (pypi.org)" -ForegroundColor Yellow
-    $repository = ""
-}
-
-try {
-    if ($repository) {
-        python -m twine upload $repository dist/*$version*
+    if ($TestPyPI) {
+        Write-Warning "Uploading to TestPyPI (test.pypi.org)"
+        $repository = "--repository testpypi"
     } else {
-        python -m twine upload dist/*$version*
+        Write-Host "Uploading to PyPI (pypi.org)" -ForegroundColor Yellow
+        $repository = ""
     }
-    
-    if ($LASTEXITCODE -eq 0) {
-        Write-Success "Upload completed successfully!"
-        
-        Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
-        Write-Host "║       Publication Successful! 🎉       ║" -ForegroundColor Green
-        Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
-        
-        if ($TestPyPI) {
-            Write-Host "Install with: pip install --index-url https://test.pypi.org/simple/ color-match-tools" -ForegroundColor Cyan
+
+    try {
+        if ($repository) {
+            python -m twine upload $repository dist/*$version*
         } else {
-            Write-Host "Install with: pip install color-match-tools" -ForegroundColor Cyan
+            python -m twine upload dist/*$version*
         }
-        Write-Host "Version: $version`n" -ForegroundColor Cyan
-    } else {
-        Write-Error "Upload failed!"
+        
+        if ($LASTEXITCODE -eq 0) {
+            Write-Success "Upload completed successfully!"
+            
+            Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
+            Write-Host "║       Publication Successful! 🎉       ║" -ForegroundColor Green
+            Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
+            
+            if ($TestPyPI) {
+                Write-Host "Install with: pip install --index-url https://test.pypi.org/simple/ color-match-tools" -ForegroundColor Cyan
+            } else {
+                Write-Host "Install with: pip install color-match-tools" -ForegroundColor Cyan
+            }
+            Write-Host "Version: $version`n" -ForegroundColor Cyan
+        } else {
+            Write-Error "Upload failed!"
+            exit 1
+        }
+    } catch {
+        Write-Error "Failed to upload: $_"
         exit 1
     }
-} catch {
-    Write-Error "Failed to upload: $_"
-    exit 1
-}
 
-# Optional: Clean up after successful publish
-$cleanAfter = Read-Host "`nClean up build artifacts? (y/N)"
-if ($cleanAfter -eq 'y' -or $cleanAfter -eq 'Y') {
-    Write-Step "Cleaning build artifacts"
-    & .\clean.ps1
+    # Optional: Clean up after successful publish
+    $cleanAfter = Read-Host "`nClean up build artifacts? (y/N)"
+    if ($cleanAfter -eq 'y' -or $cleanAfter -eq 'Y') {
+        Write-Step "Cleaning build artifacts"
+        & .\clean.ps1
+    }
+} else {
+    Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
+    Write-Host "║         Build Only Complete! 🔧        ║" -ForegroundColor Green  
+    Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
+    Write-Host "Built packages are ready in dist/ directory" -ForegroundColor Cyan
+    Write-Host "Version: $version`n" -ForegroundColor Cyan
 }
 
 Write-Host "`nDone! ✨`n" -ForegroundColor Green
