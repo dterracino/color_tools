@@ -174,17 +174,18 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated after compacting JSON file arrays to save 97KB space
-    _EXPECTED_HASH = "e0eb015f431486304d9c226bfefacf9c32cc63724fc0efe48a25f39a07a13e6a"
+    # Updated 2025-12-03: Changed cyan/magenta colors, updated COLORS_JSON_HASH
+    _EXPECTED_HASH = "2a42cc204ef7783eaa45199e837220a13decbcea967ab3e234421d16136c4522"
     
     # ========================================================================
     # Data File Integrity Hashes
     # ========================================================================
     # SHA-256 hashes of core data files for integrity verification
     # These hashes are computed from the exact file contents (including whitespace)
+    # Updated 2025-12-03: Changed cyan to #00B7EB and magenta to #FF0090 to resolve RGB duplication with aqua/fuchsia
     
-    COLORS_JSON_HASH = "fa483b1362c7fea1f5fbcad0ea716a4819e22ebc3748dd2bd31bb6ab2c87c37a"
-    FILAMENTS_JSON_HASH = "2107cfdf636c25493636793d8a843d962cee6275db6a86d160bed0376747313a"
+    COLORS_JSON_HASH = "dc8ce5769a2186008af540c03159d3f24a72e5effc9ce5b611c8b4374da19ffd"
+    FILAMENTS_JSON_HASH = "cecec1bbd83712d5a183ca4c67de555465485170ebb317e60adf65022790f988"
     MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
     
     # Palette file hashes

@@ -8,6 +8,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Filament database update** - Added missing Bambu Lab Matte Charcoal filament to complete the product line
+
+### Changed
+
+- **Color value updates to resolve RGB duplication** - Modified cyan and magenta to use more accurate printer/subtractive color values:
+  - **Cyan**: Changed from `#00FFFF` to `#00B7EB` (RGB: 0, 183, 235) - now represents true printer cyan instead of electric cyan
+  - **Magenta**: Changed from `#FF00FF` to `#FF0090` (RGB: 255, 0, 144) - now represents true printer magenta
+  - **Rationale**: The old values for cyan and magenta were identical to aqua (`#00FFFF`) and fuchsia (`#FF00FF`), causing RGB dictionary lookup collisions where only one color name would be findable by its RGB value
+  - **Aqua and Fuchsia**: Retained their CSS-standard values as the canonical web colors
+  - **Impact**: All four colors now have unique RGB coordinates, fixing palette RGB lookups and improving color matching accuracy
+
+### Improved
+
+- **Hash update tooling enhancements** - Significant improvements to `tooling/update_hashes.py`:
+  - **Rich text output** - Added colored terminal output using Rich library for better readability (section headers, hash values, errors, warnings, and success messages all color-coded)
+  - **New granular flags** - Added `--filaments-only` and `--palettes-only` options to regenerate specific hash categories without recomputing everything
+  - **Eliminated code duplication** - Removed duplicate palette file mapping, now using single `PALETTE_FILES` constant as source of truth
+  - **Uses ColorConstants methods** - Script now imports and uses `ColorConstants._compute_hash()` and `ColorConstants._compute_matrices_hash()` instead of duplicating hash logic, ensuring consistency with the main codebase
+  - **Simplified architecture** - Removed conditional Rich fallback code; Rich is now a hard requirement for the script
+
 ## [3.6.2] - 2025-12-03
 
 ### Fixed

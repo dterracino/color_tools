@@ -102,6 +102,23 @@ LCH is ideal for user interfaces because hue can be adjusted independently, maki
 python -m color_tools convert --check-gamut --value 90 50 100
 ```
 
+### Why are cyan and magenta different from the CSS standard?
+
+Color Tools uses modified values for **cyan** and **magenta** to avoid RGB duplication issues:
+
+- **Cyan**: `#00B7EB` (true printer cyan) instead of CSS `#00FFFF`
+- **Magenta**: `#FF0090` (true printer magenta) instead of CSS `#FF00FF`
+- **Aqua**: `#00FFFF` (retains CSS standard)
+- **Fuchsia**: `#FF00FF` (retains CSS standard)
+
+**Why the change?** In the CSS standard, cyan and aqua share the same value (`#00FFFF`), as do magenta and fuchsia (`#FF00FF`). This caused RGB lookup collisions where searching by RGB value would only return one color name. Our modified values:
+
+1. Use more accurate printer/subtractive color representations
+2. Give each color unique RGB coordinates for reliable lookups
+3. Better represent what designers expect from "cyan" and "magenta"
+
+If you need strict CSS compliance, use **aqua** and **fuchsia** instead.
+
 ---
 
 ## Distance Metrics

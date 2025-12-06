@@ -738,6 +738,15 @@
     "td_value": 3
   },
   {
+    "id": "bambu-lab-pla-matte-charcoal",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Charcoal",
+    "hex": "#000000",
+    "td_value": 0.6
+  },
+  {
     "id": "bambu-lab-pla-silk-plus-baby-blue",
     "maker": "Bambu Lab",
     "type": "PLA",
