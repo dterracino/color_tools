@@ -20,3 +20,11 @@ pyright>=1.1.0
 # Building and publishing
 build>=1.0.0
 twine>=4.0.0
+
+# Documentation build requirements
+sphinx>=7.0.0
+sphinx-rtd-theme>=1.3.0  # Popular theme used by Read the Docs
+myst-parser>=2.0.0       # Support for Markdown files in Sphinx
+sphinx-autodoc-typehints>=1.24.0  # Better type hint rendering
+
+# Rich console output for development scripts

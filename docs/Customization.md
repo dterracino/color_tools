@@ -39,6 +39,14 @@ Array of color objects with complete color space representations:
 ]
 ```
 
+**Note on Cyan and Magenta:** These colors use non-standard values to avoid RGB duplication:
+
+- **cyan**: `#00B7EB` (printer cyan) instead of CSS `#00FFFF`
+- **magenta**: `#FF0090` (printer magenta) instead of CSS `#FF00FF`
+- **aqua** and **fuchsia** retain the CSS-standard values
+
+This ensures all colors have unique RGB coordinates for reliable dictionary lookups.
+
 ### filaments.json - 3D Printing Filament Database
 
 Array of filament objects with manufacturer info and color data:

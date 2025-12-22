@@ -1,0 +1,256 @@
+function lookup_data( r,g,b ) {
+if(r=='00'){if(g=='00'){if(b=='00'){return(' K Black');}
+if(b=='33'){return('OWBObscure Weak Blue');}
+if(b=='66'){return('ODBObscure Dull Blue');}
+if(b=='99'){return('DFBDark Faded Blue');}
+if(b=='CC'){return('DHBDark Hard Blue');}
+if(b=='FF'){return(' B Blue');}
+}if(g=='33'){if(b=='00'){return('OWGObscure Weak Green');}
+if(b=='33'){return('OWCObscure Weak Cyan');}
+if(b=='66'){return('ODAObscure Dull Azure');}
+if(b=='99'){return('DABDark Azure Blue');}
+if(b=='CC'){return('DBADark Blue Azure');}
+if(b=='FF'){return('BBABlue Blue Azure');}
+}if(g=='66'){if(b=='00'){return('ODGObscure Dull Green');}
+if(b=='33'){return('ODTObscure Dull Teal');}
+if(b=='66'){return('ODCObscure Dull Cyan');}
+if(b=='99'){return('DACDark Azure Cyan');}
+if(b=='CC'){return('DHADark Hard Azure');}
+if(b=='FF'){return('AABAzure Azure Blue');}
+}if(g=='99'){if(b=='00'){return('DFGDark Faded Green');}
+if(b=='33'){return('DTGDark Teal Green');}
+if(b=='66'){return('DTCDark Teal Cyan');}
+if(b=='99'){return('DFCDark Faded Cyan');}
+if(b=='CC'){return('DCADark Cyan Azure');}
+if(b=='FF'){return('AACAzure Azure Cyan');}
+}if(g=='CC'){if(b=='00'){return('DHGDark Hard Green');}
+if(b=='33'){return('DGTDark Green Teal');}
+if(b=='66'){return('DHTDark Hard Teal');}
+if(b=='99'){return('DCTDark Cyan Teal');}
+if(b=='CC'){return('DHCDark Hard Cyan');}
+if(b=='FF'){return('CCACyan Cyan Azure');}
+}if(g=='FF'){if(b=='00'){return(' G Green');}
+if(b=='33'){return('GGTGreen Green Teal');}
+if(b=='66'){return('TTGTeal Teal Green');}
+if(b=='99'){return('TTCTeal Teal Cyan');}
+if(b=='CC'){return('CCTCyan Cyan Teal');}
+if(b=='FF'){return(' C Cyan');}
+}}if(r=='33'){if(g=='00'){if(b=='00'){return('OWRObscure Weak Red');}
+if(b=='33'){return('OWMObscure Weak Magenta');}
+if(b=='66'){return('ODVObscure Dull Violet');}
+if(b=='99'){return('DVBDark Violet Blue');}
+if(b=='CC'){return('DBVDark Blue Violet');}
+if(b=='FF'){return('BBVBlue Blue Violet');}
+}if(g=='33'){if(b=='00'){return('OWYObscure Weak Yellow');}
+if(b=='33'){return(' OGObscure Gray');}
+if(b=='66'){return('DWBDark Weak Blue');}
+if(b=='99'){return('DDBDark Dull Blue');}
+if(b=='CC'){return('MFBMedium Faded Blue');}
+if(b=='FF'){return('LHBLight Hard Blue');}
+}if(g=='66'){if(b=='00'){return('ODSObscure Dull Spring');}
+if(b=='33'){return('DWGDark Weak Green');}
+if(b=='66'){return('DWCDark Weak Cyan');}
+if(b=='99'){return('DDADark Dull Azure');}
+if(b=='CC'){return('MABMedium Azure Blue');}
+if(b=='FF'){return('LBALight Blue Azure');}
+}if(g=='99'){if(b=='00'){return('DSGDark Spring Green');}
+if(b=='33'){return('DDGDark Dull Green');}
+if(b=='66'){return('DDTDark Dull Teal');}
+if(b=='99'){return('DDCDark Dull Cyan');}
+if(b=='CC'){return('MACMedium Azure Cyan');}
+if(b=='FF'){return('LHALight Hard Azure');}
+}if(g=='CC'){if(b=='00'){return('DGSDark Green Spring');}
+if(b=='33'){return('MFGMedium Faded Green');}
+if(b=='66'){return('MTGMedium Teal Green');}
+if(b=='99'){return('MTCMedium Teal Cyan');}
+if(b=='CC'){return('MFCMedium Faded Cyan');}
+if(b=='FF'){return('LCALight Cyan Azure');}
+}if(g=='FF'){if(b=='00'){return('GGSGreen Green Spring');}
+if(b=='33'){return('LHGLight Hard Green');}
+if(b=='66'){return('LGTLight Green Teal');}
+if(b=='99'){return('LHTLight Hard Teal');}
+if(b=='CC'){return('LCTLight Cyan Teal');}
+if(b=='FF'){return('LHCLight Hard Cyan');}
+}}if(r=='66'){if(g=='00'){if(b=='00'){return('ODRObscure Dull Red');}
+if(b=='33'){return('ODPObscure Dull Pink');}
+if(b=='66'){return('ODMObscure Dull Magenta');}
+if(b=='99'){return('DVMDark Violet Magenta');}
+if(b=='CC'){return('DHVDark Hard Violet');}
+if(b=='FF'){return('VVBViolet Violet Blue');}
+}if(g=='33'){if(b=='00'){return('ODOObscure Dull Orange');}
+if(b=='33'){return('DWRDark Weak Red');}
+if(b=='66'){return('DWMDark Weak Magenta');}
+if(b=='99'){return('DDVDark Dull Violet');}
+if(b=='CC'){return('MVBMedium Violet Blue');}
+if(b=='FF'){return('LBVLight Blue Violet');}
+}if(g=='66'){if(b=='00'){return('ODYObscure Dull Yellow');}
+if(b=='33'){return('DWYDark Weak Yellow');}
+if(b=='66'){return(' DGDark Gray');}
+if(b=='99'){return('MWBMedium Weak Blue');}
+if(b=='CC'){return('LDBLight Dull Blue');}
+if(b=='FF'){return('LFBLight Faded Blue');}
+}if(g=='99'){if(b=='00'){return('DSYDark Spring Yellow');}
+if(b=='33'){return('DDSDark Dull Spring');}
+if(b=='66'){return('MWGMedium Weak Green');}
+if(b=='99'){return('MWCMedium Weak Cyan');}
+if(b=='CC'){return('LDALight Dull Azure');}
+if(b=='FF'){return('LABLight Azure Blue');}
+}if(g=='CC'){if(b=='00'){return('DHSDark Hard Spring');}
+if(b=='33'){return('MSGMedium Spring Green');}
+if(b=='66'){return('LDGLight Dull Green');}
+if(b=='99'){return('LDTLight Dull Teal');}
+if(b=='CC'){return('LDCLight Dull Cyan');}
+if(b=='FF'){return('LACLight Azure Cyan');}
+}if(g=='FF'){if(b=='00'){return('SSGSpring Spring Green');}
+if(b=='33'){return('LGSLight Green Spring');}
+if(b=='66'){return('LFGLight Faded Green');}
+if(b=='99'){return('LTGLight Teal Green');}
+if(b=='CC'){return('LTCLight Teal Cyan');}
+if(b=='FF'){return('LFCLight Faded Cyan');}
+}}if(r=='99'){if(g=='00'){if(b=='00'){return('DFRDark Faded Red');}
+if(b=='33'){return('DPRDark Pink Red');}
+if(b=='66'){return('DPMDark Pink Magenta');}
+if(b=='99'){return('DFMDark Faded Magenta');}
+if(b=='CC'){return('DMVDark Magenta Violet');}
+if(b=='FF'){return('VVMViolet Violet Magenta');}
+}if(g=='33'){if(b=='00'){return('DORDark Orange Red');}
+if(b=='33'){return('DDRDark Dull Red');}
+if(b=='66'){return('DDPDark Dull Pink');}
+if(b=='99'){return('DDMDark Dull Magenta');}
+if(b=='CC'){return('MVMMedium Violet Magenta');}
+if(b=='FF'){return('LHVLight Hard Violet');}
+}if(g=='66'){if(b=='00'){return('DOYDark Orange Yellow');}
+if(b=='33'){return('DDODark Dull Orange');}
+if(b=='66'){return('MWRMedium Weak Red');}
+if(b=='99'){return('MWMMedium Weak Magenta');}
+if(b=='CC'){return('LDVLight Dull Violet');}
+if(b=='FF'){return('LVBLight Violet Blue');}
+}if(g=='99'){if(b=='00'){return('DFYDark Faded Yellow');}
+if(b=='33'){return('DDYDark Dull Yellow');}
+if(b=='66'){return('MWYMedium Weak Yellow');}
+if(b=='99'){return(' LGLight Gray');}
+if(b=='CC'){return('LWBLight Weak Blue');}
+if(b=='FF'){return('PDBPale Dull Blue');}
+}if(g=='CC'){if(b=='00'){return('DYSDark Yellow Spring');}
+if(b=='33'){return('MSYMedium Spring Yellow');}
+if(b=='66'){return('LDSLight Dull Spring');}
+if(b=='99'){return('LWGLight Weak Green');}
+if(b=='CC'){return('LWCLight Weak Cyan');}
+if(b=='FF'){return('PDAPale Dull Azure');}
+}if(g=='FF'){if(b=='00'){return('SSYSpring Spring Yellow');}
+if(b=='33'){return('LHSLight Hard Spring');}
+if(b=='66'){return('LSGLight Spring Green');}
+if(b=='99'){return('PDGPale Dull Green');}
+if(b=='CC'){return('PDTPale Dull Teal');}
+if(b=='FF'){return('PDCPale Dull Cyan');}
+}}if(r=='CC'){if(g=='00'){if(b=='00'){return('DHRDark Hard Red');}
+if(b=='33'){return('DRPDark Red Pink');}
+if(b=='66'){return('DHPDark Hard Pink');}
+if(b=='99'){return('DMPDark Magenta Pink');}
+if(b=='CC'){return('DHMDark Hard Magenta');}
+if(b=='FF'){return('MMVMagenta Magenta Violet');}
+}if(g=='33'){if(b=='00'){return('DRODark Red Orange');}
+if(b=='33'){return('MFRMedium Faded Red');}
+if(b=='66'){return('MPRMedium Pink Red');}
+if(b=='99'){return('MPMMedium Pink Magenta');}
+if(b=='CC'){return('MFMMedium Faded Magenta');}
+if(b=='FF'){return('LMVLight Magenta Violet');}
+}if(g=='66'){if(b=='00'){return('DHODark Hard Orange');}
+if(b=='33'){return('MORMedium Orange Red');}
+if(b=='66'){return('LDRLight Dull Red');}
+if(b=='99'){return('LDPLight Dull Pink');}
+if(b=='CC'){return('LDMLight Dull Magenta');}
+if(b=='FF'){return('LVMLight Violet Magenta');}
+}if(g=='99'){if(b=='00'){return('DYODark Yellow Orange');}
+if(b=='33'){return('MOYMedium Orange Yellow');}
+if(b=='66'){return('LDOLight Dull Orange');}
+if(b=='99'){return('LWRLight Weak Red');}
+if(b=='CC'){return('LWMLight Weak Magenta');}
+if(b=='FF'){return('PDVPale Dull Violet');}
+}if(g=='CC'){if(b=='00'){return('DHYDark Hard Yellow');}
+if(b=='33'){return('MFYMedium Faded Yellow');}
+if(b=='66'){return('LDYLight Dull Yellow');}
+if(b=='99'){return('LWYLight Weak Yellow');}
+if(b=='CC'){return(' PGPale Gray');}
+if(b=='FF'){return('PWBPale Weak Blue');}
+}if(g=='FF'){if(b=='00'){return('YYSYellow Yellow Spring');}
+if(b=='33'){return('LYSLight Yellow Spring');}
+if(b=='66'){return('LSYLight Spring Yellow');}
+if(b=='99'){return('PDSPale Dull Spring');}
+if(b=='CC'){return('PWGPale Weak Green');}
+if(b=='FF'){return('PWCPale Weak Cyan');}
+}}if(r=='FF'){if(g=='00'){if(b=='00'){return(' R Red');}
+if(b=='33'){return('RRPRed Red Pink');}
+if(b=='66'){return('PPRPink Pink Red');}
+if(b=='99'){return('PPMPink Pink Magenta');}
+if(b=='CC'){return('MMPMagenta Magenta Pink');}
+if(b=='FF'){return(' M Magenta');}
+}if(g=='33'){if(b=='00'){return('RRORed Red Orange');}
+if(b=='33'){return('LHRLight Hard Red');}
+if(b=='66'){return('LRPLight Red Pink');}
+if(b=='99'){return('LHPLight Hard Pink');}
+if(b=='CC'){return('LMPLight Magenta Pink');}
+if(b=='FF'){return('LHMLight Hard Magenta');}
+}if(g=='66'){if(b=='00'){return('OOROrange Orange Red');}
+if(b=='33'){return('LROLight Red Orange');}
+if(b=='66'){return('LFRLight Faded Red');}
+if(b=='99'){return('LPRLight Pink Red');}
+if(b=='CC'){return('LPMLight Pink Magenta');}
+if(b=='FF'){return('LFMLight Faded Magenta');}
+}if(g=='99'){if(b=='00'){return('OOYOrange Orange Yellow');}
+if(b=='33'){return('LHOLight Hard Orange');}
+if(b=='66'){return('LORLight Orange Red');}
+if(b=='99'){return('PDRPale Dull Red');}
+if(b=='CC'){return('PDPPale Dull Pink');}
+if(b=='FF'){return('PDMPale Dull Magenta');}
+}if(g=='CC'){if(b=='00'){return('YYOYellow Yellow Orange');}
+if(b=='33'){return('LYOLight Yellow Orange');}
+if(b=='66'){return('LOYLight Orange Yellow');}
+if(b=='99'){return('PDOPale Dull Orange');}
+if(b=='CC'){return('PWRPale Weak Red');}
+if(b=='FF'){return('PWMPale Weak Magenta');}
+}if(g=='FF'){if(b=='00'){return(' Y Yellow');}
+if(b=='33'){return('LHYLight Hard Yellow');}
+if(b=='66'){return('LFYLight Faded Yellow');}
+if(b=='99'){return('PDYPale Dull Yellow');}
+if(b=='CC'){return('PWYPale Weak Yellow');}
+if(b=='FF'){return(' W White');}
+
+They are using the following adjectives:
+Light, Hard, Faded, Pale, Dull, Weak, Dark, Deep, Vivid, Bright, Warm, Cool, Muted
+
+Also, some colors use two color names, like:
+
+Yellow yellow Orange
+Light Teal Green
+
+Some may make sense... especially with add "-ish" type modifiers:
+Reddish Pink
+Greenish Brown
+Ultramarine = purplish Blue
+warm magenta = purplish pink (or maybe pinkish purple)
+cool magenta = purple-pink
+
+Saturation - Vivid/(no modifier)/Dull
+Brightness - Light or Pale/Medium(or no modifier)/Dark or Deep
+
+---------------
+
+Tint/Shade
+Tint and shade describe colours formed by mixing a hue with white or black respectively. Tinting adds white to a colour to lighten it. Shading adds black to a colour to darken it.
+
+Adding increasing amounts of white creates progressively lighter tints. At 100% white mix, any hue becomes white. Adding increasing black creates progressively darker shades. At 100% black mix, any hue becomes black.
+
+Mix	Description
+10% white	Light tint
+20% white	Medium light tint
+50% white	High tint
+10% black	Light shade
+20% black	Medium dark shade
+50% black	Dark shade
+Tinting and shading allow hue and brightness to be adjusted independently. This helps generate a rich variety of colour mixtures useful for art and design applications.
+
+---------------
+
+I don't know what the rules are yet, but we can probably figure out our own basic rules.
+This would be for a 'friendly' color name.

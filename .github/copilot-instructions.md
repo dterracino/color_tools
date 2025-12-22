@@ -1,5 +1,38 @@
 # GitHub Copilot Instructions for color_tools
 
+## CRITICAL: Always Use the Virtual Environment
+
+**Before running ANY Python commands, scripts, or modules:**
+
+1. **CHECK** if you're in the virtual environment (look for `.venv` or .\`(.venv)` in terminal prompt)
+2. **ACTIVATE** if not already active:
+   - Windows PowerShell: `.\.venv\Scripts\Activate.ps1`
+   - Windows CMD: `.\.venv\Scripts\activate.bat`
+   - Linux/Mac: `source .venv/bin/activate`
+3. **THEN** run your Python commands
+
+**This applies to:**
+- Running the module: `python -m color_tools`
+- Running scripts: `python tooling/update_hashes.py`
+- Running tests: `python -m unittest discover tests`
+- **Installing packages: `pip install ...`** ⚠️ CRITICAL - NEVER install to system Python!
+- ANY Python execution whatsoever
+
+**NEVER:**
+- Run Python commands without checking the venv status first
+- Assume the venv is active just because it was active before
+- Use system Python when the project has a venv
+- **Install packages with pip when NOT in venv** - this pollutes the user's system Python environment!
+- Run `pip install` commands in terminal without confirming venv is active first
+
+**If you need to install a package:**
+1. **FIRST** verify venv is active (look for `(.venv)` in prompt)
+2. **IF NOT ACTIVE** - activate it first, then install
+3. **NEVER** install to system Python - this will pollute the user's environment with project dependencies
+
+The virtual environment ensures correct dependencies and Python version. Always activate it first.
+**Installing packages outside the venv contaminates the system Python installation!**
+
 ## CRITICAL: When You Don't Know Something
 
 **If you are uncertain about how something works, or don't have complete knowledge:**
