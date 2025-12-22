@@ -118,3 +118,24 @@ source_suffix = {
 html_css_files = [
     'custom.css',
 ]
+
+# GitHub Pages configuration
+# Copy .nojekyll to build directory to prevent Jekyll processing
+html_extra_path = []
+
+def setup(app):
+    """Sphinx setup hook to copy .nojekyll file to build root."""
+    import shutil
+    from pathlib import Path
+    
+    def copy_nojekyll(app, exception):
+        if exception is None and app.builder.format == 'html':
+            build_dir = Path(app.outdir)
+            nojekyll_src = Path(app.confdir) / '_static' / '.nojekyll'
+            nojekyll_dst = build_dir / '.nojekyll'
+            
+            if nojekyll_src.exists():
+                shutil.copy2(nojekyll_src, nojekyll_dst)
+                print(f"✓ Copied .nojekyll to {nojekyll_dst}")
+    
+    app.connect('build-finished', copy_nojekyll)

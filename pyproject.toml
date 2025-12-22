@@ -77,7 +77,7 @@ Homepage = "https://github.com/dterracino/color_tools"
 Repository = "https://github.com/dterracino/color_tools"
 Issues = "https://github.com/dterracino/color_tools/issues"
 Changelog = "https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md"
-Documentation = "https://github.com/dterracino/color_tools/blob/main/README.md"
+Documentation = "https://dterracino.github.io/color_tools/"
 
 [project.scripts]
 color_tools = "color_tools.cli:main"
