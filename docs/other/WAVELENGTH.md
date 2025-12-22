@@ -173,6 +173,7 @@ python -m color_tools convert --from hsl --to wavelength --value 120 100 50
 ### CLI Output Examples
 
 **RGB → Wavelength:**
+
 ```bash
 $ python -m color_tools convert --from rgb --to wavelength --value 255 0 0
 
@@ -184,6 +185,7 @@ Note: This is pure spectral red - a single wavelength LED at 700nm would closely
 ```
 
 **Wavelength → RGB:**
+
 ```bash
 $ python -m color_tools convert --from wavelength --to rgb --value 550
 
@@ -194,9 +196,8 @@ Gamut status: In sRGB gamut
 Spectral purity: 100% (pure wavelength)
 Color name: Green
 Note: Peak sensitivity wavelength for human vision - appears brightest green possible.
-```
-
 **Out-of-gamut wavelength:**
+
 ```bash
 $ python -m color_tools convert --from wavelength --to rgb --value 480
 
@@ -211,6 +212,7 @@ Note: True 480nm light appears more vivid than any RGB display can show.
 ```
 
 **Non-spectral color:**
+
 ```bash
 $ python -m color_tools convert --from rgb --to wavelength --value 255 0 255
 
@@ -438,17 +440,20 @@ def get_visibility_rating(wavelength_nm: float) -> str:
 
 ### Data Dependencies
 
-**1. CIE 1931 Color Matching Functions (x̄, ȳ, z̄)**
+#### CIE 1931 Color Matching Functions (x̄, ȳ, z̄)
+
 - Maps wavelength to XYZ tristimulus values
 - Needed for wavelength → RGB conversion
 - Standard colorimetric data from CIE
 
-**2. Spectral Locus Data**
+#### Spectral Locus Data
+
 - Wavelength → (x, y) chromaticity coordinates
 - Needed for RGB → wavelength conversion
 - Derived from color matching functions
 
-**3. Standard Illuminant Data**
+#### Standard Illuminant Data
+
 - D65 white point for normalization
 - Already available in existing constants
 
@@ -523,6 +528,7 @@ def wavelength_to_xyz(wavelength_nm: float) -> tuple[float, float, float]:
 ### Module Organization
 
 **New module: `wavelength.py`**
+
 ```python
 # Core wavelength conversion functions
 def rgb_to_wavelength(rgb: tuple[int, int, int]) -> tuple[float, float, str]:
@@ -542,6 +548,7 @@ def calculate_spectral_purity(rgb: tuple[int, int, int]) -> float:
 ### CLI Integration Points
 
 **Modified files:**
+
 - `cli.py`: Add wavelength support to convert command
 - `conversions.py`: Add wavelength conversion wrappers if needed
 - `__init__.py`: Export wavelength functions
@@ -568,21 +575,25 @@ SUPPORTED_SPACES = {
 ## Educational and Scientific Applications
 
 ### 1. Physics Education
+
 - Demonstrate relationship between light wavelength and perceived color
 - Show limitations of RGB displays vs. real spectrum
 - Illustrate concept of metamerism (different spectra, same color)
 
 ### 2. LED and Lighting Design
+
 - Help select LED wavelengths for desired colors
 - Analyze RGB color accuracy for different LED combinations
 - Optimize LED arrays for color reproduction
 
 ### 3. Spectroscopy and Optics
+
 - Convert spectral measurements to displayable colors
 - Analyze color accuracy of optical instruments
 - Design color filters and optical systems
 
 ### 4. Display Technology
+
 - Analyze gamut limitations of different display types
 - Compare LCD vs OLED vs laser display capabilities
 - Optimize display calibration for specific applications
@@ -590,6 +601,7 @@ SUPPORTED_SPACES = {
 ## CLI Command Examples
 
 ### Basic Conversions
+
 ```bash
 # Simple wavelength lookup
 python -m color_tools convert --from rgb --to wavelength --value 255 0 0
@@ -603,6 +615,7 @@ python -m color_tools convert --from wavelength --to rgb,hex,lab --value 550
 ```
 
 ### Advanced Analysis
+
 ```bash
 # Round-trip quality analysis
 python -m color_tools convert --value 550 --round-trip wavelength
@@ -618,6 +631,7 @@ python -m color_tools wavelength --find-leds --hex "#FF00FF"
 ```
 
 ### Educational Commands
+
 ```bash
 # Show gamut limitations
 python -m color_tools wavelength --show-gamut-limits --range 380:780:20
@@ -632,21 +646,25 @@ python -m color_tools wavelength --generate-spectrum --output spectrum.png
 ## Future Enhancements
 
 ### 1. Spectral Data Analysis
+
 - Import/export spectral measurement data
 - Analyze color accuracy of measurement devices
 - Convert spectrometer data to RGB representations
 
 ### 2. Advanced LED Design
+
 - Multi-LED optimization algorithms
 - Color temperature considerations
 - Power efficiency calculations
 
 ### 3. Display Gamut Analysis
+
 - Compare different display technologies
 - Optimize content for specific display types
 - Generate gamut visualization tools
 
 ### 4. Real-World Applications
+
 - Sunset/sunrise color analysis
 - Gem and mineral color characterization
 - Paint and pigment spectral analysis
@@ -654,18 +672,21 @@ python -m color_tools wavelength --generate-spectrum --output spectrum.png
 ## Testing Strategy
 
 ### Unit Tests
+
 - Test known wavelength → RGB conversions
 - Verify spectral locus distance calculations
 - Test confidence metric accuracy
 - Validate round-trip conversion quality
 
 ### Integration Tests  
+
 - CLI command functionality
 - Cross-space conversion accuracy
 - Output formatting consistency
 - Error handling for invalid wavelengths
 
 ### Scientific Validation
+
 - Compare results with published spectral data
 - Validate against other color science libraries
 - Test with real spectrometer measurements
@@ -674,18 +695,21 @@ python -m color_tools wavelength --generate-spectrum --output spectrum.png
 ## Questions for Future Resolution
 
 ### Technical Decisions
+
 1. **Data source**: Which spectral locus dataset to use as reference?
 2. **Interpolation**: How to handle wavelengths between data points?
 3. **Confidence mapping**: How to calibrate distance → confidence conversion?
 4. **Gamut mapping**: Which clamping algorithm for out-of-gamut wavelengths?
 
 ### Feature Scope
+
 1. **Wavelength range**: Support 380-780nm or extend further?
 2. **Precision**: 1nm steps or higher resolution?
 3. **Multi-wavelength**: Support for spectral power distributions?
 4. **LED database**: Include specific LED wavelength characteristics?
 
 ### User Experience
+
 1. **Output verbosity**: How much metadata to show by default?
 2. **Educational content**: Level of scientific detail in explanations?
 3. **Visualization**: ASCII spectrum display in terminal?

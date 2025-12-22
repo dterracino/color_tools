@@ -7,7 +7,7 @@ A comprehensive Python library for color science operations, color space convers
 ## 📚 Documentation
 
 | Document | Description |
-|----------|-------------|
+| ----------- | ------------- |
 | [Installation](https://github.com/dterracino/color_tools/blob/main/docs/Installation.md) | Setup, dependencies, development install |
 | [Usage](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) | Library API, CLI commands, examples |
 | [Customization](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md) | Data files, custom palettes, configuration |
@@ -97,7 +97,7 @@ See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage
 ## 🎨 Color Spaces
 
 | Space | Description | Range |
-|-------|-------------|-------|
+| ------- | ------------- | ------- |
 | **RGB** | Red, Green, Blue | 0-255 per component |
 | **HSL** | Hue, Saturation, Lightness | H: 0-360°, S: 0-100%, L: 0-100% |
 | **LAB** | Perceptually uniform | L: 0-100, a/b: ±100 |
@@ -108,7 +108,7 @@ See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage
 ## 📏 Distance Metrics
 
 | Metric | Use Case |
-|--------|----------|
+| -------- | ---------- |
 | **CIEDE2000** (`de2000`) | **Recommended** - Gold standard for perceptual accuracy |
 | **CIE94** (`de94`) | Good balance of accuracy and performance |
 | **CIE76** (`de76`) | Fast, simple Euclidean in LAB space |

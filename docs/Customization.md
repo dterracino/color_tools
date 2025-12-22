@@ -166,19 +166,22 @@ User data is automatically loaded and merged with core data. User files are opti
 User files **automatically override** core data when there are conflicts, ensuring your customizations always take priority:
 
 #### **Override Behavior:**
+
 - **Name conflicts**: User colors/filaments with the same name override core entries
 - **RGB conflicts**: User colors/filaments with the same RGB values override core entries
 - **Consistent lookups**: All search methods (name, RGB, nearest neighbor) return user overrides consistently
 - **Source tracking**: Every record tracks its source file (colors.json, user-colors.json, cga4.json, etc.)
 
 #### **Override Detection:**
+
 ```bash
 # Check what user data overrides core data
 color-tools --check-overrides
 ```
 
 **Example output:**
-```
+
+```text
 User Override Report
 ==================================================
 
@@ -199,6 +202,7 @@ Active Sources:
 ```
 
 #### **Source Information in Output:**
+
 All CLI commands now show the source file:
 
 ```bash
@@ -212,6 +216,7 @@ Nearest color: red (distance=0.00) [from user-colors.json]
 ```
 
 #### **Common Use Cases:**
+
 - **Brand colors**: Override "red" with your company's specific red shade
 - **Monitor calibration**: Adjust colors for display differences
 - **Personal preferences**: Custom color naming and values
@@ -219,6 +224,7 @@ Nearest color: red (distance=0.00) [from user-colors.json]
 - **Hardware-specific**: Printer or monitor-specific color corrections
 
 #### **Programmatic Access:**
+
 ```python
 from color_tools import Palette
 
@@ -265,7 +271,7 @@ print(f"Nearest color: {nearest.name} ({nearest.hex})")
 ### Built-in Palettes
 
 | Palette | Colors | Description |
-|---------|--------|-------------|
+| --------- | -------- | ------------- |
 | `cga4` | 4 | CGA 4-color (Palette 1, high intensity) |
 | `cga16` | 16 | CGA 16-color (full RGBI palette) |
 | `ega16` | 16 | EGA 16-color (standard/default palette) |
