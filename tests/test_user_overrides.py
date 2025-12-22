@@ -142,6 +142,7 @@ class TestColorOverrides(TestUserOverrideSystem):
         # Name lookup should return user override
         red_color = palette.find_by_name("red")
         self.assertIsNotNone(red_color)
+        assert red_color is not None  # Type assertion for Pylance
         self.assertEqual(red_color.source, "user-colors.json")
         self.assertEqual(red_color.hex, "#DC143C")
         self.assertEqual(red_color.rgb, (220, 20, 60))
@@ -149,11 +150,13 @@ class TestColorOverrides(TestUserOverrideSystem):
         # Both RGB values should be accessible since they're different
         core_red_rgb = palette.find_by_rgb((255, 0, 0))
         self.assertIsNotNone(core_red_rgb)  # Core RGB still accessible
+        assert core_red_rgb is not None  # Type assertion for Pylance
         self.assertEqual(core_red_rgb.source, "colors.json")
         
         # User RGB should be findable  
         user_red_rgb = palette.find_by_rgb((220, 20, 60))
         self.assertIsNotNone(user_red_rgb)
+        assert user_red_rgb is not None  # Type assertion for Pylance
         self.assertEqual(user_red_rgb.name, "red")
         self.assertEqual(user_red_rgb.source, "user-colors.json")
     
@@ -178,16 +181,19 @@ class TestColorOverrides(TestUserOverrideSystem):
         # RGB lookup should return user override (user wins RGB conflicts)
         blue_rgb = palette.find_by_rgb((0, 0, 255))
         self.assertIsNotNone(blue_rgb)
+        assert blue_rgb is not None  # Type assertion for Pylance
         self.assertEqual(blue_rgb.source, "user-colors.json")
         self.assertEqual(blue_rgb.name, "my_blue")
         
         # Both names should still be accessible since no name conflict
         core_blue = palette.find_by_name("blue")
         self.assertIsNotNone(core_blue)  # Core name still accessible
+        assert core_blue is not None  # Type assertion for Pylance
         self.assertEqual(core_blue.source, "colors.json")
         
         user_blue = palette.find_by_name("my_blue")
         self.assertIsNotNone(user_blue)
+        assert user_blue is not None  # Type assertion for Pylance
         self.assertEqual(user_blue.source, "user-colors.json")
     
     def test_color_addition_no_conflict(self):
@@ -213,12 +219,15 @@ class TestColorOverrides(TestUserOverrideSystem):
         green = palette.find_by_name("green")
         
         self.assertIsNotNone(red)
+        assert red is not None  # Type assertion for Pylance
         self.assertEqual(red.source, "colors.json")
         
         self.assertIsNotNone(blue)
+        assert blue is not None  # Type assertion for Pylance
         self.assertEqual(blue.source, "colors.json")
         
         self.assertIsNotNone(green)
+        assert green is not None  # Type assertion for Pylance
         self.assertEqual(green.source, "user-colors.json")
     
     def test_color_nearest_color_priority(self):
@@ -242,6 +251,7 @@ class TestColorOverrides(TestUserOverrideSystem):
         # Exact match should return user override
         nearest, distance = palette.nearest_color((220, 20, 60), space="rgb")
         self.assertEqual(distance, 0.0)
+        assert nearest is not None  # Type assertion for Pylance
         self.assertEqual(nearest.source, "user-colors.json")
         self.assertEqual(nearest.name, "red")
 
@@ -272,6 +282,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         
         # First result should be user filament
         first_result = red_filaments[0]
+        assert first_result is not None  # Type assertion for Pylance
         self.assertEqual(first_result.source, "user-filaments.json")
         self.assertEqual(first_result.maker, "Custom Maker")
         self.assertEqual(first_result.type, "PETG")
@@ -296,6 +307,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         # Exact match should return user filament
         nearest, distance = palette.nearest_filament((0, 0, 255))
         self.assertEqual(distance, 0.0)
+        assert nearest is not None  # Type assertion for Pylance
         self.assertEqual(nearest.source, "user-filaments.json")
         self.assertEqual(nearest.maker, "User Maker")
     
@@ -345,6 +357,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         # Should find new maker
         new_maker_filaments = palette.find_by_maker("New Maker")
         self.assertEqual(len(new_maker_filaments), 1)
+        assert len(new_maker_filaments) > 0  # Type assertion for Pylance
         self.assertEqual(new_maker_filaments[0].source, "user-filaments.json")
         
         # Original makers should still exist
@@ -614,12 +627,14 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         
         # Test color override
         red = color_palette.find_by_name("red")
+        assert red is not None  # Type assertion for Pylance
         self.assertEqual(red.source, "user-colors.json")
         self.assertEqual(red.hex, "#DC143C")
         
         # Test filament override
         blue_filaments = filament_palette.find_by_rgb((0, 0, 255))
         user_filament = blue_filaments[0]  # Should be first (prioritized)
+        assert user_filament is not None  # Type assertion for Pylance
         self.assertEqual(user_filament.source, "user-filaments.json")
         self.assertEqual(user_filament.maker, "Custom Maker")
         
@@ -634,6 +649,7 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         # Test new maker synonyms
         custom_maker = filament_palette.find_by_maker("CM")
         self.assertGreater(len(custom_maker), 0)
+        assert len(custom_maker) > 0  # Type assertion for Pylance
         self.assertEqual(custom_maker[0].maker, "Custom Maker")
     
     def test_override_transparency_and_logging(self):
