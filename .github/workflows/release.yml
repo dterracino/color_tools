@@ -5,6 +5,9 @@ on:
     tags:
       - 'v*.*.*'  # Triggers on version tags like v3.3.0, v3.3.1, etc.
 
+# Note: Documentation is automatically deployed by the docs.yml workflow
+# which also triggers on version tags. No additional action needed here.
+
 permissions:
   contents: write  # Required to create releases
 
