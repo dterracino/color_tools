@@ -175,7 +175,8 @@ class ColorConstants:
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
     # Updated 2025-12-03: Changed cyan/magenta colors, updated COLORS_JSON_HASH
-    _EXPECTED_HASH = "2a42cc204ef7783eaa45199e837220a13decbcea967ab3e234421d16136c4522"
+    _EXPECTED_HASH = "ae879b7de3d11b651970612cdead003744c20e731032456e9388bb17c6187815"
+    # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================
     # Data File Integrity Hashes
@@ -204,10 +205,10 @@ class ColorConstants:
     VIRTUALBOY_PALETTE_HASH = "218854f6dc6506649e6ff14f92f56ff996b7c01a36c916b0374880c8524c40a9"
     WEB_PALETTE_HASH = "ba4ad53ece01d2f1338ae13221aa04e5c342519d7750d948458074001a465e7d"
     
-    # User data files (optional, not verified)
-    USER_COLORS_JSON_FILENAME = "user-colors.json"
-    USER_FILAMENTS_JSON_FILENAME = "user-filaments.json"
-    USER_SYNONYMS_JSON_FILENAME = "user-synonyms.json"
+    # User data files (optional, not verified) - now in user/ subdirectory
+    USER_COLORS_JSON_FILENAME = "user/user-colors.json"
+    USER_FILAMENTS_JSON_FILENAME = "user/user-filaments.json"
+    USER_SYNONYMS_JSON_FILENAME = "user/user-synonyms.json"
     
     # ========================================================================
     # Transformation Matrices Integrity Hash
@@ -361,5 +362,141 @@ class ColorConstants:
             # Hash hasn't been set yet - skip verification
             return True
         return cls._compute_matrices_hash() == cls.MATRICES_EXPECTED_HASH
+    
+    @classmethod
+    def generate_user_data_hash(cls, file_path: "Path | str") -> str:
+        """
+        Generate SHA-256 hash for a user data file.
+        
+        Args:
+            file_path: Path to user data file
+            
+        Returns:
+            SHA-256 hash of the file contents
+            
+        Raises:
+            FileNotFoundError: If file doesn't exist
+        """
+        from pathlib import Path
+        
+        path = Path(file_path)
+        if not path.exists():
+            raise FileNotFoundError(f"User data file not found: {path}")
+        
+        return hashlib.sha256(path.read_bytes()).hexdigest()
+    
+    @classmethod
+    def save_user_data_hash(cls, file_path: "Path | str", hash_value: str | None = None) -> "Path":
+        """
+        Save SHA-256 hash for a user data file to a .sha256 file.
+        
+        Args:
+            file_path: Path to user data file
+            hash_value: Optional pre-computed hash. If None, will compute from file.
+            
+        Returns:
+            Path to the created .sha256 file
+            
+        Raises:
+            FileNotFoundError: If file doesn't exist
+        """
+        from pathlib import Path
+        
+        path = Path(file_path)
+        if not path.exists():
+            raise FileNotFoundError(f"User data file not found: {path}")
+        
+        if hash_value is None:
+            hash_value = cls.generate_user_data_hash(path)
+        
+        hash_file = path.with_suffix(path.suffix + ".sha256")
+        hash_file.write_text(f"{hash_value}  {path.name}\n")
+        
+        return hash_file
+    
+    @classmethod
+    def verify_user_data_file(cls, file_path: "Path | str") -> tuple[bool, str | None]:
+        """
+        Verify user data file against its .sha256 file if it exists.
+        
+        Args:
+            file_path: Path to user data file
+            
+        Returns:
+            Tuple of (is_valid, error_message)
+            - is_valid: True if file is valid or no hash file exists
+            - error_message: None if valid, error description if invalid
+        """
+        from pathlib import Path
+        
+        path = Path(file_path)
+        if not path.exists():
+            return False, f"User data file not found: {path}"
+        
+        hash_file = path.with_suffix(path.suffix + ".sha256")
+        if not hash_file.exists():
+            # No hash file means no verification required
+            return True, None
+        
+        try:
+            hash_content = hash_file.read_text().strip()
+            # Extract hash from "hash  filename" format
+            expected_hash = hash_content.split()[0] if hash_content else ""
+            
+            actual_hash = cls.generate_user_data_hash(path)
+            
+            if actual_hash == expected_hash:
+                return True, None
+            else:
+                return False, f"Hash mismatch for {path.name}: expected {expected_hash[:8]}..., got {actual_hash[:8]}..."
+                
+        except Exception as e:
+            return False, f"Error verifying {path.name}: {e}"
+    
+    @classmethod
+    def verify_all_user_data(cls, data_dir: "Path | str | None" = None) -> tuple[bool, list[str]]:
+        """
+        Verify integrity of all user data files in the user/ subdirectory.
+        
+        Only files with corresponding .sha256 files are verified.
+        
+        Args:
+            data_dir: Optional custom data directory. If None, uses package data directory.
+            
+        Returns:
+            Tuple of (all_valid, list_of_errors)
+            - all_valid: True if all files with hash files pass verification
+            - list_of_errors: List of error messages for any failed verifications
+        """
+        from pathlib import Path
+        
+        if data_dir is None:
+            # Use package data directory
+            data_dir = Path(__file__).parent / "data"
+        else:
+            data_dir = Path(data_dir)
+        
+        user_dir = data_dir / "user"
+        if not user_dir.exists():
+            # No user directory means no user files to verify
+            return True, []
+        
+        errors = []
+        
+        # Check all user data files
+        user_files = [
+            cls.USER_COLORS_JSON_FILENAME,
+            cls.USER_FILAMENTS_JSON_FILENAME,
+            cls.USER_SYNONYMS_JSON_FILENAME
+        ]
+        
+        for filename in user_files:
+            file_path = data_dir / filename
+            if file_path.exists():
+                is_valid, error_msg = cls.verify_user_data_file(file_path)
+                if not is_valid and error_msg:
+                    errors.append(error_msg)
+        
+        return (len(errors) == 0, errors)
 
 

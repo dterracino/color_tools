@@ -186,6 +186,72 @@ def _show_override_report(json_dir: str | None = None):
         # Clean up logging
         logger.removeHandler(handler)
 
+def _generate_user_hashes(json_dir: str | None = None):
+    """
+    Generate .sha256 files for all user data files and exit.
+    
+    Creates hash files for user/user-colors.json, user/user-filaments.json, and 
+    user/user-synonyms.json if they exist.
+    
+    Args:
+        json_dir: Optional directory containing data files. If None, uses package default.
+    """
+    from pathlib import Path
+    
+    # Determine data directory
+    if json_dir:
+        data_dir = Path(json_dir)
+        if not data_dir.exists():
+            print(f"Error: Data directory does not exist: {data_dir}", file=sys.stderr)
+            sys.exit(1)
+        if not data_dir.is_dir():
+            print(f"Error: --json must be a directory: {data_dir}", file=sys.stderr)
+            sys.exit(1)
+    else:
+        data_dir = Path(__file__).parent / "data"
+    
+    user_dir = data_dir / "user"
+    
+    if not user_dir.exists():
+        print(f"No user data directory found at: {user_dir}")
+        print("Create user data files first, then run this command to generate hashes.")
+        sys.exit(0)
+    
+    print("Generating SHA-256 hash files for user data...")
+    print("=" * 50)
+    
+    # Files to check for hash generation
+    user_files = [
+        (ColorConstants.USER_COLORS_JSON_FILENAME, "colors"),
+        (ColorConstants.USER_FILAMENTS_JSON_FILENAME, "filaments"),
+        (ColorConstants.USER_SYNONYMS_JSON_FILENAME, "synonyms")
+    ]
+    
+    generated_count = 0
+    
+    for filename, display_name in user_files:
+        file_path = data_dir / filename
+        
+        if file_path.exists():
+            try:
+                hash_file = ColorConstants.save_user_data_hash(file_path)
+                hash_value = ColorConstants.generate_user_data_hash(file_path)
+                print(f"✓ Generated {hash_file.name}")
+                print(f"  File: {file_path.name}")
+                print(f"  Hash: {hash_value}")
+                generated_count += 1
+            except Exception as e:
+                print(f"✗ Failed to generate hash for {file_path.name}: {e}", file=sys.stderr)
+        else:
+            print(f"  Skipped {display_name}: {file_path.name} not found")
+    
+    if generated_count > 0:
+        print(f"\nGenerated {generated_count} hash file(s) successfully.")
+        print("\nTo verify integrity later, use: --verify-user-data")
+    else:
+        print("\nNo user data files found to generate hashes for.")
+        print("Create user data files (user/user-colors.json, etc.) first.")
+
 def handle_image_command(args):
     """Handle all image processing commands."""
     if not IMAGE_AVAILABLE:
@@ -333,6 +399,39 @@ def _get_program_name() -> str:
         return "color-tools"
 
 
+def _get_available_palettes(json_path: "Path | str | None" = None) -> list[str]:
+    """
+    Get list of available palette names from both core and user palettes.
+    
+    Args:
+        json_path: Optional custom data directory. If None, uses package default.
+    
+    Returns:
+        Sorted list of available palette names
+    """
+    # Determine data directory
+    if json_path is None:
+        data_dir = Path(__file__).parent / "data"
+    else:
+        data_dir = Path(json_path)
+    
+    available = []
+    
+    # Core palettes
+    core_palettes_dir = data_dir / "palettes"
+    if core_palettes_dir.exists():
+        available.extend([p.stem for p in core_palettes_dir.glob("*.json")])
+    
+    # User palettes (only user-*.json files)
+    user_palettes_dir = data_dir / "user" / "palettes"
+    if user_palettes_dir.exists():
+        user_palettes = [p.stem for p in user_palettes_dir.glob("user-*.json")]
+        available.extend(user_palettes)
+    
+    # No need to remove duplicates since user palettes have user- prefix
+    return sorted(available)
+
+
 def main():
     """
     Main entry point for the CLI.
@@ -420,12 +519,22 @@ Examples:
     parser.add_argument(
         "--verify-all",
         action="store_true",
-        help="Verify integrity of constants, data files, and matrices before proceeding"
+        help="Verify integrity of constants, data files, matrices, and user data before proceeding"
+    )
+    parser.add_argument(
+        "--verify-user-data",
+        action="store_true",
+        help="Verify integrity of user data files (user/user-colors.json, user/user-filaments.json) against .sha256 files"
+    )
+    parser.add_argument(
+        "--generate-user-hashes",
+        action="store_true",
+        help="Generate .sha256 files for all user data files and exit"
     )
     parser.add_argument(
         "--check-overrides",
         action="store_true",
-        help="Show report of user overrides (user-colors.json, user-filaments.json) and exit"
+        help="Show report of user overrides (user/user-colors.json, user/user-filaments.json) and exit"
     )
     
     # Create subparsers for the three main commands
@@ -488,8 +597,7 @@ Examples:
     color_parser.add_argument(
         "--palette",
         type=str,
-        choices=["cga4", "cga16", "commodore64", "ega16", "ega64", "gameboy", "gameboy_dmg", "gameboy_gbl", "gameboy_mgb", "nes", "sms", "vga", "virtualboy", "web"],
-        help="Use a retro palette instead of CSS colors. Available: cga4, cga16, commodore64, ega16, ega64, gameboy, gameboy_dmg, gameboy_gbl, gameboy_mgb, nes, sms, vga, virtualboy, web"
+        help="Use a retro palette instead of CSS colors. Common palettes include: cga4, cga16, ega16, ega64, vga, web, gameboy. Use '--palette list' to see all available palettes including user-created ones."
     )
     color_parser.add_argument(
         "--count",
@@ -753,7 +861,7 @@ Examples:
         image_parser.add_argument(
             "--quantize-palette",
             type=str,
-            help="Convert image to specified retro palette (e.g., cga4, ega16, vga, gameboy, commodore64)"
+            help="Convert image to specified retro palette. Built-in: cga4, ega16, vga, gameboy, commodore64. Custom user palettes must use 'user-' prefix (e.g., user-mycustom)."
         )
         image_parser.add_argument(
             "--metric",
@@ -783,6 +891,12 @@ Examples:
         args.verify_constants = True
         args.verify_data = True
         args.verify_matrices = True
+        args.verify_user_data = True
+    
+    # Handle --generate-user-hashes flag (early exit)
+    if args.generate_user_hashes:
+        _generate_user_hashes(args.json)
+        sys.exit(0)
     
     # Verify constants integrity if requested
     if args.verify_constants:
@@ -817,13 +931,34 @@ Examples:
             sys.exit(1)
         print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 14 palettes)")
     
+    # Verify user data files integrity if requested
+    if args.verify_user_data:
+        # Determine data directory (use args.json if provided, otherwise None for default)
+        data_dir = Path(args.json) if args.json else None
+        all_valid, errors = ColorConstants.verify_all_user_data(data_dir)
+        
+        if not all_valid:
+            print("ERROR: User data file integrity check FAILED!", file=sys.stderr)
+            for error in errors:
+                print(f"  {error}", file=sys.stderr)
+            sys.exit(1)
+        
+        # Count files checked
+        user_dir = (data_dir or (Path(__file__).parent / "data")) / "user"
+        if user_dir.exists():
+            hash_files = list(user_dir.glob("*.sha256"))
+            if hash_files:
+                print(f"✓ User data files integrity verified ({len(hash_files)} files checked)")
+            else:
+                print("✓ No user data hash files found to verify")
+    
     # Handle --check-overrides flag
     if args.check_overrides:
         _show_override_report(args.json)
         sys.exit(0)
     
     # If only verifying (no other command), exit after success
-    if (args.verify_constants or args.verify_data or args.verify_matrices) and not args.command:
+    if (args.verify_constants or args.verify_data or args.verify_matrices or args.verify_user_data) and not args.command:
         sys.exit(0)
     
     # Handle no subcommand
@@ -852,7 +987,29 @@ Examples:
         
         # Load color palette (either custom retro palette or default CSS colors)
         if args.palette:
-            palette = load_palette(args.palette)
+            # Special case: list available palettes
+            if args.palette.lower() == "list":
+                available_palettes = _get_available_palettes(json_path)
+                if available_palettes:
+                    print("Available palettes:")
+                    for palette_name in available_palettes:
+                        print(f"  {palette_name}")
+                else:
+                    print("No palettes found")
+                sys.exit(0)
+            
+            # Load the specified palette
+            try:
+                palette = load_palette(args.palette, json_path)
+            except FileNotFoundError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                available_palettes = _get_available_palettes(json_path)
+                if available_palettes:
+                    print(f"Available palettes: {', '.join(available_palettes)}", file=sys.stderr)
+                sys.exit(1)
+            except ValueError as e:
+                print(f"Error loading palette: {e}", file=sys.stderr)
+                sys.exit(1)
         else:
             palette = Palette(load_colors(json_path))
         

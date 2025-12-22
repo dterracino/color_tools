@@ -92,9 +92,9 @@ class TestColorConstants(unittest.TestCase):
     
     def test_user_json_filenames(self):
         """Test user JSON filename constants."""
-        self.assertEqual(ColorConstants.USER_COLORS_JSON_FILENAME, "user-colors.json")
-        self.assertEqual(ColorConstants.USER_FILAMENTS_JSON_FILENAME, "user-filaments.json")
-        self.assertEqual(ColorConstants.USER_SYNONYMS_JSON_FILENAME, "user-synonyms.json")
+        self.assertEqual(ColorConstants.USER_COLORS_JSON_FILENAME, "user/user-colors.json")
+        self.assertEqual(ColorConstants.USER_FILAMENTS_JSON_FILENAME, "user/user-filaments.json")
+        self.assertEqual(ColorConstants.USER_SYNONYMS_JSON_FILENAME, "user/user-synonyms.json")
 
 
 class TestConstantsImmutability(unittest.TestCase):

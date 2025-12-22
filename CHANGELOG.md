@@ -14,6 +14,79 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.0.0] - 2025-12-22
+
+### Added
+
+- **Custom User Palettes** - Full support for user-created retro palettes:
+  - Create custom palettes in `data/user/palettes/user-*.json`
+  - Automatic discovery and CLI integration (`--palette list`, `--palette user-mycustom`)
+  - Full image processing support (`quantize_image_to_palette` with user palettes)
+  - Comprehensive error handling with helpful guidance
+  - 10 new test cases covering all user palette scenarios
+
+### Changed
+
+- **BREAKING: User Palette Naming** - User palettes now **require** `user-` prefix for security and clarity:
+  - User palette files **must** be named `user-*.json` (e.g., `user-cyberpunk.json`)
+  - Access via `--palette user-cyberpunk` (not just `cyberpunk`)
+  - Core palettes are protected from accidental override
+  - Clear separation between built-in and user palettes
+  - Enhanced error messages guide users to correct naming
+- **Enhanced Palette Loading** - `load_palette()` function updated with user palette support:
+  - Automatic detection of user vs core palettes based on name prefix
+  - No more silent overriding of core palettes
+  - Improved error messages with available palette listing
+- **Updated Documentation** - FAQ and CLI help updated to reflect `user-` prefix requirement
+
+### Migration Guide
+
+If you have existing user palettes without `user-` prefix:
+
+```bash
+# Before: mycustom.json → --palette mycustom
+# After:  user-mycustom.json → --palette user-mycustom
+
+# Rename your palette files:
+mv data/user/palettes/mycustom.json data/user/palettes/user-mycustom.json
+
+# Update your commands:
+color-tools color --palette user-mycustom --nearest --value 255 0 0
+```
+
+## [4.0.0] - 2025-12-22
+
+### Added
+
+- **Comprehensive FAQ Section** - Added detailed User Customization section to FAQ.md with 8 common questions covering all user override scenarios, file formats, conflict resolution, and troubleshooting
+- **User Data Hash Verification** - New hash file support for user data integrity:
+  - Generate `.sha256` hash files for user data with `--generate-user-hashes`
+  - Verify user data integrity with `--verify-user-data`
+  - Automatic hash checking when `.sha256` files exist alongside user data
+  - Enhanced `--verify-all` to include both core and user data verification
+- **Enhanced Documentation** - Comprehensive user override examples, troubleshooting guides, and best practices
+
+### Changed
+
+- **🚨 BREAKING: User Data Directory Structure** - User override files moved to organized subdirectory structure:
+  - **Old locations** (no longer supported):
+    - `data/user-colors.json` → `data/user/colors.json`
+    - `data/user-filaments.json` → `data/user/filaments.json`
+    - `data/user-synonyms.json` → `data/user/synonyms.json`
+  - **New structure**: All user files now go in `data/user/` subdirectory
+  - **Rationale**: Cleaner separation of core vs user data, better organization, easier to manage and document
+  - **Migration**: Users must manually move their files to the new locations - no automatic migration provided
+
+### Removed
+
+- **🚨 BREAKING: Legacy User File Support** - No longer supports user override files in the root `data/` directory. All user files must be in `data/user/` subdirectory
+
+### Developer Notes
+
+- This is a major version bump due to breaking changes in user data file locations
+- The new directory structure provides better organization and clearer separation of concerns
+- Hash verification adds data integrity protection for user customizations
+
 ## [3.8.1] - 2025-12-22
 
 ### Fixed

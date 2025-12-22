@@ -10,7 +10,7 @@ This module provides:
 The palette classes are like databases with multiple indexes - you can
 search by name, RGB, HSL, maker, type, etc. and get instant results!
 
-User files (user-colors.json, user-filaments.json) always override core
+User files (user/user-colors.json, user/user-filaments.json) always override core
 data when there are conflicts. Override information is logged for transparency.
 
 Example:
@@ -332,8 +332,8 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     """
     Load CSS color database from JSON files (core + user additions).
     
-    Loads colors from both the core colors.json file and optional user-colors.json
-    file in the same directory. Core colors are loaded first, followed by user colors.
+    Loads colors from both the core colors.json file and optional user/user-colors.json
+    file in the data directory. Core colors are loaded first, followed by user colors.
     
     Args:
         json_path: Path to directory containing JSON files, or path to specific
@@ -419,7 +419,7 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
     Load filament database from JSON files (core + user additions).
     
     Loads filaments from both the core filaments.json file and optional 
-    user-filaments.json file in the same directory. Core filaments are loaded 
+    user/user-filaments.json file in the data directory. Core filaments are loaded 
     first, followed by user filaments.
     
     Args:
@@ -514,8 +514,8 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     Load maker synonyms from JSON files (core + user additions).
     
     Loads synonyms from both the core maker_synonyms.json file and optional
-    user-synonyms.json file in the same directory. Synonyms are merged, with
-    user additions extending (not replacing) core synonyms.
+    user/user-synonyms.json file in the data directory. Synonyms are merged, with
+    user additions extending or replacing core synonyms per maker.
     
     Args:
         json_path: Path to directory containing JSON files, or path to specific
@@ -590,14 +590,17 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     return synonyms
 
 
-def load_palette(name: str) -> 'Palette':
+def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     """
     Load a named retro palette from the palettes directory.
     
-    Palettes are automatically discovered from JSON files in the 
-    color_tools/data/palettes/ directory.
+    Palettes are loaded from:
+    1. User palettes: data/user/palettes/{name}.json (if exists)  
+    2. Core palettes: data/palettes/{name}.json (built-in)
     
-    Common palettes include:
+    User palettes override core palettes with the same name.
+    
+    Common built-in palettes include:
     - cga4: CGA 4-color palette (Palette 1, high intensity) - classic gaming!
     - cga16: CGA 16-color palette (full RGBI)
     - ega16: EGA 16-color palette (standard/default)
@@ -607,7 +610,8 @@ def load_palette(name: str) -> 'Palette':
     - gameboy: Game Boy 4-shade green palette
     
     Args:
-        name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web')
+        name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web', or custom user palette)
+        json_path: Optional custom data directory. If None, uses package default.
     
     Returns:
         Palette object loaded from the specified palette file
@@ -620,15 +624,57 @@ def load_palette(name: str) -> 'Palette':
         >>> cga = load_palette("cga4")
         >>> color, dist = cga.nearest_color((128, 64, 200))
         >>> print(f"Nearest CGA color: {color.name}")
+        
+        >>> # Load custom user palette
+        >>> custom = load_palette("my_custom_palette")
+        >>> print(f"Loaded {len(custom.records)} colors from user palette")
     """
-    palettes_dir = Path(__file__).parent / "data" / "palettes"
-    palette_file = palettes_dir / f"{name}.json"
+    # Determine data directory
+    if json_path is None:
+        data_dir = Path(__file__).parent / "data"
+    else:
+        data_dir = Path(json_path)
     
-    if not palette_file.exists():
-        available = sorted([p.stem for p in palettes_dir.glob("*.json")])
-        raise FileNotFoundError(
-            f"Palette '{name}' not found. Available palettes: {', '.join(available)}"
-        )
+    # Determine palette file location
+    palette_file = None
+    
+    if name.startswith("user-"):
+        # User palette requested
+        user_palette_file = data_dir / "user" / "palettes" / f"{name}.json"
+        if user_palette_file.exists():
+            palette_file = user_palette_file
+    else:
+        # Core palette requested
+        core_palette_file = data_dir / "palettes" / f"{name}.json"
+        if core_palette_file.exists():
+            palette_file = core_palette_file
+    
+    if palette_file is None:
+        # Build list of available palettes from both locations
+        available = []
+        
+        # Core palettes
+        core_palettes_dir = data_dir / "palettes"
+        if core_palettes_dir.exists():
+            available.extend([p.stem for p in core_palettes_dir.glob("*.json")])
+        
+        # User palettes (only user-*.json files)
+        user_palettes_dir = data_dir / "user" / "palettes"
+        if user_palettes_dir.exists():
+            user_palettes = [p.stem for p in user_palettes_dir.glob("user-*.json")]
+            available.extend(user_palettes)
+        
+        available.sort()
+        
+        # Check if there's a non-prefixed file that user might be trying to access
+        error_msg = f"Palette '{name}' not found. Available palettes: {', '.join(available)}"
+        
+        if not name.startswith("user-"):
+            non_prefixed_file = data_dir / "user" / "palettes" / f"{name}.json"
+            if non_prefixed_file.exists():
+                error_msg += f"\nNote: File '{name}.json' exists in user/palettes/ but must be named 'user-{name}.json' to be accessible."
+        
+        raise FileNotFoundError(error_msg)
     
     # Load the palette JSON data
     try:

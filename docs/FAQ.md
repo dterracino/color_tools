@@ -10,6 +10,7 @@
 - [Color Spaces](#color-spaces)
 - [Distance Metrics](#distance-metrics)
 - [3D Printing Filaments](#3d-printing-filaments)
+- [User Customization](#user-customization)
 - [Image Processing](#image-processing)
 - [Contributing](#contributing)
 
@@ -87,7 +88,7 @@ LCH is ideal for user interfaces because hue can be adjusted independently, maki
 ### When should I use which color space?
 
 | Use Case | Recommended Space |
-|----------|-------------------|
+| ---------- | ------------------- |
 | Display/screen colors | RGB |
 | User color pickers | HSL or LCH |
 | Color matching/comparison | LAB |
@@ -128,7 +129,7 @@ If you need strict CSS compliance, use **aqua** and **fuchsia** instead.
 **Delta E** (ΔE) is a measure of color difference. A Delta E of 1.0 is considered the "just noticeable difference" - the smallest color difference the average human eye can perceive.
 
 | Delta E | Perception |
-|---------|------------|
+| --------- | ------------ |
 | 0-1 | Not perceptible |
 | 1-2 | Perceptible through close observation |
 | 2-10 | Perceptible at a glance |
@@ -212,6 +213,112 @@ python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --make
 
 ---
 
+## User Customization
+
+### How do I override a core color with my own custom color?
+
+Place your custom colors in `data/user/user-colors.json` using the same format as the core colors:
+
+```json
+[
+  {
+    "name": "red",
+    "hex": "#DC143C",
+    "rgb": [220, 20, 60],
+    "hsl": [348.0, 83.3, 47.1],
+    "lab": [47.1, 70.8, 33.2],
+    "lch": [47.1, 78.3, 25.1]
+  }
+]
+```
+
+Your custom "red" will override the core red color completely. Both name and RGB lookups will return your version.
+
+### How do I add custom 3D printing filaments or override existing ones?
+
+Create `data/user/user-filaments.json` with your custom filaments:
+
+```json
+[
+  {
+    "maker": "My Company",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Custom Blue",
+    "hex": "#0066CC"
+  }
+]
+```
+
+If you use the same RGB value (`hex`) as a core filament, your filament will appear first in search results.
+
+### How do I add maker synonyms or change existing ones?
+
+Create `data/user/user-synonyms.json` to add or completely replace maker synonyms:
+
+```json
+{
+  "My Company": ["MC", "MyCo"],
+  "Bambu Lab": ["CustomBambu", "CB"]
+}
+```
+
+**Important**: User synonyms completely replace core synonyms for that maker. In the example above, "Bambu" and "BLL" (core synonyms) would no longer work - only "CustomBambu" and "CB".
+
+### How can I see what user data is overriding core data?
+
+Use the `--check-overrides` flag to see a comprehensive report:
+
+```bash
+color-tools --check-overrides
+```
+
+This shows:
+
+- Which colors are overridden by name or RGB
+- Which filaments are overridden by RGB
+- Which maker synonyms are replaced
+- Source files for all data
+
+### What happens when my user file conflicts with core data?
+
+**User data always wins** in conflicts:
+
+- **Name conflicts**: Your color/filament name overrides the core name
+- **RGB conflicts**: Your color/filament appears first in search results
+- **Synonym conflicts**: Your synonyms completely replace core synonyms for that maker
+
+All lookups (`find_by_name()`, `find_by_rgb()`, `nearest_color()`) consistently return user data when conflicts exist.
+
+### Can I disable user overrides temporarily?
+
+Yes, several options:
+
+1. **Rename the user directory**: `mv data/user data/user-disabled`
+2. **Rename specific files**: `mv data/user/user-colors.json data/user/user-colors.json.bak`
+3. **Move files elsewhere**: Keep backups outside the data directory
+
+The library only loads files in the exact expected locations, so renaming effectively disables them.
+
+### How do I verify my user data files haven't been corrupted?
+
+Generate hash files for integrity checking:
+
+```bash
+# Generate .sha256 files for all user data
+color-tools --generate-user-hashes
+
+# Verify user data integrity
+color-tools --verify-user-data
+
+# Verify everything (core + user data)
+color-tools --verify-all
+```
+
+Hash files (`.sha256`) are created alongside your data files and automatically checked during verification.
+
+---
+
 ## Image Processing
 
 ### What extras do I need for image processing?
@@ -254,6 +361,52 @@ python -m color_tools image --file photo.jpg --quantize-palette gameboy --dither
 - Classic PC: `cga4`, `cga16`, `ega16`, `ega64`, `vga`
 - Game consoles: `gameboy_dmg`, `gameboy_gbl`, `gameboy_mgb`, `commodore64`
 - Web: `web` (216-color web-safe palette)
+
+### Can I create custom retro palettes?
+
+Yes! Create custom palettes in `data/user/palettes/` with `user-` prefix:
+
+```json
+// data/user/palettes/user-mycustom.json
+[
+  {
+    "name": "MyRed",
+    "hex": "#FF0000",
+    "rgb": [255, 0, 0],
+    "hsl": [0.0, 100.0, 50.0],
+    "lab": [53.24, 80.09, 67.20],
+    "lch": [53.24, 104.55, 40.0]
+  },
+  {
+    "name": "MyBlue",
+    "hex": "#0000FF", 
+    "rgb": [0, 0, 255],
+    "hsl": [240.0, 100.0, 50.0],
+    "lab": [32.30, 79.19, -107.86],
+    "lch": [32.30, 133.81, 306.3]
+  }
+]
+```
+
+**Important:** User palette files **must** start with `user-` prefix for security and clarity.
+
+**Features:**
+- **No core palette conflicts**: `user-gameboy.json` won't override core `gameboy`
+- **Automatic discovery**: Your palettes appear in `--palette list`
+- **Full CLI integration**: Use with `--palette user-mycustom`
+- **Image processing support**: Works with image quantization
+
+**Usage:**
+```bash
+# List all available palettes (core + user)
+color-tools color --palette list
+
+# Use your custom palette
+color-tools color --palette user-mycustom --nearest --value 128 64 200 --space rgb
+
+# Image processing with custom palette
+python -m color_tools image --file photo.jpg --quantize-palette user-mycustom
+```
 
 ---
 

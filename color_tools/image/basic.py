@@ -851,12 +851,9 @@ def quantize_image_to_palette(
     Args:
         image_path: Path to input image
         palette_name: Name of palette to use:
-            - 'cga4': IBM CGA 4-color palette (1981)
-            - 'ega16': IBM EGA 16-color palette (1984)  
-            - 'ega64': IBM EGA 64-color palette (full)
-            - 'vga': IBM VGA 256-color palette (1987)
-            - 'web': Web-safe 216-color palette (1990s)
-            - 'gameboy': Game Boy 4-shade green palette
+            - Built-in palettes: 'cga4', 'ega16', 'ega64', 'vga', 'web', 'gameboy'
+            - User palettes: 'user-mycustom' (files in data/user/palettes/ must have 'user-' prefix)
+            - User palettes do not override built-in palettes (separate namespaces)
         metric: Color distance metric for matching:
             - 'de2000': CIEDE2000 (most perceptually accurate)
             - 'de94': CIE94 (good balance)
@@ -886,17 +883,12 @@ def quantize_image_to_palette(
     """
     from color_tools.palette import load_palette
     
-    # Load target palette
+    # Load target palette - load_palette now supports user palettes automatically
     try:
         palette = load_palette(palette_name)
-    except FileNotFoundError:
-        # Dynamically discover available palettes
-        from pathlib import Path
-        palettes_dir = Path(__file__).parent.parent / "data" / "palettes"
-        available = sorted([p.stem for p in palettes_dir.glob("*.json")])
-        raise ValueError(
-            f"Unknown palette '{palette_name}'. Available palettes: {available}"
-        )
+    except FileNotFoundError as e:
+        # Re-raise with the original error message which includes available palettes
+        raise ValueError(str(e)) from e
     
     # Create color mapping function
     def palette_transform(rgb: tuple[int, int, int]) -> tuple[int, int, int]:

@@ -98,18 +98,24 @@ class TestUserOverrideSystem(unittest.TestCase):
             json.dump(core_synonyms, f, indent=2)
     
     def _create_user_colors(self, colors_data):
-        """Create user-colors.json file with given data."""
-        with open(self.data_dir / "user-colors.json", "w") as f:
+        """Create user/user-colors.json file with given data."""
+        user_dir = self.data_dir / "user"
+        user_dir.mkdir(exist_ok=True)
+        with open(user_dir / "user-colors.json", "w") as f:
             json.dump(colors_data, f, indent=2)
     
     def _create_user_filaments(self, filaments_data):
-        """Create user-filaments.json file with given data."""
-        with open(self.data_dir / "user-filaments.json", "w") as f:
+        """Create user/user-filaments.json file with given data."""
+        user_dir = self.data_dir / "user"
+        user_dir.mkdir(exist_ok=True)
+        with open(user_dir / "user-filaments.json", "w") as f:
             json.dump(filaments_data, f, indent=2)
     
     def _create_user_synonyms(self, synonyms_data):
-        """Create user-synonyms.json file with given data."""
-        with open(self.data_dir / "user-synonyms.json", "w") as f:
+        """Create user/user-synonyms.json file with given data."""
+        user_dir = self.data_dir / "user"
+        user_dir.mkdir(exist_ok=True)
+        with open(user_dir / "user-synonyms.json", "w") as f:
             json.dump(synonyms_data, f, indent=2)
     
     def _load_with_custom_dir(self, loader_func):
