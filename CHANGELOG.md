@@ -10,7 +10,28 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [3.8.1] - 2025-12-22
+
+### Fixed
+
+- **Documentation** - Updated CHANGELOG.md to properly document the 3.8.0 release with comprehensive user override system features
+
+## [3.8.0] - 2025-12-22
+
+### Added
+
+- **Comprehensive User Override System** - Complete user file override capabilities with full priority-based conflict resolution:
+  - **Priority-Based Override Logic** - User files now consistently override core files across all lookup methods (`find_by_name()`, `find_by_rgb()`, `nearest_color()`, `nearest_filament()`)
+  - **Enhanced FilamentPalette Override Support** - Added complete RGB override support for filaments with `_should_prefer_source()` logic ensuring user filaments are prioritized in `find_by_rgb()` results
+  - **Comprehensive Synonym Override System** - User synonym files now completely replace (not extend) core synonyms for existing makers, with full logging and transparency
+  - **Advanced Override Detection and Reporting** - New `get_override_info()` methods on Palette and FilamentPalette classes provide detailed override analysis including name conflicts, RGB conflicts, and synonym replacements
+  - **CLI Override Integration** - Enhanced `--check-overrides` functionality now reports filament and synonym overrides in addition to color overrides
 - **Filament database update** - Added missing Bambu Lab Matte Charcoal filament to complete the product line
+- **Extensive Test Coverage** - Added comprehensive test suite (`test_user_overrides.py`) with 18 test classes covering all override scenarios, conflict detection, and integration testing
 
 ### Changed
 
@@ -20,6 +41,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Rationale**: The old values for cyan and magenta were identical to aqua (`#00FFFF`) and fuchsia (`#FF00FF`), causing RGB dictionary lookup collisions where only one color name would be findable by its RGB value
   - **Aqua and Fuchsia**: Retained their CSS-standard values as the canonical web colors
   - **Impact**: All four colors now have unique RGB coordinates, fixing palette RGB lookups and improving color matching accuracy
+- **Enhanced Palette Constructor Logic** - Modified Palette and FilamentPalette constructors to use priority-based indexing where user records override core records consistently across all data structures
+
+### Fixed
+
+- **Complete RGB Lookup Consistency** - Resolved all remaining inconsistencies where different lookup methods could return different sources for identical RGB values
+- **Filament RGB Priority Issues** - Fixed cases where `find_by_rgb()` and `nearest_filament()` could return core filaments when user filaments with identical RGB values existed
 
 ### Improved
 

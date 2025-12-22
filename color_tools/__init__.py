@@ -30,7 +30,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "3.8.0"
+__version__ = "3.8.1"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
