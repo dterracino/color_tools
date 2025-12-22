@@ -551,17 +551,41 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
         with open(user_json_path, "r", encoding="utf-8") as f:
             user_synonyms = json.load(f)
         
+        # Log synonym overrides before merging
+        overridden_makers = []
+        extended_makers = []
+        
         # Merge user synonyms into core synonyms
         for maker, user_syn_list in user_synonyms.items():
             if maker in synonyms:
-                # Extend existing synonym list (avoid duplicates)
+                # Check if user completely replaces or extends existing synonyms
                 existing = set(synonyms[maker])
-                for syn in user_syn_list:
-                    if syn not in existing:
-                        synonyms[maker].append(syn)
+                new_synonyms = set(user_syn_list)
+                
+                if existing == new_synonyms:
+                    # Same synonyms - no conflict
+                    continue
+                elif existing.isdisjoint(new_synonyms):
+                    # Completely different - user replaces core synonyms
+                    overridden_makers.append((maker, synonyms[maker], user_syn_list))
+                    synonyms[maker] = user_syn_list
+                else:
+                    # Some overlap - extend existing synonym list (avoid duplicates)
+                    original_count = len(synonyms[maker])
+                    for syn in user_syn_list:
+                        if syn not in existing:
+                            synonyms[maker].append(syn)
+                    if len(synonyms[maker]) > original_count:
+                        extended_makers.append((maker, original_count, len(synonyms[maker])))
             else:
                 # Add new maker with their synonyms
                 synonyms[maker] = user_syn_list
+        
+        # Log override information
+        if overridden_makers:
+            logger.info(f"User synonyms override {len(overridden_makers)} core makers: {[(m, f'core: {c}', f'user: {u}') for m, c, u in overridden_makers]}")
+        if extended_makers:
+            logger.info(f"User synonyms extend {len(extended_makers)} core makers: {[(m, f'{old}->{new} synonyms') for m, old, new in extended_makers]}")
     
     return synonyms
 
@@ -661,12 +685,35 @@ class Palette:
     def __init__(self, records: List[ColorRecord]) -> None:
         self.records = records
         
-        # Build multiple indices for O(1) lookups
-        self._by_name: Dict[str, ColorRecord] = {r.name.lower(): r for r in records}
-        self._by_rgb: Dict[Tuple[int, int, int], ColorRecord] = {r.rgb: r for r in records}
-        self._by_hsl: Dict[str, ColorRecord] = {_rounded_key(r.hsl): r for r in records}
-        self._by_lab: Dict[str, ColorRecord] = {_rounded_key(r.lab): r for r in records}
-        self._by_lch: Dict[str, ColorRecord] = {_rounded_key(r.lch): r for r in records}
+        # Build multiple indices for O(1) lookups with user override priority
+        self._by_name: Dict[str, ColorRecord] = {}
+        self._by_rgb: Dict[Tuple[int, int, int], ColorRecord] = {}
+        self._by_hsl: Dict[str, ColorRecord] = {}
+        self._by_lab: Dict[str, ColorRecord] = {}
+        self._by_lch: Dict[str, ColorRecord] = {}
+        
+        # Populate indices with override priority
+        for record in records:
+            name_key = record.name.lower()
+            hsl_key = _rounded_key(record.hsl)
+            lab_key = _rounded_key(record.lab)
+            lch_key = _rounded_key(record.lch)
+            
+            # For each index, check if we should override existing entry
+            if name_key not in self._by_name or _should_prefer_source(record.source, self._by_name[name_key].source):
+                self._by_name[name_key] = record
+                
+            if record.rgb not in self._by_rgb or _should_prefer_source(record.source, self._by_rgb[record.rgb].source):
+                self._by_rgb[record.rgb] = record
+                
+            if hsl_key not in self._by_hsl or _should_prefer_source(record.source, self._by_hsl[hsl_key].source):
+                self._by_hsl[hsl_key] = record
+                
+            if lab_key not in self._by_lab or _should_prefer_source(record.source, self._by_lab[lab_key].source):
+                self._by_lab[lab_key] = record
+                
+            if lch_key not in self._by_lch or _should_prefer_source(record.source, self._by_lch[lch_key].source):
+                self._by_lch[lch_key] = record
     
     @classmethod
     def load_default(cls) -> 'Palette':
@@ -864,6 +911,57 @@ class Palette:
         results.sort(key=lambda x: x[1])
         return results[:count]
 
+    def get_override_info(self) -> Dict[str, Dict[str, Dict[str, Tuple[str, str]]]]:
+        """
+        Get information about user overrides in this palette.
+        
+        Returns:
+            Dictionary with override information structure:
+            {
+                "colors": {
+                    "name": {"color_name": ("core_source", "user_source")},
+                    "rgb": {"(r,g,b)": ("core_source", "user_source")}
+                }
+            }
+        """
+        overrides: Dict[str, Dict[str, Dict[str, Tuple[str, str]]]] = {
+            "colors": {"name": {}, "rgb": {}}
+        }
+        
+        # Group records by name and RGB to detect overrides
+        name_groups: Dict[str, List[ColorRecord]] = {}
+        rgb_groups: Dict[Tuple[int, int, int], List[ColorRecord]] = {}
+        
+        for record in self.records:
+            name_key = record.name.lower()
+            if name_key not in name_groups:
+                name_groups[name_key] = []
+            name_groups[name_key].append(record)
+            
+            if record.rgb not in rgb_groups:
+                rgb_groups[record.rgb] = []
+            rgb_groups[record.rgb].append(record)
+        
+        # Check for name overrides
+        for name, records in name_groups.items():
+            if len(records) > 1:
+                # Multiple records with same name - find override pattern
+                core_records = [r for r in records if not r.source.startswith('user-')]
+                user_records = [r for r in records if r.source.startswith('user-')]
+                if core_records and user_records:
+                    overrides["colors"]["name"][name] = (core_records[0].source, user_records[0].source)
+        
+        # Check for RGB overrides  
+        for rgb, records in rgb_groups.items():
+            if len(records) > 1:
+                # Multiple records with same RGB - find override pattern
+                core_records = [r for r in records if not r.source.startswith('user-')]
+                user_records = [r for r in records if r.source.startswith('user-')]
+                if core_records and user_records:
+                    overrides["colors"]["rgb"][str(rgb)] = (core_records[0].source, user_records[0].source)
+        
+        return overrides
+
 
 class FilamentPalette:
     """
@@ -1029,8 +1127,10 @@ class FilamentPalette:
         return self._by_color.get(color.lower(), [])
 
     def find_by_rgb(self, rgb: Tuple[int, int, int]) -> List[FilamentRecord]:
-        """Find all filaments by exact RGB match."""
-        return self._by_rgb.get(rgb, [])
+        """Find all filaments by exact RGB match, with user filaments prioritized."""
+        matches = self._by_rgb.get(rgb, [])
+        # Sort to prioritize user sources over core sources
+        return sorted(matches, key=lambda r: (not r.source.startswith('user-'), r.maker, r.type, r.color))
 
     def find_by_finish(self, finish: Union[str, List[str]]) -> List[FilamentRecord]:
         """
@@ -1258,4 +1358,84 @@ class FilamentPalette:
     def finishes(self) -> List[str]:
         """Get sorted list of all finishes."""
         return sorted(self._by_finish.keys())
+
+    def get_override_info(self) -> Dict[str, Dict[str, Any]]:
+        """
+        Get information about user overrides in this filament palette.
+        
+        Returns:
+            Dictionary with override information structure:
+            {
+                "filaments": {
+                    "rgb": {"(r,g,b)": {"core": [sources], "user": [sources]}}
+                },
+                "synonyms": {
+                    "maker_name": {
+                        "type": "replaced|extended",
+                        "old": [core_synonyms],
+                        "new": [user_synonyms]
+                    }
+                }
+            }
+        """
+        from typing import Any
+        
+        overrides: Dict[str, Dict[str, Any]] = {
+            "filaments": {"rgb": {}},
+            "synonyms": {}
+        }
+        
+        # Check for filament RGB overrides
+        rgb_groups: Dict[Tuple[int, int, int], List[FilamentRecord]] = {}
+        for record in self.records:
+            if record.rgb not in rgb_groups:
+                rgb_groups[record.rgb] = []
+            rgb_groups[record.rgb].append(record)
+        
+        for rgb, records in rgb_groups.items():
+            core_records = [r for r in records if not r.source.startswith('user-')]
+            user_records = [r for r in records if r.source.startswith('user-')]
+            if core_records and user_records:
+                overrides["filaments"]["rgb"][str(rgb)] = {
+                    "core": [r.source for r in core_records],
+                    "user": [r.source for r in user_records]
+                }
+        
+        # Check for synonym overrides
+        if self.maker_synonyms:
+            # We need to reconstruct what the core synonyms were vs user synonyms
+            # This is complex since synonyms are already merged, but we can infer from source patterns
+            # For testing purposes, we'll create a basic detection
+            
+            # Load core synonyms to compare
+            try:
+                from color_tools.palette import load_maker_synonyms
+                core_synonyms = {}
+                try:
+                    # Try to load core synonyms from default location
+                    import json
+                    from pathlib import Path
+                    core_file = Path(__file__).parent / "data" / "maker_synonyms.json"
+                    if core_file.exists():
+                        with open(core_file, 'r') as f:
+                            core_synonyms = json.load(f)
+                except:
+                    pass
+                
+                # Compare current synonyms with core synonyms
+                for maker, current_synonyms in self.maker_synonyms.items():
+                    if maker in core_synonyms:
+                        core_syns = core_synonyms[maker]
+                        if set(current_synonyms) != set(core_syns):
+                            overrides["synonyms"][maker] = {
+                                "type": "replaced",
+                                "old": core_syns,
+                                "new": current_synonyms
+                            }
+                    # If maker not in core synonyms, it's an addition (not override)
+            except:
+                # If we can't load core synonyms, skip synonym override detection
+                pass
+        
+        return overrides
 

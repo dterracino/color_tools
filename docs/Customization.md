@@ -161,7 +161,7 @@ User data is automatically loaded and merged with core data. User files are opti
 
 **Note:** Users are responsible for avoiding duplicate entries between core and user data files.
 
-### User Override System (v3.7.0+)
+### User Override System (v3.8.0+)
 
 User files **automatically override** core data when there are conflicts, ensuring your customizations always take priority:
 

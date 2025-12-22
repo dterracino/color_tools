@@ -147,6 +147,10 @@ def _show_override_report(json_dir: str | None = None):
                     print(f"  Colors: {msg}")
                 elif "User filaments override" in msg:
                     print(f"  Filaments: {msg}")
+                elif "User synonyms override" in msg:
+                    print(f"  Synonyms: {msg}")
+                elif "User synonyms extend" in msg:
+                    print(f"  Synonyms: {msg}")
         else:
             print("\nNo user overrides detected.")
         
