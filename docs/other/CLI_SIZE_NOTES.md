@@ -3,6 +3,7 @@
 ## Current State
 
 The CLI module (`cli.py`) has grown significantly:
+
 - **Current size**: 1,130+ lines (more than doubled from original 453 lines)
 - **Single monolithic `main()` function** handling all commands
 - **Mixed concerns**: Argument parsing + validation + business logic + output formatting all in one place
@@ -24,24 +25,29 @@ The CLI module (`cli.py`) has grown significantly:
 **Extract into shared utilities**:
 
 **1. Validation helpers** → Move to `validation.py`:
+
 - `_parse_hex()` → `parse_hex_color()`
 - `_is_valid_lab()` → `validate_lab_range()`  
 - `_is_valid_lch()` → `validate_lch_range()`
 
 **2. Input parsing patterns** → Create `cli_utils.py`:
+
 - `parse_color_input(args)` - handles --hex vs --value logic (repeated 4+ times)
 - `get_distance_metric()` - handles metric selection + CMC params
 - `load_palette_with_fallback()` - palette loading logic
 
 **3. Output formatting** → Extract to existing modules:
+
 - Color display logic → palette.py (add `format_color_record()`)
 - Filament display logic → palette.py (add `format_filament_record()`)
 - `format_json_output()`, `format_text_output()`
 
 **4. Error handling patterns**:
+
 - `handle_validation_error()`, `format_error_message()`
 
-**Benefits**: 
+**Benefits**:
+
 - Immediate code reduction in main()
 - Better testability of individual functions
 - DRY principle - reduce repetitive code
@@ -52,7 +58,8 @@ The CLI module (`cli.py`) has grown significantly:
 **Goal**: Clean separation of concerns with proper architecture
 
 **Proposed structure**:
-```
+
+```text
 color_tools/
 ├── cli/
 │   ├── __init__.py          # Main entry point
@@ -70,12 +77,14 @@ color_tools/
 ```
 
 **BaseHandler** provides shared functionality:
+
 - Argument validation framework
 - Common output formatting
 - Error handling patterns
 - Configuration management
 
 **Command-specific handlers** focus on business logic:
+
 - Clean, testable command implementations
 - Easy to add new commands
 - Clear separation of concerns
@@ -91,22 +100,26 @@ color_tools/
 ### Why This Staged Approach Works Better
 
 **Risk Management:**
+
 - Phase 1: Low risk extraction, easy to verify
 - Phase 2: Bigger changes on a cleaner foundation
 
 **Learning During Phase 1:**
+
 - Discover natural boundaries between functions
 - Identify common patterns that emerge
 - Find the right abstraction level
 
 **Immediate Value:**
-- Code gets better **now** 
+
+- Code gets better **now**
 - Easier debugging and maintenance
 - Functions become testable in isolation
 
 ### Concrete Example: Color Input Parsing
 
 **Current (repeated 4+ times):**
+
 ```python
 if args.hex is not None:
     try:
@@ -122,6 +135,7 @@ else:
 ```
 
 **Phase 1 - Extract Helper:**
+
 ```python
 # cli_utils.py
 def parse_color_input(args) -> tuple[tuple[float, float, float], str]:
@@ -137,6 +151,7 @@ val, space = parse_color_input(args)
 ```
 
 **Phase 2 - Handler Pattern:**
+
 ```python
 # handlers/color.py  
 def handle_color_command(args):

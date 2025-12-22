@@ -347,7 +347,7 @@ Would require:
 
 - Pillow dependency (optional)
 - K-means clustering in LAB space
-- Dominant color extraction
+- Dominant color extraction (K-means or another method, can resize the image down first also)
 - Focal point detection or region selection
 
 ### Custom Palette Angles
