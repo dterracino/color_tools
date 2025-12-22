@@ -479,6 +479,7 @@ These arguments work with all commands:
 - `--verify-data`: Verify integrity of core data files before proceeding
 - `--verify-matrices`: Verify integrity of transformation matrices before proceeding
 - `--verify-all`: Verify integrity of constants, data files, and matrices before proceeding
+- `--check-overrides`: Show report of user overrides (user-colors.json, user-filaments.json) and exit
 - `--version`: Show version number and exit
 
 ---

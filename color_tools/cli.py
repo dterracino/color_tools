@@ -90,6 +90,98 @@ def _is_valid_lch(lch_tuple) -> bool:
            (ColorConstants.CHROMA_MIN <= C <= ColorConstants.CHROMA_MAX) and \
            (ColorConstants.NORMALIZED_MIN <= h < ColorConstants.HUE_CIRCLE_DEGREES)
 
+def _show_override_report(json_dir: str | None = None):
+    """
+    Show detailed report of user overrides and exit.
+    
+    Analyzes user-colors.json and user-filaments.json to show what core data
+    is being overridden, including conflicts by name and RGB values.
+    
+    Args:
+        json_dir: Optional directory containing JSON files. If None, uses package default.
+    """
+    import logging
+    import sys
+    
+    # Set up logging to capture override messages
+    log_messages = []
+    class ListHandler(logging.Handler):
+        def emit(self, record):
+            log_messages.append(self.format(record))
+    
+    # Configure logging to capture override info
+    logger = logging.getLogger('color_tools.palette')
+    logger.setLevel(logging.INFO)
+    handler = ListHandler()
+    logger.addHandler(handler)
+    
+    print("User Override Report")
+    print("=" * 50)
+    
+    try:
+        # Load colors and capture override messages
+        palette = Palette.load_default() if json_dir is None else None
+        if palette is None and json_dir:
+            colors = load_colors(json_dir)
+            palette = Palette(colors)
+        elif palette is None:
+            colors = load_colors()
+            palette = Palette(colors)
+        
+        # Load filaments and capture override messages  
+        filament_palette = FilamentPalette.load_default() if json_dir is None else None
+        if filament_palette is None and json_dir:
+            filaments = load_filaments(json_dir)
+            synonyms = load_maker_synonyms(json_dir)
+            filament_palette = FilamentPalette(filaments, synonyms)
+        elif filament_palette is None:
+            filaments = load_filaments()
+            synonyms = load_maker_synonyms()  
+            filament_palette = FilamentPalette(filaments, synonyms)
+        
+        # Display captured log messages
+        if log_messages:
+            print("\nOverride Details:")
+            for msg in log_messages:
+                if "User colors override" in msg:
+                    print(f"  Colors: {msg}")
+                elif "User filaments override" in msg:
+                    print(f"  Filaments: {msg}")
+        else:
+            print("\nNo user overrides detected.")
+        
+        # Count sources
+        color_sources = {}
+        for record in palette.records:
+            source = record.source
+            color_sources[source] = color_sources.get(source, 0) + 1
+        
+        filament_sources = {}
+        for record in filament_palette.records:
+            source = record.source
+            filament_sources[source] = filament_sources.get(source, 0) + 1
+        
+        # Summary
+        print(f"\nSummary:")
+        print(f"  Total colors: {len(palette.records)}")
+        print(f"  Total filaments: {len(filament_palette.records)}")
+        
+        print(f"\nActive Sources:")
+        print("  Colors:")
+        for source, count in sorted(color_sources.items()):
+            print(f"    {source}: {count} records")
+        
+        print("  Filaments:")
+        for source, count in sorted(filament_sources.items()):
+            print(f"    {source}: {count} records")
+        
+    except Exception as e:
+        print(f"\nError loading data: {e}")
+        sys.exit(1)
+    finally:
+        # Clean up logging
+        logger.removeHandler(handler)
+
 def handle_image_command(args):
     """Handle all image processing commands."""
     if not IMAGE_AVAILABLE:
@@ -286,6 +378,9 @@ Examples:
   
   # Check if LAB color is in sRGB gamut
   {prog_name} convert --check-gamut --value 50 100 50
+  
+  # Show user file overrides
+  {prog_name} --check-overrides
         """
     )
     
@@ -322,6 +417,11 @@ Examples:
         "--verify-all",
         action="store_true",
         help="Verify integrity of constants, data files, and matrices before proceeding"
+    )
+    parser.add_argument(
+        "--check-overrides",
+        action="store_true",
+        help="Show report of user overrides (user-colors.json, user-filaments.json) and exit"
     )
     
     # Create subparsers for the three main commands
@@ -713,6 +813,11 @@ Examples:
             sys.exit(1)
         print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 14 palettes)")
     
+    # Handle --check-overrides flag
+    if args.check_overrides:
+        _show_override_report(args.json)
+        sys.exit(0)
+    
     # If only verifying (no other command), exit after success
     if (args.verify_constants or args.verify_data or args.verify_matrices) and not args.command:
         sys.exit(0)
@@ -752,7 +857,7 @@ Examples:
             if not rec:
                 print(f"Color '{args.name}' not found")
                 sys.exit(1)
-            print(f"Name: {rec.name}")
+            print(f"Name: {rec.name} [from {rec.source}]")
             print(f"Hex:  {rec.hex}")
             print(f"RGB:  {rec.rgb}")
             print(f"HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
@@ -823,7 +928,7 @@ Examples:
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
                 )
-                print(f"Nearest color: {rec.name} (distance={d:.2f})")
+                print(f"Nearest color: {rec.name} (distance={d:.2f}) [from {rec.source}]")
                 print(f"Hex:  {rec.hex}")
                 print(f"RGB:  {rec.rgb}")
                 print(f"HSL:  ({rec.hsl[0]:.1f}°, {rec.hsl[1]:.1f}%, {rec.hsl[2]:.1f}%)")
@@ -920,7 +1025,7 @@ Examples:
                         cmc_l=args.cmc_l,
                         cmc_c=args.cmc_c,
                     )
-                    print(f"Nearest filament: (distance={d:.2f})")
+                    print(f"Nearest filament: (distance={d:.2f}) [from {rec.source}]")
                     print(f"  {rec}")
             except ValueError as e:
                 print(f"Error: {e}")

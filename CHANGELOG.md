@@ -30,6 +30,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Uses ColorConstants methods** - Script now imports and uses `ColorConstants._compute_hash()` and `ColorConstants._compute_matrices_hash()` instead of duplicating hash logic, ensuring consistency with the main codebase
   - **Simplified architecture** - Removed conditional Rich fallback code; Rich is now a hard requirement for the script
 
+## [3.7.0] - 2025-12-22
+
+### Added
+
+- **User Override System** - Comprehensive user file override capabilities with complete transparency:
+  - **Source Tracking** - Added `source` field to ColorRecord and FilamentRecord dataclasses to track JSON filename origin (colors.json, filaments.json, user-colors.json, user-filaments.json)
+  - **Automatic Override Detection** - User files (user-colors.json, user-filaments.json) automatically override core files when conflicts occur by name or RGB values, with logging warnings to inform users
+  - **CLI Override Reporting** - New `--check-overrides` global flag displays detailed reports of user overrides, showing which colors/filaments come from user files vs core files
+  - **Source Display in Output** - All CLI color and filament commands now show source filename in brackets (e.g., "red [from colors.json]", "Custom Blue [from user-colors.json]")
+  - **Consistent Override Behavior** - Modified distance comparison logic in nearest neighbor searches to prefer user sources when distances are equal, ensuring `find_by_rgb()` and `nearest_color()` return consistent results
+
+### Fixed
+
+- **RGB Dictionary Lookup Consistency** - Resolved issue where `find_by_rgb()` and `nearest_color()` could return different results for the same RGB query when both user and core files contained colors with identical RGB values
+
+### Changed
+
+- **Enhanced CLI Help** - Updated CLI help text and examples to include `--check-overrides` flag usage and documentation
+
 ## [3.6.2] - 2025-12-03
 
 ### Fixed

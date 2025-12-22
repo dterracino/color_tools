@@ -896,5 +896,162 @@ class TestParseColorRecords(unittest.TestCase):
         # and only fail later in Palette.nearest_color() without context
 
 
+class TestUserOverrides(unittest.TestCase):
+    """Test user override system functionality."""
+    
+    def setUp(self):
+        """Set up test data with core and user records."""
+        self.core_colors = [
+            ColorRecord(
+                name="red", hex="#FF0000", rgb=(255, 0, 0),
+                hsl=(0.0, 100.0, 50.0), lab=(53.24, 80.09, 67.20),
+                lch=(53.24, 104.55, 40.0), source="colors.json"
+            ),
+            ColorRecord(
+                name="blue", hex="#0000FF", rgb=(0, 0, 255), 
+                hsl=(240.0, 100.0, 50.0), lab=(32.30, 79.19, -107.86),
+                lch=(32.30, 133.81, 306.3), source="colors.json"
+            ),
+        ]
+        
+        self.user_colors = [
+            # Override red by name (different RGB)
+            ColorRecord(
+                name="red", hex="#DC143C", rgb=(220, 20, 60),
+                hsl=(348.0, 83.3, 47.1), lab=(47.1, 70.8, 33.2),
+                lch=(47.1, 78.3, 25.1), source="user-colors.json"
+            ),
+            # Override blue by RGB (different name) 
+            ColorRecord(
+                name="my_blue", hex="#0000FF", rgb=(0, 0, 255),
+                hsl=(240.0, 100.0, 50.0), lab=(32.30, 79.19, -107.86),
+                lch=(32.30, 133.81, 306.3), source="user-colors.json"
+            ),
+        ]
+    
+    def test_source_field_tracking(self):
+        """Test that source field is properly set and tracked."""
+        # Test core color source
+        core_color = self.core_colors[0]
+        self.assertEqual(core_color.source, "colors.json")
+        
+        # Test user color source
+        user_color = self.user_colors[0]
+        self.assertEqual(user_color.source, "user-colors.json")
+    
+    def test_name_override_behavior(self):
+        """Test that user colors override core colors by name."""
+        all_colors = self.core_colors + self.user_colors
+        palette = Palette(all_colors)
+        
+        # Name lookup should return user override
+        red_color = palette.find_by_name("red")
+        self.assertIsNotNone(red_color)
+        self.assertEqual(red_color.source, "user-colors.json")
+        self.assertEqual(red_color.rgb, (220, 20, 60))  # User's red, not core red
+        
+        # Core blue should still be accessible by name (no user override)
+        blue_color = palette.find_by_name("blue") 
+        self.assertIsNotNone(blue_color)
+        self.assertEqual(blue_color.source, "colors.json")
+    
+    def test_rgb_override_behavior(self):
+        """Test that user colors override core colors by RGB."""
+        all_colors = self.core_colors + self.user_colors
+        palette = Palette(all_colors)
+        
+        # RGB lookup should return user override
+        blue_rgb = palette.find_by_rgb((0, 0, 255))
+        self.assertIsNotNone(blue_rgb)
+        self.assertEqual(blue_rgb.source, "user-colors.json")
+        self.assertEqual(blue_rgb.name, "my_blue")  # User's name, not "blue"
+    
+    def test_nearest_color_consistency(self):
+        """Test that nearest_color and find_by_rgb return consistent results."""
+        all_colors = self.core_colors + self.user_colors
+        palette = Palette(all_colors)
+        
+        # Test RGB consistency - both should return user override
+        rgb_result = palette.find_by_rgb((0, 0, 255))
+        nearest_result, distance = palette.nearest_color((0, 0, 255), space="rgb")
+        
+        self.assertEqual(rgb_result.name, nearest_result.name)
+        self.assertEqual(rgb_result.source, nearest_result.source)
+        self.assertEqual(distance, 0.0)  # Exact match
+        self.assertEqual(nearest_result.source, "user-colors.json")
+    
+    def test_source_preference_helper(self):
+        """Test the _should_prefer_source helper function."""
+        from color_tools.palette import _should_prefer_source
+        
+        # User files should override core files
+        self.assertTrue(_should_prefer_source("user-colors.json", "colors.json"))
+        self.assertFalse(_should_prefer_source("colors.json", "user-colors.json"))
+        
+        # Same type (both user) - no preference 
+        self.assertFalse(_should_prefer_source("user-colors.json", "user-filaments.json"))
+        
+        # Same type (both core) - no preference
+        self.assertFalse(_should_prefer_source("colors.json", "filaments.json"))
+        
+        # Custom palettes should override core
+        self.assertTrue(_should_prefer_source("cga4.json", "colors.json"))
+        self.assertFalse(_should_prefer_source("colors.json", "cga4.json"))
+
+    def test_multiple_overrides(self):
+        """Test behavior with multiple override scenarios."""
+        # Create a complex scenario
+        colors = [
+            # Core colors
+            ColorRecord("red", "#FF0000", (255, 0, 0), (0.0, 100.0, 50.0), 
+                       (53.24, 80.09, 67.20), (53.24, 104.55, 40.0), "colors.json"),
+            ColorRecord("green", "#00FF00", (0, 255, 0), (120.0, 100.0, 50.0),
+                       (87.73, -86.18, 83.18), (87.73, 119.78, 136.0), "colors.json"),
+            
+            # User overrides
+            ColorRecord("red", "#DC143C", (220, 20, 60), (348.0, 83.3, 47.1),
+                       (47.1, 70.8, 33.2), (47.1, 78.3, 25.1), "user-colors.json"),
+            ColorRecord("custom_green", "#00FF00", (0, 255, 0), (120.0, 100.0, 50.0),
+                       (87.73, -86.18, 83.18), (87.73, 119.78, 136.0), "user-colors.json"),
+        ]
+        
+        palette = Palette(colors)
+        
+        # Name override: "red" should return user version
+        red = palette.find_by_name("red")
+        self.assertEqual(red.source, "user-colors.json")
+        self.assertEqual(red.hex, "#DC143C")
+        
+        # RGB override: (0, 255, 0) should return user version
+        green_rgb = palette.find_by_rgb((0, 255, 0))
+        self.assertEqual(green_rgb.source, "user-colors.json")
+        self.assertEqual(green_rgb.name, "custom_green")
+        
+        # Core "green" should still be accessible by name (different RGB now)
+        green_name = palette.find_by_name("green")
+        self.assertEqual(green_name.source, "colors.json")
+
+    def test_filament_overrides(self):
+        """Test filament override behavior."""
+        core_filament = FilamentRecord(
+            id="bambu-pla-red", maker="Bambu Lab", type="PLA", 
+            finish=None, color="Red", hex="#FF0000",
+            source="filaments.json"
+        )
+        
+        user_filament = FilamentRecord(
+            id="bambu-pla-red-custom", maker="Bambu Lab", type="PLA",
+            finish=None, color="Red", hex="#DC143C", 
+            source="user-filaments.json"
+        )
+        
+        filaments = [core_filament, user_filament]
+        palette = FilamentPalette(filaments)
+        
+        # RGB lookup should return user filament (different RGB)
+        red_filament = palette.find_by_rgb((220, 20, 60))[0]  # Returns list
+        self.assertEqual(red_filament.source, "user-filaments.json")
+
+
 if __name__ == '__main__':
     unittest.main()

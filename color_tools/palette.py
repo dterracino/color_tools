@@ -3,12 +3,15 @@ Color and filament palette management with fast lookup.
 
 This module provides:
 1. Data classes for colors (ColorRecord) and filaments (FilamentRecord)
-2. Functions to load color/filament data from JSON
+2. Functions to load color/filament data from JSON with user override support
 3. Palette classes with multiple indices for O(1) lookups
 4. Nearest-color search using various distance metrics
 
 The palette classes are like databases with multiple indexes - you can
 search by name, RGB, HSL, maker, type, etc. and get instant results!
+
+User files (user-colors.json, user-filaments.json) always override core
+data when there are conflicts. Override information is logged for transparency.
 
 Example:
     >>> from color_tools import Palette, FilamentPalette
@@ -42,12 +45,48 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import Tuple, Dict, List, Optional, Union, Set
 import json
+import logging
 from pathlib import Path
 
 from .constants import ColorConstants
 from .conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb
 from .distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc
 from .config import get_dual_color_mode
+
+# Set up logger for override tracking
+logger = logging.getLogger(__name__)
+
+
+def _should_prefer_source(new_source: str, current_source: str) -> bool:
+    """
+    Determine if new_source should be preferred over current_source for ties.
+    
+    User files always win over core files when distances are equal.
+    This ensures consistent behavior between index lookups and distance-based searches.
+    
+    Args:
+        new_source: Source filename of the candidate record
+        current_source: Source filename of the current best record
+    
+    Returns:
+        True if new_source should be preferred over current_source
+    """
+    # Core filenames (these are overridden by user files)
+    core_files = {"colors.json", "filaments.json"}
+    
+    new_is_core = new_source in core_files
+    current_is_core = current_source in core_files
+    
+    # If current is core and new is user, prefer new (user override)
+    if current_is_core and not new_is_core:
+        return True
+    
+    # If current is user and new is core, keep current (user wins)
+    if not current_is_core and new_is_core:
+        return False
+    
+    # Both are same type (core or user), don't prefer either
+    return False
 
 
 # ============================================================================
@@ -61,6 +100,9 @@ class ColorRecord:
     
     Frozen dataclass = immutable. Once created, you can't change it.
     This is perfect for colors - a color IS what it IS! 🎨
+    
+    The source field tracks which JSON file provided this color record,
+    enabling override detection and debugging.
     """
     name: str
     hex: str
@@ -68,6 +110,7 @@ class ColorRecord:
     hsl: Tuple[float, float, float]   # (H°, S%, L%)
     lab: Tuple[float, float, float]   # (L*, a*, b*)
     lch: Tuple[float, float, float]   # (L*, C*, H°)
+    source: str = "colors.json"      # JSON filename where this record originated
 
 
 @dataclass(frozen=True)
@@ -78,6 +121,9 @@ class FilamentRecord:
     The clever part: rgb is a @property that handles dual-color filaments!
     Some silk filaments have TWO colors twisted together (e.g., "#AABBCC-#DDEEFF"),
     and we can extract either the first, last, or perceptually blend them.
+    
+    The source field tracks which JSON file provided this filament record,
+    enabling override detection and debugging.
     """
     id: str  # Unique identifier slug (e.g., "bambu-lab-pla-silk-plus-red")
     maker: str
@@ -87,6 +133,7 @@ class FilamentRecord:
     hex: str
     td_value: Optional[float] = None  # Translucency/transparency value
     other_names: Optional[List[str]] = None  # Alternative names (regional, historical, etc.)
+    source: str = "filaments.json"   # JSON filename where this record originated
     
     @property
     def rgb(self) -> Tuple[int, int, int]:
@@ -185,16 +232,21 @@ def _parse_color_records(data: list, source_file: str = "JSON data") -> List[Col
     
     Args:
         data: List of dictionaries containing color data
-        source_file: Name of the source file for error messages
+        source_file: Name of the source file for error messages and source tracking.
+                    Should be just the filename (e.g., 'colors.json', 'user-colors.json')
     
     Returns:
-        List of ColorRecord objects
+        List of ColorRecord objects with source field set to source_file
     
     Raises:
         KeyError: If required keys are missing from the color data
         ValueError: If color data values are invalid
     """
     records: List[ColorRecord] = []
+    
+    # Extract just the filename from path for source tracking
+    from pathlib import Path
+    source_filename = Path(source_file).name if source_file != "JSON data" else "unknown.json"
     
     for i, c in enumerate(data):
         try:
@@ -212,6 +264,7 @@ def _parse_color_records(data: list, source_file: str = "JSON data") -> List[Col
                 hsl=hsl,
                 lab=lab,
                 lch=lch,
+                source=source_filename,
             ))
         except KeyError as e:
             raise ValueError(
@@ -220,6 +273,56 @@ def _parse_color_records(data: list, source_file: str = "JSON data") -> List[Col
         except (TypeError, IndexError, ValueError) as e:
             raise ValueError(
                 f"Invalid color data at index {i} in {source_file}: {e}"
+            ) from e
+    
+    return records
+
+
+def _parse_filament_records(data: list, source_file: str = "JSON data") -> List[FilamentRecord]:
+    """
+    Parse a list of filament data dictionaries into FilamentRecord objects.
+    
+    This is a helper function used by load_filaments() to avoid code duplication
+    and ensure consistent source tracking.
+    
+    Args:
+        data: List of dictionaries containing filament data
+        source_file: Name of the source file for error messages and source tracking.
+                    Should be just the filename (e.g., 'filaments.json', 'user-filaments.json')
+    
+    Returns:
+        List of FilamentRecord objects with source field set to source_file
+    
+    Raises:
+        KeyError: If required keys are missing from the filament data
+        ValueError: If filament data values are invalid
+    """
+    records: List[FilamentRecord] = []
+    
+    # Extract just the filename from path for source tracking
+    from pathlib import Path
+    source_filename = Path(source_file).name if source_file != "JSON data" else "unknown.json"
+    
+    for i, f in enumerate(data):
+        try:
+            records.append(FilamentRecord(
+                id=f.get("id", ""),  # User files may not have IDs
+                maker=f["maker"],
+                type=f["type"],
+                finish=f.get("finish"),
+                color=f["color"],
+                hex=f["hex"],
+                td_value=f.get("td_value"),
+                other_names=f.get("other_names"),
+                source=source_filename,
+            ))
+        except KeyError as e:
+            raise ValueError(
+                f"Missing required key {e} in filament at index {i} in {source_file}"
+            ) from e
+        except (TypeError, ValueError) as e:
+            raise ValueError(
+                f"Invalid filament data at index {i} in {source_file}: {e}"
             ) from e
     
     return records
@@ -275,6 +378,37 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         
         # Parse user color records using helper function
         user_records = _parse_color_records(user_data, str(user_json_path))
+        
+        # Detect and log overrides before merging
+        if user_records:
+            core_names = {r.name.lower(): r for r in records}
+            core_rgbs = {r.rgb: r for r in records}
+            
+            name_overrides = []
+            rgb_overrides = []
+            
+            for user_record in user_records:
+                # Check for name conflicts
+                if user_record.name.lower() in core_names:
+                    core_record = core_names[user_record.name.lower()]
+                    name_overrides.append((user_record.name, core_record.source, user_record.source))
+                
+                # Check for RGB conflicts (different records with same RGB)
+                if user_record.rgb in core_rgbs:
+                    core_record = core_rgbs[user_record.rgb]
+                    if core_record.name.lower() != user_record.name.lower():  # Different names, same RGB
+                        rgb_overrides.append((
+                            f"{user_record.name} {user_record.rgb}",
+                            f"{core_record.name} ({core_record.source})",
+                            user_record.source
+                        ))
+            
+            # Log override information
+            if name_overrides:
+                logger.info(f"User colors override {len(name_overrides)} core colors by name: {name_overrides}")
+            if rgb_overrides:
+                logger.info(f"User colors override {len(rgb_overrides)} core colors by RGB: {rgb_overrides}")
+        
         records.extend(user_records)
     
     return records
@@ -317,18 +451,8 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
     if not isinstance(data, list):
         raise ValueError(f"Expected array of filaments at root level in {json_path}")
     
-    records: List[FilamentRecord] = []
-    for f in data:
-        records.append(FilamentRecord(
-            id=f["id"],
-            maker=f["maker"],
-            type=f["type"],
-            finish=f.get("finish"),  # finish can be None
-            color=f["color"],
-            hex=f["hex"],
-            td_value=f.get("td_value"),  # td_value can be None
-            other_names=f.get("other_names"),  # other_names can be None
-        ))
+    # Parse core filament records using helper function
+    records = _parse_filament_records(data, str(json_path))
     
     # Load optional user filaments from same directory
     user_json_path = data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME
@@ -339,17 +463,48 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
         if not isinstance(user_data, list):
             raise ValueError(f"Expected array of filaments at root level in {user_json_path}")
         
-        for f in user_data:
-            records.append(FilamentRecord(
-                id=f.get("id", ""),  # User files may not have IDs yet
-                maker=f["maker"],
-                type=f["type"],
-                finish=f.get("finish"),
-                color=f["color"],
-                hex=f["hex"],
-                td_value=f.get("td_value"),
-                other_names=f.get("other_names"),
-            ))
+        # Parse user filament records using helper function
+        user_records = _parse_filament_records(user_data, str(user_json_path))
+        
+        # Detect and log overrides before merging
+        if user_records:
+            # For filaments, we consider a conflict when maker+type+color+hex all match
+            core_sigs = {}
+            for r in records:
+                sig = (r.maker, r.type, r.color, r.hex)
+                core_sigs[sig] = r
+            
+            exact_overrides = []
+            rgb_overrides = []
+            core_rgbs = {r.rgb: r for r in records}
+            
+            for user_record in user_records:
+                # Check for exact filament match (same maker+type+color+hex)
+                user_sig = (user_record.maker, user_record.type, user_record.color, user_record.hex)
+                if user_sig in core_sigs:
+                    core_record = core_sigs[user_sig]
+                    exact_overrides.append((
+                        f"{user_record.maker} {user_record.type} {user_record.color}",
+                        core_record.source,
+                        user_record.source
+                    ))
+                
+                # Check for RGB conflicts (different filaments with same RGB)
+                elif user_record.rgb in core_rgbs:
+                    core_record = core_rgbs[user_record.rgb]
+                    rgb_overrides.append((
+                        f"{user_record.maker} {user_record.type} {user_record.color} {user_record.rgb}",
+                        f"{core_record.maker} {core_record.type} {core_record.color} ({core_record.source})",
+                        user_record.source
+                    ))
+            
+            # Log override information
+            if exact_overrides:
+                logger.info(f"User filaments override {len(exact_overrides)} core filaments exactly: {exact_overrides}")
+            if rgb_overrides:
+                logger.info(f"User filaments override {len(rgb_overrides)} core filaments by RGB: {rgb_overrides}")
+        
+        records.extend(user_records)
     
     return records
 
@@ -574,7 +729,7 @@ class Palette:
         if space.lower() == "rgb":
             for r in self.records:
                 d = euclidean(tuple(map(float, value)), tuple(map(float, r.rgb)))
-                if d < best_d:
+                if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             return best_rec, best_d  # type: ignore
 
@@ -582,7 +737,7 @@ class Palette:
         if space.lower() == "hsl":
             for r in self.records:
                 d = hsl_euclidean(value, r.hsl)
-                if d < best_d:
+                if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             return best_rec, best_d  # type: ignore
 
@@ -591,7 +746,7 @@ class Palette:
             for r in self.records:
                 # LCH has circular hue like HSL, so we need special handling
                 d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
-                if d < best_d:
+                if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             return best_rec, best_d  # type: ignore
 
@@ -620,7 +775,7 @@ class Palette:
                 d = delta_e_cmc(value, r.lab, l=l, c=c)
             else:
                 d = fn(value, r.lab)  # type: ignore
-            if d < best_d:
+            if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                 best_rec, best_d = r, d
         return best_rec, best_d  # type: ignore
 
@@ -1002,7 +1157,7 @@ class FilamentPalette:
         for rec in candidates:
             try:
                 d = distance_fn(target_lab, rec.lab)
-                if d < best_d:
+                if d < best_d or (d == best_d and best_rec and _should_prefer_source(rec.source, best_rec.source)):
                     best_rec, best_d = rec, d
             except:
                 # Skip filaments with invalid colors

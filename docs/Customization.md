@@ -161,6 +161,73 @@ User data is automatically loaded and merged with core data. User files are opti
 
 **Note:** Users are responsible for avoiding duplicate entries between core and user data files.
 
+### User Override System (v3.7.0+)
+
+User files **automatically override** core data when there are conflicts, ensuring your customizations always take priority:
+
+#### **Override Behavior:**
+- **Name conflicts**: User colors/filaments with the same name override core entries
+- **RGB conflicts**: User colors/filaments with the same RGB values override core entries
+- **Consistent lookups**: All search methods (name, RGB, nearest neighbor) return user overrides consistently
+- **Source tracking**: Every record tracks its source file (colors.json, user-colors.json, cga4.json, etc.)
+
+#### **Override Detection:**
+```bash
+# Check what user data overrides core data
+color-tools --check-overrides
+```
+
+**Example output:**
+```
+User Override Report
+==================================================
+
+Override Details:
+  Colors: User colors override 1 core colors by name: [('red', 'colors.json', 'user-colors.json')]
+  Colors: User colors override 1 core colors by RGB: [('my_red (255, 0, 0)', 'red (colors.json)', 'user-colors.json')]
+
+Summary:
+  Total colors: 142
+  Total filaments: 585
+
+Active Sources:
+  Colors:
+    colors.json: 141 records
+    user-colors.json: 1 records
+  Filaments:
+    filaments.json: 585 records
+```
+
+#### **Source Information in Output:**
+All CLI commands now show the source file:
+
+```bash
+$ color-tools color --name red
+Name: red [from user-colors.json]
+Hex:  #DC143C
+RGB:  (220, 20, 60)
+
+$ color-tools color --nearest --value 255 0 0 --space rgb  
+Nearest color: red (distance=0.00) [from user-colors.json]
+```
+
+#### **Common Use Cases:**
+- **Brand colors**: Override "red" with your company's specific red shade
+- **Monitor calibration**: Adjust colors for display differences
+- **Personal preferences**: Custom color naming and values
+- **Regional variations**: Different color standards for different markets
+- **Hardware-specific**: Printer or monitor-specific color corrections
+
+#### **Programmatic Access:**
+```python
+from color_tools import Palette
+
+palette = Palette.load_default()
+red_color = palette.find_by_name("red")
+print(f"Red color from: {red_color.source}")
+# Output: Red color from: user-colors.json
+```
+
 ---
 
 ## Custom Palettes
