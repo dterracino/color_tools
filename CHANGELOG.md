@@ -14,6 +14,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.1.1] - 2025-12-23
+
+### Fixed
+
+- **Sphinx Documentation** - Updated API documentation to include all modules:
+  - Added missing modules: `color_deficiency`, `export`, `matrices`
+  - Fixed version number in Sphinx configuration (was 3.5.0, now 5.1.1)
+  - Added links to comprehensive usage guides (CLI, Installation, FAQ, etc.)
+  - Added CLI commands overview with links to detailed documentation
+
 ## [5.1.0] - 2025-12-23
 
 ### Added

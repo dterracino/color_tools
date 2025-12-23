@@ -24,6 +24,32 @@ Quick Start
    nearest, distance = palette.nearest_color(lab)
    print(f"Nearest color: {nearest.name}")
 
+Documentation
+-------------
+
+For comprehensive guides and CLI usage:
+
+* `📖 Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`_ - Library and CLI usage examples
+* `⚙️ Installation <https://github.com/dterracino/color_tools/blob/main/docs/Installation.md>`_ - Installation instructions
+* `🎨 Customization <https://github.com/dterracino/color_tools/blob/main/docs/Customization.md>`_ - User overrides and custom palettes
+* `❓ FAQ <https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md>`_ - Frequently asked questions
+* `📋 Quick Reference <https://github.com/dterracino/color_tools/blob/main/docs/QUICK_REFERENCE.md>`_ - Command cheat sheet
+* `🔧 Troubleshooting <https://github.com/dterracino/color_tools/blob/main/docs/Troubleshooting.md>`_ - Common issues and solutions
+
+CLI Commands
+~~~~~~~~~~~~
+
+The CLI provides five main commands:
+
+* **color** - Search CSS colors by name or find nearest color
+* **filament** - Search 3D printing filaments with filtering (maker, type, finish)
+* **convert** - Convert between color spaces and check gamut
+* **name** - Generate descriptive names for RGB colors
+* **cvd** - Color vision deficiency simulation and correction
+* **image** - Image color analysis and manipulation (requires [image] extra)
+
+See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`_ for detailed CLI examples.
+
 Core API Reference
 ------------------
 
@@ -40,8 +66,11 @@ All Modules
    color_tools.gamut
    color_tools.validation
    color_tools.naming
+   color_tools.color_deficiency
+   color_tools.export
    color_tools.config
    color_tools.constants
+   color_tools.matrices
    color_tools.image
 
 Indices and tables
