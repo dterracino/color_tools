@@ -24,6 +24,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Previously required awkward: `from color_tools.validation import ...`
   - Now follows "batteries included" principle for public API
 
+- **Validation CLI Command** - New `validate` command for validating color name/hex pairings:
+  - `color-tools validate --name "light blue" --hex "#ADD8E6"` - Check if name matches hex
+  - `--threshold` - Adjust Delta E threshold for strictness (default: 20.0)
+  - `--json-output` - Get results in JSON format for scripting
+  - Exit code 0 for match, 1 for no match (useful in scripts)
+  - Shows fuzzy matching confidence, Delta E distance, and suggestions
+
 - **Enhanced Data Class Documentation** - All 5 data classes now have comprehensive Sphinx autodoc:
   - `ColorRecord` - Detailed attribute descriptions with ranges and examples
   - `FilamentRecord` - Dual-color handling documentation and property explanations

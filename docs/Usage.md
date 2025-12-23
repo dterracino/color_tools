@@ -248,8 +248,8 @@ All data classes are immutable (frozen) with comprehensive docstrings. See [API 
 - LCH values: `(L, C, H)` where L is 0-100, C is 0-100+, H is 0-360°
 - HSL values: `(H, S, L)` where H is 0-360°, S/L are 0-100%
 - FilamentRecord's `rgb`, `lab`, and `lch` are computed properties (not stored)
-- Validation requires optional `[fuzzy]` extra for best results: `pip install color-match-tools[fuzzy]`
-- Image classes require optional `[image]` extra: `pip install color-match-tools[image]`
+- Validation uses fuzzy matching - install `[fuzzy]` extra for improved results: `pip install color-match-tools[fuzzy]`
+- Image classes require `[image]` extra: `pip install color-match-tools[image]`
 
 ---
 

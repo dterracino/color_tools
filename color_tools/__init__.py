@@ -19,6 +19,7 @@ Color Validation:
     >>> from color_tools import validate_color
     >>> 
     >>> # Validate if a hex code matches a color name
+    >>> # Note: Install [fuzzy] extra for improved matching: pip install color-match-tools[fuzzy]
     >>> result = validate_color("light blue", "#ADD8E6")
     >>> print(f"Match: {result.is_match}, Confidence: {result.name_confidence:.0%}")
     Match: True, Confidence: 100%

@@ -6,6 +6,7 @@ Provides main commands:
 - filament: Search and query 3D printing filaments
 - convert: Convert between color spaces and check gamut
 - name: Generate descriptive color names
+- validate: Validate if hex codes match color names
 - cvd: Color vision deficiency simulation/correction
 - image: Image color analysis and manipulation
 
@@ -25,6 +26,7 @@ from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
 from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
 from .color_deficiency import simulate_cvd, correct_cvd
+from .validation import validate_color
 from .export import export_filaments, export_colors, list_export_formats
 
 # Image analysis is optional (requires Pillow)
@@ -816,6 +818,42 @@ Examples:
         help="Show match type (exact/near/generated) in output"
     )
     
+    # ==================== VALIDATE SUBCOMMAND ====================
+    validate_parser = subparsers.add_parser(
+        "validate",
+        help="Validate if a hex code matches a color name",
+        description="""Validate color name/hex pairings using fuzzy matching and perceptual color distance (Delta E 2000).
+        
+        Note: For best fuzzy matching results, install the optional [fuzzy] extra:
+        pip install color-match-tools[fuzzy]
+        
+        Without [fuzzy], uses a hybrid matcher (exact/substring/Levenshtein)."""
+    )
+    
+    validate_parser.add_argument(
+        "--name",
+        type=str,
+        required=True,
+        help="Color name to validate (e.g., 'light blue', 'red', 'dark slate gray')"
+    )
+    validate_parser.add_argument(
+        "--hex",
+        type=str,
+        required=True,
+        help="Hex color code to validate (e.g., '#ADD8E6', 'ADD8E6')"
+    )
+    validate_parser.add_argument(
+        "--threshold",
+        type=float,
+        default=20.0,
+        help="Delta E threshold for color match (default: 20.0, lower = stricter)"
+    )
+    validate_parser.add_argument(
+        "--json-output",
+        action="store_true",
+        help="Output results in JSON format"
+    )
+    
     # ==================== CVD SUBCOMMAND ====================
     cvd_parser = subparsers.add_parser(
         "cvd",
@@ -1269,7 +1307,7 @@ Examples:
                 )
             elif args.export:
                 # Export all filaments if --export specified without filters
-                results = filament_palette.filaments
+                results = filament_palette.records
             else:
                 results = filament_palette.filter(
                     maker=args.maker,
@@ -1442,6 +1480,46 @@ Examples:
             print(name)
         
         sys.exit(0)
+    
+    # ==================== VALIDATE COMMAND HANDLER ====================
+    elif args.command == "validate":
+        # Validate the color name/hex pairing
+        result = validate_color(args.name, args.hex, de_threshold=args.threshold)
+        
+        if args.json_output:
+            # JSON output
+            import json
+            output = {
+                "is_match": result.is_match,
+                "name_match": result.name_match,
+                "name_confidence": result.name_confidence,
+                "hex_value": result.hex_value,
+                "suggested_hex": result.suggested_hex,
+                "delta_e": result.delta_e,
+                "message": result.message
+            }
+            print(json.dumps(output, indent=2))
+        else:
+            # Human-readable output
+            if result.is_match:
+                print(f"✓ MATCH")
+                print(f"Name:       '{args.name}' → matched to '{result.name_match}'")
+                print(f"Hex:        {result.hex_value}")
+                print(f"Confidence: {result.name_confidence:.0%}")
+                print(f"Delta E:    {result.delta_e:.2f} (threshold: {args.threshold})")
+                if result.suggested_hex and result.suggested_hex != result.hex_value:
+                    print(f"Note:       Exact match for '{result.name_match}' would be {result.suggested_hex}")
+            else:
+                print(f"✗ NO MATCH")
+                print(f"Name:       '{args.name}' → matched to '{result.name_match}'")
+                print(f"Hex:        {result.hex_value}")
+                print(f"Suggested:  {result.suggested_hex}")
+                print(f"Confidence: {result.name_confidence:.0%}")
+                print(f"Delta E:    {result.delta_e:.2f} (threshold: {args.threshold})")
+                print(f"Reason:     {result.message}")
+        
+        # Exit with code 0 for match, 1 for no match
+        sys.exit(0 if result.is_match else 1)
     
     # ==================== CVD COMMAND HANDLER ====================
     elif args.command == "cvd":

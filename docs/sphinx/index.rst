@@ -39,14 +39,20 @@ For comprehensive guides and CLI usage:
 CLI Commands
 ~~~~~~~~~~~~
 
-The CLI provides five main commands:
+The CLI provides six main commands:
 
 * **color** - Search CSS colors by name or find nearest color
 * **filament** - Search 3D printing filaments with filtering (maker, type, finish)
 * **convert** - Convert between color spaces and check gamut
 * **name** - Generate descriptive names for RGB colors
+* **validate** - Validate if hex codes match color names (fuzzy matching + Delta E)
+  
+  * *Optional:* Install ``[fuzzy]`` extra for improved fuzzy matching: ``pip install color-match-tools[fuzzy]``
+  
 * **cvd** - Color vision deficiency simulation and correction
-* **image** - Image color analysis and manipulation (requires [image] extra)
+* **image** - Image color analysis and manipulation
+  
+  * *Requires:* Install ``[image]`` extra: ``pip install color-match-tools[image]``
 
 See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`_ for detailed CLI examples.
 
