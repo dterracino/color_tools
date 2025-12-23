@@ -119,7 +119,30 @@ def _fuzzy_match_fallback(query: str, choices: list[str]) -> tuple[str, int]:
 @dataclass(frozen=True)
 class ColorValidationRecord:
     """
-    A record holding the results of a color validation check.
+    Result record from validating if a hex code matches a color name.
+    
+    This immutable dataclass contains comprehensive validation results including
+    fuzzy name matching confidence, perceptual color distance (Delta E), and
+    helpful suggestions for mismatches.
+    
+    Attributes:
+        is_match: True if the color name and hex code are a good match
+        name_match: Best matching CSS color name from the database (e.g., "lightblue")
+        name_confidence: Fuzzy matching confidence 0.0-1.0 (1.0 = exact match)
+        hex_value: The hex code that was validated (normalized with # prefix)
+        suggested_hex: Suggested hex code for the matched name, or None if exact match
+        delta_e: Perceptual color distance (Delta E 2000) between provided and suggested colors
+        message: Human-readable validation result message
+    
+    Example:
+        >>> from color_tools.validation import validate_color
+        >>> result = validate_color("light blue", "#ADD8E6")
+        >>> print(f"Match: {result.is_match}")
+        Match: True
+        >>> print(f"Matched '{result.name_match}' with {result.name_confidence:.0%} confidence")
+        Matched 'lightblue' with 100% confidence
+        >>> print(f"Delta E: {result.delta_e:.2f}")
+        Delta E: 0.00
     """
     is_match: bool
     name_match: Optional[str]

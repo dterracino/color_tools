@@ -15,14 +15,24 @@ Quick Start:
     >>> nearest, distance = palette.nearest_color(lab)
     >>> print(f"Nearest color: {nearest.name}")
 
+Color Validation:
+    >>> from color_tools import validate_color
+    >>> 
+    >>> # Validate if a hex code matches a color name
+    >>> result = validate_color("light blue", "#ADD8E6")
+    >>> print(f"Match: {result.is_match}, Confidence: {result.name_confidence:.0%}")
+    Match: True, Confidence: 100%
+
 Image Processing (requires pip install color-match-tools[image]):
     >>> from color_tools.image import simulate_cvd_image, quantize_image_to_palette
     >>> 
     >>> # Test accessibility - simulate colorblindness
     >>> sim_image = simulate_cvd_image("chart.png", "deuteranopia")
+    >>> sim_image.save("colorblind_view.png")
     >>> 
     >>> # Create retro artwork - convert to CGA palette
     >>> retro_image = quantize_image_to_palette("photo.jpg", "cga4", dither=True)
+    >>> retro_image.save("retro_art.png")
 
 Three Ways to Use:
     1. As a library: from color_tools import rgb_to_lab
@@ -30,7 +40,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "5.1.1"
+__version__ = "5.2.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -146,6 +156,15 @@ from .export import (
 )
 
 # ============================================================================
+# Color Validation (Fuzzy Name Matching + Delta E)
+# ============================================================================
+
+from .validation import (
+    validate_color,
+    ColorValidationRecord,
+)
+
+# ============================================================================
 # Color Vision Deficiency (Colorblindness Simulation and Correction)
 # ============================================================================
 
@@ -234,6 +253,10 @@ __all__ = [
     
     # Color naming
     "generate_color_name",
+    
+    # Color validation
+    "validate_color",
+    "ColorValidationRecord",
     
     # Import/Export
     "export_filaments",

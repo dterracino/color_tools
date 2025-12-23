@@ -14,6 +14,57 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.2.0] - 2025-12-23
+
+### Added
+
+- **Validation Module Exported in Public API** - The `validation` module is now fully accessible via main package imports:
+  - ✅ `from color_tools import validate_color` - Validate color name/hex pairings with fuzzy matching and Delta E
+  - ✅ `from color_tools import ColorValidationRecord` - Data class containing validation results
+  - Previously required awkward: `from color_tools.validation import ...`
+  - Now follows "batteries included" principle for public API
+
+- **Enhanced Data Class Documentation** - All 5 data classes now have comprehensive Sphinx autodoc:
+  - `ColorRecord` - Detailed attribute descriptions with ranges and examples
+  - `FilamentRecord` - Dual-color handling documentation and property explanations
+  - `ColorValidationRecord` - Complete validation result field documentation
+  - `ColorCluster` - Image cluster attributes with usage examples
+  - `ColorChange` - Luminance redistribution field documentation
+  - Single source of truth: docstrings auto-generate API documentation
+
+- **Data Classes Quick Reference** - Added comprehensive quick reference table to Usage.md:
+  - All 5 data classes with purpose, key fields, and API links
+  - Value range notes for RGB, LAB, LCH, HSL
+  - Installation notes for optional dependencies
+  - Direct links to full Sphinx documentation
+
+- **Export Library Examples** - Added comprehensive library usage examples to Usage.md:
+  - `export_filaments()` examples with filtering (AutoForge CSV, generic CSV, JSON)
+  - `export_colors()` examples
+  - Code examples showing real-world export workflows
+  - Complements existing CLI documentation
+
+### Changed
+
+- **Enhanced Package Docstring** - Main `__init__.py` docstring now includes:
+  - Color validation example showing `validate_color()` usage
+  - Improved image processing examples with `.save()` calls
+  - Better organization of Quick Start, Validation, and Image sections
+  - All examples now show complete workflows
+
+- **Improved Sphinx Index** - Added Data Classes section to API documentation:
+  - Highlights all 5 immutable dataclasses
+  - Links to quick reference in Usage.md
+  - Notes about comprehensive docstrings and examples
+
+### Documentation
+
+- Created `docs/other/DOCUMENTATION_GAPS.md` - Comprehensive analysis of documentation coverage:
+  - Coverage summary table for all modules
+  - Identified and resolved critical gaps (validation export)
+  - Documented design decisions (image module import pattern)
+  - Checklist for future feature additions
+
 ## [5.1.1] - 2025-12-23
 
 ### Fixed

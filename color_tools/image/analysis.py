@@ -23,7 +23,27 @@ from ..distance import delta_e_2000
 
 @dataclass
 class ColorCluster:
-    """A cluster of similar colors from k-means clustering."""
+    """
+    A cluster of similar colors from k-means clustering in LAB color space.
+    
+    Represents a group of perceptually similar pixels extracted from an image.
+    The centroid is the representative color for the cluster, and pixel assignments
+    enable remapping the original image to use only the dominant colors.
+    
+    Attributes:
+        centroid_rgb: Representative RGB color for this cluster (0-255 each)
+        centroid_lab: Representative color in CIE LAB space (L: 0-100, a/b: ~-128 to +127)
+        pixel_indices: List of pixel indices (flat array positions) belonging to this cluster
+        pixel_count: Number of pixels in this cluster (dominance weight)
+    
+    Example:
+        >>> from color_tools.image import extract_color_clusters
+        >>> clusters = extract_color_clusters("photo.jpg", n_colors=5)
+        >>> for i, cluster in enumerate(clusters, 1):
+        ...     print(f"Color {i}: RGB{cluster.centroid_rgb} ({cluster.pixel_count} pixels)")
+        Color 1: RGB(45, 52, 71) (15234 pixels)
+        Color 2: RGB(189, 147, 128) (8921 pixels)
+    """
     centroid_rgb: Tuple[int, int, int]  # Representative color
     centroid_lab: Tuple[float, float, float]  # LAB representation
     pixel_indices: List[int]  # Which pixels belong to this cluster
@@ -62,7 +82,31 @@ def l_value_to_hueforge_layer(l_value: float, total_layers: int = 27) -> int:
 
 @dataclass
 class ColorChange:
-    """Represents a color before and after luminance redistribution."""
+    """
+    Represents a color transformation from luminance redistribution for HueForge optimization.
+    
+    Tracks the before/after state when redistributing luminance values evenly across
+    a set of colors. This is used for HueForge 3D printing to spread colors across
+    the 27 available layers and prevent multiple colors from bunching on the same layer.
+    
+    Attributes:
+        original_rgb: Original RGB color before redistribution (0-255 each)
+        original_lch: Original LCH color (L: 0-100, C: 0-100+, H: 0-360°)
+        new_rgb: New RGB color after luminance redistribution (0-255 each)
+        new_lch: New LCH color with redistributed L value (L: 0-100, C: 0-100+, H: 0-360°)
+        delta_e: Perceptual color difference (Delta E 2000) between original and new
+        hueforge_layer: Target HueForge layer number (1-27) based on new L value
+    
+    Example:
+        >>> from color_tools.image import extract_color_clusters, redistribute_luminance
+        >>> clusters = extract_color_clusters("image.jpg", n_colors=10)
+        >>> colors = [c.centroid_rgb for c in clusters]
+        >>> changes = redistribute_luminance(colors)
+        >>> for change in changes:
+        ...     print(f"Layer {change.hueforge_layer}: RGB{change.new_rgb} (ΔE: {change.delta_e:.1f})")
+        Layer 3: RGB(45, 52, 71) (ΔE: 12.3)
+        Layer 7: RGB(89, 95, 102) (ΔE: 18.7)
+    """
     original_rgb: Tuple[int, int, int]
     original_lch: Tuple[float, float, float]
     new_rgb: Tuple[int, int, int]

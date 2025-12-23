@@ -168,6 +168,39 @@ gameboy_image.save("gameboy_style.png")
   - Returns `ColorValidationRecord` with match confidence, suggested hex, and Delta E distance
   - Example: `validate_color("light blue", "#ADD8E6")` → validates color name/hex pairing
 
+#### Export
+
+- `export_filaments()` - Export filament data to file (AutoForge CSV, generic CSV, or JSON)
+- `export_colors()` - Export color data to file (generic CSV or JSON)
+- `list_export_formats()` - List available export formats
+- Individual format exporters: `export_filaments_autoforge()`, `export_filaments_csv()`, `export_filaments_json()`, `export_colors_csv()`, `export_colors_json()`
+- `generate_filename()` - Generate timestamped filename for exports
+
+**Export Examples:**
+
+```python
+from color_tools import FilamentPalette, Palette, export_filaments, export_colors
+
+# Export all Bambu Lab PLA filaments to AutoForge CSV
+palette = FilamentPalette.load_default()
+bambu_pla = [f for f in palette.records 
+             if f.maker == "Bambu Lab" and f.type == "PLA"]
+export_filaments(bambu_pla, "bambu_pla_colors.csv", format="autoforge")
+
+# Export filtered filaments to generic CSV
+matte_filaments = palette.filter(finish="Matte")
+export_filaments(matte_filaments, "matte_filaments.csv", format="csv")
+
+# Export all colors to JSON
+color_palette = Palette.load_default()
+export_colors(color_palette.records, "all_colors.json", format="json")
+
+# List available formats
+from color_tools import list_export_formats
+formats = list_export_formats()
+print(f"Available formats: {formats}")
+```
+
 ### Data Structures
 
 The library uses immutable dataclasses for color and filament records:
@@ -195,6 +228,28 @@ print(filament.lab)     # e.g., (48.2, 68.1, 54.3) - computed on demand
 print(filament.lch)     # e.g., (48.2, 87.4, 38.6) - computed on demand
 print(filament.other_names)  # e.g., ["Classic Red"] or None
 ```
+
+#### Data Classes Quick Reference
+
+All data classes are immutable (frozen) with comprehensive docstrings. See [API Documentation](https://dterracino.github.io/color_tools/) for full details.
+
+| Class | Module | Purpose | Key Fields | Full Docs |
+| ------- | -------- | --------- | ------------ | ----------- |
+| **ColorRecord** | `palette` | Named CSS color with precomputed color space values | `name`, `hex`, `rgb`, `lab`, `lch`, `hsl` | [API](https://dterracino.github.io/color_tools/api/color_tools.palette.html#color_tools.palette.ColorRecord) |
+| **FilamentRecord** | `palette` | 3D printing filament color (handles dual-color variants) | `maker`, `type`, `color`, `hex`, `rgb` (property), `lab`, `lch` | [API](https://dterracino.github.io/color_tools/api/color_tools.palette.html#color_tools.palette.FilamentRecord) |
+| **ColorValidationRecord** | `validation` | Color name/hex validation results with fuzzy matching | `is_match`, `name_match`, `name_confidence`, `delta_e`, `message` | [API](https://dterracino.github.io/color_tools/api/color_tools.validation.html#color_tools.validation.ColorValidationRecord) |
+| **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
+| **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
+
+**Notes:**
+
+- All RGB values are tuples: `(r, g, b)` with 0-255 range
+- LAB values: `(L, a, b)` where L is 0-100, a/b are roughly -128 to +127
+- LCH values: `(L, C, H)` where L is 0-100, C is 0-100+, H is 0-360°
+- HSL values: `(H, S, L)` where H is 0-360°, S/L are 0-100%
+- FilamentRecord's `rgb`, `lab`, and `lch` are computed properties (not stored)
+- Validation requires optional `[fuzzy]` extra for best results: `pip install color-match-tools[fuzzy]`
+- Image classes require optional `[image]` extra: `pip install color-match-tools[image]`
 
 ---
 

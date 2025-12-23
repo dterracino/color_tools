@@ -96,13 +96,32 @@ def _should_prefer_source(new_source: str, current_source: str) -> bool:
 @dataclass(frozen=True)
 class ColorRecord:
     """
-    Immutable record representing a CSS color.
+    Immutable record representing a named CSS color with precomputed color space values.
     
-    Frozen dataclass = immutable. Once created, you can't change it.
-    This is perfect for colors - a color IS what it IS! 🎨
+    This dataclass is frozen (immutable) - once created, you can't change it.
+    This is perfect for colors: a color IS what it IS! 🎨
     
-    The source field tracks which JSON file provided this color record,
-    enabling override detection and debugging.
+    All color space values are precomputed and stored for fast access without
+    conversion overhead. The source field tracks which JSON file provided this
+    color, enabling user override detection and debugging.
+    
+    Attributes:
+        name: Color name (e.g., "coral", "lightblue", "darkslategray")
+        hex: Hex color code with # prefix (e.g., "#FF7F50")
+        rgb: RGB color tuple with values 0-255 (e.g., (255, 127, 80))
+        hsl: HSL color tuple (H: 0-360°, S: 0-100%, L: 0-100%)
+        lab: CIE LAB color tuple (L: 0-100, a: ~-128 to +127, b: ~-128 to +127)
+        lch: CIE LCH color tuple (L: 0-100, C: 0-100+, H: 0-360°)
+        source: JSON filename where this record originated (default: "colors.json")
+    
+    Example:
+        >>> from color_tools import Palette
+        >>> palette = Palette.load_default()
+        >>> color = palette.get_by_name("coral")
+        >>> print(f"{color.name}: RGB{color.rgb}")
+        coral: RGB(255, 127, 80)
+        >>> print(f"LAB: {color.lab}")
+        LAB: (67.29, 44.61, 49.72)
     """
     name: str
     hex: str
@@ -116,14 +135,40 @@ class ColorRecord:
 @dataclass(frozen=True)
 class FilamentRecord:
     """
-    Immutable record representing a 3D printing filament.
+    Immutable record representing a 3D printing filament color.
     
-    The clever part: rgb is a @property that handles dual-color filaments!
-    Some silk filaments have TWO colors twisted together (e.g., "#AABBCC-#DDEEFF"),
-    and we can extract either the first, last, or perceptually blend them.
+    This dataclass handles both single-color and dual-color filaments (like silk/rainbow
+    filaments with two twisted colors). The rgb property intelligently handles dual-color
+    hex codes (e.g., "#AABBCC-#DDEEFF") based on the global dual_color_mode setting.
     
-    The source field tracks which JSON file provided this filament record,
-    enabling override detection and debugging.
+    The source field tracks which JSON file provided this filament, enabling user
+    override detection and debugging.
+    
+    Attributes:
+        id: Unique identifier slug (e.g., "bambu-lab-pla-silk-plus-red")
+        maker: Manufacturer name (e.g., "Bambu Lab", "Polymaker", "Prusament")
+        type: Filament material type (e.g., "PLA", "PETG", "ABS")
+        finish: Surface finish type (e.g., "Matte", "Silk", "PolyMax") or None
+        color: Color name as labeled by manufacturer (e.g., "Jet Black", "Signal Red")
+        hex: Hex color code with # prefix, may contain dash for dual colors (e.g., "#333333-#666666")
+        td_value: Translucency/transparency value 0.0-1.0 (None for opaque)
+        other_names: Alternative color names (regional variants, historical names) or None
+        source: JSON filename where this record originated (default: "filaments.json")
+    
+    Properties:
+        rgb: RGB tuple (0-255 each) computed from hex, handles dual-color filaments
+            based on dual_color_mode ("first", "last", or "mix")
+        lab: CIE LAB tuple computed on-demand from RGB
+        lch: CIE LCH tuple computed on-demand from RGB
+    
+    Example:
+        >>> from color_tools import FilamentPalette
+        >>> palette = FilamentPalette.load_default()
+        >>> filament = palette.find_by_maker("Bambu Lab", type_name="PLA")[0]
+        >>> print(f"{filament.maker} {filament.type} - {filament.color}")
+        Bambu Lab PLA - Jet Black
+        >>> print(f"RGB: {filament.rgb}, Hex: {filament.hex}")
+        RGB: (51, 51, 51), Hex: #333333
     """
     id: str  # Unique identifier slug (e.g., "bambu-lab-pla-silk-plus-red")
     maker: str
@@ -963,12 +1008,15 @@ class Palette:
         
         Returns:
             Dictionary with override information structure:
-            {
-                "colors": {
-                    "name": {"color_name": ("core_source", "user_source")},
-                    "rgb": {"(r,g,b)": ("core_source", "user_source")}
+            
+            .. code-block:: python
+            
+                {
+                    "colors": {
+                        "name": {"color_name": ("core_source", "user_source")},
+                        "rgb": {"(r,g,b)": ("core_source", "user_source")}
+                    }
                 }
-            }
         """
         overrides: Dict[str, Dict[str, Dict[str, Tuple[str, str]]]] = {
             "colors": {"name": {}, "rgb": {}}
@@ -1411,18 +1459,21 @@ class FilamentPalette:
         
         Returns:
             Dictionary with override information structure:
-            {
-                "filaments": {
-                    "rgb": {"(r,g,b)": {"core": [sources], "user": [sources]}}
-                },
-                "synonyms": {
-                    "maker_name": {
-                        "type": "replaced|extended",
-                        "old": [core_synonyms],
-                        "new": [user_synonyms]
+            
+            .. code-block:: python
+            
+                {
+                    "filaments": {
+                        "rgb": {"(r,g,b)": {"core": [sources], "user": [sources]}}
+                    },
+                    "synonyms": {
+                        "maker_name": {
+                            "type": "replaced|extended",
+                            "old": [core_synonyms],
+                            "new": [user_synonyms]
+                        }
                     }
                 }
-            }
         """
         from typing import Any
         

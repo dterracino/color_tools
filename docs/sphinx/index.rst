@@ -50,6 +50,20 @@ The CLI provides five main commands:
 
 See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`_ for detailed CLI examples.
 
+Data Classes
+~~~~~~~~~~~~
+
+The library uses immutable dataclasses (frozen) to represent colors, filaments, and results:
+
+* **ColorRecord** - CSS colors with precomputed values in all color spaces
+* **FilamentRecord** - 3D printing filaments with intelligent dual-color handling
+* **ColorValidationRecord** - Color name/hex validation results with fuzzy matching
+* **ColorCluster** - Image color clusters from k-means analysis *(requires [image] extra)*
+* **ColorChange** - Luminance redistribution results for HueForge *(requires [image] extra)*
+
+All data classes have comprehensive docstrings with attribute descriptions and examples.
+See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#data-classes-quick-reference>`_ for a quick reference table.
+
 Core API Reference
 ------------------
 
