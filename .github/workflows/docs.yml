@@ -36,7 +36,10 @@ jobs:
       - name: Build Sphinx documentation
         run: |
           cd docs/sphinx
-          python -m sphinx -b html . _build/html --keep-going
+          # Clean any previous builds
+          rm -rf _build api
+          # Build with autosummary regeneration
+          python -m sphinx -b html . _build/html --keep-going -E -a
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
