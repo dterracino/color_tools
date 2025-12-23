@@ -174,8 +174,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated 2025-12-03: Changed cyan/magenta colors, updated COLORS_JSON_HASH
-    _EXPECTED_HASH = "ae879b7de3d11b651970612cdead003744c20e731032456e9388bb17c6187815"
+    # Updated 2025-12-23: Added CRAYOLA_PALETTE_HASH for new Crayola palette
+    _EXPECTED_HASH = "e33a64a033de2544333d6720968b9ce60799a432fa35a1fb2321e605e274e558"
     # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================
@@ -193,6 +193,7 @@ class ColorConstants:
     CGA4_PALETTE_HASH = "62624dbeef28b664feca10afe3901b52b2335395134aba88ea21f955f0d17b7d"
     CGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
     COMMODORE64_PALETTE_HASH = "c4502abaed781535de55f3042cca4d7b3653c5eeb4cec3ecb30f591bfbfdfcca"
+    CRAYOLA_PALETTE_HASH = "65bf4add677a7a8667114b8f813b8afdd6b8e92e8cef1458e53b4a8cd716a4a3"
     EGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
     EGA64_PALETTE_HASH = "2159e51f89cca4a4fb43a2d80bea030f3d7cd0cc5e1eacd25eb95f0ce2027e7f"
     GAMEBOY_PALETTE_HASH = "e2911baed15b4d56a27313b6be506c3a1f57bee3b01ecd2ca5995b512822da9b"
@@ -285,6 +286,7 @@ class ColorConstants:
             ("cga4.json", cls.CGA4_PALETTE_HASH),
             ("cga16.json", cls.CGA16_PALETTE_HASH),
             ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
+            ("crayola.json", cls.CRAYOLA_PALETTE_HASH),
             ("ega16.json", cls.EGA16_PALETTE_HASH),
             ("ega64.json", cls.EGA64_PALETTE_HASH),
             ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),

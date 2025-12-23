@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Crayola Crayon Colors Palette** - New built-in palette with 120 classic Crayola crayon colors:
+  - Load with `load_palette('crayola')` in Python
+  - Includes iconic colors: Burnt Orange, Sunset Orange, Purple Heart, Screamin' Green, etc.
+  - Full color space conversions (RGB, HSL, LAB, LCH) computed from source data
+  - Generation script available at `tooling/generate_crayola_palette.py`
+  - Documentation at `tooling/CRAYOLA_PALETTE.md`
+
 ### Changed
 
 ### Fixed

@@ -23,6 +23,7 @@ Generates palette files in `color_tools/data/palettes/` with full color space co
 
 - `cga4.json` - CGA 4-color (Palette 1, high intensity)
 - `cga16.json` - CGA 16-color (full RGBI)
+- `crayola.json` - Crayola 120-color crayon palette (see `generate_crayola_palette.py`)
 - `ega16.json` - EGA 16-color (standard/default)
 - `ega64.json` - EGA 64-color (full 6-bit RGB)
 - `vga.json` - VGA 256-color (Mode 13h)

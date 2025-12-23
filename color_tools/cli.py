@@ -929,7 +929,7 @@ Examples:
             for error in errors:
                 print(f"  {error}", file=sys.stderr)
             sys.exit(1)
-        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 14 palettes)")
+        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 15 palettes)")
     
     # Verify user data files integrity if requested
     if args.verify_user_data:

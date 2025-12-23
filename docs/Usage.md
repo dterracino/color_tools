@@ -63,10 +63,11 @@ cga = load_palette('cga4')  # Classic CGA 4-color palette
 color, distance = cga.nearest_color((128, 64, 200), space='rgb')
 print(f"Nearest CGA color: {color.name} ({color.hex})")
 
-# Available palettes: cga4, cga16, ega16, ega64, vga, web
-ega = load_palette('ega16')  # Standard EGA 16-color palette
-vga = load_palette('vga')    # VGA 256-color palette (Mode 13h)
-web = load_palette('web')    # Web-safe 216-color palette
+# Available palettes: cga4, cga16, crayola, ega16, ega64, vga, web, and more
+ega = load_palette('ega16')     # Standard EGA 16-color palette
+vga = load_palette('vga')       # VGA 256-color palette (Mode 13h)
+web = load_palette('web')       # Web-safe 216-color palette
+crayola = load_palette('crayola')  # 120 Crayola crayon colors
 
 # Error handling - helpful messages if palette doesn't exist
 try:
