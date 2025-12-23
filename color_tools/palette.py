@@ -155,7 +155,12 @@ class FilamentRecord:
         finish: Surface finish type (e.g., "Matte", "Silk", "PolyMax") or None
         color: Color name as labeled by manufacturer (e.g., "Jet Black", "Signal Red")
         hex: Hex color code with # prefix, may contain dash for dual colors (e.g., "#333333-#666666")
-        td_value: Translucency/transparency value 0.0-1.0 (None for opaque)
+        td_value: Light transmission depth - how much light passes through the filament.
+            Used for HueForge 3D printing to model light transmission through layers.
+            Most filaments: 0-10 (opaque to slightly translucent)
+            Transparent/clear filaments: ~100
+            Scale is open-ended and can exceed 100 for highly transparent materials.
+            None indicates opaque or unknown transmission characteristics.
         other_names: Alternative color names (regional variants, historical names) or None
         source: JSON filename where this record originated (default: "filaments.json")
     

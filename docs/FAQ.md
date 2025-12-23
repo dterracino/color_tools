@@ -391,12 +391,14 @@ Yes! Create custom palettes in `data/user/palettes/` with `user-` prefix:
 **Important:** User palette files **must** start with `user-` prefix for security and clarity.
 
 **Features:**
+
 - **No core palette conflicts**: `user-gameboy.json` won't override core `gameboy`
 - **Automatic discovery**: Your palettes appear in `--palette list`
 - **Full CLI integration**: Use with `--palette user-mycustom`
 - **Image processing support**: Works with image quantization
 
 **Usage:**
+
 ```bash
 # List all available palettes (core + user)
 color-tools color --palette list

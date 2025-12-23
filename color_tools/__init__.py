@@ -41,7 +41,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "5.3.0"
+__version__ = "5.4.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)

@@ -174,8 +174,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated 2025-12-23: Added CRAYOLA_PALETTE_HASH for new Crayola palette
-    _EXPECTED_HASH = "e33a64a033de2544333d6720968b9ce60799a432fa35a1fb2321e605e274e558"
+    # Updated 2025-12-23: Added CRAYOLA_PALETTE_HASH for new Crayola palette, updated filaments data comment
+    _EXPECTED_HASH = "3bb6190c350528cfddd86aab6abe14bf90cc52892bb0bbe6d1769864f3092665"
     # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================
@@ -184,9 +184,10 @@ class ColorConstants:
     # SHA-256 hashes of core data files for integrity verification
     # These hashes are computed from the exact file contents (including whitespace)
     # Updated 2025-12-03: Changed cyan to #00B7EB and magenta to #FF0090 to resolve RGB duplication with aqua/fuchsia
+    # Updated 2025-12-23: Imported 328 new filaments from HueForge data (20 new manufacturers, filtered null hex codes, deduplicated IDs)
     
     COLORS_JSON_HASH = "dc8ce5769a2186008af540c03159d3f24a72e5effc9ce5b611c8b4374da19ffd"
-    FILAMENTS_JSON_HASH = "cecec1bbd83712d5a183ca4c67de555465485170ebb317e60adf65022790f988"
+    FILAMENTS_JSON_HASH = "8e3e178cf824b7e1bcf34b67bfa929e462964334c79069073806a9a959f3536e"
     MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
     
     # Palette file hashes

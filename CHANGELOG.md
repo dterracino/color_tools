@@ -14,6 +14,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.4.0] - 2025-12-23
+
+### Added
+
+- **HueForge filament data import** - Imported 328 new filaments from HueForge dataset
+  - **20 NEW manufacturers added:**
+    - 3D Jake (3 filaments)
+    - Atomic (2 filaments)
+    - ERYONE (10 filaments)
+    - Elegoo (12 filaments)
+    - Fillamentum (3 filaments)
+    - Flashforge (3 filaments)
+    - Hatchbox (22 filaments)
+    - IIID Max (37 filaments)
+    - Inland (31 filaments)
+    - Matterhacker (1 filament)
+    - Mika3D (17 filaments)
+    - Numakers (22 filaments)
+    - Overture (18 filaments)
+    - Protopasta (48 filaments)
+    - Repkord (12 filaments)
+    - Sunlu (13 filaments)
+    - ...and 4 more
+  - **4 existing manufacturers expanded:**
+    - Bambu Lab (+1 filament)
+    - Paramount 3D (+23 filaments)
+    - Prusament (+19 filaments)
+    - eSun (+31 filaments)
+  - **Total filaments:** 913 (was 585, added 328)
+  - Import tool: `tooling/import_hueforge_data.py` with dry-run preview, duplicate detection, and conflict handling
+  - Filtered out 32 entries with null hex codes
+  - Deduplicated entries with identical IDs
+
 ## [5.3.0] - 2025-12-23
 
 ### Added
