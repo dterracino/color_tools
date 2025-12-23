@@ -138,6 +138,20 @@ class TestColorClusterDataclass(unittest.TestCase):
         )
         self.assertEqual(cluster.pixel_count, 0)
         self.assertEqual(len(cluster.pixel_indices), 0)
+    
+    def test_color_cluster_str(self):
+        """Test ColorCluster string representation."""
+        cluster = self.ColorCluster(
+            centroid_rgb=(45, 52, 71),
+            centroid_lab=(22.0, 5.0, -12.0),
+            pixel_indices=list(range(15234)),
+            pixel_count=15234
+        )
+        result = str(cluster)
+        self.assertEqual(result, "RGB(45, 52, 71) - 15234 pixels")
+        # Verify repr still shows full details
+        repr_str = repr(cluster)
+        self.assertIn("ColorCluster", repr_str)
 
 
 @unittest.skipUnless(PILLOW_AVAILABLE and NUMPY_AVAILABLE, "Requires Pillow and numpy")
@@ -163,6 +177,22 @@ class TestColorChangeDataclass(unittest.TestCase):
         self.assertEqual(change.new_rgb, (90, 45, 28))
         self.assertEqual(change.delta_e, 15.5)
         self.assertEqual(change.hueforge_layer, 1)
+    
+    def test_color_change_str(self):
+        """Test ColorChange string representation."""
+        change = self.ColorChange(
+            original_rgb=(100, 50, 30),
+            original_lch=(30.0, 40.0, 25.0),
+            new_rgb=(45, 52, 71),
+            new_lch=(22.0, 15.0, 235.0),
+            delta_e=12.3,
+            hueforge_layer=3
+        )
+        result = str(change)
+        self.assertEqual(result, "Layer 3: RGB(45, 52, 71) (ΔE 12.3)")
+        # Verify repr still shows full details
+        repr_str = repr(change)
+        self.assertIn("ColorChange", repr_str)
 
 
 @unittest.skipUnless(PILLOW_AVAILABLE and NUMPY_AVAILABLE, "Requires Pillow and numpy")

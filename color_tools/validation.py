@@ -151,6 +151,12 @@ class ColorValidationRecord:
     suggested_hex: Optional[str]
     delta_e: float
     message: str
+    
+    def __str__(self) -> str:
+        """Human-readable validation result."""
+        match_status = "✓ Match" if self.is_match else "✗ Mismatch"
+        confidence = f"{self.name_confidence:.0%}"
+        return f"{match_status}: '{self.name_match}' ({confidence} confidence, ΔE {self.delta_e:.1f})"
 
 
 def validate_color(

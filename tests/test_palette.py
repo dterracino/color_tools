@@ -48,6 +48,23 @@ class TestColorRecord(unittest.TestCase):
         )
         with self.assertRaises(AttributeError):
             color.name = "blue"
+    
+    def test_color_record_str(self):
+        """Test ColorRecord string representation."""
+        color = ColorRecord(
+            name="coral",
+            hex="#FF7F50",
+            rgb=(255, 127, 80),
+            hsl=(16.1, 100.0, 65.7),
+            lab=(67.29, 44.61, 49.72),
+            lch=(67.29, 66.87, 48.08)
+        )
+        result = str(color)
+        self.assertEqual(result, "coral (#FF7F50)")
+        # Verify repr still shows full details
+        repr_str = repr(color)
+        self.assertIn("ColorRecord", repr_str)
+        self.assertIn("coral", repr_str)
 
 
 class TestFilamentRecord(unittest.TestCase):
@@ -84,6 +101,34 @@ class TestFilamentRecord(unittest.TestCase):
         )
         with self.assertRaises(AttributeError):
             filament.color = "Blue"
+    
+    def test_filament_record_str(self):
+        """Test FilamentRecord string representation."""
+        filament = FilamentRecord(
+            id="bambu-lab-pla-matte-jet-black",
+            maker="Bambu Lab",
+            type="PLA",
+            finish="Matte",
+            color="Jet Black",
+            hex="#333333"
+        )
+        result = str(filament)
+        self.assertEqual(result, "Bambu Lab PLA Matte - Jet Black (#333333)")
+        # Test without finish
+        filament_no_finish = FilamentRecord(
+            id="test-maker-abs-red",
+            maker="Test Maker",
+            type="ABS",
+            finish=None,
+            color="Red",
+            hex="#FF0000"
+        )
+        result_no_finish = str(filament_no_finish)
+        self.assertEqual(result_no_finish, "Test Maker ABS - Red (#FF0000)")
+        # Verify repr still shows full details
+        repr_str = repr(filament)
+        self.assertIn("FilamentRecord", repr_str)
+        self.assertIn("Bambu Lab", repr_str)
 
 
 class TestPalette(unittest.TestCase):

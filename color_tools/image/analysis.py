@@ -48,6 +48,11 @@ class ColorCluster:
     centroid_lab: Tuple[float, float, float]  # LAB representation
     pixel_indices: List[int]  # Which pixels belong to this cluster
     pixel_count: int  # How many pixels in this cluster
+    
+    def __str__(self) -> str:
+        """Human-readable cluster representation: RGB color with pixel count."""
+        r, g, b = self.centroid_rgb
+        return f"RGB({r}, {g}, {b}) - {self.pixel_count} pixels"
 
 
 def l_value_to_hueforge_layer(l_value: float, total_layers: int = 27) -> int:
@@ -113,6 +118,11 @@ class ColorChange:
     new_lch: Tuple[float, float, float]
     delta_e: float
     hueforge_layer: int  # Which Hueforge layer this color maps to
+    
+    def __str__(self) -> str:
+        """Human-readable color change: layer assignment with delta E."""
+        r, g, b = self.new_rgb
+        return f"Layer {self.hueforge_layer}: RGB({r}, {g}, {b}) (ΔE {self.delta_e:.1f})"
 
 
 def _check_pillow():

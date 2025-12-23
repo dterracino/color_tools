@@ -14,6 +14,30 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+## [5.3.0] - 2025-12-23
+
+### Added
+
+- **Unit tests for data class string representations** - Added 5 comprehensive tests verifying `__str__()` behavior:
+  - `test_color_record_str` - ColorRecord formatting
+  - `test_filament_record_str` - FilamentRecord with/without finish
+  - `test_validation_record_str` - ColorValidationRecord match/mismatch cases
+  - `test_color_cluster_str` - ColorCluster pixel count display
+  - `test_color_change_str` - ColorChange layer assignment
+  - All tests verify both `str()` and `repr()` outputs
+  - Total test count: 446 tests (all passing)
+
+### Changed
+
+- **String representation of data classes** - All data classes now have concise, user-friendly `__str__()` output for better readability when printing or logging. The `repr()` output remains unchanged for debugging purposes.
+  - **ColorRecord**: `str(color)` now returns `"coral (#FF7F50)"` instead of full dataclass repr
+  - **FilamentRecord**: `str(filament)` now returns `"Bambu Lab PLA Matte - Jet Black (#333333)"`
+  - **ColorValidationRecord**: Shows match status, confidence, and Delta E at a glance
+  - **ColorCluster**: Shows RGB color and pixel count
+  - **ColorChange**: Shows HueForge layer assignment with Delta E
+  - **Migration**: If you were parsing `str(record)` output (not recommended), use dataclass properties instead: `record.name`, `record.hex`, `record.rgb`, etc.
+  - **Why this is minor version**: String representation is presentation layer, not API contract. The documented API (dataclass fields and properties) remains unchanged. Anyone parsing auto-generated repr was relying on undocumented implementation detail.
+
 ## [5.2.0] - 2025-12-23
 
 ### Added

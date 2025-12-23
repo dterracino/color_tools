@@ -130,6 +130,10 @@ class ColorRecord:
     lab: Tuple[float, float, float]   # (L*, a*, b*)
     lch: Tuple[float, float, float]   # (L*, C*, H°)
     source: str = "colors.json"      # JSON filename where this record originated
+    
+    def __str__(self) -> str:
+        """Human-readable color representation: name (#hex)"""
+        return f"{self.name} ({self.hex})"
 
 
 @dataclass(frozen=True)
@@ -258,10 +262,9 @@ class FilamentRecord:
         return rgb_to_hsl(self.rgb)
     
     def __str__(self) -> str:
-        """Pretty string representation for printing."""
-        finish_str = f" {self.finish}" if self.finish else ""
-        td_str = f" (TD: {self.td_value})" if self.td_value is not None else ""
-        return f"{self.maker} {self.type}{finish_str} - {self.color} {self.hex}{td_str}"
+        """Human-readable filament representation: Maker Type Finish - Color (#hex)"""
+        finish_part = f" {self.finish}" if self.finish else ""
+        return f"{self.maker} {self.type}{finish_part} - {self.color} ({self.hex})"
 
 
 # ============================================================================

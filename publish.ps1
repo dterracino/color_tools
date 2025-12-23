@@ -29,9 +29,9 @@ param(
 
 # Color output helpers
 function Write-Step { param($msg) Write-Host "`n==> $msg" -ForegroundColor Cyan }
-function Write-Success { param($msg) Write-Host "✓ $msg" -ForegroundColor Green }
-function Write-Error { param($msg) Write-Host "✗ $msg" -ForegroundColor Red }
-function Write-Warning { param($msg) Write-Host "⚠ $msg" -ForegroundColor Yellow }
+function Write-Success { param($msg) Write-Host "[OK] $msg" -ForegroundColor Green }
+function Write-Error { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red }
+function Write-Warning { param($msg) Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 
 # Exit on error
 $ErrorActionPreference = "Stop"
@@ -43,8 +43,8 @@ if (Test-Path ".env") {
         if ($_ -match '^([^=]+)=(.*)$') {
             $key = $matches[1].Trim()
             $value = $matches[2].Trim()
-            # Remove quotes if present
-            $value = $value -replace '^["`'']|["`'']$', ''
+            # Remove surrounding quotes if present
+            $value = $value.Trim('"').Trim("'")
             [Environment]::SetEnvironmentVariable($key, $value, "Process")
         }
     }
@@ -61,9 +61,9 @@ if (Test-Path ".env") {
     }
 }
 
-Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║  Color Tools - PyPI Publishing Script ║" -ForegroundColor Cyan
-Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Cyan
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "  Color Tools - PyPI Publishing Script" -ForegroundColor Cyan
+Write-Host "========================================`n" -ForegroundColor Cyan
 
 # Step 1: Clean previous builds
 if (-not $SkipClean) {
@@ -80,17 +80,11 @@ if (-not $SkipClean) {
 # Step 2: Run tests
 if (-not $SkipTests) {
     Write-Step "Running unit tests"
-    try {
-        $testOutput = python -m unittest discover -s tests -p "test_*.py" 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Write-Success "All tests passed"
-        } else {
-            Write-Error "Tests failed!"
-            Write-Host $testOutput
-            exit 1
-        }
-    } catch {
-        Write-Error "Failed to run tests: $_"
+    python -m unittest discover -s tests -p "test_*.py"
+    if ($LASTEXITCODE -eq 0) {
+        Write-Success "All tests passed"
+    } else {
+        Write-Error "Tests failed!"
         exit 1
     }
 } else {
@@ -169,9 +163,9 @@ if (-not $BuildOnly) {
         if ($LASTEXITCODE -eq 0) {
             Write-Success "Upload completed successfully!"
             
-            Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
-            Write-Host "║       Publication Successful! 🎉       ║" -ForegroundColor Green
-            Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
+            Write-Host "`n========================================" -ForegroundColor Green
+            Write-Host "       Publication Successful!          " -ForegroundColor Green
+            Write-Host "========================================`n" -ForegroundColor Green
             
             if ($TestPyPI) {
                 Write-Host "Install with: pip install --index-url https://test.pypi.org/simple/ color-match-tools" -ForegroundColor Cyan
@@ -195,9 +189,9 @@ if (-not $BuildOnly) {
         & .\clean.ps1
     }
 } else {
-    Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║       Build Only Complete!             ║" -ForegroundColor Green  
-    Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
+    Write-Host "`n========================================" -ForegroundColor Green
+    Write-Host "       Build Only Complete!            " -ForegroundColor Green  
+    Write-Host "========================================`n" -ForegroundColor Green
     Write-Host "Built packages are ready in dist/ directory" -ForegroundColor Cyan
     Write-Host "Version: $version`n" -ForegroundColor Cyan
 }

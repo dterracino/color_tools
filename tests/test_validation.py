@@ -134,6 +134,44 @@ class TestColorValidationRecord(unittest.TestCase):
         )
         with self.assertRaises((AttributeError, TypeError)):  # Frozen dataclass
             record.is_match = False  # type: ignore
+    
+    def test_validation_record_str(self):
+        """Test ColorValidationRecord string representation."""
+        # Test match case
+        match_record = ColorValidationRecord(
+            is_match=True,
+            name_match="lightblue",
+            name_confidence=1.0,
+            hex_value="#ADD8E6",
+            suggested_hex="#ADD8E6",
+            delta_e=0.0,
+            message="Match"
+        )
+        result = str(match_record)
+        self.assertIn("Match", result)
+        self.assertIn("lightblue", result)
+        self.assertIn("100%", result)
+        self.assertIn("0.0", result)
+        
+        # Test mismatch case
+        mismatch_record = ColorValidationRecord(
+            is_match=False,
+            name_match="red",
+            name_confidence=0.85,
+            hex_value="#FF1122",
+            suggested_hex="#FF0000",
+            delta_e=12.5,
+            message="Mismatch"
+        )
+        result = str(mismatch_record)
+        self.assertIn("Mismatch", result)
+        self.assertIn("red", result)
+        self.assertIn("85%", result)
+        self.assertIn("12.5", result)
+        
+        # Verify repr still shows full details
+        repr_str = repr(match_record)
+        self.assertIn("ColorValidationRecord", repr_str)
 
 
 class TestValidateColorExactMatches(unittest.TestCase):
