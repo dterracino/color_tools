@@ -10,6 +10,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+### Changed
+
+### Fixed
+
+## [5.1.0] - 2025-12-23
+
+### Added
+
+- **Export System (v1.0)** - Export filaments and colors to external formats:
+  - **AutoForge CSV export** - Export filaments for AutoForge library import
+  - **Generic CSV export** - All fields exported to CSV for any tool
+  - **JSON export** - Raw data export for backup/restore operations
+  - **CLI integration** - New `--export`, `--output`, `--list-export-formats` flags
+  - **Auto-generated filenames** - Timestamped filenames prevent overwrites (`filaments_autoforge_20251223_143022.csv`)
+  - **Merged data exports** - Automatically includes user overrides (user-filaments.json, user-colors.json)
+  - **Filter integration** - Combine with existing `--maker`, `--type`, `--finish` filters for targeted exports
+  - **Library API** - `export_filaments()`, `export_colors()`, `list_export_formats()` functions
+  - **Examples:**
+
+    ```bash
+    # Export Bambu Lab Basic/Matte filaments to AutoForge format
+    python -m color_tools filament --maker "Bambu Lab" --finish Basic Matte --export autoforge
+    
+    # Export all CSS colors to JSON with custom filename
+    python -m color_tools color --export json --output my_colors.json
+    
+    # List available export formats
+    python -m color_tools filament --list-export-formats
+    ```
+
+  - **Full test coverage** - 18 unit tests covering all formats and features
+  - **See `docs/other/IMPORT_EXPORT_SYSTEM.md` for design details and future plans**
+
 - **Crayola Crayon Colors Palette** - New built-in palette with 120 classic Crayola crayon colors:
   - Load with `load_palette('crayola')` in Python
   - Includes iconic colors: Burnt Orange, Sunset Orange, Purple Heart, Screamin' Green, etc.

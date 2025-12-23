@@ -30,7 +30,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "5.0.0"
+__version__ = "5.1.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -123,6 +123,29 @@ from .naming import (
 )
 
 # ============================================================================
+# Import/Export (Data Export to Various Formats)
+# ============================================================================
+
+from .export import (
+    # Export functions
+    export_filaments,
+    export_colors,
+    
+    # Format listing
+    list_export_formats,
+    
+    # Individual format exporters (advanced use)
+    export_filaments_autoforge,
+    export_filaments_csv,
+    export_filaments_json,
+    export_colors_csv,
+    export_colors_json,
+    
+    # Filename generation
+    generate_filename,
+)
+
+# ============================================================================
 # Color Vision Deficiency (Colorblindness Simulation and Correction)
 # ============================================================================
 
@@ -211,6 +234,17 @@ __all__ = [
     
     # Color naming
     "generate_color_name",
+    
+    # Import/Export
+    "export_filaments",
+    "export_colors",
+    "list_export_formats",
+    "export_filaments_autoforge",
+    "export_filaments_csv",
+    "export_filaments_json",
+    "export_colors_csv",
+    "export_colors_json",
+    "generate_filename",
     
     # Color vision deficiency
     "simulate_cvd",

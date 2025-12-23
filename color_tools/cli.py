@@ -25,6 +25,7 @@ from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
 from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
 from .color_deficiency import simulate_cvd, correct_cvd
+from .export import export_filaments, export_colors, list_export_formats
 
 # Image analysis is optional (requires Pillow)
 try:
@@ -607,6 +608,25 @@ Examples:
         help="Number of nearest colors to return (default: 1, max: 50)"
     )
     
+    # Export operations
+    color_parser.add_argument(
+        "--export",
+        type=str,
+        metavar="FORMAT",
+        help="Export colors to file (formats: csv, json)"
+    )
+    color_parser.add_argument(
+        "--output",
+        type=str,
+        metavar="FILE",
+        help="Output filename (auto-generated with timestamp if not specified)"
+    )
+    color_parser.add_argument(
+        "--list-export-formats",
+        action="store_true",
+        help="List available export formats and exit"
+    )
+    
     # ==================== FILAMENT SUBCOMMAND ====================
     filament_parser = subparsers.add_parser(
         "filament",
@@ -704,6 +724,25 @@ Examples:
         choices=["first", "last", "mix"],
         default="first",
         help="How to handle dual-color filaments: 'first' (default), 'last', or 'mix' (perceptual blend)"
+    )
+    
+    # Export operations
+    filament_parser.add_argument(
+        "--export",
+        type=str,
+        metavar="FORMAT",
+        help="Export filtered filaments to file (formats: autoforge, csv, json)"
+    )
+    filament_parser.add_argument(
+        "--output",
+        type=str,
+        metavar="FILE",
+        help="Output filename (auto-generated with timestamp if not specified)"
+    )
+    filament_parser.add_argument(
+        "--list-export-formats",
+        action="store_true",
+        help="List available export formats and exit"
     )
     
     # ==================== CONVERT SUBCOMMAND ====================
@@ -1013,6 +1052,24 @@ Examples:
         else:
             palette = Palette(load_colors(json_path))
         
+        # Handle --list-export-formats
+        if args.list_export_formats:
+            formats = list_export_formats('colors')
+            print("Available export formats for colors:")
+            for name, description in formats.items():
+                print(f"  {name:12s} - {description}")
+            sys.exit(0)
+        
+        # Handle export if specified (no other operations needed)
+        if args.export:
+            try:
+                output_path = export_colors(palette.records, args.export, args.output)
+                print(f"✓ Exported {len(palette.records)} color(s) to {output_path}")
+            except ValueError as e:
+                print(f"Error: {e}", file=sys.stderr)
+                sys.exit(1)
+            sys.exit(0)
+        
         if args.name:
             rec = palette.find_by_name(args.name)
             if not rec:
@@ -1111,6 +1168,14 @@ Examples:
         # Load filament palette with maker synonyms
         filament_palette = FilamentPalette(load_filaments(json_path), load_maker_synonyms(json_path))
         
+        # Handle --list-export-formats
+        if args.list_export_formats:
+            formats = list_export_formats('filaments')
+            print("Available export formats for filaments:")
+            for name, description in formats.items():
+                print(f"  {name:12s} - {description}")
+            sys.exit(0)
+        
         if args.list_makers:
             print("Available makers:")
             for maker in filament_palette.makers:
@@ -1193,19 +1258,41 @@ Examples:
                 sys.exit(1)
             sys.exit(0)
 
-        if args.maker or args.type or args.finish or args.color:
-            # Filter and display filaments
-            results = filament_palette.filter(
-                maker=args.maker,
-                type_name=args.type,
-                finish=args.finish,
-                color=args.color
-            )
+        if args.maker or args.type or args.finish or args.color or args.export:
+            # Filter filaments (or get all if no filters and exporting)
+            if args.maker or args.type or args.finish or args.color:
+                results = filament_palette.filter(
+                    maker=args.maker,
+                    type_name=args.type,
+                    finish=args.finish,
+                    color=args.color
+                )
+            elif args.export:
+                # Export all filaments if --export specified without filters
+                results = filament_palette.filaments
+            else:
+                results = filament_palette.filter(
+                    maker=args.maker,
+                    type_name=args.type,
+                    finish=args.finish,
+                    color=args.color
+                )
             
             if not results:
                 print("No filaments found matching the criteria")
                 sys.exit(1)
             
+            # Export if requested
+            if args.export:
+                try:
+                    output_path = export_filaments(results, args.export, args.output)
+                    print(f"✓ Exported {len(results)} filament(s) to {output_path}")
+                except ValueError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    sys.exit(1)
+                sys.exit(0)
+            
+            # Display results if not exporting
             print(f"Found {len(results)} filament(s):")
             for rec in results:
                 print(f"  {rec}")
