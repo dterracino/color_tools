@@ -1,9 +1,6 @@
 ---
 name: color-science-specialist
-description: >
-  A dedicated color science expert for this repository. Specializes in color spaces,
-  conversion accuracy, Delta E metrics, gamut mapping, tone mapping, and uses the
-  color_tools library as the primary implementation reference.
+description: A dedicated color science expert for this repository. Specializes in color spaces,conversion accuracy, Delta E metrics, gamut mapping, tone mapping, and uses the color_tools library as the primary implementation reference.
 tools: ["read", "search", "edit"]
 ---
 

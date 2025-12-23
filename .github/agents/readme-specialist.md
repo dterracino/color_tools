@@ -1,7 +1,7 @@
 ---
 name: readme-specialist
 description: Expert in creating and maintaining comprehensive, accurate README documentation with proper markdown formatting
-tools: ["read", "search", "edit", "create"]
+tools: ["read", "search", "edit"]
 ---
 
 # README Specialist
@@ -397,7 +397,7 @@ python script.py
 ```markdown
 [Link text](https://example.com)
 [Link with title](https://example.com "Hover text")
-[Relative link to docs](../../docs/installation.md)
+[Full link to docs](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md)
 ```
 
 ## Common Markdown Lint Errors to Avoid
