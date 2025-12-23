@@ -44,7 +44,7 @@ if (Test-Path ".env") {
             $key = $matches[1].Trim()
             $value = $matches[2].Trim()
             # Remove quotes if present
-            $value = $value -replace '^["'']|["'']$', ''
+            $value = $value -replace '^["`'']|["`'']$', ''
             [Environment]::SetEnvironmentVariable($key, $value, "Process")
         }
     }
@@ -196,10 +196,10 @@ if (-not $BuildOnly) {
     }
 } else {
     Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║         Build Only Complete! 🔧        ║" -ForegroundColor Green  
+    Write-Host "║       Build Only Complete!             ║" -ForegroundColor Green  
     Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
     Write-Host "Built packages are ready in dist/ directory" -ForegroundColor Cyan
     Write-Host "Version: $version`n" -ForegroundColor Cyan
 }
 
-Write-Host "`nDone! ✨`n" -ForegroundColor Green
+Write-Host "`nDone!`n" -ForegroundColor Green
