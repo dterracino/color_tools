@@ -28,6 +28,15 @@ from .palette import Palette, FilamentPalette, load_colors, load_filaments, load
 from .color_deficiency import simulate_cvd, correct_cvd
 from .validation import validate_color
 from .export import export_filaments, export_colors, list_export_formats
+from .cli_utils import (
+    validate_color_input_exclusivity,
+    get_rgb_from_args,
+    parse_hex_or_exit,
+    is_valid_lab,
+    is_valid_lch,
+    get_program_name
+)
+from .reporting import show_override_report, generate_user_hashes, get_available_palettes
 
 # Image analysis is optional (requires Pillow)
 try:
@@ -36,224 +45,6 @@ try:
 except ImportError:
     IMAGE_AVAILABLE = False
 
-def _parse_hex(hex_string: str) -> tuple[int, int, int]:
-    """
-    Parse a hex color string into RGB values using existing conversion function.
-    
-    Args:
-        hex_string: Hex color string ("#FF0000", "FF0000", "#24c", "24c")
-        
-    Returns:
-        RGB tuple (r, g, b) with values 0-255
-        
-    Raises:
-        ValueError: If hex string is invalid
-    """
-    from .conversions import hex_to_rgb
-    
-    result = hex_to_rgb(hex_string)
-    if result is None:
-        raise ValueError(f"Invalid hex color code: '{hex_string}'. Expected format: #RGB, RGB, #RRGGBB, or RRGGBB")
-    
-    return result
-
-def _is_valid_lab(lab_tuple) -> bool:
-    """
-    Validate if a Lab tuple is within the standard 8-bit Lab range.
-    Lab tuple format: (L*, a*, b*)
-    """
-    if not isinstance(lab_tuple, (tuple, list)) or len(lab_tuple) != 3:
-        return False
-
-    L, a, b = lab_tuple
-
-    # Type check
-    if not all(isinstance(v, (int, float)) for v in (L, a, b)):
-        return False
-
-    return (ColorConstants.NORMALIZED_MIN <= L <= ColorConstants.XYZ_SCALE_FACTOR) and \
-           (ColorConstants.AB_MIN <= a <= ColorConstants.AB_MAX) and \
-           (ColorConstants.AB_MIN <= b <= ColorConstants.AB_MAX)
-
-def _is_valid_lch(lch_tuple) -> bool:
-    """
-    Validate if an LCh(ab) tuple is within the standard range.
-    LCh tuple format: (L*, C*, h°)
-    """
-    if not isinstance(lch_tuple, (tuple, list)) or len(lch_tuple) != 3:
-        return False
-
-    L, C, h = lch_tuple
-
-    # Type check
-    if not all(isinstance(v, (int, float)) for v in (L, C, h)):
-        return False
-
-    return (ColorConstants.NORMALIZED_MIN <= L <= ColorConstants.XYZ_SCALE_FACTOR) and \
-           (ColorConstants.CHROMA_MIN <= C <= ColorConstants.CHROMA_MAX) and \
-           (ColorConstants.NORMALIZED_MIN <= h < ColorConstants.HUE_CIRCLE_DEGREES)
-
-def _show_override_report(json_dir: str | None = None):
-    """
-    Show detailed report of user overrides and exit.
-    
-    Analyzes user-colors.json and user-filaments.json to show what core data
-    is being overridden, including conflicts by name and RGB values.
-    
-    Args:
-        json_dir: Optional directory containing JSON files. If None, uses package default.
-    """
-    import logging
-    import sys
-    
-    # Set up logging to capture override messages
-    log_messages = []
-    class ListHandler(logging.Handler):
-        def emit(self, record):
-            log_messages.append(self.format(record))
-    
-    # Configure logging to capture override info
-    logger = logging.getLogger('color_tools.palette')
-    logger.setLevel(logging.INFO)
-    handler = ListHandler()
-    logger.addHandler(handler)
-    
-    print("User Override Report")
-    print("=" * 50)
-    
-    try:
-        # Load colors and capture override messages
-        palette = Palette.load_default() if json_dir is None else None
-        if palette is None and json_dir:
-            colors = load_colors(json_dir)
-            palette = Palette(colors)
-        elif palette is None:
-            colors = load_colors()
-            palette = Palette(colors)
-        
-        # Load filaments and capture override messages  
-        filament_palette = FilamentPalette.load_default() if json_dir is None else None
-        if filament_palette is None and json_dir:
-            filaments = load_filaments(json_dir)
-            synonyms = load_maker_synonyms(json_dir)
-            filament_palette = FilamentPalette(filaments, synonyms)
-        elif filament_palette is None:
-            filaments = load_filaments()
-            synonyms = load_maker_synonyms()  
-            filament_palette = FilamentPalette(filaments, synonyms)
-        
-        # Display captured log messages
-        if log_messages:
-            print("\nOverride Details:")
-            for msg in log_messages:
-                if "User colors override" in msg:
-                    print(f"  Colors: {msg}")
-                elif "User filaments override" in msg:
-                    print(f"  Filaments: {msg}")
-                elif "User synonyms override" in msg:
-                    print(f"  Synonyms: {msg}")
-                elif "User synonyms extend" in msg:
-                    print(f"  Synonyms: {msg}")
-        else:
-            print("\nNo user overrides detected.")
-        
-        # Count sources
-        color_sources = {}
-        for record in palette.records:
-            source = record.source
-            color_sources[source] = color_sources.get(source, 0) + 1
-        
-        filament_sources = {}
-        for record in filament_palette.records:
-            source = record.source
-            filament_sources[source] = filament_sources.get(source, 0) + 1
-        
-        # Summary
-        print(f"\nSummary:")
-        print(f"  Total colors: {len(palette.records)}")
-        print(f"  Total filaments: {len(filament_palette.records)}")
-        
-        print(f"\nActive Sources:")
-        print("  Colors:")
-        for source, count in sorted(color_sources.items()):
-            print(f"    {source}: {count} records")
-        
-        print("  Filaments:")
-        for source, count in sorted(filament_sources.items()):
-            print(f"    {source}: {count} records")
-        
-    except Exception as e:
-        print(f"\nError loading data: {e}")
-        sys.exit(1)
-    finally:
-        # Clean up logging
-        logger.removeHandler(handler)
-
-def _generate_user_hashes(json_dir: str | None = None):
-    """
-    Generate .sha256 files for all user data files and exit.
-    
-    Creates hash files for user/user-colors.json, user/user-filaments.json, and 
-    user/user-synonyms.json if they exist.
-    
-    Args:
-        json_dir: Optional directory containing data files. If None, uses package default.
-    """
-    from pathlib import Path
-    
-    # Determine data directory
-    if json_dir:
-        data_dir = Path(json_dir)
-        if not data_dir.exists():
-            print(f"Error: Data directory does not exist: {data_dir}", file=sys.stderr)
-            sys.exit(1)
-        if not data_dir.is_dir():
-            print(f"Error: --json must be a directory: {data_dir}", file=sys.stderr)
-            sys.exit(1)
-    else:
-        data_dir = Path(__file__).parent / "data"
-    
-    user_dir = data_dir / "user"
-    
-    if not user_dir.exists():
-        print(f"No user data directory found at: {user_dir}")
-        print("Create user data files first, then run this command to generate hashes.")
-        sys.exit(0)
-    
-    print("Generating SHA-256 hash files for user data...")
-    print("=" * 50)
-    
-    # Files to check for hash generation
-    user_files = [
-        (ColorConstants.USER_COLORS_JSON_FILENAME, "colors"),
-        (ColorConstants.USER_FILAMENTS_JSON_FILENAME, "filaments"),
-        (ColorConstants.USER_SYNONYMS_JSON_FILENAME, "synonyms")
-    ]
-    
-    generated_count = 0
-    
-    for filename, display_name in user_files:
-        file_path = data_dir / filename
-        
-        if file_path.exists():
-            try:
-                hash_file = ColorConstants.save_user_data_hash(file_path)
-                hash_value = ColorConstants.generate_user_data_hash(file_path)
-                print(f"✓ Generated {hash_file.name}")
-                print(f"  File: {file_path.name}")
-                print(f"  Hash: {hash_value}")
-                generated_count += 1
-            except Exception as e:
-                print(f"✗ Failed to generate hash for {file_path.name}: {e}", file=sys.stderr)
-        else:
-            print(f"  Skipped {display_name}: {file_path.name} not found")
-    
-    if generated_count > 0:
-        print(f"\nGenerated {generated_count} hash file(s) successfully.")
-        print("\nTo verify integrity later, use: --verify-user-data")
-    else:
-        print("\nNo user data files found to generate hashes for.")
-        print("Create user data files (user/user-colors.json, etc.) first.")
 
 def handle_image_command(args):
     """Handle all image processing commands."""
@@ -502,50 +293,6 @@ def handle_image_command(args):
         sys.exit(1)
 
 
-def _get_program_name() -> str:
-    """Determine the proper program name based on how we were invoked."""
-    try:
-        # If we're running as a module, show that
-        if sys.argv[0].endswith("__main__.py") or sys.argv[0].endswith("-m"):
-            return "python -m color_tools"
-        # If we have an installed command name, use that
-        return Path(sys.argv[0]).name
-    except (IndexError, AttributeError):
-        # Fallback
-        return "color-tools"
-
-
-def _get_available_palettes(json_path: "Path | str | None" = None) -> list[str]:
-    """
-    Get list of available palette names from both core and user palettes.
-    
-    Args:
-        json_path: Optional custom data directory. If None, uses package default.
-    
-    Returns:
-        Sorted list of available palette names
-    """
-    # Determine data directory
-    if json_path is None:
-        data_dir = Path(__file__).parent / "data"
-    else:
-        data_dir = Path(json_path)
-    
-    available = []
-    
-    # Core palettes
-    core_palettes_dir = data_dir / "palettes"
-    if core_palettes_dir.exists():
-        available.extend([p.stem for p in core_palettes_dir.glob("*.json")])
-    
-    # User palettes (only user-*.json files)
-    user_palettes_dir = data_dir / "user" / "palettes"
-    if user_palettes_dir.exists():
-        user_palettes = [p.stem for p in user_palettes_dir.glob("user-*.json")]
-        available.extend(user_palettes)
-    
-    # No need to remove duplicates since user palettes have user- prefix
-    return sorted(available)
 
 
 def main():
@@ -556,7 +303,7 @@ def main():
     This function is just the CLI logic - pure and testable.
     """
     # Determine the proper program name based on how we were invoked
-    prog_name = _get_program_name()
+    prog_name = get_program_name()
     
     parser = argparse.ArgumentParser(
         prog=prog_name,
@@ -1165,7 +912,7 @@ Examples:
     
     # Handle --generate-user-hashes flag (early exit)
     if args.generate_user_hashes:
-        _generate_user_hashes(args.json)
+        generate_user_hashes(args.json)
         sys.exit(0)
     
     # Verify constants integrity if requested
@@ -1224,7 +971,7 @@ Examples:
     
     # Handle --check-overrides flag
     if args.check_overrides:
-        _show_override_report(args.json)
+        show_override_report(args.json)
         sys.exit(0)
     
     # If only verifying (no other command), exit after success
@@ -1259,7 +1006,7 @@ Examples:
         if args.palette:
             # Special case: list available palettes
             if args.palette.lower() == "list":
-                available_palettes = _get_available_palettes(json_path)
+                available_palettes = get_available_palettes(json_path)
                 if available_palettes:
                     print("Available palettes:")
                     for palette_name in available_palettes:
@@ -1273,7 +1020,7 @@ Examples:
                 palette = load_palette(args.palette, json_path)
             except FileNotFoundError as e:
                 print(f"Error: {e}", file=sys.stderr)
-                available_palettes = _get_available_palettes(json_path)
+                available_palettes = get_available_palettes(json_path)
                 if available_palettes:
                     print(f"Available palettes: {', '.join(available_palettes)}", file=sys.stderr)
                 sys.exit(1)
@@ -1326,7 +1073,7 @@ Examples:
             # Handle hex input
             if args.hex is not None:
                 try:
-                    rgb_val = _parse_hex(args.hex)
+                    rgb_val = parse_hex_or_exit(args.hex)
                     val = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                     space = "rgb"  # --hex always implies RGB space
                 except ValueError as e:
@@ -1338,12 +1085,12 @@ Examples:
                 space = args.space
                 
                 # Validate LAB/LCH ranges if applicable
-                if space == "lab" and not _is_valid_lab(val):
+                if space == "lab" and not is_valid_lab(val):
                     print(f"Error: LAB values appear out of range: {val}", file=sys.stderr)
                     print(f"Expected: L* (0-{ColorConstants.XYZ_SCALE_FACTOR}), a* ({ColorConstants.AB_MIN}-{ColorConstants.AB_MAX}), b* ({ColorConstants.AB_MIN}-{ColorConstants.AB_MAX})", file=sys.stderr)
                     print("Tip: Use --space rgb or --hex for RGB input", file=sys.stderr)
                     sys.exit(2)
-                elif space == "lch" and not _is_valid_lch(val):
+                elif space == "lch" and not is_valid_lch(val):
                     print(f"Error: LCH values appear out of range: {val}", file=sys.stderr)
                     print(f"Expected: L* (0-{ColorConstants.XYZ_SCALE_FACTOR}), C* ({ColorConstants.CHROMA_MIN}-{ColorConstants.CHROMA_MAX}), h° (0-{ColorConstants.HUE_CIRCLE_DEGREES})", file=sys.stderr)
                     print("Tip: Use --space rgb or --hex for RGB input", file=sys.stderr)
@@ -1441,7 +1188,7 @@ Examples:
             # Handle hex input
             if args.hex is not None:
                 try:
-                    rgb_val = _parse_hex(args.hex)
+                    rgb_val = parse_hex_or_exit(args.hex)
                 except ValueError as e:
                     print(f"Error: {e}", file=sys.stderr)
                     sys.exit(2)
@@ -1548,7 +1295,7 @@ Examples:
             # Handle hex input (convert to LAB for gamut checking)
             if args.hex is not None:
                 try:
-                    rgb_val = _parse_hex(args.hex)
+                    rgb_val = parse_hex_or_exit(args.hex)
                     lab = rgb_to_lab(rgb_val)
                 except ValueError as e:
                     print(f"Error: {e}", file=sys.stderr)
@@ -1593,7 +1340,7 @@ Examples:
             # Handle hex input
             if args.hex is not None:
                 try:
-                    rgb_val = _parse_hex(args.hex)
+                    rgb_val = parse_hex_or_exit(args.hex)
                     val = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                     from_space = "rgb"  # --hex always implies RGB space
                 except ValueError as e:
@@ -1652,7 +1399,7 @@ Examples:
         # Handle hex input
         if args.hex is not None:
             try:
-                r, g, b = _parse_hex(args.hex)
+                r, g, b = parse_hex_or_exit(args.hex)
             except ValueError as e:
                 print(f"Error: {e}", file=sys.stderr)
                 sys.exit(2)
@@ -1728,7 +1475,7 @@ Examples:
         # Handle hex input
         if args.hex is not None:
             try:
-                r, g, b = _parse_hex(args.hex)
+                r, g, b = parse_hex_or_exit(args.hex)
             except ValueError as e:
                 print(f"Error: {e}", file=sys.stderr)
                 sys.exit(2)

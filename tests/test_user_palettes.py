@@ -6,7 +6,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from color_tools.palette import load_palette, Palette
-from color_tools.cli import _get_available_palettes
+from color_tools.reporting import get_available_palettes
 
 
 class TestUserPalettes(unittest.TestCase):
@@ -82,8 +82,8 @@ class TestUserPalettes(unittest.TestCase):
         self.temp_dir.cleanup()
     
     def test_get_available_palettes(self):
-        """Test _get_available_palettes function."""
-        available = _get_available_palettes(self.test_data_dir)
+        """Test get_available_palettes function."""
+        available = get_available_palettes(self.test_data_dir)
         
         # Should include both core and user palettes
         self.assertIn("test_core", available)
@@ -176,7 +176,7 @@ class TestUserPalettes(unittest.TestCase):
         (empty_dir / "palettes").mkdir(parents=True)
         (empty_dir / "user" / "palettes").mkdir(parents=True)
         
-        available = _get_available_palettes(empty_dir)
+        available = get_available_palettes(empty_dir)
         self.assertEqual(available, [])
     
     def test_missing_directories(self):
@@ -184,7 +184,7 @@ class TestUserPalettes(unittest.TestCase):
         # Use non-existent directory
         missing_dir = Path(self.temp_dir.name) / "missing"
         
-        available = _get_available_palettes(missing_dir)
+        available = get_available_palettes(missing_dir)
         self.assertEqual(available, [])
 
 

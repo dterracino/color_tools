@@ -103,9 +103,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     - Or use full paths for fonts elsewhere
     - See `color_tools/image/fonts/README.md` for details
   - **Dependencies:** Added `cairosvg>=2.7.0` to `requirements-image.txt` for SVG support
+    - **Windows users:** If SVG watermarks fail after installing `[image]` extras, install the GTK runtime for Cairo C libraries
+    - Download from: <https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases>
+    - This provides the necessary Cairo/cairocffi dependencies for SVG rendering
   - **Comprehensive tests:** Added `tests/test_watermark.py` with 30+ test cases
 
 ### Changed
+
+- **Internal CLI refactoring** - Extracted utility functions to improve code maintainability
+  - Created `cli_utils.py` module (162 lines) with validation and parsing utilities:
+    - `validate_color_input_exclusivity()` - Checks --value vs --hex mutual exclusivity
+    - `get_rgb_from_args()` - Unified RGB extraction from CLI args
+    - `parse_hex_or_exit()` - Hex parsing with error handling
+    - `is_valid_lab()` / `is_valid_lch()` - Color value range validation
+    - `get_program_name()` - Determines CLI invocation name
+  - Created `reporting.py` module (213 lines) with user data diagnostics:
+    - `show_override_report()` - Analyzes and displays user data overrides
+    - `generate_user_hashes()` - Creates SHA-256 files for user data integrity
+    - `get_available_palettes()` - Lists core and user palettes
+  - Reduced `cli.py` from 1776 lines to 1509 lines (15% reduction)
+  - No user-facing changes - purely internal code organization
+  - All 471 tests passing with no regressions
 
 ### Fixed
 
