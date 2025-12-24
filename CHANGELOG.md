@@ -110,19 +110,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal CLI refactoring - Phase 2: Command handlers** - Extracted all command logic to separate modules
-  - Created `cli_commands/handlers/` package with individual handler modules:
-    - `color.py` (165 lines) - Color search and query logic
-    - `filament.py` (172 lines) - Filament search and filtering logic
-    - `convert.py` (126 lines) - Color space conversion and gamut checking
-    - `name.py` (57 lines) - Color name generation
-    - `validate.py` (55 lines) - Color name/hex validation
-    - `cvd.py` (75 lines) - Color vision deficiency simulation/correction
-  - Reduced `cli.py` from 1776 lines to 1021 lines (42.5% reduction, 755 lines removed)
-  - **Phase 1 (Quick Wins)** - Extracted utility functions:
-    - Created `cli_utils.py` module (162 lines) with validation and parsing utilities
-    - Created `reporting.py` module (213 lines) with user data diagnostics
-  - **Total impact:** cli.py reduced from 1776 to 1021 lines (755 lines extracted)
+- **Internal CLI refactoring - Complete reorganization** - Extracted all CLI logic into dedicated package
+  - Created `cli_commands/` package containing all CLI-specific code:
+    - `handlers/` - Individual command handler modules (6 files):
+      - `color.py` (165 lines) - Color search and query logic
+      - `filament.py` (172 lines) - Filament search and filtering logic
+      - `convert.py` (126 lines) - Color space conversion and gamut checking
+      - `name.py` (57 lines) - Color name generation
+      - `validate.py` (55 lines) - Color name/hex validation
+      - `cvd.py` (75 lines) - Color vision deficiency simulation/correction
+    - `utils.py` (162 lines) - Validation and parsing utilities shared by handlers
+    - `reporting.py` (213 lines) - User data diagnostics and override reporting
+  - Reduced `cli.py` from 1776 lines to 1021 lines (42.5% reduction, 755 lines extracted)
+  - **Benefits:**
+    - All CLI logic now in one cohesive `cli_commands/` package
+    - Each command handler is independent and testable
+    - Shared utilities consolidated in one place
+    - Clear separation between CLI and library code
   - No user-facing changes - purely internal code organization
   - All 471 tests passing with no regressions
 
