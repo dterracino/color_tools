@@ -10,6 +10,101 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Image watermarking functionality** - Add text, image, or SVG watermarks to images with full customization
+  - **Three watermark types:**
+    - **Text watermarks** - Custom text with font control, colors, stroke/outline
+    - **Image watermarks** - PNG/image file overlays with transparency support
+    - **SVG watermarks** - Vector logo support (requires cairosvg)
+  - **Position control:**
+    - 9 preset positions: top-left, top-center, top-right, center-left, center, center-right, bottom-left, bottom-center, bottom-right
+    - Custom x,y coordinates for precise placement
+    - Adjustable margins from edges
+  - **Text styling options:**
+    - System fonts by name (e.g., Arial, Times New Roman) via `--font-name`
+    - Custom font files (.ttf, .otf) via `--font-file`
+    - Font files can be placed in `color_tools/image/fonts/` directory for easy access
+    - Adjustable font size, color (RGB), and opacity
+    - Stroke/outline support with configurable color and width
+  - **Image/SVG options:**
+    - Scale control for sizing
+    - Opacity/transparency adjustment
+    - Automatic RGBA handling for transparency
+  - **CLI usage:**
+
+    ```bash
+    # Text watermark with stroke
+    color-tools image --file photo.jpg --watermark \
+      --watermark-text "© 2025 My Brand" \
+      --watermark-position bottom-right \
+      --watermark-font-file Roboto-Bold.ttf \
+      --watermark-font-size 32 \
+      --watermark-color 255,255,255 \
+      --watermark-stroke-color 0,0,0 \
+      --watermark-stroke-width 2 \
+      --watermark-opacity 0.7
+    
+    # Image watermark
+    color-tools image --file photo.jpg --watermark \
+      --watermark-image logo.png \
+      --watermark-position top-left \
+      --watermark-scale 0.2 \
+      --watermark-opacity 0.6
+    
+    # SVG watermark
+    color-tools image --file photo.jpg --watermark \
+      --watermark-svg logo.svg \
+      --watermark-position center \
+      --watermark-scale 1.5 \
+      --watermark-opacity 0.5
+    ```
+
+  - **Python API:**
+
+    ```python
+    from color_tools.image import add_text_watermark, add_image_watermark, add_svg_watermark
+    from PIL import Image
+    
+    img = Image.open("photo.jpg")
+    
+    # Text with outline
+    watermarked = add_text_watermark(
+        img,
+        text="© 2025",
+        font_file="Roboto-Bold.ttf",
+        font_size=36,
+        color=(255, 255, 255),
+        stroke_color=(0, 0, 0),
+        stroke_width=2,
+        position="bottom-right",
+        opacity=0.8
+    )
+    
+    # Image logo
+    watermarked = add_image_watermark(
+        img,
+        watermark_path="logo.png",
+        position="top-left",
+        scale=0.3,
+        opacity=0.7
+    )
+    
+    # SVG logo (requires cairosvg)
+    watermarked = add_svg_watermark(
+        img,
+        svg_path="logo.svg",
+        position="center",
+        opacity=0.6
+    )
+    ```
+
+  - **Font directory:** Created `color_tools/image/fonts/` for custom fonts
+    - Place .ttf or .otf files here for easy access
+    - Reference by filename only: `--font-file MyFont.ttf`
+    - Or use full paths for fonts elsewhere
+    - See `color_tools/image/fonts/README.md` for details
+  - **Dependencies:** Added `cairosvg>=2.7.0` to `requirements-image.txt` for SVG support
+  - **Comprehensive tests:** Added `tests/test_watermark.py` with 30+ test cases
+
 ### Changed
 
 ### Fixed

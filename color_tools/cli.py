@@ -297,7 +297,8 @@ def handle_image_command(args):
         args.redistribute_luminance,
         args.cvd_simulate is not None,
         args.cvd_correct is not None,
-        args.quantize_palette is not None
+        args.quantize_palette is not None,
+        args.watermark
     ]
     active_count = sum(operations)
     
@@ -307,6 +308,7 @@ def handle_image_command(args):
         print("  --cvd-simulate TYPE         (colorblindness simulation)", file=sys.stderr)
         print("  --cvd-correct TYPE          (colorblindness correction)", file=sys.stderr)
         print("  --quantize-palette NAME     (convert to retro palette)", file=sys.stderr)
+        print("  --watermark                 (add text/image/SVG watermark with --watermark-text/--watermark-image/--watermark-svg)", file=sys.stderr)
         print("  --list-palettes             (show available palettes)", file=sys.stderr)
         sys.exit(1)
     elif active_count > 1:
@@ -383,6 +385,117 @@ def handle_image_command(args):
                 default_output = image_path.with_name(f"{image_path.stem}_{args.quantize_palette}{dither_suffix}{image_path.suffix}")
                 quantized_image.save(default_output)
                 print(f"Quantized image saved to: {default_output}")
+        
+        elif args.watermark:
+            # Watermarking
+            from PIL import Image
+            from color_tools.image import add_text_watermark, add_image_watermark, add_svg_watermark
+            
+            # Check that at least one watermark source is specified
+            watermark_sources = [args.watermark_text, args.watermark_image, args.watermark_svg]
+            if not any(watermark_sources):
+                print("Error: Watermark requires one of: --watermark-text, --watermark-image, or --watermark-svg", file=sys.stderr)
+                sys.exit(1)
+            
+            # Check for conflicting watermark sources
+            source_count = sum(bool(s) for s in watermark_sources)
+            if source_count > 1:
+                print("Error: Only one watermark source allowed (--watermark-text, --watermark-image, or --watermark-svg)", file=sys.stderr)
+                sys.exit(1)
+            
+            # Load input image
+            print(f"Loading image: {image_path.name}...")
+            img = Image.open(str(image_path))
+            
+            # Apply appropriate watermark type
+            if args.watermark_text:
+                # Parse color arguments
+                try:
+                    color_parts = args.watermark_color.split(',')
+                    color = tuple(int(c.strip()) for c in color_parts)
+                    if len(color) != 3:
+                        raise ValueError("Color must have 3 components (R,G,B)")
+                except Exception as e:
+                    print(f"Error: Invalid --watermark-color format: {e}", file=sys.stderr)
+                    print("Use format: R,G,B (e.g., 255,255,255)", file=sys.stderr)
+                    sys.exit(1)
+                
+                stroke_color = None
+                if args.watermark_stroke_color:
+                    try:
+                        stroke_parts = args.watermark_stroke_color.split(',')
+                        stroke_color = tuple(int(c.strip()) for c in stroke_parts)
+                        if len(stroke_color) != 3:
+                            raise ValueError("Stroke color must have 3 components (R,G,B)")
+                    except Exception as e:
+                        print(f"Error: Invalid --watermark-stroke-color format: {e}", file=sys.stderr)
+                        print("Use format: R,G,B (e.g., 0,0,0)", file=sys.stderr)
+                        sys.exit(1)
+                
+                print(f"Adding text watermark: '{args.watermark_text}'")
+                watermarked = add_text_watermark(
+                    img,
+                    text=args.watermark_text,
+                    position=args.watermark_position,
+                    font_name=args.watermark_font_name,
+                    font_file=args.watermark_font_file,
+                    font_size=args.watermark_font_size,
+                    color=color,
+                    opacity=args.watermark_opacity,
+                    stroke_color=stroke_color,
+                    stroke_width=args.watermark_stroke_width,
+                    margin=args.watermark_margin
+                )
+            
+            elif args.watermark_image:
+                print(f"Adding image watermark: {Path(args.watermark_image).name}")
+                watermarked = add_image_watermark(
+                    img,
+                    watermark_path=args.watermark_image,
+                    position=args.watermark_position,
+                    scale=args.watermark_scale,
+                    opacity=args.watermark_opacity,
+                    margin=args.watermark_margin
+                )
+            
+            elif args.watermark_svg:
+                print(f"Adding SVG watermark: {Path(args.watermark_svg).name}")
+                try:
+                    watermarked = add_svg_watermark(
+                        img,
+                        svg_path=args.watermark_svg,
+                        position=args.watermark_position,
+                        scale=args.watermark_scale,
+                        opacity=args.watermark_opacity,
+                        margin=args.watermark_margin
+                    )
+                except ImportError as e:
+                    print(f"Error: {e}", file=sys.stderr)
+                    sys.exit(1)
+            
+            # Save watermarked image
+            if output_path:
+                # Convert RGBA to RGB if saving as JPEG
+                if output_path.lower().endswith(('.jpg', '.jpeg')) and watermarked.mode == 'RGBA':
+                    # Create white background
+                    rgb_img = Image.new('RGB', watermarked.size, (255, 255, 255))
+                    rgb_img.paste(watermarked, mask=watermarked.split()[3])  # Use alpha channel as mask
+                    watermarked = rgb_img
+                
+                watermarked.save(output_path)
+                print(f"Watermarked image saved to: {output_path}")
+            else:
+                # Generate default output name
+                default_output = image_path.with_name(f"{image_path.stem}_watermarked{image_path.suffix}")
+                
+                # Convert RGBA to RGB if saving as JPEG
+                if default_output.suffix.lower() in ['.jpg', '.jpeg'] and watermarked.mode == 'RGBA':
+                    rgb_img = Image.new('RGB', watermarked.size, (255, 255, 255))
+                    rgb_img.paste(watermarked, mask=watermarked.split()[3])
+                    watermarked = rgb_img
+                
+                watermarked.save(default_output)
+                print(f"Watermarked image saved to: {default_output}")
             
     except Exception as e:
         print(f"Error processing image: {e}", file=sys.stderr)
@@ -892,7 +1005,7 @@ Examples:
         image_parser = subparsers.add_parser(
             "image",
             help="Image color analysis and manipulation",
-            description="Extract colors, redistribute luminance, simulate colorblindness, and convert to retro palettes"
+            description="Extract colors, redistribute luminance, simulate colorblindness, convert to retro palettes, and add watermarks"
         )
         
         image_parser.add_argument(
@@ -951,6 +1064,86 @@ Examples:
             "--dither",
             action="store_true",
             help="Apply Floyd-Steinberg dithering for palette quantization (reduces banding)"
+        )
+        
+        # Watermarking operations
+        image_parser.add_argument(
+            "--watermark",
+            action="store_true",
+            help="Add a watermark to the image (use with --watermark-text, --watermark-image, or --watermark-svg)"
+        )
+        image_parser.add_argument(
+            "--watermark-text",
+            type=str,
+            help="Text to use for watermark (e.g., '© 2025 My Brand')"
+        )
+        image_parser.add_argument(
+            "--watermark-image",
+            type=str,
+            help="Path to image file to use as watermark (PNG recommended)"
+        )
+        image_parser.add_argument(
+            "--watermark-svg",
+            type=str,
+            help="Path to SVG file to use as watermark (requires cairosvg)"
+        )
+        image_parser.add_argument(
+            "--watermark-position",
+            type=str,
+            choices=["top-left", "top-center", "top-right", "center-left", "center", "center-right", "bottom-left", "bottom-center", "bottom-right"],
+            default="bottom-right",
+            help="Position for watermark (default: bottom-right)"
+        )
+        image_parser.add_argument(
+            "--watermark-font-name",
+            type=str,
+            help="System font name for text watermark (e.g., 'Arial', 'Times New Roman')"
+        )
+        image_parser.add_argument(
+            "--watermark-font-file",
+            type=str,
+            help="Custom font file for text watermark (path or filename in fonts/ directory)"
+        )
+        image_parser.add_argument(
+            "--watermark-font-size",
+            type=int,
+            default=24,
+            help="Font size for text watermark in points (default: 24)"
+        )
+        image_parser.add_argument(
+            "--watermark-color",
+            type=str,
+            default="255,255,255",
+            help="Text color as R,G,B (default: 255,255,255 white)"
+        )
+        image_parser.add_argument(
+            "--watermark-stroke-color",
+            type=str,
+            help="Text outline color as R,G,B (e.g., 0,0,0 for black outline)"
+        )
+        image_parser.add_argument(
+            "--watermark-stroke-width",
+            type=int,
+            default=0,
+            help="Text outline width in pixels (default: 0, no outline)"
+        )
+        image_parser.add_argument(
+            "--watermark-opacity",
+            type=float,
+            default=0.8,
+            help="Watermark opacity from 0.0 (transparent) to 1.0 (opaque) (default: 0.8)"
+        )
+        image_parser.add_argument(
+            "--watermark-scale",
+            type=float,
+            default=1.0,
+            help="Scale factor for image/SVG watermark (default: 1.0)"
+        )
+        image_parser.add_argument(
+            "--watermark-margin",
+            type=int,
+            default=10,
+            help="Margin from edges in pixels for preset positions (default: 10)"
         )
         
         # List available palettes

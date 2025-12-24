@@ -74,6 +74,11 @@ try:
         correct_cvd_image,
         quantize_image_to_palette,
     )
+    from .watermark import (
+        add_text_watermark,
+        add_image_watermark,
+        add_svg_watermark,
+    )
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
@@ -108,6 +113,11 @@ except ImportError:
     correct_cvd_image = _not_available
     quantize_image_to_palette = _not_available
     
+    # Watermarking functions
+    add_text_watermark = _not_available
+    add_image_watermark = _not_available
+    add_svg_watermark = _not_available
+    
     # Dummy classes for type hints - use Any to avoid type conflicts
     from typing import Any
     ColorCluster: type[Any] = type('ColorCluster', (), {})
@@ -138,4 +148,8 @@ __all__ = [
     'simulate_cvd_image',
     'correct_cvd_image',
     'quantize_image_to_palette',
+    # Watermarking functions
+    'add_text_watermark',
+    'add_image_watermark',
+    'add_svg_watermark',
 ]
