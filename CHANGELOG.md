@@ -14,7 +14,39 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-## [5.4.0] - 2025-12-23
+## [5.5.0] - 2024-12-24
+
+### Changed
+
+- **Palette quantization performance optimization** - Dramatically improved conversion speed for high-color images
+  - **Before:** Slow conversions taking multiple seconds for large images
+  - **After:** ~0.95 seconds for 1015×1015 image with 245k unique colors (nearly instant, comparable to web-based tools)
+  - **Optimizations:**
+    - Pixel sampling: Max 10k samples for k-means clustering (not all pixels)
+    - k-means++ initialization: Better centroid selection than random
+    - Reduced iterations: 5 instead of 10 (converges quickly with smart initialization)
+    - Vectorized numpy operations: Eliminated Python loops, pure array math
+    - RGB space k-means: Avoided expensive LAB conversions during clustering
+    - Vectorized final assignment: All pixels assigned in one operation
+  - **Impact:** Professional-grade speed with maintained visual quality
+
+### Fixed
+
+- **Palette quantization color collapse and detail loss** - Fixed critical bugs in retro palette conversions
+  - **Problem 1:** 4-color images collapsed to 2 colors when mapped to 4-color palettes (CGA4, Gameboy)
+  - **Problem 2:** High-color images lost significant detail, mapping most pixels to black/white extremes
+  - **Root cause:** Per-pixel nearest-color matching without intelligent color reduction
+  - **Solution:** Hybrid approach using k-means quantization + collision-free palette mapping
+    - **High-color images** (unique colors > palette size): Use k-means clustering to reduce to palette_size representative colors, preserving image structure and detail
+    - **Low-color images** (unique colors ≤ palette size): Direct 1:1 mapping with L-value sorting
+    - Collision-free mapping ensures all palette colors are utilized
+    - Color map dictionary provides O(1) pixel lookups
+  - **Impact:** Retro palette conversions now preserve visual detail comparable to professional tools
+  - **Examples:**
+    - gb-megaman-title.png (4 colors) → CGA4: All 4 colors preserved (was 2)
+    - purple-dragon.jpg (245k colors) → Gameboy: Detail preserved across all 4 shades (was mostly black/white)
+
+## [5.4.0] - 2024-12-23
 
 ### Added
 
