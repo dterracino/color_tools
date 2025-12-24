@@ -107,6 +107,197 @@ Color Luminance Redistribution Report
    Hueforge Layer: 1 (of 27)
 ```
 
+### 6. Image Format Conversion
+
+**Function:** `convert_image(input_path, output_path=None, output_format=None, quality=None, lossless=False)`
+
+Convert images between various formats with intelligent defaults for quality and compression.
+
+**Supported Formats:**
+
+- **PNG** - Lossless, supports transparency
+- **JPEG/JPG** - Lossy, good for photos (default quality: 67)
+- **WebP** - Modern format (default: lossless, use `lossy=True` for compression)
+- **BMP** - Uncompressed bitmap
+- **GIF** - Animated/static with palette
+- **TIFF/TIF** - Professional photography
+- **AVIF** - Next-gen format (default quality: 80, requires Pillow 10+)
+- **HEIC/HEIF** - Apple format (requires `pillow-heif>=0.14.0`)
+
+**Key Features:**
+
+- Auto-generates output filename if not specified (`photo.webp` → `photo.png`)
+- Auto-detects input format from file extension
+- Format aliases supported (`jpg`↔`jpeg`, `tif`↔`tiff`)
+- Case-insensitive format names
+- Automatic RGBA→RGB conversion for JPEG/BMP (no transparency support)
+- Sensible quality defaults:
+  - JPEG: 67 (equivalent to Photoshop quality 8)
+  - WebP: Lossless by default
+  - AVIF: 80
+
+**CLI Usage:**
+
+```bash
+# Convert WebP to PNG (lossless)
+color-tools image --file photo.webp --convert png
+
+# Convert JPEG to WebP with custom quality
+color-tools image --file photo.jpg --convert webp --quality 80 --lossy
+
+# Convert to HEIC (requires pillow-heif)
+color-tools image --file photo.jpg --convert heic
+```
+
+**Python API:**
+
+```python
+from color_tools.image import convert_image
+
+# Auto-generate output filename
+convert_image("photo.webp", output_format="png")  # Creates photo.png
+
+# Custom output path
+convert_image("input.jpg", output_path="output.webp", lossless=True)
+
+# Lossy WebP with quality control
+convert_image("photo.jpg", output_format="webp", quality=80, lossless=False)
+```
+
+### 7. Image Watermarking
+
+**Functions:**
+
+- `add_text_watermark(input_path, text, output_path=None, **options)` - Add text watermark
+- `add_image_watermark(input_path, watermark_path, output_path=None, **options)` - Add image watermark
+- `add_svg_watermark(input_path, svg_path, output_path=None, **options)` - Add SVG watermark (requires `cairosvg`)
+
+Add customizable watermarks to images with precise control over positioning, opacity, scaling, and styling.
+
+**Watermark Types:**
+
+1. **Text Watermarks**
+   - Custom text (e.g., "© 2025 My Brand")
+   - Font customization (system fonts or custom TTF/OTF files)
+   - Size, color, and opacity control
+   - Optional text outlines/strokes for visibility
+   - Built-in font collection in `fonts/` directory
+
+2. **Image Watermarks**
+   - PNG logos/graphics (transparency supported)
+   - Automatic scaling and positioning
+   - Opacity blending
+
+3. **SVG Watermarks**
+   - Vector graphics (scales perfectly)
+   - Requires `cairosvg` dependency
+   - Ideal for logos and icons
+
+**Position Presets:**
+
+- `top-left`, `top-center`, `top-right`
+- `center-left`, `center`, `center-right`
+- `bottom-left`, `bottom-center`, `bottom-right`
+
+**Common Options:**
+
+- `position`: Position preset (default: `"bottom-right"`)
+- `opacity`: 0.0 (transparent) to 1.0 (opaque) (default: 0.8)
+- `scale`: Scale factor for images/SVGs (default: 1.0)
+- `margin`: Distance from edges in pixels (default: 10)
+
+**Text-Specific Options:**
+
+- `font_name`: System font name (e.g., "Arial", "Times New Roman")
+- `font_file`: Path to TTF/OTF file or filename in `fonts/` directory
+- `font_size`: Font size in points (default: 24)
+- `color`: Text color as (R, G, B) tuple (default: (255, 255, 255))
+- `stroke_color`: Outline color as (R, G, B) tuple
+- `stroke_width`: Outline width in pixels (default: 0)
+
+**CLI Usage:**
+
+```bash
+# Text watermark with default settings
+color-tools image --file photo.jpg \
+  --watermark \
+  --watermark-text "© 2025 MyBrand"
+
+# Text watermark with custom styling
+color-tools image --file photo.jpg \
+  --watermark \
+  --watermark-text "© 2025 MyBrand" \
+  --watermark-font-size 32 \
+  --watermark-color "255,255,255" \
+  --watermark-stroke-color "0,0,0" \
+  --watermark-stroke-width 2 \
+  --watermark-position top-right \
+  --watermark-opacity 0.9
+
+# Image watermark (logo)
+color-tools image --file photo.jpg \
+  --watermark \
+  --watermark-image logo.png \
+  --watermark-position center \
+  --watermark-scale 0.5 \
+  --watermark-opacity 0.7
+
+# SVG watermark
+color-tools image --file photo.jpg \
+  --watermark \
+  --watermark-svg logo.svg \
+  --watermark-position bottom-center
+```
+
+**Python API:**
+
+```python
+from color_tools.image import add_text_watermark, add_image_watermark, add_svg_watermark
+
+# Simple text watermark
+add_text_watermark(
+    "photo.jpg",
+    text="© 2025 MyBrand",
+    output_path="watermarked.jpg"
+)
+
+# Styled text with outline
+add_text_watermark(
+    "photo.jpg",
+    text="© 2025 MyBrand",
+    font_size=32,
+    color=(255, 255, 255),
+    stroke_color=(0, 0, 0),
+    stroke_width=2,
+    position="top-right",
+    opacity=0.9,
+    output_path="watermarked.jpg"
+)
+
+# Image watermark
+add_image_watermark(
+    "photo.jpg",
+    watermark_path="logo.png",
+    position="center",
+    scale=0.5,
+    opacity=0.7,
+    output_path="branded.jpg"
+)
+
+# SVG watermark (vector graphics)
+add_svg_watermark(
+    "photo.jpg",
+    svg_path="logo.svg",
+    position="bottom-center",
+    scale=0.8,
+    output_path="branded.jpg"
+)
+```
+
+**Font Collection:**
+
+The module includes a curated collection of fonts in `fonts/` directory for text watermarks. See `fonts/README.md` for available fonts and licensing information.
+
 ## Data Structures
 
 ### ColorCluster

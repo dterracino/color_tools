@@ -88,6 +88,18 @@ Examples:
   # Extract and redistribute luminance from image
   {prog_name} image --file photo.jpg --redistribute-luminance --colors 8
   
+  # Convert image formats (WebP, PNG, JPEG, HEIC, AVIF, etc.)
+  {prog_name} image --file photo.webp --convert png
+  {prog_name} image --file photo.jpg --convert webp --quality 80 --lossy
+  
+  # Add watermarks to images
+  {prog_name} image --file photo.jpg --watermark --watermark-text "© 2025 MyBrand"
+  {prog_name} image --file photo.jpg --watermark --watermark-image logo.png --watermark-position top-right
+  
+  # Simulate colorblindness and convert to retro palettes
+  {prog_name} image --file chart.png --cvd-simulate deuteranopia --output colorblind_view.png
+  {prog_name} image --file photo.jpg --quantize-palette cga4 --dither --output retro.png
+  
   # Find nearest filament to an RGB color
   {prog_name} filament --nearest --value 255 0 0
   {prog_name} filament --nearest --hex "#FF0000"
@@ -510,7 +522,15 @@ Examples:
     image_parser = subparsers.add_parser(
         "image",
         help="Image color analysis and manipulation",
-        description="Extract colors, redistribute luminance, simulate colorblindness, convert to retro palettes, and add watermarks"
+        description="""Image processing operations:
+        
+- Format Conversion: Convert between PNG, JPEG, WebP, HEIC, AVIF, etc.
+- Watermarking: Add text, image, or SVG watermarks with customizable positioning
+- Color Analysis: Extract dominant colors with K-means clustering
+- Luminance Redistribution: Redistribute luminance values for HueForge 3D printing
+- CVD Simulation/Correction: Simulate or correct for color vision deficiencies
+- Palette Quantization: Convert to retro palettes (CGA, EGA, VGA, etc.) with dithering
+        """
     )
     
     image_parser.add_argument(

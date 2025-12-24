@@ -1,7 +1,13 @@
 """
 Image processing command handler.
 
-Handles all image subcommands: cvd (simulation/correction), quantize, watermark, etc.
+Handles all image subcommands:
+- Format Conversion: Convert between image formats (PNG, JPEG, WebP, HEIC, AVIF, etc.)
+- Watermarking: Add text, image, or SVG watermarks with customizable positioning
+- Color Analysis: Extract dominant colors with K-means clustering
+- Luminance Redistribution: Redistribute luminance values for HueForge 3D printing
+- CVD Operations: Simulate or correct for color vision deficiencies (protanopia, deuteranopia, tritanopia)
+- Palette Quantization: Convert images to retro palettes (CGA, EGA, VGA, etc.) with dithering
 """
 
 import sys

@@ -8,6 +8,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.6.1] - 2024-12-24
+
+### Fixed
+
+- **CLI documentation** - Updated all CLI help text and docstrings to document image conversion and watermarking features
+  - Updated main CLI epilog with conversion and watermarking examples
+  - Expanded image parser description to list all 6 operation types
+  - Updated `color_tools/__init__.py` docstring with conversion/watermarking examples
+  - Updated `color_tools/image/__init__.py` docstring with comprehensive examples
+  - Updated `color_tools/cli_commands/handlers/image.py` docstring
+  - Added detailed sections in `color_tools/image/README.md` for:
+    - Section 6: Image Format Conversion (formats, quality defaults, CLI/API examples)
+    - Section 7: Image Watermarking (text/image/SVG types, positioning, styling)
+
+## [5.6.0] - 2024-12-24
+
 ### Added
 
 - **Image format conversion** - Simple, high-quality conversion between image formats

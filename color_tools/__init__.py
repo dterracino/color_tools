@@ -25,7 +25,14 @@ Color Validation:
     Match: True, Confidence: 100%
 
 Image Processing (requires pip install color-match-tools[image]):
-    >>> from color_tools.image import simulate_cvd_image, quantize_image_to_palette
+    >>> from color_tools.image import simulate_cvd_image, quantize_image_to_palette, convert_image, add_watermark
+    >>> 
+    >>> # Convert image formats (WebP, PNG, JPEG, HEIC, AVIF, etc.)
+    >>> convert_image("photo.webp", output_format="png")  # Creates photo.png
+    >>> convert_image("photo.jpg", output_format="webp", lossless=True)
+    >>> 
+    >>> # Add watermarks
+    >>> add_watermark("photo.jpg", text="© 2025 MyBrand", output="watermarked.jpg")
     >>> 
     >>> # Test accessibility - simulate colorblindness
     >>> sim_image = simulate_cvd_image("chart.png", "deuteranopia")
@@ -41,7 +48,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "5.5.0"
+__version__ = "5.6.1"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
