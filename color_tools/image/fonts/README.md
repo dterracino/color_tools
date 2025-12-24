@@ -66,11 +66,15 @@ color-tools image --file input.jpg --watermark \
 
 ## Font License Compliance
 
-When adding fonts to this directory:
+When adding fonts to this directory **for redistribution with the package**:
 
-- Ensure the font license permits redistribution
-- Include license files (e.g., LICENSE.txt, OFL.txt) alongside font files
-- Do not add proprietary fonts without permission
+- **Ensure the font license permits redistribution** - Most open-source fonts (OFL, Apache, MIT) allow this
+- **Document the license** - Add font name, license type, and source URL to this README
+- **Respect attribution requirements** - Some licenses require attribution in documentation
+
+**For personal use:** You can use any font you legally own (purchased, licensed, or free) by placing it in this directory or specifying its path with `--watermark-font-file`. Just don't commit proprietary/purchased fonts to the repository.
+
+**Note:** Including individual license files (OFL.txt, LICENSE.txt) alongside each font is optional. Google Fonts use the same filename for all fonts, which would cause conflicts. Instead, document licenses here or in a master LICENSE file.
 
 ## Font Sources
 
