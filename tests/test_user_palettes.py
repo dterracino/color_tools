@@ -6,7 +6,7 @@ from pathlib import Path
 from tempfile import TemporaryDirectory
 
 from color_tools.palette import load_palette, Palette
-from color_tools.reporting import get_available_palettes
+from color_tools.cli_commands.reporting import get_available_palettes
 
 
 class TestUserPalettes(unittest.TestCase):

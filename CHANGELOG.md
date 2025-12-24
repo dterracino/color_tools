@@ -110,18 +110,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- **Internal CLI refactoring** - Extracted utility functions to improve code maintainability
-  - Created `cli_utils.py` module (162 lines) with validation and parsing utilities:
-    - `validate_color_input_exclusivity()` - Checks --value vs --hex mutual exclusivity
-    - `get_rgb_from_args()` - Unified RGB extraction from CLI args
-    - `parse_hex_or_exit()` - Hex parsing with error handling
-    - `is_valid_lab()` / `is_valid_lch()` - Color value range validation
-    - `get_program_name()` - Determines CLI invocation name
-  - Created `reporting.py` module (213 lines) with user data diagnostics:
-    - `show_override_report()` - Analyzes and displays user data overrides
-    - `generate_user_hashes()` - Creates SHA-256 files for user data integrity
-    - `get_available_palettes()` - Lists core and user palettes
-  - Reduced `cli.py` from 1776 lines to 1509 lines (15% reduction)
+- **Internal CLI refactoring - Phase 2: Command handlers** - Extracted all command logic to separate modules
+  - Created `cli_commands/handlers/` package with individual handler modules:
+    - `color.py` (165 lines) - Color search and query logic
+    - `filament.py` (172 lines) - Filament search and filtering logic
+    - `convert.py` (126 lines) - Color space conversion and gamut checking
+    - `name.py` (57 lines) - Color name generation
+    - `validate.py` (55 lines) - Color name/hex validation
+    - `cvd.py` (75 lines) - Color vision deficiency simulation/correction
+  - Reduced `cli.py` from 1776 lines to 1021 lines (42.5% reduction, 755 lines removed)
+  - **Phase 1 (Quick Wins)** - Extracted utility functions:
+    - Created `cli_utils.py` module (162 lines) with validation and parsing utilities
+    - Created `reporting.py` module (213 lines) with user data diagnostics
+  - **Total impact:** cli.py reduced from 1776 to 1021 lines (755 lines extracted)
   - No user-facing changes - purely internal code organization
   - All 471 tests passing with no regressions
 
