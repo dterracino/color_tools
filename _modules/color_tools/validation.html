@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.validation &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.validation</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.validation</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Color validation functions to check if a hex code matches a color name.</span>
+<span class="sd">Uses fuzzy matching and perceptual color distance (Delta E 2000).</span>
+<span class="sd">Useful for validating imported color data or user input.</span>
+
+<span class="sd">Note: For best fuzzy matching results, install the optional fuzzywuzzy package:</span>
+<span class="sd">    pip install fuzzywuzzy</span>
+<span class="sd">    </span>
+<span class="sd">A hybrid fallback matcher (exact/substring/Levenshtein) is used when </span>
+<span class="sd">fuzzywuzzy is not available.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">dataclass</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">fuzzywuzzy</span><span class="w"> </span><span class="kn">import</span> <span class="n">process</span>
+    <span class="n">HAS_FUZZYWUZZY</span> <span class="o">=</span> <span class="kc">True</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="n">HAS_FUZZYWUZZY</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.palette</span><span class="w"> </span><span class="kn">import</span> <span class="n">Palette</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">hex_to_rgb</span><span class="p">,</span> <span class="n">rgb_to_lab</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.distance</span><span class="w"> </span><span class="kn">import</span> <span class="n">delta_e_2000</span>
+
+<span class="c1"># Load the default color palette once to be used by the validation function</span>
+<span class="n">_palette</span> <span class="o">=</span> <span class="n">Palette</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="n">_color_names</span> <span class="o">=</span> <span class="p">[</span><span class="n">r</span><span class="o">.</span><span class="n">name</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="n">_palette</span><span class="o">.</span><span class="n">records</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_levenshtein_distance</span><span class="p">(</span><span class="n">s1</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">s2</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate Levenshtein distance between two strings.</span>
+<span class="sd">    </span>
+<span class="sd">    The Levenshtein distance is the minimum number of single-character edits</span>
+<span class="sd">    (insertions, deletions, or substitutions) required to change one string</span>
+<span class="sd">    into another.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        s1: First string</span>
+<span class="sd">        s2: Second string</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        The edit distance between the two strings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">_levenshtein_distance</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span> <span class="n">s1</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">s1</span><span class="p">)</span>
+    
+    <span class="n">previous_row</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">s2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">c1</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s1</span><span class="p">):</span>
+        <span class="n">current_row</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">c2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">s2</span><span class="p">):</span>
+            <span class="c1"># Cost of insertions, deletions, or substitutions</span>
+            <span class="n">insertions</span> <span class="o">=</span> <span class="n">previous_row</span><span class="p">[</span><span class="n">j</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">deletions</span> <span class="o">=</span> <span class="n">current_row</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">substitutions</span> <span class="o">=</span> <span class="n">previous_row</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">+</span> <span class="p">(</span><span class="n">c1</span> <span class="o">!=</span> <span class="n">c2</span><span class="p">)</span>
+            <span class="n">current_row</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">insertions</span><span class="p">,</span> <span class="n">deletions</span><span class="p">,</span> <span class="n">substitutions</span><span class="p">))</span>
+        <span class="n">previous_row</span> <span class="o">=</span> <span class="n">current_row</span>
+    
+    <span class="k">return</span> <span class="n">previous_row</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_fuzzy_match_fallback</span><span class="p">(</span><span class="n">query</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">choices</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Hybrid fuzzy matching fallback when fuzzywuzzy is not available.</span>
+<span class="sd">    </span>
+<span class="sd">    Uses multiple strategies for best results:</span>
+<span class="sd">    1. Exact match (after normalization) - 100 score</span>
+<span class="sd">    2. Substring match - 90-95 score</span>
+<span class="sd">    3. Levenshtein distance - variable score</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        query: The string to search for</span>
+<span class="sd">        choices: List of strings to search in</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Tuple of (best_match, score) where score is 0-100</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">query_norm</span> <span class="o">=</span> <span class="n">query</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Strategy 1: Exact match (normalized)</span>
+    <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">:</span>
+        <span class="n">choice_norm</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">query_norm</span> <span class="o">==</span> <span class="n">choice_norm</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">choice</span><span class="p">,</span> <span class="mi">100</span><span class="p">)</span>
+    
+    <span class="c1"># Strategy 2: Substring match + Strategy 3: Levenshtein fallback</span>
+    <span class="n">best_match</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="n">best_score</span> <span class="o">=</span> <span class="mi">0</span>
+    
+    <span class="k">for</span> <span class="n">choice</span> <span class="ow">in</span> <span class="n">choices</span><span class="p">:</span>
+        <span class="n">choice_norm</span> <span class="o">=</span> <span class="n">choice</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot; &quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;-&quot;</span><span class="p">,</span> <span class="s2">&quot;&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">query_norm</span> <span class="ow">in</span> <span class="n">choice_norm</span><span class="p">:</span>
+            <span class="c1"># Substring match - higher score for better coverage</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">query_norm</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">choice_norm</span><span class="p">))</span> <span class="o">*</span> <span class="mi">95</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">choice_norm</span> <span class="ow">in</span> <span class="n">query_norm</span><span class="p">:</span>
+            <span class="c1"># Reverse substring match - slightly lower score</span>
+            <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">choice_norm</span><span class="p">)</span> <span class="o">/</span> <span class="nb">len</span><span class="p">(</span><span class="n">query_norm</span><span class="p">))</span> <span class="o">*</span> <span class="mi">90</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Strategy 3: Use Levenshtein for non-matches</span>
+            <span class="n">distance</span> <span class="o">=</span> <span class="n">_levenshtein_distance</span><span class="p">(</span><span class="n">query_norm</span><span class="p">,</span> <span class="n">choice_norm</span><span class="p">)</span>
+            <span class="n">max_len</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">query_norm</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">choice_norm</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">max_len</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="mi">100</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="p">(</span><span class="n">distance</span> <span class="o">/</span> <span class="n">max_len</span><span class="p">)))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">score</span> <span class="o">=</span> <span class="mi">0</span>
+        
+        <span class="k">if</span> <span class="n">score</span> <span class="o">&gt;</span> <span class="n">best_score</span><span class="p">:</span>
+            <span class="n">best_score</span> <span class="o">=</span> <span class="n">score</span>
+            <span class="n">best_match</span> <span class="o">=</span> <span class="n">choice</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">best_match</span> <span class="ow">or</span> <span class="n">choices</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">best_score</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ColorValidationRecord">
+<a class="viewcode-back" href="../../api/color_tools.validation.html#color_tools.validation.ColorValidationRecord">[docs]</a>
+<span class="nd">@dataclass</span><span class="p">(</span><span class="n">frozen</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColorValidationRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Result record from validating if a hex code matches a color name.</span>
+<span class="sd">    </span>
+<span class="sd">    This immutable dataclass contains comprehensive validation results including</span>
+<span class="sd">    fuzzy name matching confidence, perceptual color distance (Delta E), and</span>
+<span class="sd">    helpful suggestions for mismatches.</span>
+<span class="sd">    </span>
+<span class="sd">    Attributes:</span>
+<span class="sd">        is_match: True if the color name and hex code are a good match</span>
+<span class="sd">        name_match: Best matching CSS color name from the database (e.g., &quot;lightblue&quot;)</span>
+<span class="sd">        name_confidence: Fuzzy matching confidence 0.0-1.0 (1.0 = exact match)</span>
+<span class="sd">        hex_value: The hex code that was validated (normalized with # prefix)</span>
+<span class="sd">        suggested_hex: Suggested hex code for the matched name, or None if exact match</span>
+<span class="sd">        delta_e: Perceptual color distance (Delta E 2000) between provided and suggested colors</span>
+<span class="sd">        message: Human-readable validation result message</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.validation import validate_color</span>
+<span class="sd">        &gt;&gt;&gt; result = validate_color(&quot;light blue&quot;, &quot;#ADD8E6&quot;)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Match: {result.is_match}&quot;)</span>
+<span class="sd">        Match: True</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Matched &#39;{result.name_match}&#39; with {result.name_confidence:.0%} confidence&quot;)</span>
+<span class="sd">        Matched &#39;lightblue&#39; with 100% confidence</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Delta E: {result.delta_e:.2f}&quot;)</span>
+<span class="sd">        Delta E: 0.00</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">is_match</span><span class="p">:</span> <span class="nb">bool</span>
+    <span class="n">name_match</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">name_confidence</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">hex_value</span><span class="p">:</span> <span class="nb">str</span>
+    <span class="n">suggested_hex</span><span class="p">:</span> <span class="n">Optional</span><span class="p">[</span><span class="nb">str</span><span class="p">]</span>
+    <span class="n">delta_e</span><span class="p">:</span> <span class="nb">float</span>
+    <span class="n">message</span><span class="p">:</span> <span class="nb">str</span>
+    
+<div class="viewcode-block" id="ColorValidationRecord.__str__">
+<a class="viewcode-back" href="../../api/color_tools.validation.html#color_tools.validation.ColorValidationRecord.__str__">[docs]</a>
+    <span class="k">def</span><span class="w"> </span><span class="fm">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;Human-readable validation result.&quot;&quot;&quot;</span>
+        <span class="n">match_status</span> <span class="o">=</span> <span class="s2">&quot;✓ Match&quot;</span> <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">is_match</span> <span class="k">else</span> <span class="s2">&quot;✗ Mismatch&quot;</span>
+        <span class="n">confidence</span> <span class="o">=</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_confidence</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">match_status</span><span class="si">}</span><span class="s2">: &#39;</span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">name_match</span><span class="si">}</span><span class="s2">&#39; (</span><span class="si">{</span><span class="n">confidence</span><span class="si">}</span><span class="s2"> confidence, ΔE </span><span class="si">{</span><span class="bp">self</span><span class="o">.</span><span class="n">delta_e</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">)&quot;</span></div>
+</div>
+
+
+
+<div class="viewcode-block" id="validate_color">
+<a class="viewcode-back" href="../../api/color_tools.validation.html#color_tools.validation.validate_color">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">validate_color</span><span class="p">(</span>
+    <span class="n">color_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">hex_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">de_threshold</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">20.0</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">ColorValidationRecord</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Validates if a given hex code approximately matches a given color name.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        color_name: The name of the color to check (e.g., &quot;light red&quot;).</span>
+<span class="sd">        hex_code: The hex code to validate (e.g., &quot;#FFC0CB&quot;).</span>
+<span class="sd">        de_threshold: The Delta E 2000 threshold for a color to be considered a match.</span>
+<span class="sd">                      Lower is stricter. Default is 20.0.</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        A ColorValidationRecord with the validation results.</span>
+<span class="sd">        </span>
+<span class="sd">    Note:</span>
+<span class="sd">        Uses fuzzywuzzy for fuzzy matching if available, otherwise falls back</span>
+<span class="sd">        to a hybrid matcher using exact/substring/Levenshtein matching.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># 1. Find the best matching color name from our CSS palette</span>
+    <span class="k">if</span> <span class="n">HAS_FUZZYWUZZY</span><span class="p">:</span>
+        <span class="n">match_result</span> <span class="o">=</span> <span class="n">process</span><span class="o">.</span><span class="n">extractOne</span><span class="p">(</span><span class="n">color_name</span><span class="p">,</span> <span class="n">_color_names</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">match_result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">ColorValidationRecord</span><span class="p">(</span>
+                <span class="n">is_match</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+                <span class="n">name_match</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">name_confidence</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span>
+                <span class="n">hex_value</span><span class="o">=</span><span class="n">hex_code</span><span class="p">,</span>
+                <span class="n">suggested_hex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">delta_e</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
+                <span class="n">message</span><span class="o">=</span><span class="s2">&quot;No matching color name could be found.&quot;</span>
+            <span class="p">)</span>
+        <span class="n">best_match</span><span class="p">,</span> <span class="n">name_confidence_raw</span> <span class="o">=</span> <span class="n">match_result</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">match_result</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">name_confidence</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">name_confidence_raw</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Use fallback matcher</span>
+        <span class="n">best_match</span><span class="p">,</span> <span class="n">name_confidence_raw</span> <span class="o">=</span> <span class="n">_fuzzy_match_fallback</span><span class="p">(</span><span class="n">color_name</span><span class="p">,</span> <span class="n">_color_names</span><span class="p">)</span>
+        <span class="n">name_confidence</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">name_confidence_raw</span><span class="p">)</span> <span class="o">/</span> <span class="mf">100.0</span>
+    
+    <span class="c1"># 2. Get the official record for the best matching color name</span>
+    <span class="n">matched_color_record</span> <span class="o">=</span> <span class="n">_palette</span><span class="o">.</span><span class="n">find_by_name</span><span class="p">(</span><span class="n">best_match</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">matched_color_record</span><span class="p">:</span>
+        <span class="c1"># This should theoretically never happen if _color_names is in sync</span>
+        <span class="k">return</span> <span class="n">ColorValidationRecord</span><span class="p">(</span>
+            <span class="n">is_match</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">name_match</span><span class="o">=</span><span class="n">best_match</span><span class="p">,</span>
+            <span class="n">name_confidence</span><span class="o">=</span><span class="n">name_confidence</span><span class="p">,</span>
+            <span class="n">hex_value</span><span class="o">=</span><span class="n">hex_code</span><span class="p">,</span>
+            <span class="n">suggested_hex</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">delta_e</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
+            <span class="n">message</span><span class="o">=</span><span class="s2">&quot;Could not find the matched color in the palette.&quot;</span>
+        <span class="p">)</span>
+
+    <span class="n">suggested_hex</span> <span class="o">=</span> <span class="n">matched_color_record</span><span class="o">.</span><span class="n">hex</span>
+    <span class="n">suggested_lab</span> <span class="o">=</span> <span class="n">matched_color_record</span><span class="o">.</span><span class="n">lab</span>
+
+    <span class="c1"># 3. Convert the user&#39;s input hex to LAB for comparison</span>
+    <span class="n">input_rgb</span> <span class="o">=</span> <span class="n">hex_to_rgb</span><span class="p">(</span><span class="n">hex_code</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">input_rgb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ColorValidationRecord</span><span class="p">(</span>
+            <span class="n">is_match</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span>
+            <span class="n">name_match</span><span class="o">=</span><span class="n">best_match</span><span class="p">,</span>
+            <span class="n">name_confidence</span><span class="o">=</span><span class="n">name_confidence</span><span class="p">,</span>
+            <span class="n">hex_value</span><span class="o">=</span><span class="n">hex_code</span><span class="p">,</span>
+            <span class="n">suggested_hex</span><span class="o">=</span><span class="n">suggested_hex</span><span class="p">,</span>
+            <span class="n">delta_e</span><span class="o">=</span><span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">),</span>
+            <span class="n">message</span><span class="o">=</span><span class="sa">f</span><span class="s2">&quot;Invalid hex code format: </span><span class="si">{</span><span class="n">hex_code</span><span class="si">}</span><span class="s2">&quot;</span>
+        <span class="p">)</span>
+    <span class="n">input_lab</span> <span class="o">=</span> <span class="n">rgb_to_lab</span><span class="p">(</span><span class="n">input_rgb</span><span class="p">)</span>
+
+    <span class="c1"># 4. Calculate the perceptual distance (Delta E 2000)</span>
+    <span class="n">delta_e</span> <span class="o">=</span> <span class="n">delta_e_2000</span><span class="p">(</span><span class="n">input_lab</span><span class="p">,</span> <span class="n">suggested_lab</span><span class="p">)</span>
+
+    <span class="c1"># 5. Determine if it&#39;s a match</span>
+    <span class="n">is_match</span> <span class="o">=</span> <span class="n">delta_e</span> <span class="o">&lt;=</span> <span class="n">de_threshold</span>
+    
+    <span class="n">message</span> <span class="o">=</span> <span class="s2">&quot;Match&quot;</span> <span class="k">if</span> <span class="n">is_match</span> <span class="k">else</span> <span class="s2">&quot;No Match&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">is_match</span><span class="p">:</span>
+        <span class="n">message</span> <span class="o">+=</span> <span class="sa">f</span><span class="s2">&quot; (Delta E of </span><span class="si">{</span><span class="n">delta_e</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2"> is above threshold of </span><span class="si">{</span><span class="n">de_threshold</span><span class="si">}</span><span class="s2">)&quot;</span>
+
+    <span class="k">return</span> <span class="n">ColorValidationRecord</span><span class="p">(</span>
+        <span class="n">is_match</span><span class="o">=</span><span class="n">is_match</span><span class="p">,</span>
+        <span class="n">name_match</span><span class="o">=</span><span class="n">best_match</span><span class="p">,</span>
+        <span class="n">name_confidence</span><span class="o">=</span><span class="n">name_confidence</span><span class="p">,</span>
+        <span class="n">hex_value</span><span class="o">=</span><span class="n">hex_code</span><span class="p">,</span>
+        <span class="n">suggested_hex</span><span class="o">=</span><span class="n">suggested_hex</span><span class="p">,</span>
+        <span class="n">delta_e</span><span class="o">=</span><span class="n">delta_e</span><span class="p">,</span>
+        <span class="n">message</span><span class="o">=</span><span class="n">message</span>
+    <span class="p">)</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

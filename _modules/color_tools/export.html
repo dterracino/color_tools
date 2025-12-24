@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.export &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.export</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.export</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Export system for filaments and colors.</span>
+
+<span class="sd">Provides export functionality to various formats (CSV, JSON) for integration</span>
+<span class="sd">with external tools like AutoForge, HueForge, and other color management systems.</span>
+
+<span class="sd">Version 1.0 - Simple hardcoded formats, extensible architecture for future enhancements.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+
+<span class="kn">import</span><span class="w"> </span><span class="nn">csv</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">dataclasses</span><span class="w"> </span><span class="kn">import</span> <span class="n">asdict</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">datetime</span><span class="w"> </span><span class="kn">import</span> <span class="n">datetime</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">color_tools.palette</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorRecord</span><span class="p">,</span> <span class="n">FilamentRecord</span>
+
+
+<span class="c1"># Export format definitions</span>
+<span class="n">EXPORT_FORMATS</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;autoforge&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;AutoForge filament library CSV format&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;file_extension&#39;</span><span class="p">:</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;applies_to&#39;</span><span class="p">:</span> <span class="s1">&#39;filaments&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;csv&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;Generic CSV with all fields&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;file_extension&#39;</span><span class="p">:</span> <span class="s1">&#39;csv&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;applies_to&#39;</span><span class="p">:</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+    <span class="s1">&#39;json&#39;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s1">&#39;description&#39;</span><span class="p">:</span> <span class="s1">&#39;JSON format (raw data, backup/restore)&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;file_extension&#39;</span><span class="p">:</span> <span class="s1">&#39;json&#39;</span><span class="p">,</span>
+        <span class="s1">&#39;applies_to&#39;</span><span class="p">:</span> <span class="s1">&#39;both&#39;</span><span class="p">,</span>
+    <span class="p">},</span>
+<span class="p">}</span>
+
+
+<div class="viewcode-block" id="list_export_formats">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.list_export_formats">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">list_export_formats</span><span class="p">(</span><span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;both&#39;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="nb">str</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    List available export formats.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        data_type: Filter by &#39;filaments&#39;, &#39;colors&#39;, or &#39;both&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Dictionary mapping format name to description</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; formats = list_export_formats(&#39;filaments&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; print(formats[&#39;autoforge&#39;])</span>
+<span class="sd">        AutoForge filament library CSV format</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">info</span> <span class="ow">in</span> <span class="n">EXPORT_FORMATS</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+        <span class="n">applies_to</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;applies_to&#39;</span><span class="p">]</span>
+        <span class="c1"># Include format if data_type is &#39;both&#39;, or if format applies to requested type</span>
+        <span class="k">if</span> <span class="n">data_type</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span> <span class="ow">or</span> <span class="n">applies_to</span> <span class="o">==</span> <span class="s1">&#39;both&#39;</span> <span class="ow">or</span> <span class="n">applies_to</span> <span class="o">==</span> <span class="n">data_type</span><span class="p">:</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">info</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+
+<div class="viewcode-block" id="generate_filename">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.generate_filename">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">generate_filename</span><span class="p">(</span><span class="n">data_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generate timestamped filename for export.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        data_type: &#39;filaments&#39; or &#39;colors&#39;</span>
+<span class="sd">        format_name: Export format name (e.g., &#39;autoforge&#39;, &#39;csv&#39;, &#39;json&#39;)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Filename in format: {type}_{format}_{YYYYMMDD}_{HHMMSS}.{ext}</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; generate_filename(&#39;filaments&#39;, &#39;autoforge&#39;)</span>
+<span class="sd">        &#39;filaments_autoforge_20251223_143022.csv&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">timestamp</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">now</span><span class="p">()</span><span class="o">.</span><span class="n">strftime</span><span class="p">(</span><span class="s1">&#39;%Y%m</span><span class="si">%d</span><span class="s1">_%H%M%S&#39;</span><span class="p">)</span>
+    <span class="n">ext</span> <span class="o">=</span> <span class="n">EXPORT_FORMATS</span><span class="p">[</span><span class="n">format_name</span><span class="p">][</span><span class="s1">&#39;file_extension&#39;</span><span class="p">]</span>
+    <span class="k">return</span> <span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">data_type</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">_</span><span class="si">{</span><span class="n">timestamp</span><span class="si">}</span><span class="s2">.</span><span class="si">{</span><span class="n">ext</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+
+
+<div class="viewcode-block" id="export_filaments_autoforge">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_filaments_autoforge">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_filaments_autoforge</span><span class="p">(</span>
+    <span class="n">filaments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FilamentRecord</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export filaments to AutoForge CSV format.</span>
+<span class="sd">    </span>
+<span class="sd">    Format:</span>
+<span class="sd">        Brand,Name,TD,Color,Owned</span>
+<span class="sd">        Bambu Lab PLA Basic,Jet Black,0.1,#000000,TRUE</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filaments: List of FilamentRecord objects to export</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import FilamentPalette</span>
+<span class="sd">        &gt;&gt;&gt; palette = FilamentPalette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; bambu = [f for f in palette.filaments if f.maker == &#39;Bambu Lab&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; path = export_filaments_autoforge(bambu)</span>
+<span class="sd">        &gt;&gt;&gt; print(f&quot;Exported {len(bambu)} filaments to {path}&quot;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">generate_filename</span><span class="p">(</span><span class="s1">&#39;filaments&#39;</span><span class="p">,</span> <span class="s1">&#39;autoforge&#39;</span><span class="p">)</span>
+    
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        
+        <span class="c1"># Write header</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;Brand&#39;</span><span class="p">,</span> <span class="s1">&#39;Name&#39;</span><span class="p">,</span> <span class="s1">&#39;TD&#39;</span><span class="p">,</span> <span class="s1">&#39;Color&#39;</span><span class="p">,</span> <span class="s1">&#39;Owned&#39;</span><span class="p">])</span>
+        
+        <span class="c1"># Write data rows</span>
+        <span class="k">for</span> <span class="n">filament</span> <span class="ow">in</span> <span class="n">filaments</span><span class="p">:</span>
+            <span class="c1"># Combine maker, type, and finish for Brand column</span>
+            <span class="n">brand_parts</span> <span class="o">=</span> <span class="p">[</span><span class="n">filament</span><span class="o">.</span><span class="n">maker</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">filament</span><span class="o">.</span><span class="n">type</span><span class="p">:</span>
+                <span class="n">brand_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filament</span><span class="o">.</span><span class="n">type</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">filament</span><span class="o">.</span><span class="n">finish</span><span class="p">:</span>
+                <span class="n">brand_parts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">filament</span><span class="o">.</span><span class="n">finish</span><span class="p">)</span>
+            <span class="n">brand</span> <span class="o">=</span> <span class="s1">&#39; &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">brand_parts</span><span class="p">)</span>
+            
+            <span class="n">name</span> <span class="o">=</span> <span class="n">filament</span><span class="o">.</span><span class="n">color</span>
+            <span class="n">td</span> <span class="o">=</span> <span class="n">filament</span><span class="o">.</span><span class="n">td_value</span> <span class="k">if</span> <span class="n">filament</span><span class="o">.</span><span class="n">td_value</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="k">else</span> <span class="s1">&#39;&#39;</span>
+            <span class="n">color</span> <span class="o">=</span> <span class="n">filament</span><span class="o">.</span><span class="n">hex</span>
+            <span class="n">owned</span> <span class="o">=</span> <span class="s1">&#39;TRUE&#39;</span>
+            
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="n">brand</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">td</span><span class="p">,</span> <span class="n">color</span><span class="p">,</span> <span class="n">owned</span><span class="p">])</span>
+    
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_filaments_csv">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_filaments_csv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_filaments_csv</span><span class="p">(</span>
+    <span class="n">filaments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FilamentRecord</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export filaments to generic CSV format with all fields.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filaments: List of FilamentRecord objects to export</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import FilamentPalette</span>
+<span class="sd">        &gt;&gt;&gt; palette = FilamentPalette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; path = export_filaments_csv(palette.filaments)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">generate_filename</span><span class="p">(</span><span class="s1">&#39;filaments&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
+    
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">filaments</span><span class="p">:</span>
+        <span class="c1"># Create empty file with header</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;id&#39;</span><span class="p">,</span> <span class="s1">&#39;maker&#39;</span><span class="p">,</span> <span class="s1">&#39;type&#39;</span><span class="p">,</span> <span class="s1">&#39;finish&#39;</span><span class="p">,</span> <span class="s1">&#39;color&#39;</span><span class="p">,</span> <span class="s1">&#39;hex&#39;</span><span class="p">,</span> <span class="s1">&#39;td_value&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="c1"># Get all field names from first filament (dataclass)</span>
+    <span class="n">fieldnames</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">filaments</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">keys</span><span class="p">())</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">DictWriter</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">fieldnames</span><span class="o">=</span><span class="n">fieldnames</span><span class="p">)</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writeheader</span><span class="p">()</span>
+        
+        <span class="k">for</span> <span class="n">filament</span> <span class="ow">in</span> <span class="n">filaments</span><span class="p">:</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">(</span><span class="n">asdict</span><span class="p">(</span><span class="n">filament</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_filaments_json">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_filaments_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_filaments_json</span><span class="p">(</span>
+    <span class="n">filaments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FilamentRecord</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export filaments to JSON format.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filaments: List of FilamentRecord objects to export</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import FilamentPalette</span>
+<span class="sd">        &gt;&gt;&gt; palette = FilamentPalette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; path = export_filaments_json(palette.filaments, &#39;backup.json&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">generate_filename</span><span class="p">(</span><span class="s1">&#39;filaments&#39;</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">)</span>
+    
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">asdict</span><span class="p">(</span><span class="n">f</span><span class="p">)</span> <span class="k">for</span> <span class="n">f</span> <span class="ow">in</span> <span class="n">filaments</span><span class="p">]</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_colors_csv">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_colors_csv">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_colors_csv</span><span class="p">(</span>
+    <span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColorRecord</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export colors to generic CSV format with all fields.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        colors: List of ColorRecord objects to export</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import Palette</span>
+<span class="sd">        &gt;&gt;&gt; palette = Palette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; path = export_colors_csv(palette.colors)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">generate_filename</span><span class="p">(</span><span class="s1">&#39;colors&#39;</span><span class="p">,</span> <span class="s1">&#39;csv&#39;</span><span class="p">)</span>
+    
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">colors</span><span class="p">:</span>
+        <span class="c1"># Create empty file with header</span>
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;hex&#39;</span><span class="p">,</span> <span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="s1">&#39;hsl&#39;</span><span class="p">,</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="s1">&#39;lch&#39;</span><span class="p">])</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="c1"># Colors have tuples, need custom handling</span>
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">,</span> <span class="n">newline</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">writer</span> <span class="o">=</span> <span class="n">csv</span><span class="o">.</span><span class="n">writer</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        
+        <span class="c1"># Write header</span>
+        <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span><span class="s1">&#39;name&#39;</span><span class="p">,</span> <span class="s1">&#39;hex&#39;</span><span class="p">,</span> <span class="s1">&#39;rgb&#39;</span><span class="p">,</span> <span class="s1">&#39;hsl&#39;</span><span class="p">,</span> <span class="s1">&#39;lab&#39;</span><span class="p">,</span> <span class="s1">&#39;lch&#39;</span><span class="p">])</span>
+        
+        <span class="c1"># Write data rows</span>
+        <span class="k">for</span> <span class="n">color</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">:</span>
+            <span class="c1"># Convert tuples to comma-separated strings</span>
+            <span class="n">rgb_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="n">color</span><span class="o">.</span><span class="n">rgb</span><span class="p">))</span>
+            <span class="n">hsl_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">color</span><span class="o">.</span><span class="n">hsl</span><span class="p">)</span>
+            <span class="n">lab_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">color</span><span class="o">.</span><span class="n">lab</span><span class="p">)</span>
+            <span class="n">lch_str</span> <span class="o">=</span> <span class="s1">&#39;,&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="sa">f</span><span class="s1">&#39;</span><span class="si">{</span><span class="n">v</span><span class="si">:</span><span class="s1">.1f</span><span class="si">}</span><span class="s1">&#39;</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">color</span><span class="o">.</span><span class="n">lch</span><span class="p">)</span>
+            
+            <span class="n">writer</span><span class="o">.</span><span class="n">writerow</span><span class="p">([</span>
+                <span class="n">color</span><span class="o">.</span><span class="n">name</span><span class="p">,</span>
+                <span class="n">color</span><span class="o">.</span><span class="n">hex</span><span class="p">,</span>
+                <span class="n">rgb_str</span><span class="p">,</span>
+                <span class="n">hsl_str</span><span class="p">,</span>
+                <span class="n">lab_str</span><span class="p">,</span>
+                <span class="n">lch_str</span>
+            <span class="p">])</span>
+    
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_colors_json">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_colors_json">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_colors_json</span><span class="p">(</span>
+    <span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColorRecord</span><span class="p">],</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export colors to JSON format.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        colors: List of ColorRecord objects to export</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import Palette</span>
+<span class="sd">        &gt;&gt;&gt; palette = Palette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; path = export_colors_json(palette.colors, &#39;my_colors.json&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">output_path</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">output_path</span> <span class="o">=</span> <span class="n">generate_filename</span><span class="p">(</span><span class="s1">&#39;colors&#39;</span><span class="p">,</span> <span class="s1">&#39;json&#39;</span><span class="p">)</span>
+    
+    <span class="n">output_path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span>
+    
+    <span class="n">data</span> <span class="o">=</span> <span class="p">[</span><span class="n">asdict</span><span class="p">(</span><span class="n">c</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">colors</span><span class="p">]</span>
+    
+    <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span> <span class="s1">&#39;w&#39;</span><span class="p">,</span> <span class="n">encoding</span><span class="o">=</span><span class="s1">&#39;utf-8&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+        <span class="n">json</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">f</span><span class="p">,</span> <span class="n">indent</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">ensure_ascii</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">output_path</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_filaments">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_filaments">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_filaments</span><span class="p">(</span>
+    <span class="n">filaments</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">FilamentRecord</span><span class="p">],</span>
+    <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export filaments to specified format.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        filaments: List of FilamentRecord objects to export</span>
+<span class="sd">        format_name: Export format (&#39;autoforge&#39;, &#39;csv&#39;, &#39;json&#39;)</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If format is not supported for filaments</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import FilamentPalette</span>
+<span class="sd">        &gt;&gt;&gt; palette = FilamentPalette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; bambu = [f for f in palette.filaments if f.maker == &#39;Bambu Lab&#39;]</span>
+<span class="sd">        &gt;&gt;&gt; path = export_filaments(bambu, &#39;autoforge&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">format_name</span> <span class="o">=</span> <span class="n">format_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">format_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EXPORT_FORMATS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown export format: </span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">format_info</span> <span class="o">=</span> <span class="n">EXPORT_FORMATS</span><span class="p">[</span><span class="n">format_name</span><span class="p">]</span>
+    <span class="n">applies_to</span> <span class="o">=</span> <span class="n">format_info</span><span class="p">[</span><span class="s1">&#39;applies_to&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">applies_to</span> <span class="o">!=</span> <span class="s1">&#39;filaments&#39;</span> <span class="ow">and</span> <span class="n">applies_to</span> <span class="o">!=</span> <span class="s1">&#39;both&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Format &#39;</span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&#39; does not support filaments&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">format_name</span> <span class="o">==</span> <span class="s1">&#39;autoforge&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">export_filaments_autoforge</span><span class="p">(</span><span class="n">filaments</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">format_name</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">export_filaments_csv</span><span class="p">(</span><span class="n">filaments</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">format_name</span> <span class="o">==</span> <span class="s1">&#39;json&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">export_filaments_json</span><span class="p">(</span><span class="n">filaments</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Format &#39;</span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&#39; not implemented yet&quot;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="export_colors">
+<a class="viewcode-back" href="../../api/color_tools.export.html#color_tools.export.export_colors">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">export_colors</span><span class="p">(</span>
+    <span class="n">colors</span><span class="p">:</span> <span class="nb">list</span><span class="p">[</span><span class="n">ColorRecord</span><span class="p">],</span>
+    <span class="n">format_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">output_path</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Export colors to specified format.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        colors: List of ColorRecord objects to export</span>
+<span class="sd">        format_name: Export format (&#39;csv&#39;, &#39;json&#39;)</span>
+<span class="sd">        output_path: Output file path (auto-generated if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Path to the exported file</span>
+<span class="sd">    </span>
+<span class="sd">    Raises:</span>
+<span class="sd">        ValueError: If format is not supported for colors</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; from color_tools.palette import Palette</span>
+<span class="sd">        &gt;&gt;&gt; palette = Palette.load_default()</span>
+<span class="sd">        &gt;&gt;&gt; blues = [c for c in palette.colors if &#39;blue&#39; in c.name.lower()]</span>
+<span class="sd">        &gt;&gt;&gt; path = export_colors(blues, &#39;json&#39;, &#39;blue_colors.json&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">format_name</span> <span class="o">=</span> <span class="n">format_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    
+    <span class="k">if</span> <span class="n">format_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">EXPORT_FORMATS</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Unknown export format: </span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+    
+    <span class="n">format_info</span> <span class="o">=</span> <span class="n">EXPORT_FORMATS</span><span class="p">[</span><span class="n">format_name</span><span class="p">]</span>
+    <span class="n">applies_to</span> <span class="o">=</span> <span class="n">format_info</span><span class="p">[</span><span class="s1">&#39;applies_to&#39;</span><span class="p">]</span>
+    
+    <span class="k">if</span> <span class="n">applies_to</span> <span class="o">!=</span> <span class="s1">&#39;colors&#39;</span> <span class="ow">and</span> <span class="n">applies_to</span> <span class="o">!=</span> <span class="s1">&#39;both&#39;</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Format &#39;</span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&#39; does not support colors&quot;</span><span class="p">)</span>
+    
+    <span class="k">if</span> <span class="n">format_name</span> <span class="o">==</span> <span class="s1">&#39;csv&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">export_colors_csv</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">format_name</span> <span class="o">==</span> <span class="s1">&#39;json&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">export_colors_json</span><span class="p">(</span><span class="n">colors</span><span class="p">,</span> <span class="n">output_path</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Format &#39;</span><span class="si">{</span><span class="n">format_name</span><span class="si">}</span><span class="s2">&#39; not implemented yet&quot;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.distance &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.distance</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.distance</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Color distance metrics for measuring perceptual color differences.</span>
+
+<span class="sd">Includes multiple Delta E formulas:</span>
+<span class="sd">- Delta E 1976 (CIE76): Simple Euclidean distance</span>
+<span class="sd">- Delta E 1994 (CIE94): Improved with weighting</span>
+<span class="sd">- Delta E 2000 (CIEDE2000): Current gold standard</span>
+<span class="sd">- Delta E CMC: Textile industry standard</span>
+
+<span class="sd">Also includes simpler distance functions for RGB and HSL spaces.</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    &gt;&gt;&gt; from color_tools import rgb_to_lab, delta_e_2000</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # Compare two similar reds</span>
+<span class="sd">    &gt;&gt;&gt; red1 = rgb_to_lab((255, 0, 0))    # Pure red</span>
+<span class="sd">    &gt;&gt;&gt; red2 = rgb_to_lab((250, 5, 5))    # Slightly darker red</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # Calculate perceptual difference</span>
+<span class="sd">    &gt;&gt;&gt; distance = delta_e_2000(red1, red2)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;ΔE2000: {distance:.2f}&quot;)</span>
+<span class="sd">    ΔE2000: 2.85</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # ΔE &lt; 1.0 = imperceptible</span>
+<span class="sd">    &gt;&gt;&gt; # ΔE &lt; 2.0 = barely noticeable  </span>
+<span class="sd">    &gt;&gt;&gt; # ΔE &lt; 5.0 = noticeable but acceptable</span>
+<span class="sd">    &gt;&gt;&gt; if distance &lt; 2.0:</span>
+<span class="sd">    ...     print(&quot;Colors are nearly identical!&quot;)</span>
+<span class="sd">    ... elif distance &lt; 5.0:</span>
+<span class="sd">    ...     print(&quot;Colors are similar&quot;)</span>
+<span class="sd">    ... else:</span>
+<span class="sd">    ...     print(&quot;Colors are noticeably different&quot;)</span>
+<span class="sd">    Colors are similar</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorConstants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">lab_to_lch</span>
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Basic Distance Functions</span>
+<span class="c1"># ============================================================================</span>
+
+<div class="viewcode-block" id="euclidean">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.euclidean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">euclidean</span><span class="p">(</span><span class="n">v1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">],</span> <span class="n">v2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="o">...</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simple Euclidean distance between two vectors.</span>
+<span class="sd">    </span>
+<span class="sd">    The classic √((x₁-x₂)² + (y₁-y₂)² + (z₁-z₂)²) formula.</span>
+<span class="sd">    Works for any dimensionality, not just colors!</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="nb">sum</span><span class="p">((</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">for</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span> <span class="n">v2</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="hue_diff_deg">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.hue_diff_deg">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hue_diff_deg</span><span class="p">(</span><span class="n">h1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h2</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Calculate hue difference accounting for circular nature (0° = 360°).</span>
+<span class="sd">    </span>
+<span class="sd">    Hue is circular (like a clock), so the difference between 359° and 1° </span>
+<span class="sd">    should be 2°, not 358°! This function finds the smallest angular difference.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        h1, h2: Hue angles in degrees</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Smallest hue difference in degrees (0-180)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">h1</span> <span class="o">-</span> <span class="n">h2</span><span class="p">)</span> <span class="o">%</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span>
+    <span class="k">return</span> <span class="nb">min</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span> <span class="o">-</span> <span class="n">d</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="hsl_euclidean">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.hsl_euclidean">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hsl_euclidean</span><span class="p">(</span><span class="n">hsl1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">hsl2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Euclidean distance in HSL space (accounting for hue circularity).</span>
+<span class="sd">    </span>
+<span class="sd">    Note: HSL distance doesn&#39;t match human perception well - LAB is better!</span>
+<span class="sd">    This is here for compatibility with systems that work in HSL.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dh</span> <span class="o">=</span> <span class="n">hue_diff_deg</span><span class="p">(</span><span class="n">hsl1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">hsl2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">ds</span> <span class="o">=</span> <span class="n">hsl1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">hsl2</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">dl</span> <span class="o">=</span> <span class="n">hsl1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">hsl2</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dh</span><span class="o">*</span><span class="n">dh</span> <span class="o">+</span> <span class="n">ds</span><span class="o">*</span><span class="n">ds</span> <span class="o">+</span> <span class="n">dl</span><span class="o">*</span><span class="n">dl</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Delta E 1976 (CIE76) - The Original</span>
+<span class="c1"># ============================================================================</span>
+
+<div class="viewcode-block" id="delta_e_76">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.delta_e_76">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delta_e_76</span><span class="p">(</span><span class="n">lab1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">lab2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delta E 1976 (CIE76) - Simple Euclidean distance in LAB space.</span>
+<span class="sd">    </span>
+<span class="sd">    The OG color difference formula! Just treats LAB like any other 3D space</span>
+<span class="sd">    and measures straight-line distance.</span>
+<span class="sd">    </span>
+<span class="sd">    **Pros:** Fast and simple</span>
+<span class="sd">    **Cons:** Doesn&#39;t match human perception well, especially for saturated colors</span>
+<span class="sd">    </span>
+<span class="sd">    A ΔE of 1.0 is supposedly the &quot;just noticeable difference&quot; but in reality</span>
+<span class="sd">    it varies based on the colors involved.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab1, lab2: L*a*b* color tuples</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Delta E 1976 value (lower = more similar)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">euclidean</span><span class="p">(</span><span class="n">lab1</span><span class="p">,</span> <span class="n">lab2</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Delta E 1994 (CIE94) - The Improvement</span>
+<span class="c1"># ============================================================================</span>
+
+<div class="viewcode-block" id="delta_e_94">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.delta_e_94">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delta_e_94</span><span class="p">(</span>
+    <span class="n">lab1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">lab2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">kL</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kC</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kH</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">K1</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+    <span class="n">K2</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delta E 1994 (CIE94) - Improved perceptual uniformity.</span>
+<span class="sd">    </span>
+<span class="sd">    CIE94 realized that humans are more sensitive to lightness differences</span>
+<span class="sd">    than chroma differences, and more sensitive to chroma than hue. This</span>
+<span class="sd">    formula weights things accordingly!</span>
+<span class="sd">    </span>
+<span class="sd">    **Better than CIE76 but still has issues with saturated colors.**</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab1, lab2: L*a*b* color tuples</span>
+<span class="sd">        kL, kC, kH: Weighting factors (usually all 1.0)</span>
+<span class="sd">        K1, K2: Chroma and hue weighting constants (use defaults if None)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Delta E 1994 value (lower = more similar)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">K1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">K1</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE94_K1</span>
+    <span class="k">if</span> <span class="n">K2</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">K2</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE94_K2</span>
+        
+    <span class="n">L1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">lab1</span>
+    <span class="n">L2</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">lab2</span>
+    
+    <span class="c1"># Calculate differences</span>
+    <span class="n">dL</span> <span class="o">=</span> <span class="n">L1</span> <span class="o">-</span> <span class="n">L2</span>
+    <span class="n">C1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>  <span class="c1"># Chroma of color 1</span>
+    <span class="n">C2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>  <span class="c1"># Chroma of color 2</span>
+    <span class="n">dC</span> <span class="o">=</span> <span class="n">C1</span> <span class="o">-</span> <span class="n">C2</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">a2</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">b1</span> <span class="o">-</span> <span class="n">b2</span>
+    
+    <span class="c1"># Hue difference (derived from a, b differences)</span>
+    <span class="n">dH_sq</span> <span class="o">=</span> <span class="n">da</span><span class="o">*</span><span class="n">da</span> <span class="o">+</span> <span class="n">db</span><span class="o">*</span><span class="n">db</span> <span class="o">-</span> <span class="n">dC</span><span class="o">*</span><span class="n">dC</span>
+    
+    <span class="c1"># Weighting functions (make the formula perceptually uniform)</span>
+    <span class="n">SL</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span>
+    <span class="n">SC</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="n">K1</span> <span class="o">*</span> <span class="n">C1</span>
+    <span class="n">SH</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="n">K2</span> <span class="o">*</span> <span class="n">C1</span>
+    
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">dL</span><span class="o">/</span><span class="p">(</span><span class="n">kL</span><span class="o">*</span><span class="n">SL</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dC</span><span class="o">/</span><span class="p">(</span><span class="n">kC</span><span class="o">*</span><span class="n">SC</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">dH_sq</span><span class="o">/</span><span class="p">((</span><span class="n">kH</span><span class="o">*</span><span class="n">SH</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Delta E 2000 (CIEDE2000) - The Gold Standard</span>
+<span class="c1"># ============================================================================</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_atan2_deg</span><span class="p">(</span><span class="n">y</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">x</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;atan2 in degrees mapped to [0,360).&quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="o">==</span> <span class="mf">0.0</span> <span class="ow">and</span> <span class="n">y</span> <span class="o">==</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mf">0.0</span>
+    <span class="n">ang</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">ang</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span> <span class="k">if</span> <span class="n">ang</span> <span class="o">&lt;</span> <span class="mf">0.0</span> <span class="k">else</span> <span class="n">ang</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_hp</span><span class="p">(</span><span class="n">ap</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">b</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Helper for CIEDE2000 hue prime calculation.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_atan2_deg</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">ap</span><span class="p">)</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_mean_hue</span><span class="p">(</span><span class="n">h1</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">h2</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">C1p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">C2p</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Helper for CIEDE2000 mean hue calculation.</span>
+<span class="sd">    </span>
+<span class="sd">    Handles the tricky case of averaging hues near the 0°/360° boundary.</span>
+<span class="sd">    You can&#39;t just average 10° and 350° to get 180° - that&#39;s wrong!</span>
+<span class="sd">    The mean should be 0° (or 360°).</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">C1p</span> <span class="o">*</span> <span class="n">C2p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">h1</span> <span class="o">+</span> <span class="n">h2</span>
+    <span class="n">dh</span> <span class="o">=</span> <span class="nb">abs</span><span class="p">(</span><span class="n">h1</span> <span class="o">-</span> <span class="n">h2</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">dh</span> <span class="o">&gt;</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_HALF_CIRCLE_DEGREES</span><span class="p">:</span>
+        <span class="n">sum_h</span> <span class="o">=</span> <span class="n">h1</span> <span class="o">+</span> <span class="n">h2</span>
+        <span class="k">if</span> <span class="n">sum_h</span> <span class="o">&lt;</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">sum_h</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">sum_h</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">h1</span> <span class="o">+</span> <span class="n">h2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+
+
+<div class="viewcode-block" id="delta_e_2000">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.delta_e_2000">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delta_e_2000</span><span class="p">(</span>
+    <span class="n">lab1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">lab2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">kL</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kC</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+    <span class="n">kH</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delta E 2000 (CIEDE2000) - Current gold standard for color difference.</span>
+<span class="sd">    </span>
+<span class="sd">    This is THE formula to use for color matching! After decades of research,</span>
+<span class="sd">    CIEDE2000 finally handles all the edge cases that tripped up earlier formulas:</span>
+<span class="sd">    - Neutral colors (low chroma)</span>
+<span class="sd">    - Blue hues (which humans perceive differently)</span>
+<span class="sd">    - Lightness differences at different brightness levels</span>
+<span class="sd">    </span>
+<span class="sd">    The formula is... complex. It&#39;s got rotation terms, weighting functions,</span>
+<span class="sd">    and special handling for different hue regions. But it WORKS!</span>
+<span class="sd">    </span>
+<span class="sd">    **Fun fact:** A ΔE2000 of 1.0 is roughly the &quot;just noticeable difference&quot;</span>
+<span class="sd">    for most colors. ΔE &lt; 2 is considered imperceptible for most applications.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab1, lab2: L*a*b* color tuples</span>
+<span class="sd">        kL, kC, kH: Weighting factors (usually all 1.0)</span>
+<span class="sd">            - kL for lightness</span>
+<span class="sd">            - kC for chroma</span>
+<span class="sd">            - kH for hue</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Delta E 2000 value (lower = more similar)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">lab1</span>
+    <span class="n">L2</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">lab2</span>
+
+    <span class="c1"># Step 1: Calculate chroma and compensate for neutral colors</span>
+    <span class="c1"># (The 25^7 term helps with very low chroma colors)</span>
+    <span class="n">C1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>
+    <span class="n">C2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>
+    <span class="n">C_bar</span> <span class="o">=</span> <span class="p">(</span><span class="n">C1</span> <span class="o">+</span> <span class="n">C2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">C_bar7</span> <span class="o">=</span> <span class="n">C_bar</span> <span class="o">**</span> <span class="mi">7</span>
+    <span class="n">pow7_term</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_POW7_BASE</span> <span class="o">**</span> <span class="mi">7</span>
+    <span class="n">G</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">-</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">C_bar7</span> <span class="o">/</span> <span class="p">(</span><span class="n">C_bar7</span> <span class="o">+</span> <span class="n">pow7_term</span><span class="p">)))</span>
+    
+    <span class="c1"># a&#39; (a-prime) - adjusted a values</span>
+    <span class="n">a1p</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">G</span><span class="p">)</span> <span class="o">*</span> <span class="n">a1</span>
+    <span class="n">a2p</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">+</span> <span class="n">G</span><span class="p">)</span> <span class="o">*</span> <span class="n">a2</span>
+    <span class="n">C1p</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a1p</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>
+    <span class="n">C2p</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a2p</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>
+
+    <span class="c1"># Step 2: Calculate hue angles</span>
+    <span class="n">h1p</span> <span class="o">=</span> <span class="n">_hp</span><span class="p">(</span><span class="n">a1p</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>
+    <span class="n">h2p</span> <span class="o">=</span> <span class="n">_hp</span><span class="p">(</span><span class="n">a2p</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>
+
+    <span class="c1"># Step 3: Calculate differences in L&#39;, C&#39;, and H&#39;</span>
+    <span class="n">dLp</span> <span class="o">=</span> <span class="n">L2</span> <span class="o">-</span> <span class="n">L1</span>
+    <span class="n">dCp</span> <span class="o">=</span> <span class="n">C2p</span> <span class="o">-</span> <span class="n">C1p</span>
+    
+    <span class="c1"># Hue difference (accounting for circularity)</span>
+    <span class="k">if</span> <span class="n">C1p</span> <span class="o">*</span> <span class="n">C2p</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">dhp</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dh</span> <span class="o">=</span> <span class="n">h2p</span> <span class="o">-</span> <span class="n">h1p</span>
+        <span class="k">if</span> <span class="n">dh</span> <span class="o">&gt;</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_HALF_CIRCLE_DEGREES</span><span class="p">:</span>
+            <span class="n">dh</span> <span class="o">-=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span>
+        <span class="k">elif</span> <span class="n">dh</span> <span class="o">&lt;</span> <span class="o">-</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_HALF_CIRCLE_DEGREES</span><span class="p">:</span>
+            <span class="n">dh</span> <span class="o">+=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span>
+        <span class="n">dhp</span> <span class="o">=</span> <span class="n">dh</span>
+    
+    <span class="n">dHp</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">C1p</span> <span class="o">*</span> <span class="n">C2p</span><span class="p">)</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">dhp</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">))</span>
+
+    <span class="c1"># Step 4: Calculate mean values</span>
+    <span class="n">Lp_bar</span> <span class="o">=</span> <span class="p">(</span><span class="n">L1</span> <span class="o">+</span> <span class="n">L2</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">Cp_bar</span> <span class="o">=</span> <span class="p">(</span><span class="n">C1p</span> <span class="o">+</span> <span class="n">C2p</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">hp_bar</span> <span class="o">=</span> <span class="n">_mean_hue</span><span class="p">(</span><span class="n">h1p</span><span class="p">,</span> <span class="n">h2p</span><span class="p">,</span> <span class="n">C1p</span><span class="p">,</span> <span class="n">C2p</span><span class="p">)</span>
+
+    <span class="c1"># Step 5: Calculate weighting functions</span>
+    <span class="c1"># T: Hue-dependent term (handles blue region specially)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span>
+        <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_WEIGHT_1</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">hp_bar</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_OFFSET_1</span><span class="p">))</span>
+        <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_WEIGHT_2</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_MULT_2</span> <span class="o">*</span> <span class="n">hp_bar</span><span class="p">))</span>
+        <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_WEIGHT_3</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_MULT_3</span> <span class="o">*</span> <span class="n">hp_bar</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_OFFSET_3</span><span class="p">))</span>
+        <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_WEIGHT_4</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_MULT_4</span> <span class="o">*</span> <span class="n">hp_bar</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_HUE_OFFSET_4</span><span class="p">))</span>
+    <span class="p">)</span>
+    
+    <span class="c1"># d_ro: Rotation term for blue region</span>
+    <span class="n">d_ro</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_DRO_MULT</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(((</span><span class="n">hp_bar</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_DRO_CENTER</span><span class="p">)</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_DRO_DIVISOR</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    
+    <span class="c1"># RC: Rotation function</span>
+    <span class="n">Cp_bar7</span> <span class="o">=</span> <span class="n">Cp_bar</span> <span class="o">**</span> <span class="mi">7</span>
+    <span class="n">RC</span> <span class="o">=</span> <span class="mf">2.0</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">Cp_bar7</span> <span class="o">/</span> <span class="p">(</span><span class="n">Cp_bar7</span> <span class="o">+</span> <span class="n">pow7_term</span><span class="p">))</span>
+    
+    <span class="c1"># Lightness weighting</span>
+    <span class="n">L_diff</span> <span class="o">=</span> <span class="n">Lp_bar</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_L_OFFSET</span>
+    <span class="n">SL</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_L_WEIGHT</span> <span class="o">*</span> <span class="p">(</span><span class="n">L_diff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span> <span class="o">/</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_L_DIVISOR</span> <span class="o">+</span> <span class="p">(</span><span class="n">L_diff</span> <span class="o">**</span> <span class="mi">2</span><span class="p">))</span>
+    
+    <span class="c1"># Chroma weighting</span>
+    <span class="n">SC</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_C_WEIGHT</span> <span class="o">*</span> <span class="n">Cp_bar</span>
+    
+    <span class="c1"># Hue weighting</span>
+    <span class="n">SH</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">DE2000_H_WEIGHT</span> <span class="o">*</span> <span class="n">Cp_bar</span> <span class="o">*</span> <span class="n">T</span>
+    
+    <span class="c1"># Rotation term (interaction between chroma and hue)</span>
+    <span class="n">RT</span> <span class="o">=</span> <span class="o">-</span><span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">d_ro</span><span class="p">))</span> <span class="o">*</span> <span class="n">RC</span>
+
+    <span class="c1"># Step 6: Final Delta E 2000 formula</span>
+    <span class="c1"># This combines all the weighted differences plus the rotation term</span>
+    <span class="n">dE</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span>
+        <span class="p">(</span><span class="n">dLp</span> <span class="o">/</span> <span class="p">(</span><span class="n">kL</span> <span class="o">*</span> <span class="n">SL</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">dCp</span> <span class="o">/</span> <span class="p">(</span><span class="n">kC</span> <span class="o">*</span> <span class="n">SC</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="p">(</span><span class="n">dHp</span> <span class="o">/</span> <span class="p">(</span><span class="n">kH</span> <span class="o">*</span> <span class="n">SH</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+        <span class="o">+</span> <span class="n">RT</span> <span class="o">*</span> <span class="p">(</span><span class="n">dCp</span> <span class="o">/</span> <span class="p">(</span><span class="n">kC</span> <span class="o">*</span> <span class="n">SC</span><span class="p">))</span> <span class="o">*</span> <span class="p">(</span><span class="n">dHp</span> <span class="o">/</span> <span class="p">(</span><span class="n">kH</span> <span class="o">*</span> <span class="n">SH</span><span class="p">))</span>
+    <span class="p">)</span>
+    <span class="k">return</span> <span class="n">dE</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Delta E CMC - Textile Industry Standard</span>
+<span class="c1"># ============================================================================</span>
+
+<div class="viewcode-block" id="delta_e_cmc">
+<a class="viewcode-back" href="../../api/color_tools.distance.html#color_tools.distance.delta_e_cmc">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">delta_e_cmc</span><span class="p">(</span>
+    <span class="n">lab1</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">lab2</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span>
+    <span class="n">l</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">2.0</span><span class="p">,</span>
+    <span class="n">c</span><span class="p">:</span> <span class="nb">float</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Delta E CMC(l:c) - Color difference formula used in textile industry.</span>
+<span class="sd">    </span>
+<span class="sd">    CMC was developed specifically for textile color matching, where the</span>
+<span class="sd">    context matters (viewing conditions, material properties, etc.).</span>
+<span class="sd">    </span>
+<span class="sd">    The l:c ratio lets you tune the formula for different use cases:</span>
+<span class="sd">    - **CMC(2:1)** - &quot;Acceptability&quot; → Used to judge if colors match well enough</span>
+<span class="sd">    - **CMC(1:1)** - &quot;Perceptibility&quot; → More strict, for detecting differences</span>
+<span class="sd">    </span>
+<span class="sd">    **Why two ratios?** Turns out humans are more forgiving of color differences</span>
+<span class="sd">    when deciding &quot;is this acceptable?&quot; vs &quot;can I see a difference?&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab1, lab2: L*a*b* color tuples</span>
+<span class="sd">        l: Lightness weight (2.0 for acceptability, 1.0 for perceptibility)</span>
+<span class="sd">        c: Chroma weight (usually 1.0)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Delta E CMC value (lower = more similar)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L1</span><span class="p">,</span> <span class="n">a1</span><span class="p">,</span> <span class="n">b1</span> <span class="o">=</span> <span class="n">lab1</span>
+    <span class="n">L2</span><span class="p">,</span> <span class="n">a2</span><span class="p">,</span> <span class="n">b2</span> <span class="o">=</span> <span class="n">lab2</span>
+
+    <span class="c1"># Calculate chroma</span>
+    <span class="n">C1</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a1</span><span class="p">,</span> <span class="n">b1</span><span class="p">)</span>
+    <span class="n">C2</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">hypot</span><span class="p">(</span><span class="n">a2</span><span class="p">,</span> <span class="n">b2</span><span class="p">)</span>
+
+    <span class="c1"># Calculate differences</span>
+    <span class="n">dL</span> <span class="o">=</span> <span class="n">L1</span> <span class="o">-</span> <span class="n">L2</span>
+    <span class="n">da</span> <span class="o">=</span> <span class="n">a1</span> <span class="o">-</span> <span class="n">a2</span>
+    <span class="n">db</span> <span class="o">=</span> <span class="n">b1</span> <span class="o">-</span> <span class="n">b2</span>
+    <span class="n">dC</span> <span class="o">=</span> <span class="n">C1</span> <span class="o">-</span> <span class="n">C2</span>
+    <span class="n">dH_sq</span> <span class="o">=</span> <span class="n">da</span> <span class="o">*</span> <span class="n">da</span> <span class="o">+</span> <span class="n">db</span> <span class="o">*</span> <span class="n">db</span> <span class="o">-</span> <span class="n">dC</span> <span class="o">*</span> <span class="n">dC</span>
+    <span class="k">if</span> <span class="n">dH_sq</span> <span class="o">&lt;</span> <span class="mf">0.0</span><span class="p">:</span>
+        <span class="n">dH_sq</span> <span class="o">=</span> <span class="mf">0.0</span>  <span class="c1"># Numerical safety</span>
+
+    <span class="c1"># Lightness weight</span>
+    <span class="k">if</span> <span class="n">L1</span> <span class="o">&lt;</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_L_THRESHOLD</span><span class="p">:</span>
+        <span class="n">SL</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_L_LOW</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">SL</span> <span class="o">=</span> <span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_L_SCALE</span> <span class="o">*</span> <span class="n">L1</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_L_DIVISOR</span> <span class="o">*</span> <span class="n">L1</span><span class="p">)</span>
+    
+    <span class="c1"># Chroma weight</span>
+    <span class="n">SC</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_C_SCALE</span> <span class="o">*</span> <span class="n">C1</span> <span class="o">/</span> <span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_C_DIVISOR</span> <span class="o">*</span> <span class="n">C1</span><span class="p">)</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_C_OFFSET</span>
+
+    <span class="c1"># Hue weight (depends on hue angle - different for different color regions)</span>
+    <span class="n">h1</span> <span class="o">=</span> <span class="n">_atan2_deg</span><span class="p">(</span><span class="n">b1</span><span class="p">,</span> <span class="n">a1</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_HUE_MIN</span> <span class="o">&lt;=</span> <span class="n">h1</span> <span class="o">&lt;=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_HUE_MAX</span><span class="p">:</span>
+        <span class="c1"># Red/magenta region</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_T_IN_RANGE</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_T_COS_MULT_IN</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">h1</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_T_HUE_OFFSET_IN</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># Other regions</span>
+        <span class="n">T</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_T_OUT_RANGE</span> <span class="o">+</span> <span class="nb">abs</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_T_COS_MULT_OUT</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">h1</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_T_HUE_OFFSET_OUT</span><span class="p">)))</span>
+
+    <span class="n">F</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">C1</span> <span class="o">**</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_F_POWER</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">C1</span> <span class="o">**</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_F_POWER</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">CMC_F_DIVISOR</span><span class="p">))</span> <span class="k">if</span> <span class="n">C1</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+    <span class="n">SH</span> <span class="o">=</span> <span class="n">SC</span> <span class="o">*</span> <span class="p">(</span><span class="n">F</span> <span class="o">*</span> <span class="n">T</span> <span class="o">+</span> <span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MAX</span> <span class="o">-</span> <span class="n">F</span><span class="p">))</span>
+
+    <span class="c1"># Combine all the weighted differences</span>
+    <span class="n">term_L</span> <span class="o">=</span> <span class="p">(</span><span class="n">dL</span> <span class="o">/</span> <span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="n">SL</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">term_C</span> <span class="o">=</span> <span class="p">(</span><span class="n">dC</span> <span class="o">/</span> <span class="p">(</span><span class="n">c</span> <span class="o">*</span> <span class="n">SC</span><span class="p">))</span> <span class="o">**</span> <span class="mi">2</span>
+    <span class="n">term_H</span> <span class="o">=</span> <span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dH_sq</span><span class="p">)</span> <span class="o">/</span> <span class="n">SH</span><span class="p">)</span> <span class="o">**</span> <span class="mi">2</span> <span class="k">if</span> <span class="n">SH</span> <span class="o">!=</span> <span class="mi">0</span> <span class="k">else</span> <span class="mf">0.0</span>
+
+    <span class="k">return</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">term_L</span> <span class="o">+</span> <span class="n">term_C</span> <span class="o">+</span> <span class="n">term_H</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

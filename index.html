@@ -1,0 +1,240 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="./">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Color Tools API Reference &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="_static/custom.css?v=08153a50" />
+
+  
+      <script src="_static/jquery.js?v=5d32c60e"></script>
+      <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="_static/documentation_options.js?v=2dde5210"></script>
+      <script src="_static/doctools.js?v=9bcbadda"></script>
+      <script src="_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="color_tools.conversions" href="api/color_tools.conversions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="#" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="#">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="#" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Color Tools API Reference</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/index.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="color-tools-api-reference">
+<h1>Color Tools API Reference<a class="headerlink" href="#color-tools-api-reference" title="Link to this heading"></a></h1>
+<p>Welcome to the Color Tools API documentation! This library provides comprehensive color science tools for accurate color space conversions, perceptual color distance metrics, and color matching.</p>
+<p>🎨 <strong>Three Ways to Use Color Tools:</strong></p>
+<ol class="arabic simple">
+<li><p><strong>As a library:</strong> <code class="docutils literal notranslate"><span class="pre">from</span> <span class="pre">color_tools</span> <span class="pre">import</span> <span class="pre">rgb_to_lab</span></code></p></li>
+<li><p><strong>As a CLI tool:</strong> <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-m</span> <span class="pre">color_tools</span> <span class="pre">color</span> <span class="pre">--name</span> <span class="pre">coral</span></code></p></li>
+<li><p><strong>As installed command:</strong> <code class="docutils literal notranslate"><span class="pre">color_tools</span> <span class="pre">filament</span> <span class="pre">--list-makers</span></code> (needs pip install)</p></li>
+</ol>
+<section id="quick-start">
+<h2>Quick Start<a class="headerlink" href="#quick-start" title="Link to this heading"></a></h2>
+<div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">rgb_to_lab</span><span class="p">,</span> <span class="n">delta_e_2000</span><span class="p">,</span> <span class="n">Palette</span>
+
+<span class="c1"># Convert RGB to LAB</span>
+<span class="n">lab</span> <span class="o">=</span> <span class="n">rgb_to_lab</span><span class="p">((</span><span class="mi">255</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">))</span>
+
+<span class="c1"># Find nearest CSS color</span>
+<span class="n">palette</span> <span class="o">=</span> <span class="n">Palette</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="n">nearest</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">palette</span><span class="o">.</span><span class="n">nearest_color</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nearest color: </span><span class="si">{</span><span class="n">nearest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<section id="documentation">
+<h2>Documentation<a class="headerlink" href="#documentation" title="Link to this heading"></a></h2>
+<p>For comprehensive guides and CLI usage:</p>
+<ul class="simple">
+<li><p><a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/Usage.md">📖 Usage Guide</a> - Library and CLI usage examples</p></li>
+<li><p><a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/Installation.md">⚙️ Installation</a> - Installation instructions</p></li>
+<li><p><a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/Customization.md">🎨 Customization</a> - User overrides and custom palettes</p></li>
+<li><p><a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md">❓ FAQ</a> - Frequently asked questions</p></li>
+<li><p><a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/QUICK_REFERENCE.md">📋 Quick Reference</a> - Command cheat sheet</p></li>
+<li><p><a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/Troubleshooting.md">🔧 Troubleshooting</a> - Common issues and solutions</p></li>
+</ul>
+<section id="cli-commands">
+<h3>CLI Commands<a class="headerlink" href="#cli-commands" title="Link to this heading"></a></h3>
+<p>The CLI provides six main commands:</p>
+<ul class="simple">
+<li><p><strong>color</strong> - Search CSS colors by name or find nearest color</p></li>
+<li><p><strong>filament</strong> - Search 3D printing filaments with filtering (maker, type, finish)</p></li>
+<li><p><strong>convert</strong> - Convert between color spaces and check gamut</p></li>
+<li><p><strong>name</strong> - Generate descriptive names for RGB colors</p></li>
+<li><p><strong>validate</strong> - Validate if hex codes match color names (fuzzy matching + Delta E)</p>
+<ul>
+<li><p><em>Optional:</em> Install <code class="docutils literal notranslate"><span class="pre">[fuzzy]</span></code> extra for improved fuzzy matching: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">color-match-tools[fuzzy]</span></code></p></li>
+</ul>
+</li>
+<li><p><strong>cvd</strong> - Color vision deficiency simulation and correction</p></li>
+<li><p><strong>image</strong> - Image color analysis and manipulation</p>
+<ul>
+<li><p><em>Requires:</em> Install <code class="docutils literal notranslate"><span class="pre">[image]</span></code> extra: <code class="docutils literal notranslate"><span class="pre">pip</span> <span class="pre">install</span> <span class="pre">color-match-tools[image]</span></code></p></li>
+</ul>
+</li>
+</ul>
+<p>See the <a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/Usage.md">Usage Guide</a> for detailed CLI examples.</p>
+</section>
+<section id="data-classes">
+<h3>Data Classes<a class="headerlink" href="#data-classes" title="Link to this heading"></a></h3>
+<p>The library uses immutable dataclasses (frozen) to represent colors, filaments, and results:</p>
+<ul class="simple">
+<li><p><strong>ColorRecord</strong> - CSS colors with precomputed values in all color spaces</p></li>
+<li><p><strong>FilamentRecord</strong> - 3D printing filaments with intelligent dual-color handling</p></li>
+<li><p><strong>ColorValidationRecord</strong> - Color name/hex validation results with fuzzy matching</p></li>
+<li><p><strong>ColorCluster</strong> - Image color clusters from k-means analysis <em>(requires [image] extra)</em></p></li>
+<li><p><strong>ColorChange</strong> - Luminance redistribution results for HueForge <em>(requires [image] extra)</em></p></li>
+</ul>
+<p>All data classes have comprehensive docstrings with attribute descriptions and examples.
+See the <a class="reference external" href="https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#data-classes-quick-reference">Usage Guide</a> for a quick reference table.</p>
+</section>
+</section>
+<section id="core-api-reference">
+<h2>Core API Reference<a class="headerlink" href="#core-api-reference" title="Link to this heading"></a></h2>
+<section id="all-modules">
+<h3>All Modules<a class="headerlink" href="#all-modules" title="Link to this heading"></a></h3>
+<table class="autosummary longtable docutils align-default">
+<tbody>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/color_tools.conversions.html#module-color_tools.conversions" title="color_tools.conversions"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.conversions</span></code></a></p></td>
+<td><p>Color space conversion functions.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/color_tools.distance.html#module-color_tools.distance" title="color_tools.distance"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.distance</span></code></a></p></td>
+<td><p>Color distance metrics for measuring perceptual color differences.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/color_tools.palette.html#module-color_tools.palette" title="color_tools.palette"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.palette</span></code></a></p></td>
+<td><p>Color and filament palette management with fast lookup.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/color_tools.gamut.html#module-color_tools.gamut" title="color_tools.gamut"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.gamut</span></code></a></p></td>
+<td><p>Gamut checking and mapping for sRGB color space.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/color_tools.validation.html#module-color_tools.validation" title="color_tools.validation"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.validation</span></code></a></p></td>
+<td><p>Color validation functions to check if a hex code matches a color name.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/color_tools.naming.html#module-color_tools.naming" title="color_tools.naming"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.naming</span></code></a></p></td>
+<td><p>Color naming utilities for generating descriptive names from RGB values.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/color_tools.color_deficiency.html#module-color_tools.color_deficiency" title="color_tools.color_deficiency"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.color_deficiency</span></code></a></p></td>
+<td><p>Color vision deficiency simulation and correction.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/color_tools.export.html#module-color_tools.export" title="color_tools.export"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.export</span></code></a></p></td>
+<td><p>Export system for filaments and colors.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/color_tools.config.html#module-color_tools.config" title="color_tools.config"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.config</span></code></a></p></td>
+<td><p>Thread-safe runtime configuration for color processing behavior.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/color_tools.constants.html#module-color_tools.constants" title="color_tools.constants"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.constants</span></code></a></p></td>
+<td><p>Immutable color science constants from international standards.</p></td>
+</tr>
+<tr class="row-odd"><td><p><a class="reference internal" href="api/color_tools.matrices.html#module-color_tools.matrices" title="color_tools.matrices"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.matrices</span></code></a></p></td>
+<td><p>Color transformation matrices for various operations.</p></td>
+</tr>
+<tr class="row-even"><td><p><a class="reference internal" href="api/color_tools.image.html#module-color_tools.image" title="color_tools.image"><code class="xref py py-obj docutils literal notranslate"><span class="pre">color_tools.image</span></code></a></p></td>
+<td><p>Image processing module for color_tools.</p></td>
+</tr>
+</tbody>
+</table>
+</section>
+</section>
+</section>
+<section id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Link to this heading"></a></h1>
+<ul class="simple">
+<li><p><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></p></li>
+<li><p><a class="reference internal" href="py-modindex.html"><span class="std std-ref">Module Index</span></a></p></li>
+<li><p><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></p></li>
+</ul>
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="api/color_tools.conversions.html" class="btn btn-neutral float-right" title="color_tools.conversions" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
