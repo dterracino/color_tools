@@ -16,6 +16,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [5.5.0] - 2024-12-24
 
+### Added
+
+- **Four new retro palettes** - Added classic computer palettes for nostalgic conversions
+  - **Apple II** (6 colors): Black, Red, Purple, Green, Cyan, Light Gray
+  - **Macintosh** (8 colors): 8 grayscale shades from classic Mac
+  - **Game Boy Color** (14 colors): Extended Game Boy palette with color variations
+  - **Tandy 16** (16 colors): Full Tandy RGB/CGA-compatible 16-color palette
+  - All palettes work with `--quantize-palette` image command
+  - Example: `color-tools image --file photo.jpg --quantize-palette apple2`
+  - Total retro palettes available: 19
+
 ### Changed
 
 - **Palette quantization performance optimization** - Dramatically improved conversion speed for high-color images

@@ -174,8 +174,8 @@ class ColorConstants:
     # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated 2025-12-23: Added CRAYOLA_PALETTE_HASH for new Crayola palette, updated filaments data comment
-    _EXPECTED_HASH = "3bb6190c350528cfddd86aab6abe14bf90cc52892bb0bbe6d1769864f3092665"
+    # Updated 2024-12-24: Added 4 new palette hashes (apple2, macintosh, gameboy-color, tandy16), compacted format
+    _EXPECTED_HASH = "80334d543a3b79fd41ada7d24fa05c765afc8d71c172e6ff2b3957a7bbdc6e07"
     # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================
@@ -191,6 +191,7 @@ class ColorConstants:
     MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
     
     # Palette file hashes
+    APPLE2_PALETTE_HASH = "d5374e50f76312799c031a8f64fe9537cac2d903c59dbc09f0760e8f5bb581fe"
     CGA4_PALETTE_HASH = "62624dbeef28b664feca10afe3901b52b2335395134aba88ea21f955f0d17b7d"
     CGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
     COMMODORE64_PALETTE_HASH = "c4502abaed781535de55f3042cca4d7b3653c5eeb4cec3ecb30f591bfbfdfcca"
@@ -198,11 +199,14 @@ class ColorConstants:
     EGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
     EGA64_PALETTE_HASH = "2159e51f89cca4a4fb43a2d80bea030f3d7cd0cc5e1eacd25eb95f0ce2027e7f"
     GAMEBOY_PALETTE_HASH = "e2911baed15b4d56a27313b6be506c3a1f57bee3b01ecd2ca5995b512822da9b"
+    GAMEBOY_COLOR_PALETTE_HASH = "5c98dd69be991f445aabafe21a0bdddabc8f6e98aa728724e3d0e72a445aadde"
     GAMEBOY_DMG_PALETTE_HASH = "042d7cfd7b94f8719aa01603ddf5b0d9c73ae59b04e27295132ddac13142e968"
     GAMEBOY_GBL_PALETTE_HASH = "f2b6a573b09c1efa3529e79f281dcb0ed4e5c788cb10e51526c60e6e5d928231"
     GAMEBOY_MGB_PALETTE_HASH = "7c556e05e13adcfce0e7aec06ded6c7871acee63771e520319afa67e07080027"
+    MACINTOSH_PALETTE_HASH = "e9b5bce3ce2eda12dec5793b4eb3c588a92d53e8d6ecaf4fa310998fe2dd1ddd"
     NES_PALETTE_HASH = "3021573a00b158fb6cf694e6546b236c2ec6862d52e08cc860f32d983e1f0a59"
     SMS_PALETTE_HASH = "95010c348c2f77a209544170da29ee7f5bfccacbcd32ed33c36cb7ef269f72e8"
+    TANDY16_PALETTE_HASH = "820f2f1dcdd3acd7130a88247b09e6bf969779a08c97091800db19c1748f1a03"
     VGA_PALETTE_HASH = "9eb6055508d5523ceafbb4abe3d2921f09bc61b20485da1052e4d4fd653a5d00"
     VIRTUALBOY_PALETTE_HASH = "218854f6dc6506649e6ff14f92f56ff996b7c01a36c916b0374880c8524c40a9"
     WEB_PALETTE_HASH = "ba4ad53ece01d2f1338ae13221aa04e5c342519d7750d948458074001a465e7d"
@@ -284,6 +288,7 @@ class ColorConstants:
         # Verify palette files
         palettes_dir = data_dir / "palettes"
         palette_checks = [
+            ("apple2.json", cls.APPLE2_PALETTE_HASH),
             ("cga4.json", cls.CGA4_PALETTE_HASH),
             ("cga16.json", cls.CGA16_PALETTE_HASH),
             ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
@@ -291,11 +296,14 @@ class ColorConstants:
             ("ega16.json", cls.EGA16_PALETTE_HASH),
             ("ega64.json", cls.EGA64_PALETTE_HASH),
             ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),
+            ("gameboy-color.json", cls.GAMEBOY_COLOR_PALETTE_HASH),
             ("gameboy_dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
             ("gameboy_gbl.json", cls.GAMEBOY_GBL_PALETTE_HASH),
             ("gameboy_mgb.json", cls.GAMEBOY_MGB_PALETTE_HASH),
+            ("macintosh.json", cls.MACINTOSH_PALETTE_HASH),
             ("nes.json", cls.NES_PALETTE_HASH),
             ("sms.json", cls.SMS_PALETTE_HASH),
+            ("tandy16.json", cls.TANDY16_PALETTE_HASH),
             ("vga.json", cls.VGA_PALETTE_HASH),
             ("virtualboy.json", cls.VIRTUALBOY_PALETTE_HASH),
             ("web.json", cls.WEB_PALETTE_HASH),
