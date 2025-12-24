@@ -79,6 +79,10 @@ try:
         add_image_watermark,
         add_svg_watermark,
     )
+    from .conversion import (
+        convert_image,
+        get_supported_formats,
+    )
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
@@ -118,6 +122,10 @@ except ImportError:
     add_image_watermark = _not_available
     add_svg_watermark = _not_available
     
+    # Conversion functions
+    convert_image = _not_available
+    get_supported_formats = _not_available
+    
     # Dummy classes for type hints - use Any to avoid type conflicts
     from typing import Any
     ColorCluster: type[Any] = type('ColorCluster', (), {})
@@ -152,4 +160,7 @@ __all__ = [
     'add_text_watermark',
     'add_image_watermark',
     'add_svg_watermark',
+    # Conversion functions
+    'convert_image',
+    'get_supported_formats',
 ]

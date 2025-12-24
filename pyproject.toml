@@ -42,6 +42,7 @@ image = [
     "Pillow>=10.0.0",
     "numpy>=1.24.0",
     "scikit-image>=0.20.0",
+    "pillow-heif>=0.14.0",  # HEIC format support (AVIF supported natively in Pillow 10+)
 ]
 
 # Documentation generation
@@ -66,6 +67,7 @@ all = [
     "Pillow>=10.0.0",
     "numpy>=1.24.0",
     "scikit-image>=0.20.0",
+    "pillow-heif>=0.14.0",
     "sphinx>=7.0.0",
     "sphinx-rtd-theme>=1.3.0",
     "myst-parser>=2.0.0",

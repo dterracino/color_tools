@@ -204,3 +204,93 @@ def get_available_palettes(json_path: Path | str | None = None) -> list[str]:
     
     # No need to remove duplicates since user palettes have user- prefix
     return sorted(available)
+
+
+def handle_verification_flags(args) -> bool:
+    """
+    Handle all verification flags and early-exit conditions.
+    
+    Returns True if the program should exit after verification, False otherwise.
+    
+    Args:
+        args: Parsed command-line arguments from argparse
+        
+    Returns:
+        bool: True if program should exit (verification-only mode or early exit flag)
+    """
+    # Handle --verify-all flag
+    if args.verify_all:
+        args.verify_constants = True
+        args.verify_data = True
+        args.verify_matrices = True
+        args.verify_user_data = True
+    
+    # Handle --generate-user-hashes flag (early exit)
+    if args.generate_user_hashes:
+        generate_user_hashes(args.json)
+        sys.exit(0)
+    
+    # Verify constants integrity if requested
+    if args.verify_constants:
+        if not ColorConstants.verify_integrity():
+            print("ERROR: ColorConstants integrity check FAILED!", file=sys.stderr)
+            print("The color science constants have been modified.", file=sys.stderr)
+            print(f"Expected hash: {ColorConstants._EXPECTED_HASH}", file=sys.stderr)
+            print(f"Current hash:  {ColorConstants._compute_hash()}", file=sys.stderr)
+            sys.exit(1)
+        print("✓ ColorConstants integrity verified")
+    
+    # Verify matrices integrity if requested
+    if args.verify_matrices:
+        if not ColorConstants.verify_matrices_integrity():
+            print("ERROR: Transformation matrices integrity check FAILED!", file=sys.stderr)
+            print("The CVD transformation matrices have been modified.", file=sys.stderr)
+            print(f"Expected hash: {ColorConstants.MATRICES_EXPECTED_HASH}", file=sys.stderr)
+            print(f"Current hash:  {ColorConstants._compute_matrices_hash()}", file=sys.stderr)
+            sys.exit(1)
+        print("✓ Transformation matrices integrity verified")
+    
+    # Verify data files integrity if requested
+    if args.verify_data:
+        # Determine data directory (use args.json if provided, otherwise None for default)
+        data_dir = Path(args.json) if args.json else None
+        all_valid, errors = ColorConstants.verify_all_data_files(data_dir)
+        
+        if not all_valid:
+            print("ERROR: Data file integrity check FAILED!", file=sys.stderr)
+            for error in errors:
+                print(f"  {error}", file=sys.stderr)
+            sys.exit(1)
+        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 19 palettes)")
+    
+    # Verify user data files integrity if requested
+    if args.verify_user_data:
+        # Determine data directory (use args.json if provided, otherwise None for default)
+        data_dir = Path(args.json) if args.json else None
+        all_valid, errors = ColorConstants.verify_all_user_data(data_dir)
+        
+        if not all_valid:
+            print("ERROR: User data file integrity check FAILED!", file=sys.stderr)
+            for error in errors:
+                print(f"  {error}", file=sys.stderr)
+            sys.exit(1)
+        
+        # Count files checked
+        user_dir = (data_dir or (Path(__file__).parent.parent / "data")) / "user"
+        if user_dir.exists():
+            hash_files = list(user_dir.glob("*.sha256"))
+            if hash_files:
+                print(f"✓ User data files integrity verified ({len(hash_files)} files checked)")
+            else:
+                print("✓ No user data hash files found to verify")
+    
+    # Handle --check-overrides flag
+    if args.check_overrides:
+        show_override_report(args.json)
+        sys.exit(0)
+    
+    # If only verifying (no other command), exit after success
+    if (args.verify_constants or args.verify_data or args.verify_matrices or args.verify_user_data) and not args.command:
+        return True
+    
+    return False

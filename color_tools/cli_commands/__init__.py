@@ -7,6 +7,7 @@ from .handlers import (
     handle_color_command,
     handle_filament_command,
     handle_convert_command,
+    handle_image_command,
 )
 from .utils import (
     validate_color_input_exclusivity,
@@ -20,6 +21,7 @@ from .reporting import (
     show_override_report,
     generate_user_hashes,
     get_available_palettes,
+    handle_verification_flags,
 )
 
 __all__ = [
@@ -30,6 +32,7 @@ __all__ = [
     "handle_color_command",
     "handle_filament_command",
     "handle_convert_command",
+    "handle_image_command",
     # Utils
     "validate_color_input_exclusivity",
     "get_rgb_from_args",
@@ -41,4 +44,5 @@ __all__ = [
     "show_override_report",
     "generate_user_hashes",
     "get_available_palettes",
+    "handle_verification_flags",
 ]

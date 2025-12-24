@@ -10,6 +10,66 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Image format conversion** - Simple, high-quality conversion between image formats
+  - **CLI usage:**
+
+    ```bash
+    # Convert WebP to PNG (auto-generates output.png)
+    color-tools image --file input.webp --convert png
+    
+    # Convert with custom output path
+    color-tools image --file photo.jpg --convert webp --output result.webp
+    
+    # JPEG with custom quality (default: 67, Photoshop quality 8 equivalent)
+    color-tools image --file photo.png --convert jpg --quality 85
+    
+    # WebP with lossy compression (default: lossless)
+    color-tools image --file photo.jpg --convert webp --lossy --quality 80
+    ```
+
+  - **Supported formats:**
+    - Standard: PNG, JPEG, WebP, BMP, GIF, TIFF, AVIF, ICO, PCX, PPM, SGI, TGA
+    - HEIC/HEIF: Supported via `pillow-heif` (included in `[image]` extras)
+  - **Quality defaults:**
+    - JPEG: Quality 67 (Photoshop quality 8/12 equivalent)
+    - WebP: Lossless by default (use `--lossy` for lossy compression)
+    - AVIF: Quality 80 for lossy, 100 for lossless
+    - PNG: Always lossless with optimized compression
+  - **Features:**
+    - Auto-detects input format from file extension
+    - Auto-generates output filename (e.g., `input.webp` → `input.png`)
+    - Case-insensitive format names
+    - Handles format aliases (jpg/jpeg, tif/tiff)
+    - Automatic RGBA → RGB conversion for formats that don't support transparency
+  - **Python API:**
+
+    ```python
+    from color_tools.image import convert_image
+    
+    # Simple conversion
+    convert_image("photo.webp", output_format="png")
+    
+    # Custom quality
+    convert_image("photo.png", output_format="jpg", quality=90)
+    
+    # Lossy WebP
+    convert_image("photo.jpg", output_format="webp", lossless=False, quality=80)
+    ```
+
+  - **Dependencies:** Added `pillow-heif>=0.14.0` to `[image]` extras for HEIC support
+  - **Tests:** 21 comprehensive tests covering format conversion, quality settings, and edge cases
+
+- **Comprehensive CLI integration tests** - Added 30 integration tests for command-line interface
+  - **Test coverage:**
+    - Basic CLI functionality (help, version, no-args behavior)
+    - All 7 commands (color, filament, convert, name, validate, cvd, image)
+    - Verification flags (--verify-constants, --verify-data, --verify-matrices, --verify-all)
+    - Error handling and exit codes
+    - JSON output formatting
+  - **Implementation:** Subprocess-based tests calling actual CLI commands for real-world validation
+  - **Windows Unicode handling:** UTF-8 encoding configured in CLI for Unicode checkmarks (✓/✗)
+  - **Test suite total:** 522 tests (471 existing + 30 CLI + 21 conversion tests)
+
 - **Image watermarking functionality** - Add text, image, or SVG watermarks to images with full customization
   - **Three watermark types:**
     - **Text watermarks** - Custom text with font control, colors, stroke/outline
@@ -112,23 +172,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - **Internal CLI refactoring - Complete reorganization** - Extracted all CLI logic into dedicated package
   - Created `cli_commands/` package containing all CLI-specific code:
-    - `handlers/` - Individual command handler modules (6 files):
+    - `handlers/` - Individual command handler modules (7 files):
       - `color.py` (165 lines) - Color search and query logic
       - `filament.py` (172 lines) - Filament search and filtering logic
       - `convert.py` (126 lines) - Color space conversion and gamut checking
       - `name.py` (57 lines) - Color name generation
       - `validate.py` (55 lines) - Color name/hex validation
       - `cvd.py` (75 lines) - Color vision deficiency simulation/correction
+      - `image.py` (290 lines) - Image processing operations (HueForge, CVD, quantize, watermark)
     - `utils.py` (162 lines) - Validation and parsing utilities shared by handlers
-    - `reporting.py` (213 lines) - User data diagnostics and override reporting
-  - Reduced `cli.py` from 1776 lines to 1021 lines (42.5% reduction, 755 lines extracted)
+    - `reporting.py` (300 lines) - User data diagnostics, override reporting, and verification logic
+  - Reduced `cli.py` from 1776 lines to 706 lines (60.2% reduction, 1070 lines extracted)
   - **Benefits:**
     - All CLI logic now in one cohesive `cli_commands/` package
     - Each command handler is independent and testable
     - Shared utilities consolidated in one place
+    - Verification/diagnostic code separated from main flow
     - Clear separation between CLI and library code
+    - Consistent handler structure across all commands
   - No user-facing changes - purely internal code organization
-  - All 471 tests passing with no regressions
+  - All 522 tests passing with no regressions
 
 ### Fixed
 

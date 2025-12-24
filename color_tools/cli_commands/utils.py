@@ -79,7 +79,7 @@ def parse_hex_or_exit(hex_string: str) -> tuple[int, int, int]:
     Raises:
         SystemExit: If hex string is invalid
     """
-    from .conversions import hex_to_rgb
+    from ..conversions import hex_to_rgb
     
     result = hex_to_rgb(hex_string)
     if result is None:
