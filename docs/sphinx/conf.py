@@ -21,7 +21,7 @@ except ImportError as e:
 project = 'Color Tools'
 copyright = '2024, David Terracino'
 author = 'David Terracino'
-release = '3.5.0'
+release = '5.2.0'
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -136,6 +136,6 @@ def setup(app):
             
             if nojekyll_src.exists():
                 shutil.copy2(nojekyll_src, nojekyll_dst)
-                print(f"✓ Copied .nojekyll to {nojekyll_dst}")
+                print(f"Copied .nojekyll to {nojekyll_dst}")
     
     app.connect('build-finished', copy_nojekyll)

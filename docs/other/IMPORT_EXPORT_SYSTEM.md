@@ -2,9 +2,72 @@
 
 ## Overview
 
-Design for a flexible import/export system for filaments and colors, driven by JSON format definitions. Enables integration with external tools like AutoForge, HueForge, Cura, PrusaSlicer, etc.
+Design for a flexible import/export system for filaments and colors, driven by format definitions. Enables integration with external tools like AutoForge, HueForge, Cura, PrusaSlicer, etc.
 
-**Status:** Design phase - no implementation yet
+**Status:**
+
+- ✅ **v1.0 Export System IMPLEMENTED** (December 2025)
+- 📋 **Import System: Design phase** - awaiting prioritization
+
+---
+
+## What's Implemented (v1.0)
+
+### Export System ✅
+
+**Implemented Features:**
+
+- Three hardcoded export formats (AutoForge CSV, generic CSV, JSON)
+- CLI integration with existing filter flags
+- Auto-generated timestamped filenames
+- Merged data exports (core + user files)
+- Full test coverage (18 unit tests)
+
+**CLI Usage:**
+
+```bash
+# Export filaments with filters
+python -m color_tools filament --maker "Bambu Lab" --finish Basic Matte --export autoforge
+
+# Export with custom filename
+python -m color_tools filament --export csv --output my_filaments.csv
+
+# Export all colors (auto-generated filename)
+python -m color_tools color --export json
+
+# List available export formats
+python -m color_tools filament --list-export-formats
+python -m color_tools color --list-export-formats
+```
+
+**Library Usage:**
+
+```python
+from color_tools import export_filaments, export_colors, FilamentPalette
+
+# Export filaments
+palette = FilamentPalette.load_default()
+bambu = [f for f in palette.records if f.maker == 'Bambu Lab']
+export_filaments(bambu, 'autoforge', 'bambu.csv')
+
+# Export colors  
+from color_tools import Palette
+palette = Palette.load_default()
+export_colors(palette.records, 'json', 'colors.json')
+```
+
+**Available Formats:**
+
+- `autoforge` - AutoForge filament library CSV (filaments only)
+- `csv` - Generic CSV with all fields (both)
+- `json` - JSON format for backup/restore (both)
+
+**Implementation Details:**
+
+- Formats defined in `color_tools/export.py` as `EXPORT_FORMATS` dict
+- Auto-merge of core + user data files (matching search behavior)
+- Auto-generated filenames: `{type}_{format}_{YYYYMMDD}_{HHMMSS}.{ext}`
+- Users can temporarily rename user files for core-only exports
 
 ---
 
@@ -380,36 +443,97 @@ Errors:
 
 ## Implementation Plan
 
-### Phase 1: Export System
+### ✅ Phase 1: Export System (COMPLETED - v1.0)
 
-1. Create `export-formats.json` with AutoForge format
-2. Implement `import_export.py` module with export functions
-3. **Implement merged data loading (core + user files)**
-4. Add `--export`, `--output`, `--core-only`, `--list-export-formats` CLI flags
-5. Add auto-generated filename logic
-6. Write unit tests for export formats (with and without user data)
-7. Update documentation
+**What we implemented:**
 
-### Phase 2: Import System
+1. ✅ Created `export.py` module with export functions
+2. ✅ Implemented three formats: AutoForge CSV, generic CSV, JSON
+3. ✅ Hardcoded format definitions (no JSON config files needed for v1.0)
+4. ✅ Merged data loading (core + user files automatically combined)
+5. ✅ Added `--export`, `--output`, `--list-export-formats` CLI flags
+6. ✅ Auto-generated timestamped filename logic
+7. ✅ Comprehensive unit tests (18 tests covering all formats)
+8. ✅ Updated documentation
 
-1. Create `import-formats.json` with HueForge format
-2. Implement import functions in `import_export.py`
+**What we simplified from original plan:**
+
+- **No JSON format definition files** - Formats are hardcoded in Python for simplicity
+- **No --core-only flag** - Users can rename user files if needed (keeps it simple)
+- **No hash verification for export formats** - Not needed without JSON config files
+- **Limited to 3 essential formats** - Can expand later based on demand
+
+**Why this approach:**
+
+- Faster to ship and iterate
+- Simpler codebase (less abstraction)
+- Easy to add more formats as Python code
+- Can refactor to JSON-driven system later if needed
+
+### 📋 Phase 2: Import System (FUTURE)
+
+**When needed:**
+
+- User requests for importing from HueForge, other tools
+- Need to bulk import filament collections
+- Migration from other color management tools
+
+**Proposed implementation:**
+
+1. Create `import-formats.json` with HueForge format (or hardcode like exports)
+2. Implement import functions in `export.py` (or new `import_export.py`)
 3. Add field splitting, transformations, validation
-4. **Implement user database import (default target)**
-5. **Implement duplicate detection across core + user databases**
+4. Implement user database import (default target for safety)
+5. Implement duplicate detection across core + user databases
 6. Add `--import`, `--target`, `--merge-strategy`, `--dry-run` CLI flags
-7. Implement duplicate detection and merge strategies
-8. **Add hash regeneration for core database imports**
-9. Write unit tests for import formats (user and core targets)
-10. Update documentation
+7. Add hash regeneration for core database imports
+8. Write unit tests for import formats (user and core targets)
+9. Update documentation
 
-### Phase 3: Additional Formats
+### 📋 Phase 3: Additional Formats (FUTURE)
 
-1. Add Cura XML format (export/import)
-2. Add PrusaSlicer format (export/import)
-3. Add generic JSON format (export/import)
-4. Add generic CSV format with column mapping
-5. Document format creation for users
+**Potential additions based on demand:**
+
+1. Cura XML format (export/import)
+2. PrusaSlicer format (export/import)
+3. HueForge JSON format (import)
+4. Generic column-mapped CSV (configurable)
+5. User-defined format templates
+
+---
+
+## v1.0 vs. Original Design: What Changed?
+
+### Simplifications Made
+
+#### 1. Hardcoded vs. JSON-Driven Formats
+
+- **Original:** `export-formats.json` and `import-formats.json` config files
+- **v1.0:** Formats defined as Python dictionaries in `export.py`
+- **Why:** Simpler, faster to ship, easier to maintain for small number of formats
+- **Future:** Can refactor to JSON if we need user-customizable formats
+
+#### 2. Data Merging Approach
+
+- **Original:** `--core-only` flag to skip user data
+- **v1.0:** Always merge core + user data (users can rename files if needed)
+- **Why:** Consistent with search behavior, simpler UX
+- **Future:** Add flag if users frequently need core-only exports
+
+#### 3. Format Count
+
+- **Original:** Planned support for AutoForge, HueForge, Cura, PrusaSlicer, generic CSV/JSON
+- **v1.0:** Implemented AutoForge CSV, generic CSV, JSON (3 formats)
+- **Why:** Focus on immediate needs (AutoForge), add others as requested
+- **Future:** Add formats incrementally based on user feedback
+
+### What Stayed the Same
+
+✅ **Auto-generated filenames** - Timestamped to prevent overwrites
+✅ **CLI filter integration** - Reuses existing `--maker`, `--type`, `--finish` filters  
+✅ **Merged data exports** - Includes user overrides automatically  
+✅ **Format listing** - `--list-export-formats` to show what's available  
+✅ **Library API** - Functions exportable for programmatic use
 
 ---
 
@@ -486,6 +610,10 @@ Errors:
 
 ---
 
-**Last Updated:** 2025-12-05
-**Status:** Design phase - awaiting user feedback and prioritization
-**Next Steps:** Research HueForge JSON format, design import validation system
+**Last Updated:** 2025-12-23  
+**Status:** v1.0 Export System LIVE! 🚀  
+**Next Steps:**
+
+- Gather user feedback on export formats
+- Add more formats based on demand (Cura, PrusaSlicer, HueForge)
+- Consider import system if users request bulk import capabilities

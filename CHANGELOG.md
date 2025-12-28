@@ -8,7 +8,412 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [5.6.1] - 2024-12-24
+
+### Fixed
+
+- **CLI documentation** - Updated all CLI help text and docstrings to document image conversion and watermarking features
+  - Updated main CLI epilog with conversion and watermarking examples
+  - Expanded image parser description to list all 6 operation types
+  - Updated `color_tools/__init__.py` docstring with conversion/watermarking examples
+  - Updated `color_tools/image/__init__.py` docstring with comprehensive examples
+  - Updated `color_tools/cli_commands/handlers/image.py` docstring
+  - Added detailed sections in `color_tools/image/README.md` for:
+    - Section 6: Image Format Conversion (formats, quality defaults, CLI/API examples)
+    - Section 7: Image Watermarking (text/image/SVG types, positioning, styling)
+
+## [5.6.0] - 2024-12-24
+
 ### Added
+
+- **Image format conversion** - Simple, high-quality conversion between image formats
+  - **CLI usage:**
+
+    ```bash
+    # Convert WebP to PNG (auto-generates output.png)
+    color-tools image --file input.webp --convert png
+    
+    # Convert with custom output path
+    color-tools image --file photo.jpg --convert webp --output result.webp
+    
+    # JPEG with custom quality (default: 67, Photoshop quality 8 equivalent)
+    color-tools image --file photo.png --convert jpg --quality 85
+    
+    # WebP with lossy compression (default: lossless)
+    color-tools image --file photo.jpg --convert webp --lossy --quality 80
+    ```
+
+  - **Supported formats:**
+    - Standard: PNG, JPEG, WebP, BMP, GIF, TIFF, AVIF, ICO, PCX, PPM, SGI, TGA
+    - HEIC/HEIF: Supported via `pillow-heif` (included in `[image]` extras)
+  - **Quality defaults:**
+    - JPEG: Quality 67 (Photoshop quality 8/12 equivalent)
+    - WebP: Lossless by default (use `--lossy` for lossy compression)
+    - AVIF: Quality 80 for lossy, 100 for lossless
+    - PNG: Always lossless with optimized compression
+  - **Features:**
+    - Auto-detects input format from file extension
+    - Auto-generates output filename (e.g., `input.webp` → `input.png`)
+    - Case-insensitive format names
+    - Handles format aliases (jpg/jpeg, tif/tiff)
+    - Automatic RGBA → RGB conversion for formats that don't support transparency
+  - **Python API:**
+
+    ```python
+    from color_tools.image import convert_image
+    
+    # Simple conversion
+    convert_image("photo.webp", output_format="png")
+    
+    # Custom quality
+    convert_image("photo.png", output_format="jpg", quality=90)
+    
+    # Lossy WebP
+    convert_image("photo.jpg", output_format="webp", lossless=False, quality=80)
+    ```
+
+  - **Dependencies:** Added `pillow-heif>=0.14.0` to `[image]` extras for HEIC support
+  - **Tests:** 21 comprehensive tests covering format conversion, quality settings, and edge cases
+
+- **Comprehensive CLI integration tests** - Added 30 integration tests for command-line interface
+  - **Test coverage:**
+    - Basic CLI functionality (help, version, no-args behavior)
+    - All 7 commands (color, filament, convert, name, validate, cvd, image)
+    - Verification flags (--verify-constants, --verify-data, --verify-matrices, --verify-all)
+    - Error handling and exit codes
+    - JSON output formatting
+  - **Implementation:** Subprocess-based tests calling actual CLI commands for real-world validation
+  - **Windows Unicode handling:** UTF-8 encoding configured in CLI for Unicode checkmarks (✓/✗)
+  - **Test suite total:** 522 tests (471 existing + 30 CLI + 21 conversion tests)
+
+- **Image watermarking functionality** - Add text, image, or SVG watermarks to images with full customization
+  - **Three watermark types:**
+    - **Text watermarks** - Custom text with font control, colors, stroke/outline
+    - **Image watermarks** - PNG/image file overlays with transparency support
+    - **SVG watermarks** - Vector logo support (requires cairosvg)
+  - **Position control:**
+    - 9 preset positions: top-left, top-center, top-right, center-left, center, center-right, bottom-left, bottom-center, bottom-right
+    - Custom x,y coordinates for precise placement
+    - Adjustable margins from edges
+  - **Text styling options:**
+    - System fonts by name (e.g., Arial, Times New Roman) via `--font-name`
+    - Custom font files (.ttf, .otf) via `--font-file`
+    - Font files can be placed in `color_tools/image/fonts/` directory for easy access
+    - Adjustable font size, color (RGB), and opacity
+    - Stroke/outline support with configurable color and width
+  - **Image/SVG options:**
+    - Scale control for sizing
+    - Opacity/transparency adjustment
+    - Automatic RGBA handling for transparency
+  - **CLI usage:**
+
+    ```bash
+    # Text watermark with stroke
+    color-tools image --file photo.jpg --watermark \
+      --watermark-text "© 2025 My Brand" \
+      --watermark-position bottom-right \
+      --watermark-font-file Roboto-Bold.ttf \
+      --watermark-font-size 32 \
+      --watermark-color 255,255,255 \
+      --watermark-stroke-color 0,0,0 \
+      --watermark-stroke-width 2 \
+      --watermark-opacity 0.7
+    
+    # Image watermark
+    color-tools image --file photo.jpg --watermark \
+      --watermark-image logo.png \
+      --watermark-position top-left \
+      --watermark-scale 0.2 \
+      --watermark-opacity 0.6
+    
+    # SVG watermark
+    color-tools image --file photo.jpg --watermark \
+      --watermark-svg logo.svg \
+      --watermark-position center \
+      --watermark-scale 1.5 \
+      --watermark-opacity 0.5
+    ```
+
+  - **Python API:**
+
+    ```python
+    from color_tools.image import add_text_watermark, add_image_watermark, add_svg_watermark
+    from PIL import Image
+    
+    img = Image.open("photo.jpg")
+    
+    # Text with outline
+    watermarked = add_text_watermark(
+        img,
+        text="© 2025",
+        font_file="Roboto-Bold.ttf",
+        font_size=36,
+        color=(255, 255, 255),
+        stroke_color=(0, 0, 0),
+        stroke_width=2,
+        position="bottom-right",
+        opacity=0.8
+    )
+    
+    # Image logo
+    watermarked = add_image_watermark(
+        img,
+        watermark_path="logo.png",
+        position="top-left",
+        scale=0.3,
+        opacity=0.7
+    )
+    
+    # SVG logo (requires cairosvg)
+    watermarked = add_svg_watermark(
+        img,
+        svg_path="logo.svg",
+        position="center",
+        opacity=0.6
+    )
+    ```
+
+  - **Font directory:** Created `color_tools/image/fonts/` for custom fonts
+    - Place .ttf or .otf files here for easy access
+    - Reference by filename only: `--font-file MyFont.ttf`
+    - Or use full paths for fonts elsewhere
+    - See `color_tools/image/fonts/README.md` for details
+  - **Dependencies:** Added `cairosvg>=2.7.0` to `requirements-image.txt` for SVG support
+    - **Windows users:** If SVG watermarks fail after installing `[image]` extras, install the GTK runtime for Cairo C libraries
+    - Download from: <https://github.com/tschoonj/GTK-for-Windows-Runtime-Environment-Installer/releases>
+    - This provides the necessary Cairo/cairocffi dependencies for SVG rendering
+  - **Comprehensive tests:** Added `tests/test_watermark.py` with 30+ test cases
+
+### Changed
+
+- **Internal CLI refactoring - Complete reorganization** - Extracted all CLI logic into dedicated package
+  - Created `cli_commands/` package containing all CLI-specific code:
+    - `handlers/` - Individual command handler modules (7 files):
+      - `color.py` (165 lines) - Color search and query logic
+      - `filament.py` (172 lines) - Filament search and filtering logic
+      - `convert.py` (126 lines) - Color space conversion and gamut checking
+      - `name.py` (57 lines) - Color name generation
+      - `validate.py` (55 lines) - Color name/hex validation
+      - `cvd.py` (75 lines) - Color vision deficiency simulation/correction
+      - `image.py` (290 lines) - Image processing operations (HueForge, CVD, quantize, watermark)
+    - `utils.py` (162 lines) - Validation and parsing utilities shared by handlers
+    - `reporting.py` (300 lines) - User data diagnostics, override reporting, and verification logic
+  - Reduced `cli.py` from 1776 lines to 706 lines (60.2% reduction, 1070 lines extracted)
+  - **Benefits:**
+    - All CLI logic now in one cohesive `cli_commands/` package
+    - Each command handler is independent and testable
+    - Shared utilities consolidated in one place
+    - Verification/diagnostic code separated from main flow
+    - Clear separation between CLI and library code
+    - Consistent handler structure across all commands
+  - No user-facing changes - purely internal code organization
+  - All 522 tests passing with no regressions
+
+### Fixed
+
+## [5.5.0] - 2024-12-24
+
+### Added
+
+- **Four new retro palettes** - Added classic computer palettes for nostalgic conversions
+  - **Apple II** (6 colors): Black, Red, Purple, Green, Cyan, Light Gray
+  - **Macintosh** (8 colors): 8 grayscale shades from classic Mac
+  - **Game Boy Color** (14 colors): Extended Game Boy palette with color variations
+  - **Tandy 16** (16 colors): Full Tandy RGB/CGA-compatible 16-color palette
+  - All palettes work with `--quantize-palette` image command
+  - Example: `color-tools image --file photo.jpg --quantize-palette apple2`
+  - Total retro palettes available: 19
+
+### Changed
+
+- **Palette quantization performance optimization** - Dramatically improved conversion speed for high-color images
+  - **Before:** Slow conversions taking multiple seconds for large images
+  - **After:** ~0.95 seconds for 1015×1015 image with 245k unique colors (nearly instant, comparable to web-based tools)
+  - **Optimizations:**
+    - Pixel sampling: Max 10k samples for k-means clustering (not all pixels)
+    - k-means++ initialization: Better centroid selection than random
+    - Reduced iterations: 5 instead of 10 (converges quickly with smart initialization)
+    - Vectorized numpy operations: Eliminated Python loops, pure array math
+    - RGB space k-means: Avoided expensive LAB conversions during clustering
+    - Vectorized final assignment: All pixels assigned in one operation
+  - **Impact:** Professional-grade speed with maintained visual quality
+
+### Fixed
+
+- **Palette quantization color collapse and detail loss** - Fixed critical bugs in retro palette conversions
+  - **Problem 1:** 4-color images collapsed to 2 colors when mapped to 4-color palettes (CGA4, Gameboy)
+  - **Problem 2:** High-color images lost significant detail, mapping most pixels to black/white extremes
+  - **Root cause:** Per-pixel nearest-color matching without intelligent color reduction
+  - **Solution:** Hybrid approach using k-means quantization + collision-free palette mapping
+    - **High-color images** (unique colors > palette size): Use k-means clustering to reduce to palette_size representative colors, preserving image structure and detail
+    - **Low-color images** (unique colors ≤ palette size): Direct 1:1 mapping with L-value sorting
+    - Collision-free mapping ensures all palette colors are utilized
+    - Color map dictionary provides O(1) pixel lookups
+  - **Impact:** Retro palette conversions now preserve visual detail comparable to professional tools
+  - **Examples:**
+    - gb-megaman-title.png (4 colors) → CGA4: All 4 colors preserved (was 2)
+    - purple-dragon.jpg (245k colors) → Gameboy: Detail preserved across all 4 shades (was mostly black/white)
+
+## [5.4.0] - 2024-12-23
+
+### Added
+
+- **HueForge filament data import** - Imported 328 new filaments from HueForge dataset
+  - **20 NEW manufacturers added:**
+    - 3D Jake (3 filaments)
+    - Atomic (2 filaments)
+    - ERYONE (10 filaments)
+    - Elegoo (12 filaments)
+    - Fillamentum (3 filaments)
+    - Flashforge (3 filaments)
+    - Hatchbox (22 filaments)
+    - IIID Max (37 filaments)
+    - Inland (31 filaments)
+    - Matterhacker (1 filament)
+    - Mika3D (17 filaments)
+    - Numakers (22 filaments)
+    - Overture (18 filaments)
+    - Protopasta (48 filaments)
+    - Repkord (12 filaments)
+    - Sunlu (13 filaments)
+    - ...and 4 more
+  - **4 existing manufacturers expanded:**
+    - Bambu Lab (+1 filament)
+    - Paramount 3D (+23 filaments)
+    - Prusament (+19 filaments)
+    - eSun (+31 filaments)
+  - **Total filaments:** 913 (was 585, added 328)
+  - Import tool: `tooling/import_hueforge_data.py` with dry-run preview, duplicate detection, and conflict handling
+  - Filtered out 32 entries with null hex codes
+  - Deduplicated entries with identical IDs
+
+## [5.3.0] - 2025-12-23
+
+### Added
+
+- **Unit tests for data class string representations** - Added 5 comprehensive tests verifying `__str__()` behavior:
+  - `test_color_record_str` - ColorRecord formatting
+  - `test_filament_record_str` - FilamentRecord with/without finish
+  - `test_validation_record_str` - ColorValidationRecord match/mismatch cases
+  - `test_color_cluster_str` - ColorCluster pixel count display
+  - `test_color_change_str` - ColorChange layer assignment
+  - All tests verify both `str()` and `repr()` outputs
+  - Total test count: 446 tests (all passing)
+
+### Changed
+
+- **String representation of data classes** - All data classes now have concise, user-friendly `__str__()` output for better readability when printing or logging. The `repr()` output remains unchanged for debugging purposes.
+  - **ColorRecord**: `str(color)` now returns `"coral (#FF7F50)"` instead of full dataclass repr
+  - **FilamentRecord**: `str(filament)` now returns `"Bambu Lab PLA Matte - Jet Black (#333333)"`
+  - **ColorValidationRecord**: Shows match status, confidence, and Delta E at a glance
+  - **ColorCluster**: Shows RGB color and pixel count
+  - **ColorChange**: Shows HueForge layer assignment with Delta E
+  - **Migration**: If you were parsing `str(record)` output (not recommended), use dataclass properties instead: `record.name`, `record.hex`, `record.rgb`, etc.
+  - **Why this is minor version**: String representation is presentation layer, not API contract. The documented API (dataclass fields and properties) remains unchanged. Anyone parsing auto-generated repr was relying on undocumented implementation detail.
+
+## [5.2.0] - 2025-12-23
+
+### Added
+
+- **Validation Module Exported in Public API** - The `validation` module is now fully accessible via main package imports:
+  - ✅ `from color_tools import validate_color` - Validate color name/hex pairings with fuzzy matching and Delta E
+  - ✅ `from color_tools import ColorValidationRecord` - Data class containing validation results
+  - Previously required awkward: `from color_tools.validation import ...`
+  - Now follows "batteries included" principle for public API
+
+- **Validation CLI Command** - New `validate` command for validating color name/hex pairings:
+  - `color-tools validate --name "light blue" --hex "#ADD8E6"` - Check if name matches hex
+  - `--threshold` - Adjust Delta E threshold for strictness (default: 20.0)
+  - `--json-output` - Get results in JSON format for scripting
+  - Exit code 0 for match, 1 for no match (useful in scripts)
+  - Shows fuzzy matching confidence, Delta E distance, and suggestions
+
+- **Enhanced Data Class Documentation** - All 5 data classes now have comprehensive Sphinx autodoc:
+  - `ColorRecord` - Detailed attribute descriptions with ranges and examples
+  - `FilamentRecord` - Dual-color handling documentation and property explanations
+  - `ColorValidationRecord` - Complete validation result field documentation
+  - `ColorCluster` - Image cluster attributes with usage examples
+  - `ColorChange` - Luminance redistribution field documentation
+  - Single source of truth: docstrings auto-generate API documentation
+
+- **Data Classes Quick Reference** - Added comprehensive quick reference table to Usage.md:
+  - All 5 data classes with purpose, key fields, and API links
+  - Value range notes for RGB, LAB, LCH, HSL
+  - Installation notes for optional dependencies
+  - Direct links to full Sphinx documentation
+
+- **Export Library Examples** - Added comprehensive library usage examples to Usage.md:
+  - `export_filaments()` examples with filtering (AutoForge CSV, generic CSV, JSON)
+  - `export_colors()` examples
+  - Code examples showing real-world export workflows
+  - Complements existing CLI documentation
+
+### Changed
+
+- **Enhanced Package Docstring** - Main `__init__.py` docstring now includes:
+  - Color validation example showing `validate_color()` usage
+  - Improved image processing examples with `.save()` calls
+  - Better organization of Quick Start, Validation, and Image sections
+  - All examples now show complete workflows
+
+- **Improved Sphinx Index** - Added Data Classes section to API documentation:
+  - Highlights all 5 immutable dataclasses
+  - Links to quick reference in Usage.md
+  - Notes about comprehensive docstrings and examples
+
+### Documentation
+
+- Created `docs/other/DOCUMENTATION_GAPS.md` - Comprehensive analysis of documentation coverage:
+  - Coverage summary table for all modules
+  - Identified and resolved critical gaps (validation export)
+  - Documented design decisions (image module import pattern)
+  - Checklist for future feature additions
+
+## [5.1.1] - 2025-12-23
+
+### Fixed
+
+- **Sphinx Documentation** - Updated API documentation to include all modules:
+  - Added missing modules: `color_deficiency`, `export`, `matrices`
+  - Fixed version number in Sphinx configuration (was 3.5.0, now 5.1.1)
+  - Added links to comprehensive usage guides (CLI, Installation, FAQ, etc.)
+  - Added CLI commands overview with links to detailed documentation
+
+## [5.1.0] - 2025-12-23
+
+### Added
+
+- **Export System (v1.0)** - Export filaments and colors to external formats:
+  - **AutoForge CSV export** - Export filaments for AutoForge library import
+  - **Generic CSV export** - All fields exported to CSV for any tool
+  - **JSON export** - Raw data export for backup/restore operations
+  - **CLI integration** - New `--export`, `--output`, `--list-export-formats` flags
+  - **Auto-generated filenames** - Timestamped filenames prevent overwrites (`filaments_autoforge_20251223_143022.csv`)
+  - **Merged data exports** - Automatically includes user overrides (user-filaments.json, user-colors.json)
+  - **Filter integration** - Combine with existing `--maker`, `--type`, `--finish` filters for targeted exports
+  - **Library API** - `export_filaments()`, `export_colors()`, `list_export_formats()` functions
+  - **Examples:**
+
+    ```bash
+    # Export Bambu Lab Basic/Matte filaments to AutoForge format
+    python -m color_tools filament --maker "Bambu Lab" --finish Basic Matte --export autoforge
+    
+    # Export all CSS colors to JSON with custom filename
+    python -m color_tools color --export json --output my_colors.json
+    
+    # List available export formats
+    python -m color_tools filament --list-export-formats
+    ```
+
+  - **Full test coverage** - 18 unit tests covering all formats and features
+  - **See `docs/other/IMPORT_EXPORT_SYSTEM.md` for design details and future plans**
+
+- **Crayola Crayon Colors Palette** - New built-in palette with 120 classic Crayola crayon colors:
+  - Load with `load_palette('crayola')` in Python
+  - Includes iconic colors: Burnt Orange, Sunset Orange, Purple Heart, Screamin' Green, etc.
+  - Full color space conversions (RGB, HSL, LAB, LCH) computed from source data
+  - Generation script available at `tooling/generate_crayola_palette.py`
+  - Documentation at `tooling/CRAYOLA_PALETTE.md`
 
 ### Changed
 

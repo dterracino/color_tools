@@ -488,7 +488,7 @@ Create comprehensive tests with reference values from the OKLab specification.
 **Test Reference Values** (from <https://bottosson.github.io/posts/oklab/>):
 
 | RGB (0-1) | OKLab |
-|-----------|-------|
+| ----------- | ------- |
 | (1.0, 0.0, 0.0) | (0.628, 0.225, 0.126) |
 | (0.0, 1.0, 0.0) | (0.867, -0.234, 0.180) |
 | (0.0, 0.0, 1.0) | (0.452, -0.032, -0.312) |

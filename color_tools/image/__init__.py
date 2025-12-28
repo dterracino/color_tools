@@ -2,17 +2,37 @@
 Image processing module for color_tools.
 
 This module provides image color analysis and manipulation tools:
-- General image analysis (basic.py)  
-- HueForge 3D printing optimization (analysis.py)
+- Format Conversion: Convert between PNG, JPEG, WebP, HEIC, AVIF, etc. (conversion.py)
+- Watermarking: Add text, image, or SVG watermarks (watermark.py)
+- Color Analysis: Extract dominant colors with K-means clustering (analysis.py)
+- HueForge 3D printing: Luminance redistribution for multi-color printing (analysis.py)
+- CVD Operations: Simulate/correct color vision deficiencies (basic.py)
+- Palette Quantization: Convert to retro palettes with dithering (basic.py)
+- General Analysis: Count colors, brightness, contrast, noise (basic.py)
 
 Requires Pillow: pip install color-match-tools[image]
 
 Example:
 --------
     >>> from color_tools.image import (
+    ...     convert_image, add_watermark,
     ...     count_unique_colors, analyze_brightness,
     ...     simulate_cvd_image, quantize_image_to_palette
     ... )
+    >>> 
+    >>> # Convert image formats (auto-generates output filename)
+    >>> convert_image("photo.webp", output_format="png")  # Creates photo.png
+    >>> convert_image("photo.jpg", output_format="webp", lossless=True)
+    PosixPath('photo.webp')
+    >>> 
+    >>> # Add watermark
+    >>> add_text_watermark(
+    ...     "photo.jpg",
+    ...     text="© 2025 MyBrand",
+    ...     position="bottom-right",
+    ...     output_path="watermarked.jpg"
+    ... )
+    PosixPath('watermarked.jpg')
     >>> 
     >>> # Count colors in an image
     >>> total = count_unique_colors("photo.jpg")
@@ -74,6 +94,15 @@ try:
         correct_cvd_image,
         quantize_image_to_palette,
     )
+    from .watermark import (
+        add_text_watermark,
+        add_image_watermark,
+        add_svg_watermark,
+    )
+    from .conversion import (
+        convert_image,
+        get_supported_formats,
+    )
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
@@ -108,6 +137,15 @@ except ImportError:
     correct_cvd_image = _not_available
     quantize_image_to_palette = _not_available
     
+    # Watermarking functions
+    add_text_watermark = _not_available
+    add_image_watermark = _not_available
+    add_svg_watermark = _not_available
+    
+    # Conversion functions
+    convert_image = _not_available
+    get_supported_formats = _not_available
+    
     # Dummy classes for type hints - use Any to avoid type conflicts
     from typing import Any
     ColorCluster: type[Any] = type('ColorCluster', (), {})
@@ -138,4 +176,11 @@ __all__ = [
     'simulate_cvd_image',
     'correct_cvd_image',
     'quantize_image_to_palette',
+    # Watermarking functions
+    'add_text_watermark',
+    'add_image_watermark',
+    'add_svg_watermark',
+    # Conversion functions
+    'convert_image',
+    'get_supported_formats',
 ]

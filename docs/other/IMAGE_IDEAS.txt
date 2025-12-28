@@ -1,0 +1,81 @@
+
+Used 1 reference
+Generated ideas for library features
+Great question! Let me brainstorm some easy wins that would be fun and useful. I'll organize these by category:
+
+🎨 Color & Filament Matching Ideas
+Color Harmony Generator ⭐ (Strong Recommendation)
+Given a color, generate harmonious palettes using color theory:
+
+Complementary (opposite on color wheel)
+Analogous (adjacent colors)
+Triadic (evenly spaced)
+Split-complementary
+Tetradic/Square
+Why it's great: Designers and artists would love this. It's pure math based on HSL/LCH hue values, so it's easy to implement.
+
+Color Gradient/Interpolation
+Generate smooth gradients between two or more colors:
+
+Linear interpolation in LAB space (perceptually uniform)
+Specify number of steps
+CLI: color-tools gradient --from coral --to navy --steps 10
+Why it's great: Useful for data visualization, design work, and understanding color transitions.
+
+Contrast Ratio Calculator ⭐ (Strong Recommendation)
+Calculate WCAG contrast ratios between two colors:
+
+Check if text would be readable on a background
+Return AA/AAA compliance levels
+Suggest similar colors that meet contrast requirements
+Why it's great: Accessibility is important, and this is a pure math problem (simple formula).
+
+Color Temperature Analysis
+Classify colors as warm/cool and calculate a temperature score:
+
+Based on hue position
+Could help with color scheme creation
+Why it's great: Simple but adds a nice qualitative dimension to color analysis.
+
+Filament Blend Simulator
+Calculate what color you'd get by mixing two filament colors:
+
+Simple RGB averaging or more sophisticated LAB blending
+Useful for multicolor 3D printing
+🖼️ Image Processing Ideas
+Watermarking ⭐ (Your Idea - Excellent!)
+Add text or image watermarks:
+
+Position control (corner, center, custom)
+Opacity control
+Font selection for text watermarks
+Why it's great: Super practical for content creators.
+
+Dithering Effects ⭐⭐ (Highly Recommended)
+Convert images to limited color palettes with dithering:
+
+Floyd-Steinberg dithering
+Ordered (Bayer) dithering
+Use any palette (CSS colors, filaments, custom)
+Creates retro/artistic effects
+Why it's great: This is really fun visually, ties into your existing palette system, and algorithms are well-documented. Would be amazing for retro game aesthetics or artistic effects.
+
+Color Tinting/Overlay
+Apply a color tint to an image:
+
+Sepia, warm, cool, custom color overlays
+Blend modes (multiply, screen, overlay)
+Why it's great: Simple pixel operations, dramatic visual effects.
+
+Pixelation Effect
+Reduce image resolution for retro/artistic looks:
+
+Adjustable block size
+Optional palette reduction
+Why it's great: One-liner algorithm, fun results.
+
+Border/Frame Addition
+Add decorative borders to images:
+
+Solid color or gradient borders
+Adjustable thickness

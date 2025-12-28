@@ -1,26 +1,24 @@
 # publish.ps1 - Build and publish color_tools to PyPI
 # This script handles the complete build and upload process
 #
-# API Key Setup Options:
-# Option 1: Set environment variable directly
-#   $env:TWINE_PASSWORD = "your-api-key-here"
-#   .\publish.ps1
+# API Key Setup (in priority order):
 #
-# Option 2: Load from .env file automatically  
-#   Get-Content .env | ForEach-Object {
-#       if ($_ -match '^([^=]+)=(.*)$') {
-#           [Environment]::SetEnvironmentVariable($matches[1], $matches[2], "Process")
-#       }
-#   }
-#   $env:TWINE_PASSWORD = $env:PYPI_API_KEY
-#   .\publish.ps1
+# 1. Automatic from .env file (RECOMMENDED - easiest!)
+#    - Copy .env.example to .env
+#    - Add your PyPI API token: PYPI_API_KEY=pypi-...
+#    - Script automatically loads it on every run
+#    - For TestPyPI: TESTPYPI_API_KEY=pypi-...
 #
-# Option 3: Let twine prompt for password (paste API key when asked)
-#   .\publish.ps1
+# 2. Set environment variable before running
+#    $env:TWINE_PASSWORD = "pypi-your-api-key-here"
+#    .\publish.ps1
 #
-# Option 4: Configure twine once (most secure)
-#   python -m twine configure
-#   .\publish.ps1
+# 3. Let twine prompt for password (paste API key when asked)
+#    .\publish.ps1
+#
+# 4. Configure twine once (stored in config file)
+#    python -m twine configure
+#    .\publish.ps1
 
 param(
     [switch]$TestPyPI,
@@ -31,16 +29,41 @@ param(
 
 # Color output helpers
 function Write-Step { param($msg) Write-Host "`n==> $msg" -ForegroundColor Cyan }
-function Write-Success { param($msg) Write-Host "✓ $msg" -ForegroundColor Green }
-function Write-Error { param($msg) Write-Host "✗ $msg" -ForegroundColor Red }
-function Write-Warning { param($msg) Write-Host "⚠ $msg" -ForegroundColor Yellow }
+function Write-Success { param($msg) Write-Host "[OK] $msg" -ForegroundColor Green }
+function Write-Error { param($msg) Write-Host "[ERROR] $msg" -ForegroundColor Red }
+function Write-Warning { param($msg) Write-Host "[WARN] $msg" -ForegroundColor Yellow }
 
 # Exit on error
 $ErrorActionPreference = "Stop"
 
-Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Cyan
-Write-Host "║  Color Tools - PyPI Publishing Script ║" -ForegroundColor Cyan
-Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Cyan
+# Auto-load API key from .env file if it exists
+if (Test-Path ".env") {
+    Write-Host "Loading API key from .env file..." -ForegroundColor Cyan
+    Get-Content .env | ForEach-Object {
+        if ($_ -match '^([^=]+)=(.*)$') {
+            $key = $matches[1].Trim()
+            $value = $matches[2].Trim()
+            # Remove surrounding quotes if present
+            $value = $value.Trim('"').Trim("'")
+            [Environment]::SetEnvironmentVariable($key, $value, "Process")
+        }
+    }
+    
+    # Set TWINE_PASSWORD from PYPI_API_KEY or TESTPYPI_API_KEY
+    if ($TestPyPI -and $env:TESTPYPI_API_KEY) {
+        $env:TWINE_PASSWORD = $env:TESTPYPI_API_KEY
+        Write-Success "Using TestPyPI API key from .env"
+    } elseif ($env:PYPI_API_KEY) {
+        $env:TWINE_PASSWORD = $env:PYPI_API_KEY
+        Write-Success "Using PyPI API key from .env"
+    } else {
+        Write-Warning ".env file found but no API key configured"
+    }
+}
+
+Write-Host "`n========================================" -ForegroundColor Cyan
+Write-Host "  Color Tools - PyPI Publishing Script" -ForegroundColor Cyan
+Write-Host "========================================`n" -ForegroundColor Cyan
 
 # Step 1: Clean previous builds
 if (-not $SkipClean) {
@@ -57,17 +80,11 @@ if (-not $SkipClean) {
 # Step 2: Run tests
 if (-not $SkipTests) {
     Write-Step "Running unit tests"
-    try {
-        $testOutput = python -m unittest discover -s tests -p "test_*.py" 2>&1
-        if ($LASTEXITCODE -eq 0) {
-            Write-Success "All tests passed"
-        } else {
-            Write-Error "Tests failed!"
-            Write-Host $testOutput
-            exit 1
-        }
-    } catch {
-        Write-Error "Failed to run tests: $_"
+    python -m unittest discover -s tests -p "test_*.py"
+    if ($LASTEXITCODE -eq 0) {
+        Write-Success "All tests passed"
+    } else {
+        Write-Error "Tests failed!"
         exit 1
     }
 } else {
@@ -146,9 +163,9 @@ if (-not $BuildOnly) {
         if ($LASTEXITCODE -eq 0) {
             Write-Success "Upload completed successfully!"
             
-            Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
-            Write-Host "║       Publication Successful! 🎉       ║" -ForegroundColor Green
-            Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
+            Write-Host "`n========================================" -ForegroundColor Green
+            Write-Host "       Publication Successful!          " -ForegroundColor Green
+            Write-Host "========================================`n" -ForegroundColor Green
             
             if ($TestPyPI) {
                 Write-Host "Install with: pip install --index-url https://test.pypi.org/simple/ color-match-tools" -ForegroundColor Cyan
@@ -172,11 +189,11 @@ if (-not $BuildOnly) {
         & .\clean.ps1
     }
 } else {
-    Write-Host "`n╔════════════════════════════════════════╗" -ForegroundColor Green
-    Write-Host "║         Build Only Complete! 🔧        ║" -ForegroundColor Green  
-    Write-Host "╚════════════════════════════════════════╝`n" -ForegroundColor Green
+    Write-Host "`n========================================" -ForegroundColor Green
+    Write-Host "       Build Only Complete!            " -ForegroundColor Green  
+    Write-Host "========================================`n" -ForegroundColor Green
     Write-Host "Built packages are ready in dist/ directory" -ForegroundColor Cyan
     Write-Host "Version: $version`n" -ForegroundColor Cyan
 }
 
-Write-Host "`nDone! ✨`n" -ForegroundColor Green
+Write-Host "`nDone!`n" -ForegroundColor Green

@@ -882,47 +882,182 @@ def quantize_image_to_palette(
         ... )
     """
     from color_tools.palette import load_palette
+    from ..conversions import rgb_to_lab
+    from ..distance import (
+        euclidean, delta_e_76, delta_e_94, delta_e_2000,
+        delta_e_cmc, hsl_euclidean
+    )
     
-    # Load target palette - load_palette now supports user palettes automatically
+    # Load target palette
     try:
         palette = load_palette(palette_name)
     except FileNotFoundError as e:
-        # Re-raise with the original error message which includes available palettes
         raise ValueError(str(e)) from e
     
-    # Create color mapping function
-    def palette_transform(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
-        color_record, _ = palette.nearest_color(rgb, metric=metric)
-        return color_record.rgb
-    
-    # Apply basic transformation
-    if not dither:
-        return transform_image(image_path, palette_transform, output_path=output_path)
-    
-    # Apply with Floyd-Steinberg dithering
     try:
         import PIL.Image
         import numpy as np
     except ImportError:
         raise ImportError(
-            "Dithering requires Pillow and numpy. "
+            "Palette quantization requires Pillow and numpy. "
             "Install with: pip install color-match-tools[image]"
         )
     
-    # Load image
     from pathlib import Path
-    image_path = Path(image_path) 
+    image_path = Path(image_path)
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
     
+    # Load image
     original = PIL.Image.open(image_path).convert('RGB')
+    pixels_rgb: list[tuple[int, int, int]] = list(original.getdata())  # type: ignore[arg-type]
+    
+    # Get unique colors from source image
+    unique_colors = {}  # {rgb: count}
+    for pixel in pixels_rgb:
+        unique_colors[pixel] = unique_colors.get(pixel, 0) + 1
+    
+    num_unique = len(unique_colors)
+    palette_size = len(palette.records)
+    
+    # Strategy depends on source color count vs palette size:
+    # - High-color image: Quantize to palette_size colors first, then remap
+    # - Low-color image: Direct 1:1 remapping
+    
+    if num_unique > palette_size:
+        # High-color image: Use fast k-means to reduce to palette_size colors
+        # This preserves image detail by finding representative colors
+        
+        # Convert pixels to numpy array for vectorized operations
+        pixels_array = np.array(pixels_rgb, dtype=np.float32)
+        
+        # Sample pixels for large images (max 10k samples for speed)
+        max_samples = 10000
+        if len(pixels_array) > max_samples:
+            sample_indices = np.random.choice(len(pixels_array), max_samples, replace=False)
+            samples = pixels_array[sample_indices]
+        else:
+            samples = pixels_array
+        
+        # Initialize centroids using k-means++ approach (better than random)
+        # Start with random first centroid
+        centroids = [samples[np.random.randint(len(samples))]]
+        
+        for _ in range(palette_size - 1):
+            # Calculate distances from each sample to nearest centroid
+            distances = np.min([
+                np.sum((samples - centroid) ** 2, axis=1)
+                for centroid in centroids
+            ], axis=0)
+            
+            # Choose next centroid with probability proportional to distance^2
+            probabilities = distances / distances.sum()
+            next_idx = np.random.choice(len(samples), p=probabilities)
+            centroids.append(samples[next_idx])
+        
+        centroids = np.array(centroids, dtype=np.float32)
+        
+        # Run k-means on samples (fewer iterations, vectorized)
+        for _ in range(5):  # Reduced from 10 iterations
+            # Assign samples to nearest centroid (vectorized)
+            distances = np.array([
+                np.sum((samples - centroid) ** 2, axis=1)
+                for centroid in centroids
+            ])
+            assignments = np.argmin(distances, axis=0)
+            
+            # Update centroids
+            for i in range(palette_size):
+                mask = assignments == i
+                if mask.any():
+                    centroids[i] = samples[mask].mean(axis=0)
+        
+        # Assign ALL pixels to nearest centroid (vectorized, fast)
+        distances = np.array([
+            np.sum((pixels_array - centroid) ** 2, axis=1)
+            for centroid in centroids
+        ])
+        pixel_assignments = np.argmin(distances, axis=0)
+        
+        # Build quantized colors and pixel mapping
+        quantized_colors = [tuple(int(round(c)) for c in centroid) for centroid in centroids]
+        pixels_to_cluster = {i: quantized_colors[pixel_assignments[i]] for i in range(len(pixels_rgb))}
+        
+        # Sort quantized colors by L-value for better palette matching
+        quantized_with_lab = [(rgb, rgb_to_lab(rgb)) for rgb in quantized_colors]
+        colors_to_map = sorted(quantized_with_lab, key=lambda x: x[1][0])
+    else:
+        # Low-color image: Direct mapping of unique colors
+        unique_with_lab = [(rgb, rgb_to_lab(rgb)) for rgb in unique_colors.keys()]
+        colors_to_map = sorted(unique_with_lab, key=lambda x: x[1][0])
+        pixels_to_cluster = None  # Not needed for low-color images
+    
+    # Select distance function
+    distance_funcs = {
+        'euclidean': euclidean,
+        'de76': delta_e_76,
+        'de94': delta_e_94,
+        'de2000': delta_e_2000,
+        'cmc': delta_e_cmc,
+        'hsl_euclidean': hsl_euclidean
+    }
+    distance_func = distance_funcs.get(metric, delta_e_2000)
+    
+    # Map quantized/unique colors to palette colors (collision-free)
+    color_map = {}
+    used_palette_colors = set()
+    
+    for source_rgb, source_lab in colors_to_map:
+        # Find nearest UNUSED palette color
+        best_match = None
+        best_distance = float('inf')
+        
+        for palette_record in palette.records:
+            if palette_record.rgb in used_palette_colors:
+                continue  # Skip already-used colors
+            
+            # Calculate distance using selected metric
+            dist = distance_func(source_rgb, palette_record.rgb)
+            
+            if dist < best_distance:
+                best_distance = dist
+                best_match = palette_record.rgb
+        
+        # If all palette colors are used, reuse nearest one
+        if best_match is None:
+            color_record, _ = palette.nearest_color(source_rgb, metric=metric)
+            best_match = color_record.rgb
+        
+        color_map[source_rgb] = best_match
+        used_palette_colors.add(best_match)
+    
+    # Apply mapping without dithering
+    if not dither:
+        if pixels_to_cluster is not None:
+            # High-color: Map through k-means clusters
+            quantized_pixels = [
+                color_map[pixels_to_cluster[i]] 
+                for i in range(len(pixels_rgb))
+            ]
+        else:
+            # Low-color: Direct mapping
+            quantized_pixels = [color_map[pixel] for pixel in pixels_rgb]
+        
+        quantized = PIL.Image.new('RGB', original.size)
+        quantized.putdata(quantized_pixels)
+        
+        if output_path is not None:
+            output_path = Path(output_path) if not isinstance(output_path, Path) else output_path
+            output_path.parent.mkdir(parents=True, exist_ok=True)
+            quantized.save(output_path)
+        
+        return quantized
+    
+    # Apply with Floyd-Steinberg dithering
     np_image = np.array(original, dtype=np.float32)
     height, width = np_image.shape[:2]
     
     # Floyd-Steinberg error diffusion matrix
-    # Current pixel gets 0/16, distribute error:
-    # [ ] [*] [ ]
-    # [3] [5] [1]  (all /16)
     error_weights = [
         (1, 0, 7/16),   # Right
         (-1, 1, 3/16),  # Down-left  
@@ -933,12 +1068,19 @@ def quantize_image_to_palette(
     # Process each pixel with error diffusion
     for y in range(height):
         for x in range(width):
+            pixel_idx = y * width + x
+            
             # Get current pixel color
             old_rgb = tuple(np.clip(np_image[y, x], 0, 255).astype(int))
             
-            # Find nearest palette color
-            color_record, _ = palette.nearest_color(old_rgb, metric=metric)
-            new_rgb = color_record.rgb
+            # Map to palette color (through k-means cluster if high-color image)
+            if pixels_to_cluster is not None:
+                # High-color: Map through cluster
+                cluster_rgb = pixels_to_cluster[pixel_idx]
+                new_rgb = color_map[cluster_rgb]
+            else:
+                # Low-color: Direct mapping
+                new_rgb = color_map.get(old_rgb, old_rgb)
             
             # Set new color
             np_image[y, x] = new_rgb
