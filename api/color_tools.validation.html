@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.validation &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="color_tools.naming" href="color_tools.naming.html" />
+    <link rel="prev" title="color_tools.gamut" href="color_tools.gamut.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">color_tools.validation</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.is_match"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.is_match</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.name_match"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.name_match</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.name_confidence"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.name_confidence</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.hex_value"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.hex_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.suggested_hex"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.suggested_hex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.delta_e"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.delta_e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.message"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.message</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.is_match</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.name_match</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.name_confidence</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.hex_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.suggested_hex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.delta_e</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.message</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.__str__"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.__str__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord.__init__"><code class="docutils literal notranslate"><span class="pre">ColorValidationRecord.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.validation.validate_color"><code class="docutils literal notranslate"><span class="pre">validate_color()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">color_tools.validation</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/color_tools.validation.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-color_tools.validation">
+<span id="color-tools-validation"></span><h1>color_tools.validation<a class="headerlink" href="#module-color_tools.validation" title="Link to this heading"></a></h1>
+<p>Color validation functions to check if a hex code matches a color name.
+Uses fuzzy matching and perceptual color distance (Delta E 2000).
+Useful for validating imported color data or user input.</p>
+<dl class="simple">
+<dt>Note: For best fuzzy matching results, install the optional fuzzywuzzy package:</dt><dd><p>pip install fuzzywuzzy</p>
+</dd>
+</dl>
+<p>A hybrid fallback matcher (exact/substring/Levenshtein) is used when
+fuzzywuzzy is not available.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.validation.</span></span><span class="sig-name descname"><span class="pre">ColorValidationRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_match</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_match</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_confidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suggested_hex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/validation.html#ColorValidationRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.validation.ColorValidationRecord" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Result record from validating if a hex code matches a color name.</p>
+<p>This immutable dataclass contains comprehensive validation results including
+fuzzy name matching confidence, perceptual color distance (Delta E), and
+helpful suggestions for mismatches.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.is_match">
+<span class="sig-name descname"><span class="pre">is_match</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.is_match" title="Link to this definition"></a></dt>
+<dd><p>True if the color name and hex code are a good match</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.name_match">
+<span class="sig-name descname"><span class="pre">name_match</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.name_match" title="Link to this definition"></a></dt>
+<dd><p>Best matching CSS color name from the database (e.g., “lightblue”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.name_confidence">
+<span class="sig-name descname"><span class="pre">name_confidence</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.name_confidence" title="Link to this definition"></a></dt>
+<dd><p>Fuzzy matching confidence 0.0-1.0 (1.0 = exact match)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.hex_value">
+<span class="sig-name descname"><span class="pre">hex_value</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.hex_value" title="Link to this definition"></a></dt>
+<dd><p>The hex code that was validated (normalized with # prefix)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.suggested_hex">
+<span class="sig-name descname"><span class="pre">suggested_hex</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.suggested_hex" title="Link to this definition"></a></dt>
+<dd><p>Suggested hex code for the matched name, or None if exact match</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.delta_e">
+<span class="sig-name descname"><span class="pre">delta_e</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.delta_e" title="Link to this definition"></a></dt>
+<dd><p>Perceptual color distance (Delta E 2000) between provided and suggested colors</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.message">
+<span class="sig-name descname"><span class="pre">message</span></span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.message" title="Link to this definition"></a></dt>
+<dd><p>Human-readable validation result message</p>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools.validation</span><span class="w"> </span><span class="kn">import</span> <span class="n">validate_color</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">result</span> <span class="o">=</span> <span class="n">validate_color</span><span class="p">(</span><span class="s2">&quot;light blue&quot;</span><span class="p">,</span> <span class="s2">&quot;#ADD8E6&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Match: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">is_match</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Match: True</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Matched &#39;</span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">name_match</span><span class="si">}</span><span class="s2">&#39; with </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">name_confidence</span><span class="si">:</span><span class="s2">.0%</span><span class="si">}</span><span class="s2"> confidence&quot;</span><span class="p">)</span>
+<span class="go">Matched &#39;lightblue&#39; with 100% confidence</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Delta E: </span><span class="si">{</span><span class="n">result</span><span class="o">.</span><span class="n">delta_e</span><span class="si">:</span><span class="s2">.2f</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Delta E: 0.00</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>is_match</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>)</p></li>
+<li><p><strong>name_match</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>)</p></li>
+<li><p><strong>name_confidence</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>)</p></li>
+<li><p><strong>hex_value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>suggested_hex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>)</p></li>
+<li><p><strong>delta_e</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>)</p></li>
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">is_match</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">name_match</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">name_confidence</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">hex_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">suggested_hex</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">delta_e</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">message</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/validation.html#ColorValidationRecord.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.__str__" title="Link to this definition"></a></dt>
+<dd><p>Human-readable validation result.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.validation.ColorValidationRecord.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">is_match</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_match</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name_confidence</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex_value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">suggested_hex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">delta_e</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">message</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.validation.ColorValidationRecord.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>is_match</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span>)</p></li>
+<li><p><strong>name_match</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>)</p></li>
+<li><p><strong>name_confidence</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>)</p></li>
+<li><p><strong>hex_value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>suggested_hex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>)</p></li>
+<li><p><strong>delta_e</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>)</p></li>
+<li><p><strong>message</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.validation.validate_color">
+<span class="sig-prename descclassname"><span class="pre">color_tools.validation.</span></span><span class="sig-name descname"><span class="pre">validate_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color_name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex_code</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">de_threshold</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">20.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/validation.html#validate_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.validation.validate_color" title="Link to this definition"></a></dt>
+<dd><p>Validates if a given hex code approximately matches a given color name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>color_name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The name of the color to check (e.g., “light red”).</p></li>
+<li><p><strong>hex_code</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – The hex code to validate (e.g., “#FFC0CB”).</p></li>
+<li><p><strong>de_threshold</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – The Delta E 2000 threshold for a color to be considered a match.
+Lower is stricter. Default is 20.0.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#color_tools.validation.ColorValidationRecord" title="color_tools.validation.ColorValidationRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorValidationRecord</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A ColorValidationRecord with the validation results.</p>
+</dd>
+</dl>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Uses fuzzywuzzy for fuzzy matching if available, otherwise falls back
+to a hybrid matcher using exact/substring/Levenshtein matching.</p>
+</div>
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="color_tools.gamut.html" class="btn btn-neutral float-left" title="color_tools.gamut" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="color_tools.naming.html" class="btn btn-neutral float-right" title="color_tools.naming" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

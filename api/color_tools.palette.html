@@ -1,0 +1,1154 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.palette &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="color_tools.gamut" href="color_tools.gamut.html" />
+    <link rel="prev" title="color_tools.distance" href="color_tools.distance.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">color_tools.palette</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.ColorRecord"><code class="docutils literal notranslate"><span class="pre">ColorRecord</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.name"><code class="docutils literal notranslate"><span class="pre">ColorRecord.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.hex"><code class="docutils literal notranslate"><span class="pre">ColorRecord.hex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.rgb"><code class="docutils literal notranslate"><span class="pre">ColorRecord.rgb</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.hsl"><code class="docutils literal notranslate"><span class="pre">ColorRecord.hsl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.lab"><code class="docutils literal notranslate"><span class="pre">ColorRecord.lab</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.lch"><code class="docutils literal notranslate"><span class="pre">ColorRecord.lch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.source"><code class="docutils literal notranslate"><span class="pre">ColorRecord.source</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id0"><code class="docutils literal notranslate"><span class="pre">ColorRecord.name</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id1"><code class="docutils literal notranslate"><span class="pre">ColorRecord.hex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id2"><code class="docutils literal notranslate"><span class="pre">ColorRecord.rgb</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id3"><code class="docutils literal notranslate"><span class="pre">ColorRecord.hsl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id4"><code class="docutils literal notranslate"><span class="pre">ColorRecord.lab</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id5"><code class="docutils literal notranslate"><span class="pre">ColorRecord.lch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id6"><code class="docutils literal notranslate"><span class="pre">ColorRecord.source</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.__str__"><code class="docutils literal notranslate"><span class="pre">ColorRecord.__str__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.ColorRecord.__init__"><code class="docutils literal notranslate"><span class="pre">ColorRecord.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.FilamentRecord"><code class="docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.id"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.maker"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.maker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.type"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.finish"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.finish</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.color"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.hex"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.hex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.td_value"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.td_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.other_names"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.other_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.source"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.source</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id7"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.id</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id8"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.maker</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id9"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.type</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id10"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.finish</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id11"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.color</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id12"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.hex</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id13"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.td_value</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id14"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.other_names</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#id15"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.source</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.rgb"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.rgb</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.lab"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.lab</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.lch"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.lch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.hsl"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.hsl</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.__str__"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.__str__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentRecord.__init__"><code class="docutils literal notranslate"><span class="pre">FilamentRecord.__init__()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.load_colors"><code class="docutils literal notranslate"><span class="pre">load_colors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.load_filaments"><code class="docutils literal notranslate"><span class="pre">load_filaments()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.load_maker_synonyms"><code class="docutils literal notranslate"><span class="pre">load_maker_synonyms()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.load_palette"><code class="docutils literal notranslate"><span class="pre">load_palette()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.Palette"><code class="docutils literal notranslate"><span class="pre">Palette</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.__init__"><code class="docutils literal notranslate"><span class="pre">Palette.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.load_default"><code class="docutils literal notranslate"><span class="pre">Palette.load_default()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.find_by_name"><code class="docutils literal notranslate"><span class="pre">Palette.find_by_name()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.find_by_rgb"><code class="docutils literal notranslate"><span class="pre">Palette.find_by_rgb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.find_by_hsl"><code class="docutils literal notranslate"><span class="pre">Palette.find_by_hsl()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.find_by_lab"><code class="docutils literal notranslate"><span class="pre">Palette.find_by_lab()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.find_by_lch"><code class="docutils literal notranslate"><span class="pre">Palette.find_by_lch()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.nearest_color"><code class="docutils literal notranslate"><span class="pre">Palette.nearest_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.nearest_colors"><code class="docutils literal notranslate"><span class="pre">Palette.nearest_colors()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.Palette.get_override_info"><code class="docutils literal notranslate"><span class="pre">Palette.get_override_info()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.palette.FilamentPalette"><code class="docutils literal notranslate"><span class="pre">FilamentPalette</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.__init__"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.__init__()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.load_default"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.load_default()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.find_by_maker"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.find_by_maker()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.find_by_type"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.find_by_type()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.find_by_color"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.find_by_color()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.find_by_rgb"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.find_by_rgb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.find_by_finish"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.find_by_finish()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.filter"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.filter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.nearest_filament"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.nearest_filament()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.nearest_filaments"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.nearest_filaments()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.makers"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.makers</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.types"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.types</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.finishes"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.finishes</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.palette.FilamentPalette.get_override_info"><code class="docutils literal notranslate"><span class="pre">FilamentPalette.get_override_info()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">color_tools.palette</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/color_tools.palette.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-color_tools.palette">
+<span id="color-tools-palette"></span><h1>color_tools.palette<a class="headerlink" href="#module-color_tools.palette" title="Link to this heading"></a></h1>
+<p>Color and filament palette management with fast lookup.</p>
+<p>This module provides:
+1. Data classes for colors (ColorRecord) and filaments (FilamentRecord)
+2. Functions to load color/filament data from JSON with user override support
+3. Palette classes with multiple indices for O(1) lookups
+4. Nearest-color search using various distance metrics</p>
+<p>The palette classes are like databases with multiple indexes - you can
+search by name, RGB, HSL, maker, type, etc. and get instant results!</p>
+<p>User files (user/user-colors.json, user/user-filaments.json) always override core
+data when there are conflicts. Override information is logged for transparency.</p>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Palette</span><span class="p">,</span> <span class="n">FilamentPalette</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load CSS color database</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">palette</span> <span class="o">=</span> <span class="n">Palette</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">palette</span><span class="o">.</span><span class="n">colors</span><span class="p">)</span><span class="si">}</span><span class="s2"> CSS colors&quot;</span><span class="p">)</span>
+<span class="go">Loaded 148 CSS colors</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Find exact color by name</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">coral</span> <span class="o">=</span> <span class="n">palette</span><span class="o">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="s2">&quot;coral&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Coral: RGB</span><span class="si">{</span><span class="n">coral</span><span class="o">.</span><span class="n">rgb</span><span class="si">}</span><span class="s2"> (#</span><span class="si">{</span><span class="n">coral</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="go">Coral: RGB(255, 127, 80) (#FF7F50)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Find nearest color to custom RGB</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">custom_orange</span> <span class="o">=</span> <span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="mi">140</span><span class="p">,</span> <span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">nearest</span><span class="p">,</span> <span class="n">distance</span> <span class="o">=</span> <span class="n">palette</span><span class="o">.</span><span class="n">nearest_color</span><span class="p">(</span><span class="n">custom_orange</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nearest to RGB</span><span class="si">{</span><span class="n">custom_orange</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">nearest</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2"> (ΔE: </span><span class="si">{</span><span class="n">distance</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="go">Nearest to RGB(255, 140, 60): darkorange (ΔE: 7.2)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load 3D printing filaments</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filaments</span> <span class="o">=</span> <span class="n">FilamentPalette</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Search by maker and material</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">pla_colors</span> <span class="o">=</span> <span class="n">filaments</span><span class="o">.</span><span class="n">find_by_maker</span><span class="p">(</span><span class="s2">&quot;Bambu&quot;</span><span class="p">,</span> <span class="n">type_name</span><span class="o">=</span><span class="s2">&quot;PLA&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">pla_colors</span><span class="p">)</span><span class="si">}</span><span class="s2"> Bambu PLA colors&quot;</span><span class="p">)</span>
+<span class="go">Found 24 Bambu PLA colors</span>
+</pre></div>
+</div>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">ColorRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'colors.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#ColorRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.ColorRecord" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Immutable record representing a named CSS color with precomputed color space values.</p>
+<p>This dataclass is frozen (immutable) - once created, you can’t change it.
+This is perfect for colors: a color IS what it IS! 🎨</p>
+<p>All color space values are precomputed and stored for fast access without
+conversion overhead. The source field tracks which JSON file provided this
+color, enabling user override detection and debugging.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.name">
+<span class="sig-name descname"><span class="pre">name</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.name" title="Link to this definition"></a></dt>
+<dd><p>Color name (e.g., “coral”, “lightblue”, “darkslategray”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.hex">
+<span class="sig-name descname"><span class="pre">hex</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.hex" title="Link to this definition"></a></dt>
+<dd><p>Hex color code with # prefix (e.g., “#FF7F50”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.rgb">
+<span class="sig-name descname"><span class="pre">rgb</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.rgb" title="Link to this definition"></a></dt>
+<dd><p>RGB color tuple with values 0-255 (e.g., (255, 127, 80))</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.hsl">
+<span class="sig-name descname"><span class="pre">hsl</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.hsl" title="Link to this definition"></a></dt>
+<dd><p>HSL color tuple (H: 0-360°, S: 0-100%, L: 0-100%)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.lab">
+<span class="sig-name descname"><span class="pre">lab</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.lab" title="Link to this definition"></a></dt>
+<dd><p>CIE LAB color tuple (L: 0-100, a: ~-128 to +127, b: ~-128 to +127)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.lch">
+<span class="sig-name descname"><span class="pre">lch</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.lch" title="Link to this definition"></a></dt>
+<dd><p>CIE LCH color tuple (L: 0-100, C: 0-100+, H: 0-360°)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.source">
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#color_tools.palette.ColorRecord.source" title="Link to this definition"></a></dt>
+<dd><p>JSON filename where this record originated (default: “colors.json”)</p>
+</dd></dl>
+
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">Palette</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">palette</span> <span class="o">=</span> <span class="n">Palette</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span> <span class="o">=</span> <span class="n">palette</span><span class="o">.</span><span class="n">get_by_name</span><span class="p">(</span><span class="s2">&quot;coral&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: RGB</span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">rgb</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">coral: RGB(255, 127, 80)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;LAB: </span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">lab</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">LAB: (67.29, 44.61, 49.72)</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>hex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>rgb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
+<li><p><strong>hsl</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>lab</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>lch</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id0">
+<span class="sig-name descname"><span class="pre">name</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id0" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id1">
+<span class="sig-name descname"><span class="pre">hex</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id2">
+<span class="sig-name descname"><span class="pre">rgb</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id3">
+<span class="sig-name descname"><span class="pre">hsl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id4">
+<span class="sig-name descname"><span class="pre">lab</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id5">
+<span class="sig-name descname"><span class="pre">lch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">,</span> <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id5" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id6">
+<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'colors.json'</span></em><a class="headerlink" href="#id6" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#ColorRecord.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.ColorRecord.__str__" title="Link to this definition"></a></dt>
+<dd><p>Human-readable color representation: name (#hex)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.ColorRecord.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hsl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">lch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'colors.json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.palette.ColorRecord.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>hex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>rgb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p></li>
+<li><p><strong>hsl</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>lab</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>lch</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">FilamentRecord</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finish</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">td_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'filaments.json'</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentRecord"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentRecord" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Immutable record representing a 3D printing filament color.</p>
+<p>This dataclass handles both single-color and dual-color filaments (like silk/rainbow
+filaments with two twisted colors). The rgb property intelligently handles dual-color
+hex codes (e.g., “#AABBCC-#DDEEFF”) based on the global dual_color_mode setting.</p>
+<p>The source field tracks which JSON file provided this filament, enabling user
+override detection and debugging.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.id">
+<span class="sig-name descname"><span class="pre">id</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.id" title="Link to this definition"></a></dt>
+<dd><p>Unique identifier slug (e.g., “bambu-lab-pla-silk-plus-red”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.maker">
+<span class="sig-name descname"><span class="pre">maker</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.maker" title="Link to this definition"></a></dt>
+<dd><p>Manufacturer name (e.g., “Bambu Lab”, “Polymaker”, “Prusament”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.type">
+<span class="sig-name descname"><span class="pre">type</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.type" title="Link to this definition"></a></dt>
+<dd><p>Filament material type (e.g., “PLA”, “PETG”, “ABS”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.finish">
+<span class="sig-name descname"><span class="pre">finish</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.finish" title="Link to this definition"></a></dt>
+<dd><p>Surface finish type (e.g., “Matte”, “Silk”, “PolyMax”) or None</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.color">
+<span class="sig-name descname"><span class="pre">color</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.color" title="Link to this definition"></a></dt>
+<dd><p>Color name as labeled by manufacturer (e.g., “Jet Black”, “Signal Red”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.hex">
+<span class="sig-name descname"><span class="pre">hex</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.hex" title="Link to this definition"></a></dt>
+<dd><p>Hex color code with # prefix, may contain dash for dual colors (e.g., “#333333-#666666”)</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.td_value">
+<span class="sig-name descname"><span class="pre">td_value</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.td_value" title="Link to this definition"></a></dt>
+<dd><p>Light transmission depth - how much light passes through the filament.
+Used for HueForge 3D printing to model light transmission through layers.
+Most filaments: 0-10 (opaque to slightly translucent)
+Transparent/clear filaments: ~100
+Scale is open-ended and can exceed 100 for highly transparent materials.
+None indicates opaque or unknown transmission characteristics.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.other_names">
+<span class="sig-name descname"><span class="pre">other_names</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.other_names" title="Link to this definition"></a></dt>
+<dd><p>Alternative color names (regional variants, historical names) or None</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.source">
+<span class="sig-name descname"><span class="pre">source</span></span><a class="headerlink" href="#color_tools.palette.FilamentRecord.source" title="Link to this definition"></a></dt>
+<dd><p>JSON filename where this record originated (default: “filaments.json”)</p>
+</dd></dl>
+
+<dl>
+<dt>Properties:</dt><dd><dl class="simple">
+<dt>rgb: RGB tuple (0-255 each) computed from hex, handles dual-color filaments</dt><dd><p>based on dual_color_mode (“first”, “last”, or “mix”)</p>
+</dd>
+</dl>
+<p>lab: CIE LAB tuple computed on-demand from RGB
+lch: CIE LCH tuple computed on-demand from RGB</p>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools</span><span class="w"> </span><span class="kn">import</span> <span class="n">FilamentPalette</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">palette</span> <span class="o">=</span> <span class="n">FilamentPalette</span><span class="o">.</span><span class="n">load_default</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">filament</span> <span class="o">=</span> <span class="n">palette</span><span class="o">.</span><span class="n">find_by_maker</span><span class="p">(</span><span class="s2">&quot;Bambu Lab&quot;</span><span class="p">,</span> <span class="n">type_name</span><span class="o">=</span><span class="s2">&quot;PLA&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">filament</span><span class="o">.</span><span class="n">maker</span><span class="si">}</span><span class="s2"> </span><span class="si">{</span><span class="n">filament</span><span class="o">.</span><span class="n">type</span><span class="si">}</span><span class="s2"> - </span><span class="si">{</span><span class="n">filament</span><span class="o">.</span><span class="n">color</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">Bambu Lab PLA - Jet Black</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;RGB: </span><span class="si">{</span><span class="n">filament</span><span class="o">.</span><span class="n">rgb</span><span class="si">}</span><span class="s2">, Hex: </span><span class="si">{</span><span class="n">filament</span><span class="o">.</span><span class="n">hex</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+<span class="go">RGB: (51, 51, 51), Hex: #333333</span>
+</pre></div>
+</div>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>maker</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>finish</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>)</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>hex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>td_value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>other_names</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>)</p></li>
+<li><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id7">
+<span class="sig-name descname"><span class="pre">id</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id7" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id8">
+<span class="sig-name descname"><span class="pre">maker</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id8" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id9">
+<span class="sig-name descname"><span class="pre">type</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id9" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id10">
+<span class="sig-name descname"><span class="pre">finish</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">]</span></em><a class="headerlink" href="#id10" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id11">
+<span class="sig-name descname"><span class="pre">color</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id11" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id12">
+<span class="sig-name descname"><span class="pre">hex</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><a class="headerlink" href="#id12" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id13">
+<span class="sig-name descname"><span class="pre">td_value</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a><span class="pre">]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id13" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id14">
+<span class="sig-name descname"><span class="pre">other_names</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a><span class="pre">[</span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a><span class="pre">]]</span></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">None</span></em><a class="headerlink" href="#id14" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="id15">
+<span class="sig-name descname"><span class="pre">source</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></em><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'filaments.json'</span></em><a class="headerlink" href="#id15" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.rgb">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">rgb</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><span class="pre">int</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentRecord.rgb" title="Link to this definition"></a></dt>
+<dd><p>Convert hex to RGB tuple, handling dual-color filaments.</p>
+<p>This is where the dual-color magic happens! If hex contains a dash
+(e.g., “#333333-#666666”), we parse BOTH colors and handle them based
+on the global dual_color_mode setting:
+- “first”: Use first color (default)
+- “last”: Use second color
+- “mix”: Perceptually blend in LAB space (the proper way!)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>RGB tuple (0-255 for each component)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.lab">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lab</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentRecord.lab" title="Link to this definition"></a></dt>
+<dd><p>Convert to LAB color space.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.lch">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">lch</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentRecord.lch" title="Link to this definition"></a></dt>
+<dd><p>Convert to LCH color space.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.hsl">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">hsl</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><span class="pre">Tuple</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">,</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><span class="pre">float</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentRecord.hsl" title="Link to this definition"></a></dt>
+<dd><p>Convert to HSL color space.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.__str__">
+<span class="sig-name descname"><span class="pre">__str__</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentRecord.__str__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentRecord.__str__" title="Link to this definition"></a></dt>
+<dd><p>Human-readable filament representation: Maker Type Finish - Color (#hex)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentRecord.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">id</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maker</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finish</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hex</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">td_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">other_names</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">source</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'filaments.json'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.palette.FilamentRecord.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>id</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>maker</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>type</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>finish</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>)</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>hex</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+<li><p><strong>td_value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>other_names</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>)</p></li>
+<li><p><strong>source</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.palette.load_colors">
+<span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">load_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#load_colors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.load_colors" title="Link to this definition"></a></dt>
+<dd><p>Load CSS color database from JSON files (core + user additions).</p>
+<p>Loads colors from both the core colors.json file and optional user/user-colors.json
+file in the data directory. Core colors are loaded first, followed by user colors.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Path to directory containing JSON files, or path to specific
+colors JSON file. If None, looks for colors.json in the
+package’s data/ directory.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of ColorRecord objects (core colors + user colors)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.palette.load_filaments">
+<span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">load_filaments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#load_filaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.load_filaments" title="Link to this definition"></a></dt>
+<dd><p>Load filament database from JSON files (core + user additions).</p>
+<p>Loads filaments from both the core filaments.json file and optional
+user/user-filaments.json file in the data directory. Core filaments are loaded
+first, followed by user filaments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Path to directory containing JSON files, or path to specific
+filaments JSON file. If None, looks for filaments.json in
+the package’s data/ directory.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of FilamentRecord objects (core filaments + user filaments)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.palette.load_maker_synonyms">
+<span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">load_maker_synonyms</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">json_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#load_maker_synonyms"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.load_maker_synonyms" title="Link to this definition"></a></dt>
+<dd><p>Load maker synonyms from JSON files (core + user additions).</p>
+<p>Loads synonyms from both the core maker_synonyms.json file and optional
+user/user-synonyms.json file in the data directory. Synonyms are merged, with
+user additions extending or replacing core synonyms per maker.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>json_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Path to directory containing JSON files, or path to specific
+maker_synonyms JSON file. If None, looks for maker_synonyms.json
+in the package’s data/ directory.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Dictionary mapping canonical maker names to lists of synonyms</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.palette.load_palette">
+<span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">load_palette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">json_path</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#load_palette"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.load_palette" title="Link to this definition"></a></dt>
+<dd><p>Load a named retro palette from the palettes directory.</p>
+<p>Palettes are loaded from:
+1. User palettes: data/user/palettes/{name}.json (if exists)
+2. Core palettes: data/palettes/{name}.json (built-in)</p>
+<p>User palettes override core palettes with the same name.</p>
+<p>Common built-in palettes include:
+- cga4: CGA 4-color palette (Palette 1, high intensity) - classic gaming!
+- cga16: CGA 16-color palette (full RGBI)
+- ega16: EGA 16-color palette (standard/default)
+- ega64: EGA 64-color palette (full 6-bit RGB)
+- vga: VGA 256-color palette (Mode 13h)
+- web: Web-safe 216-color palette (6x6x6 RGB cube)
+- gameboy: Game Boy 4-shade green palette</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Palette name (e.g., ‘cga4’, ‘ega16’, ‘vga’, ‘web’, or custom user palette)</p></li>
+<li><p><strong>json_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Optional custom data directory. If None, uses package default.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#color_tools.palette.Palette" title="color_tools.palette.Palette"><code class="xref py py-class docutils literal notranslate"><span class="pre">Palette</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Palette object loaded from the specified palette file</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><ul class="simple">
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If the palette file doesn’t exist</p></li>
+<li><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#ValueError" title="(in Python v3.14)"><strong>ValueError</strong></a> – If the palette file is malformed or contains invalid data</p></li>
+</ul>
+</dd>
+</dl>
+<p class="rubric">Example</p>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">cga</span> <span class="o">=</span> <span class="n">load_palette</span><span class="p">(</span><span class="s2">&quot;cga4&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">color</span><span class="p">,</span> <span class="n">dist</span> <span class="o">=</span> <span class="n">cga</span><span class="o">.</span><span class="n">nearest_color</span><span class="p">((</span><span class="mi">128</span><span class="p">,</span> <span class="mi">64</span><span class="p">,</span> <span class="mi">200</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Nearest CGA color: </span><span class="si">{</span><span class="n">color</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1"># Load custom user palette</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">custom</span> <span class="o">=</span> <span class="n">load_palette</span><span class="p">(</span><span class="s2">&quot;my_custom_palette&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Loaded </span><span class="si">{</span><span class="nb">len</span><span class="p">(</span><span class="n">custom</span><span class="o">.</span><span class="n">records</span><span class="p">)</span><span class="si">}</span><span class="s2"> colors from user palette&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.palette.Palette">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">Palette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>CSS color palette with multiple indexing strategies for fast lookup.</p>
+<p>Think of this as a database with multiple indexes. Want to find a color
+by name? O(1). By RGB? O(1). By LAB? O(1). The tradeoff is memory -
+we keep multiple dictionaries pointing to the same ColorRecords.</p>
+<p>For a palette with ~150 CSS colors, this is totally fine! 🚀</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>records</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span>)</p>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>records</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span>)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.load_default">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.load_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.load_default" title="Link to this definition"></a></dt>
+<dd><p>Load the default CSS color palette from the package data.</p>
+<p>This is a convenience method so you don’t have to worry about
+file paths - just call Palette.load_default() and go!</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#color_tools.palette.Palette" title="color_tools.palette.Palette"><code class="xref py py-class docutils literal notranslate"><span class="pre">Palette</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.find_by_name">
+<span class="sig-name descname"><span class="pre">find_by_name</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.find_by_name"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.find_by_name" title="Link to this definition"></a></dt>
+<dd><p>Find color by exact name match (case-insensitive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>name</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.find_by_rgb">
+<span class="sig-name descname"><span class="pre">find_by_rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.find_by_rgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.find_by_rgb" title="Link to this definition"></a></dt>
+<dd><p>Find color by exact RGB match.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rgb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.find_by_hsl">
+<span class="sig-name descname"><span class="pre">find_by_hsl</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">hsl</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.find_by_hsl"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.find_by_hsl" title="Link to this definition"></a></dt>
+<dd><p>Find color by HSL match (with rounding for fuzzy matching).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>hsl</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>rounding</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.find_by_lab">
+<span class="sig-name descname"><span class="pre">find_by_lab</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lab</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.find_by_lab"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.find_by_lab" title="Link to this definition"></a></dt>
+<dd><p>Find color by LAB match (with rounding for fuzzy matching).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lab</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>rounding</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.find_by_lch">
+<span class="sig-name descname"><span class="pre">find_by_lch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">lch</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">rounding</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.find_by_lch"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.find_by_lch" title="Link to this definition"></a></dt>
+<dd><p>Find color by LCH match (with rounding for fuzzy matching).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>lch</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>)</p></li>
+<li><p><strong>rounding</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.nearest_color">
+<span class="sig-name descname"><span class="pre">nearest_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lab'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de2000'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.nearest_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.nearest_color" title="Link to this definition"></a></dt>
+<dd><p>Find nearest color by space/metric.</p>
+<p>This is the main search function! It iterates through all colors
+and finds the one with minimum distance in the specified space.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>) – Color in the specified space (RGB, HSL, LAB, or LCH)</p></li>
+<li><p><strong>space</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Color space - ‘rgb’, ‘hsl’, ‘lab’, or ‘lch’ (default: ‘lab’)</p></li>
+<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric - ‘euclidean’, ‘de76’, ‘de94’, ‘de2000’, ‘cmc’</p></li>
+<li><p><strong>cmc_l</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric (default 2:1 for acceptability)</p></li>
+<li><p><strong>cmc_c</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric (default 2:1 for acceptability)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nearest_color_record, distance) tuple</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.nearest_colors">
+<span class="sig-name descname"><span class="pre">nearest_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">space</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'lab'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de2000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.nearest_colors"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.nearest_colors" title="Link to this definition"></a></dt>
+<dd><p>Find the nearest N colors by space/metric.</p>
+<p>Similar to nearest_color but returns multiple results sorted by distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span>) – Color in the specified space (RGB, HSL, LAB, or LCH)</p></li>
+<li><p><strong>space</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Color space - ‘rgb’, ‘hsl’, ‘lab’, or ‘lch’ (default: ‘lab’)</p></li>
+<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric - ‘euclidean’, ‘de76’, ‘de94’, ‘de2000’, ‘cmc’</p></li>
+<li><p><strong>count</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Number of results to return (default: 5, max: 50)</p></li>
+<li><p><strong>cmc_l</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric (default 2:1 for acceptability)</p></li>
+<li><p><strong>cmc_c</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric (default 2:1 for acceptability)</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#color_tools.palette.ColorRecord" title="color_tools.palette.ColorRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">ColorRecord</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of (color_record, distance) tuples sorted by distance (closest first)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.Palette.get_override_info">
+<span class="sig-name descname"><span class="pre">get_override_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#Palette.get_override_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.Palette.get_override_info" title="Link to this definition"></a></dt>
+<dd><p>Get information about user overrides in this palette.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;colors&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;color_name&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;core_source&quot;</span><span class="p">,</span> <span class="s2">&quot;user_source&quot;</span><span class="p">)},</span>
+        <span class="s2">&quot;rgb&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;(r,g,b)&quot;</span><span class="p">:</span> <span class="p">(</span><span class="s2">&quot;core_source&quot;</span><span class="p">,</span> <span class="s2">&quot;user_source&quot;</span><span class="p">)}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with override information structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.palette.</span></span><span class="sig-name descname"><span class="pre">FilamentPalette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maker_synonyms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Filament palette with multiple indexing strategies for fast lookup.</p>
+<p>Similar to Palette, but designed for 3D printing filaments which have
+additional properties (maker, type, finish) that we want to search by.</p>
+<p>The indices allow for fast filtering: “Show me all Bambu Lab PLA Matte filaments”
+becomes a simple dictionary lookup instead of scanning the whole list! 📇</p>
+<p>Supports maker synonyms: you can search for “Bambu” and it will find “Bambu Lab”
+filaments automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>records</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span>)</p></li>
+<li><p><strong>maker_synonyms</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]]</span>)</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.__init__">
+<span class="sig-name descname"><span class="pre">__init__</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">records</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maker_synonyms</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.__init__"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.__init__" title="Link to this definition"></a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>records</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span>)</p></li>
+<li><p><strong>maker_synonyms</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Dict" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Dict</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]]</span>)</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.load_default">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">load_default</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.load_default"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.load_default" title="Link to this definition"></a></dt>
+<dd><p>Load the default filament palette from the package data.</p>
+<p>Convenience method for quick loading without worrying about paths.
+Also loads maker synonyms automatically.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference internal" href="#color_tools.palette.FilamentPalette" title="color_tools.palette.FilamentPalette"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentPalette</span></code></a></span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.find_by_maker">
+<span class="sig-name descname"><span class="pre">find_by_maker</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maker</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.find_by_maker"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.find_by_maker" title="Link to this definition"></a></dt>
+<dd><p>Find all filaments by a single maker or a list of makers.</p>
+<p>Supports synonyms: searching for “Bambu” will find “Bambu Lab” filaments.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>maker</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – A single maker name (str) or a list of names (can use synonyms).</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all matching FilamentRecord objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.find_by_type">
+<span class="sig-name descname"><span class="pre">find_by_type</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">type_name</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.find_by_type"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.find_by_type" title="Link to this definition"></a></dt>
+<dd><p>Find all filaments by a single type or a list of types.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>type_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – A single filament type (str) or a list of types.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all matching FilamentRecord objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.find_by_color">
+<span class="sig-name descname"><span class="pre">find_by_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">color</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.find_by_color"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.find_by_color" title="Link to this definition"></a></dt>
+<dd><p>Find all filaments by color name (case-insensitive).</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.find_by_rgb">
+<span class="sig-name descname"><span class="pre">find_by_rgb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">rgb</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.find_by_rgb"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.find_by_rgb" title="Link to this definition"></a></dt>
+<dd><p>Find all filaments by exact RGB match, with user filaments prioritized.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>rgb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>)</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.find_by_finish">
+<span class="sig-name descname"><span class="pre">find_by_finish</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">finish</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.find_by_finish"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.find_by_finish" title="Link to this definition"></a></dt>
+<dd><p>Find all filaments by a single finish or a list of finishes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>finish</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span>) – A single filament finish (str) or a list of finishes.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of all matching FilamentRecord objects.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.filter">
+<span class="sig-name descname"><span class="pre">filter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finish</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">color</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.filter"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.filter" title="Link to this definition"></a></dt>
+<dd><p>Filter filaments by multiple criteria.</p>
+<p>This is like SQL WHERE clauses! Start with all records, then filter
+down by each criterion that’s provided. Maker, type, and finish
+can accept a single string or a list of strings.</p>
+<p>Supports maker synonyms: filtering by “Bambu” will include “Bambu Lab”.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>maker</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A maker name or list of maker names (can use synonyms).</p></li>
+<li><p><strong>type_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A filament type or list of types.</p></li>
+<li><p><strong>finish</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – A filament finish or list of finishes.</p></li>
+<li><p><strong>color</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Optional" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Optional</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]</span>) – A single color name to match (case-insensitive).</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>A list of FilamentRecord objects matching the criteria.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.nearest_filament">
+<span class="sig-name descname"><span class="pre">nearest_filament</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_rgb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de2000'</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">maker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finish</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.nearest_filament"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.nearest_filament" title="Link to this definition"></a></dt>
+<dd><p>Find nearest filament by color similarity, with optional filters.</p>
+<p>The killer feature for 3D printing! “I want this exact color… what
+filament should I buy?” 🎨🖨️</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_rgb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>) – Target RGB color tuple.</p></li>
+<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric - ‘euclidean’, ‘de76’, ‘de94’, ‘de2000’, ‘cmc’.</p></li>
+<li><p><strong>maker</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Optional maker name or list of names to filter by. Use “*” to ignore filter.</p></li>
+<li><p><strong>type_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Optional filament type or list of types to filter by. Use “*” to ignore filter.</p></li>
+<li><p><strong>finish</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Optional filament finish or list of finishes to filter by. Use “*” to ignore filter.</p></li>
+<li><p><strong>cmc_l</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric.</p></li>
+<li><p><strong>cmc_c</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>(nearest_filament_record, distance) tuple.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.nearest_filaments">
+<span class="sig-name descname"><span class="pre">nearest_filaments</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">target_rgb</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">metric</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'de2000'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">count</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">5</span></span></em>, <em class="sig-param"><span class="keyword-only-separator o"><abbr title="Keyword-only parameters separator (PEP 3102)"><span class="pre">*</span></abbr></span></em>, <em class="sig-param"><span class="n"><span class="pre">maker</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">type_name</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">finish</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_l</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">2.0</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">cmc_c</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.nearest_filaments"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.nearest_filaments" title="Link to this definition"></a></dt>
+<dd><p>Find nearest N filaments by color similarity, with optional filters.</p>
+<p>Similar to nearest_filament but returns multiple results sorted by distance.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>target_rgb</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a>]</span>) – Target RGB color tuple.</p></li>
+<li><p><strong>metric</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Distance metric - ‘euclidean’, ‘de76’, ‘de94’, ‘de2000’, ‘cmc’.</p></li>
+<li><p><strong>count</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#int" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">int</span></code></a></span>) – Number of results to return (default: 5, max: 50)</p></li>
+<li><p><strong>maker</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Optional maker name or list of names to filter by. Use “*” to ignore filter.</p></li>
+<li><p><strong>type_name</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Optional filament type or list of types to filter by. Use “*” to ignore filter.</p></li>
+<li><p><strong>finish</strong> (<span class="sphinx_autodoc_typehints-type"><code class="xref py py-data docutils literal notranslate"><span class="pre">Union</span></code>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>], <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span>) – Optional filament finish or list of finishes to filter by. Use “*” to ignore filter.</p></li>
+<li><p><strong>cmc_l</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric.</p></li>
+<li><p><strong>cmc_c</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a></span>) – Parameters for CMC metric.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">List</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.Tuple" title="(in Python v3.14)"><code class="xref py py-data docutils literal notranslate"><span class="pre">Tuple</span></code></a>[<a class="reference internal" href="#color_tools.palette.FilamentRecord" title="color_tools.palette.FilamentRecord"><code class="xref py py-class docutils literal notranslate"><span class="pre">FilamentRecord</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/functions.html#float" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">float</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>List of (filament_record, distance) tuples sorted by distance (closest first).</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.makers">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">makers</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentPalette.makers" title="Link to this definition"></a></dt>
+<dd><p>Get sorted list of all makers.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.types">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">types</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentPalette.types" title="Link to this definition"></a></dt>
+<dd><p>Get sorted list of all types.</p>
+</dd></dl>
+
+<dl class="py property">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.finishes">
+<em class="property"><span class="k"><span class="pre">property</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">finishes</span></span><em class="property"><span class="p"><span class="pre">:</span></span><span class="w"> </span><a class="reference external" href="https://docs.python.org/3/library/typing.html#typing.List" title="(in Python v3.14)"><span class="pre">List</span></a><span class="p"><span class="pre">[</span></span><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><span class="pre">str</span></a><span class="p"><span class="pre">]</span></span></em><a class="headerlink" href="#color_tools.palette.FilamentPalette.finishes" title="Link to this definition"></a></dt>
+<dd><p>Get sorted list of all finishes.</p>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.palette.FilamentPalette.get_override_info">
+<span class="sig-name descname"><span class="pre">get_override_info</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/palette.html#FilamentPalette.get_override_info"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.palette.FilamentPalette.get_override_info" title="Link to this definition"></a></dt>
+<dd><p>Get information about user overrides in this filament palette.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p><div class="highlight-python notranslate"><div class="highlight"><pre><span></span><span class="p">{</span>
+    <span class="s2">&quot;filaments&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;rgb&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;(r,g,b)&quot;</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;core&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">sources</span><span class="p">],</span> <span class="s2">&quot;user&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">sources</span><span class="p">]}}</span>
+    <span class="p">},</span>
+    <span class="s2">&quot;synonyms&quot;</span><span class="p">:</span> <span class="p">{</span>
+        <span class="s2">&quot;maker_name&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s2">&quot;type&quot;</span><span class="p">:</span> <span class="s2">&quot;replaced|extended&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;old&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">core_synonyms</span><span class="p">],</span>
+            <span class="s2">&quot;new&quot;</span><span class="p">:</span> <span class="p">[</span><span class="n">user_synonyms</span><span class="p">]</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>Dictionary with override information structure</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="color_tools.distance.html" class="btn btn-neutral float-left" title="color_tools.distance" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="color_tools.gamut.html" class="btn btn-neutral float-right" title="color_tools.gamut" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

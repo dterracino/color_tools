@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.image &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="prev" title="color_tools.matrices" href="color_tools.matrices.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">color_tools.image</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#example">Example:</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.ColorCluster"><code class="docutils literal notranslate"><span class="pre">ColorCluster</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.ColorChange"><code class="docutils literal notranslate"><span class="pre">ColorChange</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.extract_unique_colors"><code class="docutils literal notranslate"><span class="pre">extract_unique_colors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.extract_color_clusters"><code class="docutils literal notranslate"><span class="pre">extract_color_clusters()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.redistribute_luminance"><code class="docutils literal notranslate"><span class="pre">redistribute_luminance()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.format_color_change_report"><code class="docutils literal notranslate"><span class="pre">format_color_change_report()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.l_value_to_hueforge_layer"><code class="docutils literal notranslate"><span class="pre">l_value_to_hueforge_layer()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.count_unique_colors"><code class="docutils literal notranslate"><span class="pre">count_unique_colors()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.get_color_histogram"><code class="docutils literal notranslate"><span class="pre">get_color_histogram()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.get_dominant_color"><code class="docutils literal notranslate"><span class="pre">get_dominant_color()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.is_indexed_mode"><code class="docutils literal notranslate"><span class="pre">is_indexed_mode()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.analyze_brightness"><code class="docutils literal notranslate"><span class="pre">analyze_brightness()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.analyze_contrast"><code class="docutils literal notranslate"><span class="pre">analyze_contrast()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.analyze_noise_level"><code class="docutils literal notranslate"><span class="pre">analyze_noise_level()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.analyze_dynamic_range"><code class="docutils literal notranslate"><span class="pre">analyze_dynamic_range()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.transform_image"><code class="docutils literal notranslate"><span class="pre">transform_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.simulate_cvd_image"><code class="docutils literal notranslate"><span class="pre">simulate_cvd_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.correct_cvd_image"><code class="docutils literal notranslate"><span class="pre">correct_cvd_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.quantize_image_to_palette"><code class="docutils literal notranslate"><span class="pre">quantize_image_to_palette()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.add_text_watermark"><code class="docutils literal notranslate"><span class="pre">add_text_watermark()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.add_image_watermark"><code class="docutils literal notranslate"><span class="pre">add_image_watermark()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.add_svg_watermark"><code class="docutils literal notranslate"><span class="pre">add_svg_watermark()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.convert_image"><code class="docutils literal notranslate"><span class="pre">convert_image()</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.image.get_supported_formats"><code class="docutils literal notranslate"><span class="pre">get_supported_formats()</span></code></a></li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">color_tools.image</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/color_tools.image.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-color_tools.image">
+<span id="color-tools-image"></span><h1>color_tools.image<a class="headerlink" href="#module-color_tools.image" title="Link to this heading"></a></h1>
+<p>Image processing module for color_tools.</p>
+<p>This module provides image color analysis and manipulation tools:
+- Format Conversion: Convert between PNG, JPEG, WebP, HEIC, AVIF, etc. (conversion.py)
+- Watermarking: Add text, image, or SVG watermarks (watermark.py)
+- Color Analysis: Extract dominant colors with K-means clustering (analysis.py)
+- HueForge 3D printing: Luminance redistribution for multi-color printing (analysis.py)
+- CVD Operations: Simulate/correct color vision deficiencies (basic.py)
+- Palette Quantization: Convert to retro palettes with dithering (basic.py)
+- General Analysis: Count colors, brightness, contrast, noise (basic.py)</p>
+<p>Requires Pillow: pip install color-match-tools[image]</p>
+<section id="example">
+<h2>Example:<a class="headerlink" href="#example" title="Link to this heading"></a></h2>
+<div class="doctest highlight-default notranslate"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools.image</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+<span class="gp">... </span>    <span class="n">convert_image</span><span class="p">,</span> <span class="n">add_watermark</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">count_unique_colors</span><span class="p">,</span> <span class="n">analyze_brightness</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">simulate_cvd_image</span><span class="p">,</span> <span class="n">quantize_image_to_palette</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Convert image formats (auto-generates output filename)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convert_image</span><span class="p">(</span><span class="s2">&quot;photo.webp&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;png&quot;</span><span class="p">)</span>  <span class="c1"># Creates photo.png</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">convert_image</span><span class="p">(</span><span class="s2">&quot;photo.jpg&quot;</span><span class="p">,</span> <span class="n">output_format</span><span class="o">=</span><span class="s2">&quot;webp&quot;</span><span class="p">,</span> <span class="n">lossless</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="go">PosixPath(&#39;photo.webp&#39;)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Add watermark</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">add_text_watermark</span><span class="p">(</span>
+<span class="gp">... </span>    <span class="s2">&quot;photo.jpg&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">text</span><span class="o">=</span><span class="s2">&quot;© 2025 MyBrand&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">position</span><span class="o">=</span><span class="s2">&quot;bottom-right&quot;</span><span class="p">,</span>
+<span class="gp">... </span>    <span class="n">output_path</span><span class="o">=</span><span class="s2">&quot;watermarked.jpg&quot;</span>
+<span class="gp">... </span><span class="p">)</span>
+<span class="go">PosixPath(&#39;watermarked.jpg&#39;)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Count colors in an image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">total</span> <span class="o">=</span> <span class="n">count_unique_colors</span><span class="p">(</span><span class="s2">&quot;photo.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Found </span><span class="si">{</span><span class="n">total</span><span class="si">}</span><span class="s2"> unique colors&quot;</span><span class="p">)</span>
+<span class="go">Found 42387 unique colors</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Analyze image quality</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">brightness</span> <span class="o">=</span> <span class="n">analyze_brightness</span><span class="p">(</span><span class="s2">&quot;photo.jpg&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Brightness: </span><span class="si">{</span><span class="n">brightness</span><span class="p">[</span><span class="s1">&#39;mean_brightness&#39;</span><span class="p">]</span><span class="si">:</span><span class="s2">.1f</span><span class="si">}</span><span class="s2"> (</span><span class="si">{</span><span class="n">brightness</span><span class="p">[</span><span class="s1">&#39;assessment&#39;</span><span class="p">]</span><span class="si">}</span><span class="s2">)&quot;</span><span class="p">)</span>
+<span class="go">Brightness: 127.3 (normal)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Test accessibility with CVD simulation</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_image</span> <span class="o">=</span> <span class="n">simulate_cvd_image</span><span class="p">(</span><span class="s2">&quot;chart.png&quot;</span><span class="p">,</span> <span class="s2">&quot;deuteranopia&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">sim_image</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;chart_colorblind_view.png&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Create retro-style artwork</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">retro</span> <span class="o">=</span> <span class="n">quantize_image_to_palette</span><span class="p">(</span><span class="s2">&quot;photo.jpg&quot;</span><span class="p">,</span> <span class="s2">&quot;cga4&quot;</span><span class="p">,</span> <span class="n">dither</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">retro</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="s2">&quot;retro_cga.png&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract dominant colors for Hueforge</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span><span class="w"> </span><span class="nn">color_tools.image</span><span class="w"> </span><span class="kn">import</span> <span class="n">extract_color_clusters</span><span class="p">,</span> <span class="n">redistribute_luminance</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Extract 10 dominant colors from image</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">clusters</span> <span class="o">=</span> <span class="n">extract_color_clusters</span><span class="p">(</span><span class="s2">&quot;photo.jpg&quot;</span><span class="p">,</span> <span class="n">n_colors</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Redistribute luminance for Hueforge</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">colors</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span><span class="o">.</span><span class="n">centroid_rgb</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">clusters</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">changes</span> <span class="o">=</span> <span class="n">redistribute_luminance</span><span class="p">(</span><span class="n">colors</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="c1"># Show layer assignments</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">for</span> <span class="n">change</span> <span class="ow">in</span> <span class="n">changes</span><span class="p">:</span>
+<span class="gp">... </span>    <span class="nb">print</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Layer </span><span class="si">{</span><span class="n">change</span><span class="o">.</span><span class="n">hueforge_layer</span><span class="si">}</span><span class="s2">: RGB</span><span class="si">{</span><span class="n">change</span><span class="o">.</span><span class="n">new_rgb</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</section>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.image.ColorCluster">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">ColorCluster</span></span><a class="headerlink" href="#color_tools.image.ColorCluster" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.image.ColorChange">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">ColorChange</span></span><a class="headerlink" href="#color_tools.image.ColorChange" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+</dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.extract_unique_colors">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">extract_unique_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.extract_unique_colors" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.extract_color_clusters">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">extract_color_clusters</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.extract_color_clusters" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.redistribute_luminance">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">redistribute_luminance</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.redistribute_luminance" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.format_color_change_report">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">format_color_change_report</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.format_color_change_report" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.l_value_to_hueforge_layer">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">l_value_to_hueforge_layer</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.l_value_to_hueforge_layer" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.count_unique_colors">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">count_unique_colors</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.count_unique_colors" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.get_color_histogram">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">get_color_histogram</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.get_color_histogram" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.get_dominant_color">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">get_dominant_color</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.get_dominant_color" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.is_indexed_mode">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">is_indexed_mode</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.is_indexed_mode" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.analyze_brightness">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">analyze_brightness</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.analyze_brightness" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.analyze_contrast">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">analyze_contrast</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.analyze_contrast" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.analyze_noise_level">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">analyze_noise_level</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.analyze_noise_level" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.analyze_dynamic_range">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">analyze_dynamic_range</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.analyze_dynamic_range" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.transform_image">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">transform_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.transform_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.simulate_cvd_image">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">simulate_cvd_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.simulate_cvd_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.correct_cvd_image">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">correct_cvd_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.correct_cvd_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.quantize_image_to_palette">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">quantize_image_to_palette</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.quantize_image_to_palette" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.add_text_watermark">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">add_text_watermark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.add_text_watermark" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.add_image_watermark">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">add_image_watermark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.add_image_watermark" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.add_svg_watermark">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">add_svg_watermark</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.add_svg_watermark" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.convert_image">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">convert_image</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.convert_image" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py function">
+<dt class="sig sig-object py" id="color_tools.image.get_supported_formats">
+<span class="sig-prename descclassname"><span class="pre">color_tools.image.</span></span><span class="sig-name descname"><span class="pre">get_supported_formats</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="o"><span class="pre">*</span></span><span class="n"><span class="pre">args</span></span></em>, <em class="sig-param"><span class="o"><span class="pre">**</span></span><span class="n"><span class="pre">kwargs</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#color_tools.image.get_supported_formats" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="color_tools.matrices.html" class="btn btn-neutral float-left" title="color_tools.matrices" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

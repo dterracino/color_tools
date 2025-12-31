@@ -1,0 +1,291 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.gamut &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.gamut</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.gamut</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Gamut checking and mapping for sRGB color space.</span>
+
+<span class="sd">Not all LAB colors can be represented in sRGB! Some theoretical colors</span>
+<span class="sd">that humans can perceive simply can&#39;t be displayed on a monitor. This</span>
+<span class="sd">module helps you:</span>
+<span class="sd">1. Check if a LAB color is displayable (in gamut)</span>
+<span class="sd">2. Find the nearest displayable color if it&#39;s not</span>
+
+<span class="sd">The key insight: sRGB is a cube (R, G, B all 0-255), but LAB describes</span>
+<span class="sd">a much larger volume. The intersection is the &quot;sRGB gamut.&quot;</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorConstants</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">lab_to_rgb</span><span class="p">,</span> <span class="n">lab_to_lch</span><span class="p">,</span> <span class="n">lch_to_lab</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">.config</span><span class="w"> </span><span class="kn">import</span> <span class="n">get_gamut_tolerance</span><span class="p">,</span> <span class="n">get_gamut_max_iterations</span>
+
+
+<div class="viewcode-block" id="is_in_srgb_gamut">
+<a class="viewcode-back" href="../../api/color_tools.gamut.html#color_tools.gamut.is_in_srgb_gamut">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">is_in_srgb_gamut</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">tolerance</span><span class="p">:</span> <span class="nb">float</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Check if a LAB color can be represented in sRGB without clipping.</span>
+<span class="sd">    </span>
+<span class="sd">    This is the fundamental question of color reproduction: &quot;Can my monitor</span>
+<span class="sd">    actually show this color, or will it have to fake it by clamping?&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    **How it works:** Convert LAB → RGB *without* clamping. If all RGB</span>
+<span class="sd">    components are naturally in the 0-255 range (with a small tolerance),</span>
+<span class="sd">    the color is in gamut!</span>
+<span class="sd">    </span>
+<span class="sd">    **Why tolerance?** Floating point math is imprecise. A value of</span>
+<span class="sd">    255.0000001 should be considered &quot;in gamut&quot; even though it&#39;s technically</span>
+<span class="sd">    over 255.</span>
+<span class="sd">    </span>
+<span class="sd">    **Examples of out-of-gamut colors:**</span>
+<span class="sd">    - Super saturated colors at mid-lightness (like &quot;laser red&quot;)</span>
+<span class="sd">    - Colors that would need negative RGB values</span>
+<span class="sd">    - Colors that would need RGB values &gt; 255</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab: L*a*b* color tuple</span>
+<span class="sd">        tolerance: How close to 0/255 boundaries before considering out-of-gamut.</span>
+<span class="sd">                   If None, uses the global config value (default 0.01).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        True if the color can be represented in sRGB, False if it would clip</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; is_in_srgb_gamut((50, 0, 0))  # Mid gray</span>
+<span class="sd">        True</span>
+<span class="sd">        &gt;&gt;&gt; is_in_srgb_gamut((50, 150, 100))  # Super saturated - impossible!</span>
+<span class="sd">        False</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">tolerance</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">tolerance</span> <span class="o">=</span> <span class="n">get_gamut_tolerance</span><span class="p">()</span>
+        
+    <span class="k">try</span><span class="p">:</span>
+        <span class="c1"># Convert without clamping to see the &quot;true&quot; values</span>
+        <span class="n">rgb</span> <span class="o">=</span> <span class="n">lab_to_rgb</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">clamp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">rgb</span>
+        
+        <span class="c1"># Check if all components are within valid range (with small tolerance)</span>
+        <span class="n">min_val</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span> <span class="o">-</span> <span class="n">tolerance</span>
+        <span class="n">max_val</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span> <span class="o">+</span> <span class="n">tolerance</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="n">min_val</span> <span class="o">&lt;=</span> <span class="n">r</span> <span class="o">&lt;=</span> <span class="n">max_val</span> <span class="ow">and</span> 
+                <span class="n">min_val</span> <span class="o">&lt;=</span> <span class="n">g</span> <span class="o">&lt;=</span> <span class="n">max_val</span> <span class="ow">and</span> 
+                <span class="n">min_val</span> <span class="o">&lt;=</span> <span class="n">b</span> <span class="o">&lt;=</span> <span class="n">max_val</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+
+
+<div class="viewcode-block" id="find_nearest_in_gamut">
+<a class="viewcode-back" href="../../api/color_tools.gamut.html#color_tools.gamut.find_nearest_in_gamut">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">find_nearest_in_gamut</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> 
+                          <span class="n">max_iterations</span><span class="p">:</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Find the nearest in-gamut LAB color to a given (possibly out-of-gamut) LAB color.</span>
+<span class="sd">    </span>
+<span class="sd">    **The Strategy:** When a color is out of gamut, it&#39;s usually because it&#39;s</span>
+<span class="sd">    too *saturated* (high chroma). So we convert to LCH, then use binary search</span>
+<span class="sd">    to find the maximum chroma that still fits in sRGB. This preserves:</span>
+<span class="sd">    - ✅ Lightness (L) - stays the same</span>
+<span class="sd">    - ✅ Hue (h) - stays the same  </span>
+<span class="sd">    - ❌ Chroma (C) - reduced until it fits</span>
+<span class="sd">    </span>
+<span class="sd">    **Why this works:** Think of it like turning down the &quot;saturation&quot; slider</span>
+<span class="sd">    in Photoshop until the color becomes displayable. The hue doesn&#39;t change</span>
+<span class="sd">    (red stays red), it just becomes less &quot;punchy.&quot;</span>
+<span class="sd">    </span>
+<span class="sd">    **Binary search magic:** Instead of trying every possible chroma value</span>
+<span class="sd">    (0.0, 0.01, 0.02, ...), we do a binary search. Each iteration cuts the</span>
+<span class="sd">    search space in half. After 20 iterations, we&#39;ve checked 2^20 = 1 million</span>
+<span class="sd">    possible values! 🚀</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab: Potentially out-of-gamut L*a*b* color</span>
+<span class="sd">        max_iterations: Maximum desaturation steps (binary search iterations).</span>
+<span class="sd">                       If None, uses global config value (default 20).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        In-gamut L*a*b* color (closest match that can be displayed)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Super saturated red - can&#39;t be displayed!</span>
+<span class="sd">        &gt;&gt;&gt; out_of_gamut = (50, 100, 80)</span>
+<span class="sd">        &gt;&gt;&gt; displayable = find_nearest_in_gamut(out_of_gamut)</span>
+<span class="sd">        &gt;&gt;&gt; # Result: same lightness and hue, but less saturated</span>
+<span class="sd">        &gt;&gt;&gt; is_in_srgb_gamut(displayable)</span>
+<span class="sd">        True</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">max_iterations</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">max_iterations</span> <span class="o">=</span> <span class="n">get_gamut_max_iterations</span><span class="p">()</span>
+        
+    <span class="c1"># If already in gamut, we&#39;re done!</span>
+    <span class="k">if</span> <span class="n">is_in_srgb_gamut</span><span class="p">(</span><span class="n">lab</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">lab</span>
+    
+    <span class="c1"># Convert to LCH for easier chroma manipulation</span>
+    <span class="c1"># LCH = cylindrical LAB (Lightness, Chroma, Hue)</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">lab_to_lch</span><span class="p">(</span><span class="n">lab</span><span class="p">)</span>
+    
+    <span class="c1"># Binary search for the maximum chroma that fits in gamut</span>
+    <span class="c1"># Start with search bounds: [0, current_chroma]</span>
+    <span class="n">min_c</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">NORMALIZED_MIN</span>  <span class="c1"># Minimum possible chroma (gray)</span>
+    <span class="n">max_c</span> <span class="o">=</span> <span class="n">C</span>  <span class="c1"># Maximum possible chroma (current, which we know is too high)</span>
+    
+    <span class="c1"># Binary search: keep splitting the range in half</span>
+    <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">max_iterations</span><span class="p">):</span>
+        <span class="c1"># Try the midpoint</span>
+        <span class="n">test_c</span> <span class="o">=</span> <span class="p">(</span><span class="n">min_c</span> <span class="o">+</span> <span class="n">max_c</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.0</span>
+        <span class="n">test_lab</span> <span class="o">=</span> <span class="n">lch_to_lab</span><span class="p">((</span><span class="n">L</span><span class="p">,</span> <span class="n">test_c</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span>
+        
+        <span class="k">if</span> <span class="n">is_in_srgb_gamut</span><span class="p">(</span><span class="n">test_lab</span><span class="p">):</span>
+            <span class="c1"># This chroma works! Can we go higher?</span>
+            <span class="n">min_c</span> <span class="o">=</span> <span class="n">test_c</span>  <span class="c1"># New lower bound</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># Too saturated, need to reduce</span>
+            <span class="n">max_c</span> <span class="o">=</span> <span class="n">test_c</span>  <span class="c1"># New upper bound</span>
+    
+    <span class="c1"># After max_iterations, min_c is the highest in-gamut chroma</span>
+    <span class="k">return</span> <span class="n">lch_to_lab</span><span class="p">((</span><span class="n">L</span><span class="p">,</span> <span class="n">min_c</span><span class="p">,</span> <span class="n">h</span><span class="p">))</span></div>
+
+
+
+<div class="viewcode-block" id="clamp_to_gamut">
+<a class="viewcode-back" href="../../api/color_tools.gamut.html#color_tools.gamut.clamp_to_gamut">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">clamp_to_gamut</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert LAB to RGB and back to LAB (with clamping).</span>
+<span class="sd">    </span>
+<span class="sd">    This is the &quot;quick and dirty&quot; approach to gamut mapping. Instead of</span>
+<span class="sd">    carefully desaturating, we just let lab_to_rgb() clamp the RGB values</span>
+<span class="sd">    to 0-255, then convert back to LAB to see what we got.</span>
+<span class="sd">    </span>
+<span class="sd">    **Pros:** Fast!</span>
+<span class="sd">    </span>
+<span class="sd">    **Cons:** Can change hue (not just chroma). A pure red might become</span>
+<span class="sd">    a slightly orange-red after clamping.</span>
+<span class="sd">    </span>
+<span class="sd">    For most applications, `find_nearest_in_gamut()` is better because it</span>
+<span class="sd">    preserves hue. This function exists for when you need speed over accuracy.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab: Any L*a*b* color (in-gamut or not)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        In-gamut L*a*b* color (clamped)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">.conversions</span><span class="w"> </span><span class="kn">import</span> <span class="n">rgb_to_lab</span>
+    <span class="c1"># Convert to RGB (with clamping), then back to LAB</span>
+    <span class="n">rgb</span> <span class="o">=</span> <span class="n">lab_to_rgb</span><span class="p">(</span><span class="n">lab</span><span class="p">,</span> <span class="n">clamp</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rgb_to_lab</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

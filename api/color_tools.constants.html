@@ -1,0 +1,920 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../">
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.constants &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="next" title="color_tools.matrices" href="color_tools.matrices.html" />
+    <link rel="prev" title="color_tools.config" href="color_tools.config.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">color_tools.constants</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#color_tools.constants.ColorConstants"><code class="docutils literal notranslate"><span class="pre">ColorConstants</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.D65_WHITE_X"><code class="docutils literal notranslate"><span class="pre">ColorConstants.D65_WHITE_X</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.D65_WHITE_Y"><code class="docutils literal notranslate"><span class="pre">ColorConstants.D65_WHITE_Y</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.D65_WHITE_Z"><code class="docutils literal notranslate"><span class="pre">ColorConstants.D65_WHITE_Z</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_TO_XYZ_R"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_TO_XYZ_R</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_TO_XYZ_G"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_TO_XYZ_G</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_TO_XYZ_B"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_TO_XYZ_B</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.XYZ_TO_SRGB_X"><code class="docutils literal notranslate"><span class="pre">ColorConstants.XYZ_TO_SRGB_X</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.XYZ_TO_SRGB_Y"><code class="docutils literal notranslate"><span class="pre">ColorConstants.XYZ_TO_SRGB_Y</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.XYZ_TO_SRGB_Z"><code class="docutils literal notranslate"><span class="pre">ColorConstants.XYZ_TO_SRGB_Z</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_GAMMA_THRESHOLD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_LINEAR_SCALE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_GAMMA_LINEAR_SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_OFFSET"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_GAMMA_OFFSET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_DIVISOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_GAMMA_DIVISOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_POWER"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_GAMMA_POWER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SRGB_INV_GAMMA_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SRGB_INV_GAMMA_THRESHOLD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_DELTA"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_DELTA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_KAPPA"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_KAPPA</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_OFFSET"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_OFFSET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_A_SCALE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_A_SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_B_SCALE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_B_SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE94_K1"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE94_K1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE94_K2"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE94_K2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_POW7_BASE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_POW7_BASE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_1"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_OFFSET_1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_1"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_WEIGHT_1</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_MULT_2"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_MULT_2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_2"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_WEIGHT_2</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_MULT_3"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_MULT_3</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_3"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_OFFSET_3</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_3"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_WEIGHT_3</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_MULT_4"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_MULT_4</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_4"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_OFFSET_4</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_4"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_HUE_WEIGHT_4</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_DRO_MULT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_DRO_MULT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_DRO_CENTER"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_DRO_CENTER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_DRO_DIVISOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_DRO_DIVISOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_L_WEIGHT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_L_WEIGHT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_L_OFFSET"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_L_OFFSET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_L_DIVISOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_L_DIVISOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_C_WEIGHT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_C_WEIGHT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.DE2000_H_WEIGHT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.DE2000_H_WEIGHT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_L_THRESHOLD"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_L_THRESHOLD</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_L_LOW"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_L_LOW</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_L_SCALE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_L_SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_L_DIVISOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_L_DIVISOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_C_SCALE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_C_SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_C_DIVISOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_C_DIVISOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_C_OFFSET"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_C_OFFSET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_HUE_MIN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_HUE_MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_HUE_MAX"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_HUE_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_T_IN_RANGE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_T_IN_RANGE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_T_COS_MULT_IN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_T_COS_MULT_IN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_T_HUE_OFFSET_IN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_T_HUE_OFFSET_IN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_T_OUT_RANGE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_T_OUT_RANGE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_T_COS_MULT_OUT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_T_COS_MULT_OUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_T_HUE_OFFSET_OUT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_T_HUE_OFFSET_OUT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_F_POWER"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_F_POWER</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_F_DIVISOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_F_DIVISOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_L_DEFAULT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_L_DEFAULT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CMC_C_DEFAULT"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CMC_C_DEFAULT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.HUE_CIRCLE_DEGREES"><code class="docutils literal notranslate"><span class="pre">ColorConstants.HUE_CIRCLE_DEGREES</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.HUE_HALF_CIRCLE_DEGREES"><code class="docutils literal notranslate"><span class="pre">ColorConstants.HUE_HALF_CIRCLE_DEGREES</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.RGB_MIN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.RGB_MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.RGB_MAX"><code class="docutils literal notranslate"><span class="pre">ColorConstants.RGB_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.NORMALIZED_MIN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.NORMALIZED_MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.NORMALIZED_MAX"><code class="docutils literal notranslate"><span class="pre">ColorConstants.NORMALIZED_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.XYZ_SCALE_FACTOR"><code class="docutils literal notranslate"><span class="pre">ColorConstants.XYZ_SCALE_FACTOR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.WIN_HSL_MAX"><code class="docutils literal notranslate"><span class="pre">ColorConstants.WIN_HSL_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.AB_MIN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.AB_MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.AB_MAX"><code class="docutils literal notranslate"><span class="pre">ColorConstants.AB_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CHROMA_MIN"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CHROMA_MIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CHROMA_MAX"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CHROMA_MAX</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.COLORS_JSON_FILENAME"><code class="docutils literal notranslate"><span class="pre">ColorConstants.COLORS_JSON_FILENAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.FILAMENTS_JSON_FILENAME"><code class="docutils literal notranslate"><span class="pre">ColorConstants.FILAMENTS_JSON_FILENAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.MAKER_SYNONYMS_JSON_FILENAME"><code class="docutils literal notranslate"><span class="pre">ColorConstants.MAKER_SYNONYMS_JSON_FILENAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_DELTA_CUBED"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_DELTA_CUBED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_F_SCALE"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_F_SCALE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.LAB_F_OFFSET"><code class="docutils literal notranslate"><span class="pre">ColorConstants.LAB_F_OFFSET</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.verify_integrity"><code class="docutils literal notranslate"><span class="pre">ColorConstants.verify_integrity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.COLORS_JSON_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.COLORS_JSON_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.FILAMENTS_JSON_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.FILAMENTS_JSON_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.MAKER_SYNONYMS_JSON_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.MAKER_SYNONYMS_JSON_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.APPLE2_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.APPLE2_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CGA4_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CGA4_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CGA16_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CGA16_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.COMMODORE64_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.COMMODORE64_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.CRAYOLA_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.CRAYOLA_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.EGA16_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.EGA16_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.EGA64_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.EGA64_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.GAMEBOY_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.GAMEBOY_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.GAMEBOY_COLOR_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.GAMEBOY_COLOR_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.GAMEBOY_DMG_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.GAMEBOY_DMG_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.GAMEBOY_GBL_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.GAMEBOY_GBL_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.GAMEBOY_MGB_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.GAMEBOY_MGB_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.MACINTOSH_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.MACINTOSH_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.NES_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.NES_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.SMS_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.SMS_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.TANDY16_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.TANDY16_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.VGA_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.VGA_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.VIRTUALBOY_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.VIRTUALBOY_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.WEB_PALETTE_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.WEB_PALETTE_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.USER_COLORS_JSON_FILENAME"><code class="docutils literal notranslate"><span class="pre">ColorConstants.USER_COLORS_JSON_FILENAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.USER_FILAMENTS_JSON_FILENAME"><code class="docutils literal notranslate"><span class="pre">ColorConstants.USER_FILAMENTS_JSON_FILENAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.USER_SYNONYMS_JSON_FILENAME"><code class="docutils literal notranslate"><span class="pre">ColorConstants.USER_SYNONYMS_JSON_FILENAME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.MATRICES_EXPECTED_HASH"><code class="docutils literal notranslate"><span class="pre">ColorConstants.MATRICES_EXPECTED_HASH</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.verify_data_file"><code class="docutils literal notranslate"><span class="pre">ColorConstants.verify_data_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.verify_all_data_files"><code class="docutils literal notranslate"><span class="pre">ColorConstants.verify_all_data_files()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.verify_matrices_integrity"><code class="docutils literal notranslate"><span class="pre">ColorConstants.verify_matrices_integrity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.generate_user_data_hash"><code class="docutils literal notranslate"><span class="pre">ColorConstants.generate_user_data_hash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.save_user_data_hash"><code class="docutils literal notranslate"><span class="pre">ColorConstants.save_user_data_hash()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.verify_user_data_file"><code class="docutils literal notranslate"><span class="pre">ColorConstants.verify_user_data_file()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#color_tools.constants.ColorConstants.verify_all_user_data"><code class="docutils literal notranslate"><span class="pre">ColorConstants.verify_all_user_data()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">color_tools.constants</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="../_sources/api/color_tools.constants.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="module-color_tools.constants">
+<span id="color-tools-constants"></span><h1>color_tools.constants<a class="headerlink" href="#module-color_tools.constants" title="Link to this heading"></a></h1>
+<p>Immutable color science constants from international standards.</p>
+<p>These values are defined by CIE (International Commission on Illumination),
+sRGB specification, and various color difference formulas. They should
+never be modified as they represent fundamental color science.</p>
+<dl class="py class">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants">
+<em class="property"><span class="k"><span class="pre">class</span></span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">color_tools.constants.</span></span><span class="sig-name descname"><span class="pre">ColorConstants</span></span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants" title="Link to this definition"></a></dt>
+<dd><p>Bases: <a class="reference external" href="https://docs.python.org/3/library/functions.html#object" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></a></p>
+<p>Immutable color science constants from international standards.</p>
+<p>These values are defined by CIE (International Commission on Illumination),
+sRGB specification, and various color difference formulas. They should
+never be modified as they represent fundamental color science.</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.D65_WHITE_X">
+<span class="sig-name descname"><span class="pre">D65_WHITE_X</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">95.047</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.D65_WHITE_X" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.D65_WHITE_Y">
+<span class="sig-name descname"><span class="pre">D65_WHITE_Y</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.D65_WHITE_Y" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.D65_WHITE_Z">
+<span class="sig-name descname"><span class="pre">D65_WHITE_Z</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">108.883</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.D65_WHITE_Z" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_TO_XYZ_R">
+<span class="sig-name descname"><span class="pre">SRGB_TO_XYZ_R</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.4124564,</span> <span class="pre">0.3575761,</span> <span class="pre">0.1804375)</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_TO_XYZ_R" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_TO_XYZ_G">
+<span class="sig-name descname"><span class="pre">SRGB_TO_XYZ_G</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.2126729,</span> <span class="pre">0.7151522,</span> <span class="pre">0.072175)</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_TO_XYZ_G" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_TO_XYZ_B">
+<span class="sig-name descname"><span class="pre">SRGB_TO_XYZ_B</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.0193339,</span> <span class="pre">0.119192,</span> <span class="pre">0.9503041)</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_TO_XYZ_B" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.XYZ_TO_SRGB_X">
+<span class="sig-name descname"><span class="pre">XYZ_TO_SRGB_X</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(3.2404542,</span> <span class="pre">-1.5371385,</span> <span class="pre">-0.4985314)</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.XYZ_TO_SRGB_X" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.XYZ_TO_SRGB_Y">
+<span class="sig-name descname"><span class="pre">XYZ_TO_SRGB_Y</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(-0.969266,</span> <span class="pre">1.8760108,</span> <span class="pre">0.041556)</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.XYZ_TO_SRGB_Y" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.XYZ_TO_SRGB_Z">
+<span class="sig-name descname"><span class="pre">XYZ_TO_SRGB_Z</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">(0.0556434,</span> <span class="pre">-0.2040259,</span> <span class="pre">1.0572252)</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.XYZ_TO_SRGB_Z" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_GAMMA_THRESHOLD">
+<span class="sig-name descname"><span class="pre">SRGB_GAMMA_THRESHOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.04045</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_THRESHOLD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_GAMMA_LINEAR_SCALE">
+<span class="sig-name descname"><span class="pre">SRGB_GAMMA_LINEAR_SCALE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">12.92</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_LINEAR_SCALE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_GAMMA_OFFSET">
+<span class="sig-name descname"><span class="pre">SRGB_GAMMA_OFFSET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.055</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_OFFSET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_GAMMA_DIVISOR">
+<span class="sig-name descname"><span class="pre">SRGB_GAMMA_DIVISOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.055</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_DIVISOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_GAMMA_POWER">
+<span class="sig-name descname"><span class="pre">SRGB_GAMMA_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.4</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_GAMMA_POWER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SRGB_INV_GAMMA_THRESHOLD">
+<span class="sig-name descname"><span class="pre">SRGB_INV_GAMMA_THRESHOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0031308</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SRGB_INV_GAMMA_THRESHOLD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_DELTA">
+<span class="sig-name descname"><span class="pre">LAB_DELTA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.20689655172413793</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_DELTA" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_KAPPA">
+<span class="sig-name descname"><span class="pre">LAB_KAPPA</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">116.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_KAPPA" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_OFFSET">
+<span class="sig-name descname"><span class="pre">LAB_OFFSET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_OFFSET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_A_SCALE">
+<span class="sig-name descname"><span class="pre">LAB_A_SCALE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">500.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_A_SCALE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_B_SCALE">
+<span class="sig-name descname"><span class="pre">LAB_B_SCALE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">200.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_B_SCALE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE94_K1">
+<span class="sig-name descname"><span class="pre">DE94_K1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.045</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE94_K1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE94_K2">
+<span class="sig-name descname"><span class="pre">DE94_K2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.015</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE94_K2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_POW7_BASE">
+<span class="sig-name descname"><span class="pre">DE2000_POW7_BASE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_POW7_BASE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_1">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_OFFSET_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_1">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_WEIGHT_1</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.17</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_1" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_MULT_2">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_MULT_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_MULT_2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_2">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_WEIGHT_2</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.24</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_2" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_MULT_3">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_MULT_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">3.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_MULT_3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_3">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_OFFSET_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">6.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_3">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_WEIGHT_3</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.32</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_3" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_MULT_4">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_MULT_4</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_MULT_4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_4">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_OFFSET_4</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">63.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_OFFSET_4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_4">
+<span class="sig-name descname"><span class="pre">DE2000_HUE_WEIGHT_4</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.2</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_HUE_WEIGHT_4" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_DRO_MULT">
+<span class="sig-name descname"><span class="pre">DE2000_DRO_MULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">30.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_DRO_MULT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_DRO_CENTER">
+<span class="sig-name descname"><span class="pre">DE2000_DRO_CENTER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">275.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_DRO_CENTER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_DRO_DIVISOR">
+<span class="sig-name descname"><span class="pre">DE2000_DRO_DIVISOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">25.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_DRO_DIVISOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_L_WEIGHT">
+<span class="sig-name descname"><span class="pre">DE2000_L_WEIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.015</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_L_WEIGHT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_L_OFFSET">
+<span class="sig-name descname"><span class="pre">DE2000_L_OFFSET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">50.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_L_OFFSET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_L_DIVISOR">
+<span class="sig-name descname"><span class="pre">DE2000_L_DIVISOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">20.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_L_DIVISOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_C_WEIGHT">
+<span class="sig-name descname"><span class="pre">DE2000_C_WEIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.045</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_C_WEIGHT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.DE2000_H_WEIGHT">
+<span class="sig-name descname"><span class="pre">DE2000_H_WEIGHT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.015</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.DE2000_H_WEIGHT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_L_THRESHOLD">
+<span class="sig-name descname"><span class="pre">CMC_L_THRESHOLD</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">16.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_L_THRESHOLD" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_L_LOW">
+<span class="sig-name descname"><span class="pre">CMC_L_LOW</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.511</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_L_LOW" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_L_SCALE">
+<span class="sig-name descname"><span class="pre">CMC_L_SCALE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.040975</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_L_SCALE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_L_DIVISOR">
+<span class="sig-name descname"><span class="pre">CMC_L_DIVISOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.01765</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_L_DIVISOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_C_SCALE">
+<span class="sig-name descname"><span class="pre">CMC_C_SCALE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0638</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_C_SCALE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_C_DIVISOR">
+<span class="sig-name descname"><span class="pre">CMC_C_DIVISOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0131</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_C_DIVISOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_C_OFFSET">
+<span class="sig-name descname"><span class="pre">CMC_C_OFFSET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.638</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_C_OFFSET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_HUE_MIN">
+<span class="sig-name descname"><span class="pre">CMC_HUE_MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">164.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_HUE_MIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_HUE_MAX">
+<span class="sig-name descname"><span class="pre">CMC_HUE_MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">345.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_HUE_MAX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_T_IN_RANGE">
+<span class="sig-name descname"><span class="pre">CMC_T_IN_RANGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.56</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_T_IN_RANGE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_T_COS_MULT_IN">
+<span class="sig-name descname"><span class="pre">CMC_T_COS_MULT_IN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.2</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_T_COS_MULT_IN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_T_HUE_OFFSET_IN">
+<span class="sig-name descname"><span class="pre">CMC_T_HUE_OFFSET_IN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">168.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_T_HUE_OFFSET_IN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_T_OUT_RANGE">
+<span class="sig-name descname"><span class="pre">CMC_T_OUT_RANGE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.36</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_T_OUT_RANGE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_T_COS_MULT_OUT">
+<span class="sig-name descname"><span class="pre">CMC_T_COS_MULT_OUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.4</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_T_COS_MULT_OUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_T_HUE_OFFSET_OUT">
+<span class="sig-name descname"><span class="pre">CMC_T_HUE_OFFSET_OUT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">35.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_T_HUE_OFFSET_OUT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_F_POWER">
+<span class="sig-name descname"><span class="pre">CMC_F_POWER</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">4.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_F_POWER" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_F_DIVISOR">
+<span class="sig-name descname"><span class="pre">CMC_F_DIVISOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1900.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_F_DIVISOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_L_DEFAULT">
+<span class="sig-name descname"><span class="pre">CMC_L_DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">2.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_L_DEFAULT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CMC_C_DEFAULT">
+<span class="sig-name descname"><span class="pre">CMC_C_DEFAULT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CMC_C_DEFAULT" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.HUE_CIRCLE_DEGREES">
+<span class="sig-name descname"><span class="pre">HUE_CIRCLE_DEGREES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">360.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.HUE_CIRCLE_DEGREES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.HUE_HALF_CIRCLE_DEGREES">
+<span class="sig-name descname"><span class="pre">HUE_HALF_CIRCLE_DEGREES</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">180.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.HUE_HALF_CIRCLE_DEGREES" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.RGB_MIN">
+<span class="sig-name descname"><span class="pre">RGB_MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.RGB_MIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.RGB_MAX">
+<span class="sig-name descname"><span class="pre">RGB_MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">255</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.RGB_MAX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.NORMALIZED_MIN">
+<span class="sig-name descname"><span class="pre">NORMALIZED_MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.NORMALIZED_MIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.NORMALIZED_MAX">
+<span class="sig-name descname"><span class="pre">NORMALIZED_MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">1.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.NORMALIZED_MAX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.XYZ_SCALE_FACTOR">
+<span class="sig-name descname"><span class="pre">XYZ_SCALE_FACTOR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">100.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.XYZ_SCALE_FACTOR" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.WIN_HSL_MAX">
+<span class="sig-name descname"><span class="pre">WIN_HSL_MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">240.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.WIN_HSL_MAX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.AB_MIN">
+<span class="sig-name descname"><span class="pre">AB_MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">-128.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.AB_MIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.AB_MAX">
+<span class="sig-name descname"><span class="pre">AB_MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">127.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.AB_MAX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CHROMA_MIN">
+<span class="sig-name descname"><span class="pre">CHROMA_MIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CHROMA_MIN" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CHROMA_MAX">
+<span class="sig-name descname"><span class="pre">CHROMA_MAX</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">181.0</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CHROMA_MAX" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.COLORS_JSON_FILENAME">
+<span class="sig-name descname"><span class="pre">COLORS_JSON_FILENAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'colors.json'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.COLORS_JSON_FILENAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.FILAMENTS_JSON_FILENAME">
+<span class="sig-name descname"><span class="pre">FILAMENTS_JSON_FILENAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'filaments.json'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.FILAMENTS_JSON_FILENAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.MAKER_SYNONYMS_JSON_FILENAME">
+<span class="sig-name descname"><span class="pre">MAKER_SYNONYMS_JSON_FILENAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'maker_synonyms.json'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.MAKER_SYNONYMS_JSON_FILENAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_DELTA_CUBED">
+<span class="sig-name descname"><span class="pre">LAB_DELTA_CUBED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.008856451679035631</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_DELTA_CUBED" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_F_SCALE">
+<span class="sig-name descname"><span class="pre">LAB_F_SCALE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.12841854934601665</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_F_SCALE" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.LAB_F_OFFSET">
+<span class="sig-name descname"><span class="pre">LAB_F_OFFSET</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">0.13793103448275862</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.LAB_F_OFFSET" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.verify_integrity">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_integrity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.verify_integrity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.verify_integrity" title="Link to this definition"></a></dt>
+<dd><p>Verify that constants haven’t been modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all constants match expected values, False if tampered with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.COLORS_JSON_HASH">
+<span class="sig-name descname"><span class="pre">COLORS_JSON_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'dc8ce5769a2186008af540c03159d3f24a72e5effc9ce5b611c8b4374da19ffd'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.COLORS_JSON_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.FILAMENTS_JSON_HASH">
+<span class="sig-name descname"><span class="pre">FILAMENTS_JSON_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'8e3e178cf824b7e1bcf34b67bfa929e462964334c79069073806a9a959f3536e'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.FILAMENTS_JSON_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.MAKER_SYNONYMS_JSON_HASH">
+<span class="sig-name descname"><span class="pre">MAKER_SYNONYMS_JSON_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.MAKER_SYNONYMS_JSON_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.APPLE2_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">APPLE2_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'d5374e50f76312799c031a8f64fe9537cac2d903c59dbc09f0760e8f5bb581fe'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.APPLE2_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CGA4_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">CGA4_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'62624dbeef28b664feca10afe3901b52b2335395134aba88ea21f955f0d17b7d'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CGA4_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CGA16_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">CGA16_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CGA16_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.COMMODORE64_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">COMMODORE64_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'c4502abaed781535de55f3042cca4d7b3653c5eeb4cec3ecb30f591bfbfdfcca'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.COMMODORE64_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.CRAYOLA_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">CRAYOLA_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'65bf4add677a7a8667114b8f813b8afdd6b8e92e8cef1458e53b4a8cd716a4a3'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.CRAYOLA_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.EGA16_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">EGA16_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.EGA16_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.EGA64_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">EGA64_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'2159e51f89cca4a4fb43a2d80bea030f3d7cd0cc5e1eacd25eb95f0ce2027e7f'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.EGA64_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.GAMEBOY_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">GAMEBOY_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'e2911baed15b4d56a27313b6be506c3a1f57bee3b01ecd2ca5995b512822da9b'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.GAMEBOY_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.GAMEBOY_COLOR_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">GAMEBOY_COLOR_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'5c98dd69be991f445aabafe21a0bdddabc8f6e98aa728724e3d0e72a445aadde'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.GAMEBOY_COLOR_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.GAMEBOY_DMG_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">GAMEBOY_DMG_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'042d7cfd7b94f8719aa01603ddf5b0d9c73ae59b04e27295132ddac13142e968'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.GAMEBOY_DMG_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.GAMEBOY_GBL_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">GAMEBOY_GBL_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'f2b6a573b09c1efa3529e79f281dcb0ed4e5c788cb10e51526c60e6e5d928231'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.GAMEBOY_GBL_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.GAMEBOY_MGB_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">GAMEBOY_MGB_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'7c556e05e13adcfce0e7aec06ded6c7871acee63771e520319afa67e07080027'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.GAMEBOY_MGB_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.MACINTOSH_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">MACINTOSH_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'e9b5bce3ce2eda12dec5793b4eb3c588a92d53e8d6ecaf4fa310998fe2dd1ddd'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.MACINTOSH_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.NES_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">NES_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'3021573a00b158fb6cf694e6546b236c2ec6862d52e08cc860f32d983e1f0a59'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.NES_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.SMS_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">SMS_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'95010c348c2f77a209544170da29ee7f5bfccacbcd32ed33c36cb7ef269f72e8'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.SMS_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.TANDY16_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">TANDY16_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'820f2f1dcdd3acd7130a88247b09e6bf969779a08c97091800db19c1748f1a03'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.TANDY16_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.VGA_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">VGA_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'9eb6055508d5523ceafbb4abe3d2921f09bc61b20485da1052e4d4fd653a5d00'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.VGA_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.VIRTUALBOY_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">VIRTUALBOY_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'218854f6dc6506649e6ff14f92f56ff996b7c01a36c916b0374880c8524c40a9'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.VIRTUALBOY_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.WEB_PALETTE_HASH">
+<span class="sig-name descname"><span class="pre">WEB_PALETTE_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'ba4ad53ece01d2f1338ae13221aa04e5c342519d7750d948458074001a465e7d'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.WEB_PALETTE_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.USER_COLORS_JSON_FILENAME">
+<span class="sig-name descname"><span class="pre">USER_COLORS_JSON_FILENAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user/user-colors.json'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.USER_COLORS_JSON_FILENAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.USER_FILAMENTS_JSON_FILENAME">
+<span class="sig-name descname"><span class="pre">USER_FILAMENTS_JSON_FILENAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user/user-filaments.json'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.USER_FILAMENTS_JSON_FILENAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.USER_SYNONYMS_JSON_FILENAME">
+<span class="sig-name descname"><span class="pre">USER_SYNONYMS_JSON_FILENAME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'user/user-synonyms.json'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.USER_SYNONYMS_JSON_FILENAME" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.MATRICES_EXPECTED_HASH">
+<span class="sig-name descname"><span class="pre">MATRICES_EXPECTED_HASH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">'d177316ade5146a084bb5b92d693c3f9c62ec593fde9b6face567dbd8a633df5'</span></em><a class="headerlink" href="#color_tools.constants.ColorConstants.MATRICES_EXPECTED_HASH" title="Link to this definition"></a></dt>
+<dd></dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.verify_data_file">
+<em class="property"><span class="k"><span class="pre">static</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_data_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">filepath</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">expected_hash</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.verify_data_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.verify_data_file" title="Link to this definition"></a></dt>
+<dd><p>Verify integrity of a data file using SHA-256 hash.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>filepath</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span>) – Path to the data file to verify</p></li>
+<li><p><strong>expected_hash</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Expected SHA-256 hash of the file contents</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>True if file hash matches expected hash, False otherwise</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.verify_all_data_files">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_all_data_files</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.verify_all_data_files"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.verify_all_data_files" title="Link to this definition"></a></dt>
+<dd><p>Verify integrity of all core data files.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Directory containing data files. If None, uses package data directory.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of (all_valid, list_of_errors)
+- all_valid: True if all files pass verification
+- list_of_errors: List of error messages for any failed verifications</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.verify_matrices_integrity">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_matrices_integrity</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.verify_matrices_integrity"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.verify_matrices_integrity" title="Link to this definition"></a></dt>
+<dd><p>Verify that transformation matrices haven’t been modified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Return type<span class="colon">:</span></dt>
+<dd class="field-odd"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a></span></p>
+</dd>
+<dt class="field-even">Returns<span class="colon">:</span></dt>
+<dd class="field-even"><p>True if all matrices match expected values, False if tampered with.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.generate_user_data_hash">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">generate_user_data_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.generate_user_data_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.generate_user_data_hash" title="Link to this definition"></a></dt>
+<dd><p>Generate SHA-256 hash for a user data file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to user data file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>SHA-256 hash of the file contents</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If file doesn’t exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.save_user_data_hash">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">save_user_data_hash</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">hash_value</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.save_user_data_hash"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.save_user_data_hash" title="Link to this definition"></a></dt>
+<dd><p>Save SHA-256 hash for a user data file to a .sha256 file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to user data file</p></li>
+<li><p><strong>hash_value</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Optional pre-computed hash. If None, will compute from file.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a></span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Path to the created .sha256 file</p>
+</dd>
+<dt class="field-even">Raises<span class="colon">:</span></dt>
+<dd class="field-even"><p><a class="reference external" href="https://docs.python.org/3/library/exceptions.html#FileNotFoundError" title="(in Python v3.14)"><strong>FileNotFoundError</strong></a> – If file doesn’t exist</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.verify_user_data_file">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_user_data_file</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">file_path</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.verify_user_data_file"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.verify_user_data_file" title="Link to this definition"></a></dt>
+<dd><p>Verify user data file against its .sha256 file if it exists.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>file_path</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a></span>) – Path to user data file</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a>]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of (is_valid, error_message)
+- is_valid: True if file is valid or no hash file exists
+- error_message: None if valid, error description if invalid</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="color_tools.constants.ColorConstants.verify_all_user_data">
+<em class="property"><span class="k"><span class="pre">classmethod</span></span><span class="w"> </span></em><span class="sig-name descname"><span class="pre">verify_all_user_data</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">data_dir</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/color_tools/constants.html#ColorConstants.verify_all_user_data"><span class="viewcode-link"><span class="pre">[source]</span></span></a><a class="headerlink" href="#color_tools.constants.ColorConstants.verify_all_user_data" title="Link to this definition"></a></dt>
+<dd><p>Verify integrity of all user data files in the user/ subdirectory.</p>
+<p>Only files with corresponding .sha256 files are verified.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>data_dir</strong> (<span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/pathlib.html#pathlib.Path" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">Path</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a> | <a class="reference external" href="https://docs.python.org/3/library/constants.html#None" title="(in Python v3.14)"><code class="xref py py-obj docutils literal notranslate"><span class="pre">None</span></code></a></span>) – Optional custom data directory. If None, uses package data directory.</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p><span class="sphinx_autodoc_typehints-type"><a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#tuple" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">tuple</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/functions.html#bool" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">bool</span></code></a>, <a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#list" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">list</span></code></a>[<a class="reference external" href="https://docs.python.org/3/library/stdtypes.html#str" title="(in Python v3.14)"><code class="xref py py-class docutils literal notranslate"><span class="pre">str</span></code></a>]]</span></p>
+</dd>
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Tuple of (all_valid, list_of_errors)
+- all_valid: True if all files with hash files pass verification
+- list_of_errors: List of error messages for any failed verifications</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="color_tools.config.html" class="btn btn-neutral float-left" title="color_tools.config" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="color_tools.matrices.html" class="btn btn-neutral float-right" title="color_tools.matrices" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

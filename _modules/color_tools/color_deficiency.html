@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.color_deficiency &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.color_deficiency</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.color_deficiency</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Color vision deficiency simulation and correction.</span>
+
+<span class="sd">This module provides functions to simulate how colors appear to individuals with</span>
+<span class="sd">various types of color blindness (color vision deficiency, CVD) and to apply</span>
+<span class="sd">corrections that can improve color discriminability for CVD individuals.</span>
+
+<span class="sd">Supported deficiency types:</span>
+<span class="sd">- **Protanopia**: Red-blind (missing L-cones, ~1% of males)</span>
+<span class="sd">- **Deuteranopia**: Green-blind (missing M-cones, ~1% of males)  </span>
+<span class="sd">- **Tritanopia**: Blue-blind (missing S-cones, ~0.001% of population)</span>
+
+<span class="sd">Example usage:</span>
+<span class="sd">    &gt;&gt;&gt; # Simulate how red appears to someone with protanopia</span>
+<span class="sd">    &gt;&gt;&gt; simulated = simulate_protanopia((255, 0, 0))</span>
+<span class="sd">    &gt;&gt;&gt; # Result will be darker, yellowish</span>
+<span class="sd">    </span>
+<span class="sd">    &gt;&gt;&gt; # Correct colors to improve discriminability for deuteranopia</span>
+<span class="sd">    &gt;&gt;&gt; corrected = correct_deuteranopia((0, 255, 0))</span>
+<span class="sd">    &gt;&gt;&gt; # Result shifts green to be more distinguishable</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Tuple</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">color_tools.matrices</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+    <span class="n">multiply_matrix_vector</span><span class="p">,</span>
+    <span class="n">get_simulation_matrix</span><span class="p">,</span>
+    <span class="n">get_correction_matrix</span>
+<span class="p">)</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">color_tools.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorConstants</span>
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_apply_cvd_transform</span><span class="p">(</span>
+    <span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span>
+    <span class="n">deficiency_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span>
+    <span class="n">operation</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="s1">&#39;simulate&#39;</span>
+<span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Internal helper to apply color vision deficiency transformation.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">        deficiency_type: Type of CVD (&#39;protanopia&#39;, &#39;deuteranopia&#39;, &#39;tritanopia&#39;)</span>
+<span class="sd">        operation: Either &#39;simulate&#39; or &#39;correct&#39;</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Transformed RGB color tuple (0-255)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Normalize RGB to 0-1 range</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">]</span>
+    
+    <span class="c1"># Get appropriate transformation matrix</span>
+    <span class="k">if</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;simulate&#39;</span><span class="p">:</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">get_simulation_matrix</span><span class="p">(</span><span class="n">deficiency_type</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">operation</span> <span class="o">==</span> <span class="s1">&#39;correct&#39;</span><span class="p">:</span>
+        <span class="n">matrix</span> <span class="o">=</span> <span class="n">get_correction_matrix</span><span class="p">(</span><span class="n">deficiency_type</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;Invalid operation: </span><span class="si">{</span><span class="n">operation</span><span class="si">}</span><span class="s2">. Must be &#39;simulate&#39; or &#39;correct&#39;&quot;</span><span class="p">)</span>
+    
+    <span class="c1"># Apply matrix transformation</span>
+    <span class="n">r_new</span><span class="p">,</span> <span class="n">g_new</span><span class="p">,</span> <span class="n">b_new</span> <span class="o">=</span> <span class="n">multiply_matrix_vector</span><span class="p">(</span><span class="n">matrix</span><span class="p">,</span> <span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    
+    <span class="c1"># Clamp to valid range and convert back to 0-255</span>
+    <span class="n">r_out</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">r_new</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">)))</span>
+    <span class="n">g_out</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">g_new</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">)))</span>
+    <span class="n">b_out</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">b_new</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">)))</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">r_out</span><span class="p">,</span> <span class="n">g_out</span><span class="p">,</span> <span class="n">b_out</span><span class="p">)</span>
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Simulation Functions</span>
+<span class="c1"># =============================================================================</span>
+
+<div class="viewcode-block" id="simulate_cvd">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.simulate_cvd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">deficiency_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate how a color appears to someone with color vision deficiency.</span>
+<span class="sd">    </span>
+<span class="sd">    This transforms colors to show how they would appear to individuals with</span>
+<span class="sd">    various types of color blindness. Useful for testing color schemes for</span>
+<span class="sd">    accessibility.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">        deficiency_type: Type of CVD to simulate</span>
+<span class="sd">            - &#39;protanopia&#39; or &#39;protan&#39;: Red-blind</span>
+<span class="sd">            - &#39;deuteranopia&#39; or &#39;deutan&#39;: Green-blind</span>
+<span class="sd">            - &#39;tritanopia&#39; or &#39;tritan&#39;: Blue-blind</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color as it would appear to someone with the deficiency (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # See how red appears to someone with protanopia</span>
+<span class="sd">        &gt;&gt;&gt; simulate_cvd((255, 0, 0), &#39;protanopia&#39;)</span>
+<span class="sd">        (145, 110, 0)  # Appears darker, yellowish-brown</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; # Test if two colors are distinguishable for deuteranopia</span>
+<span class="sd">        &gt;&gt;&gt; red_sim = simulate_cvd((255, 0, 0), &#39;deuteranopia&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; green_sim = simulate_cvd((0, 255, 0), &#39;deuteranopia&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; # If these are too similar, the colors may be confusing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_apply_cvd_transform</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">deficiency_type</span><span class="p">,</span> <span class="s1">&#39;simulate&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_protanopia">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.simulate_protanopia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_protanopia</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate protanopia (red-blindness).</span>
+<span class="sd">    </span>
+<span class="sd">    Protanopia is the absence of red cones (L-cones), affecting ~1% of males.</span>
+<span class="sd">    Individuals with protanopia have difficulty distinguishing red from green,</span>
+<span class="sd">    and red colors appear significantly darker.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color as it appears to someone with protanopia (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; simulate_protanopia((255, 0, 0))  # Pure red</span>
+<span class="sd">        (145, 110, 0)  # Appears dark yellow-brown</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">simulate_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;protanopia&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_deuteranopia">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.simulate_deuteranopia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_deuteranopia</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate deuteranopia (green-blindness).</span>
+<span class="sd">    </span>
+<span class="sd">    Deuteranopia is the absence of green cones (M-cones), affecting ~1% of males.</span>
+<span class="sd">    This is the most common form of color blindness. Individuals have difficulty</span>
+<span class="sd">    distinguishing red from green, but unlike protanopia, reds don&#39;t appear darker.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color as it appears to someone with deuteranopia (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; simulate_deuteranopia((0, 255, 0))  # Pure green</span>
+<span class="sd">        (159, 178, 0)  # Appears yellowish</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">simulate_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;deuteranopia&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="simulate_tritanopia">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.simulate_tritanopia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">simulate_tritanopia</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Simulate tritanopia (blue-blindness).</span>
+<span class="sd">    </span>
+<span class="sd">    Tritanopia is the absence of blue cones (S-cones), affecting ~0.001% of</span>
+<span class="sd">    the population. This is very rare. Individuals have difficulty distinguishing</span>
+<span class="sd">    blue from yellow/green.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color as it appears to someone with tritanopia (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; simulate_tritanopia((0, 0, 255))  # Pure blue</span>
+<span class="sd">        (0, 172, 133)  # Appears cyan/turquoise</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">simulate_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;tritanopia&#39;</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># =============================================================================</span>
+<span class="c1"># Correction Functions</span>
+<span class="c1"># =============================================================================</span>
+
+<div class="viewcode-block" id="correct_cvd">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.correct_cvd">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">],</span> <span class="n">deficiency_type</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Apply color correction for color vision deficiency.</span>
+<span class="sd">    </span>
+<span class="sd">    This transforms colors to improve discriminability for individuals with</span>
+<span class="sd">    color blindness. The correction cannot restore missing color information,</span>
+<span class="sd">    but can shift colors to utilize the remaining functional cone types more</span>
+<span class="sd">    effectively.</span>
+<span class="sd">    </span>
+<span class="sd">    Note: Corrected images should be viewed by individuals with the specific</span>
+<span class="sd">    deficiency - they will not look &quot;correct&quot; to people with normal color vision.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">        deficiency_type: Type of CVD to correct for</span>
+<span class="sd">            - &#39;protanopia&#39; or &#39;protan&#39;: Red-blind</span>
+<span class="sd">            - &#39;deuteranopia&#39; or &#39;deutan&#39;: Green-blind</span>
+<span class="sd">            - &#39;tritanopia&#39; or &#39;tritan&#39;: Blue-blind</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color corrected for the deficiency (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; # Correct red for protanopia viewers</span>
+<span class="sd">        &gt;&gt;&gt; correct_cvd((255, 0, 0), &#39;protanopia&#39;)</span>
+<span class="sd">        (178, 178, 191)  # Shifted to be more visible</span>
+<span class="sd">        </span>
+<span class="sd">        &gt;&gt;&gt; # Improve green discriminability for deuteranopia</span>
+<span class="sd">        &gt;&gt;&gt; correct_cvd((0, 255, 0), &#39;deuteranopia&#39;)</span>
+<span class="sd">        (178, 0, 178)  # Shifted toward magenta</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">_apply_cvd_transform</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="n">deficiency_type</span><span class="p">,</span> <span class="s1">&#39;correct&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="correct_protanopia">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.correct_protanopia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_protanopia</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct colors for protanopia (red-blindness).</span>
+<span class="sd">    </span>
+<span class="sd">    Shifts reds toward orange/yellow to increase visibility and improve</span>
+<span class="sd">    discrimination between red and green for red-blind individuals.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color corrected for protanopia (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; correct_protanopia((255, 0, 0))  # Pure red</span>
+<span class="sd">        (178, 178, 191)  # Shifted to be distinguishable</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">correct_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;protanopia&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="correct_deuteranopia">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.correct_deuteranopia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_deuteranopia</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct colors for deuteranopia (green-blindness).</span>
+<span class="sd">    </span>
+<span class="sd">    Adjusts greens and reds to be more distinguishable for green-blind</span>
+<span class="sd">    individuals by utilizing blue channel contrast.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color corrected for deuteranopia (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; correct_deuteranopia((0, 255, 0))  # Pure green</span>
+<span class="sd">        (178, 0, 178)  # Shifted toward magenta</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">correct_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;deuteranopia&#39;</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="correct_tritanopia">
+<a class="viewcode-back" href="../../api/color_tools.color_deficiency.html#color_tools.color_deficiency.correct_tritanopia">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">correct_tritanopia</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Correct colors for tritanopia (blue-blindness).</span>
+<span class="sd">    </span>
+<span class="sd">    Modifies blues and yellows to increase contrast for blue-blind individuals</span>
+<span class="sd">    by enhancing red/green channel differences.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: RGB color tuple (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB color corrected for tritanopia (0-255)</span>
+<span class="sd">    </span>
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; correct_tritanopia((0, 0, 255))  # Pure blue</span>
+<span class="sd">        (178, 178, 0)  # Shifted toward yellow for contrast</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">correct_cvd</span><span class="p">(</span><span class="n">rgb</span><span class="p">,</span> <span class="s1">&#39;tritanopia&#39;</span><span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

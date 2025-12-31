@@ -1,0 +1,9 @@
+﻿color\_tools.naming
+===================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.naming
+   :members:
+   :undoc-members:
+   :show-inheritance:

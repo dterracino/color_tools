@@ -1,0 +1,652 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.constants &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.constants</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.constants</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Immutable color science constants from international standards.</span>
+
+<span class="sd">These values are defined by CIE (International Commission on Illumination),</span>
+<span class="sd">sRGB specification, and various color difference formulas. They should</span>
+<span class="sd">never be modified as they represent fundamental color science.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">json</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">TYPE_CHECKING</span>
+
+<span class="k">if</span> <span class="n">TYPE_CHECKING</span><span class="p">:</span>
+    <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+
+
+<div class="viewcode-block" id="ColorConstants">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants">[docs]</a>
+<span class="k">class</span><span class="w"> </span><span class="nc">ColorConstants</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Immutable color science constants from international standards.</span>
+<span class="sd">    </span>
+<span class="sd">    These values are defined by CIE (International Commission on Illumination),</span>
+<span class="sd">    sRGB specification, and various color difference formulas. They should</span>
+<span class="sd">    never be modified as they represent fundamental color science.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    
+    <span class="c1"># ===== D65 Standard Illuminant (CIE XYZ Reference White Point) =====</span>
+    <span class="c1"># D65 represents average daylight with correlated color temperature of 6504K</span>
+    <span class="n">D65_WHITE_X</span> <span class="o">=</span> <span class="mf">95.047</span>
+    <span class="n">D65_WHITE_Y</span> <span class="o">=</span> <span class="mf">100.000</span>
+    <span class="n">D65_WHITE_Z</span> <span class="o">=</span> <span class="mf">108.883</span>
+    
+    <span class="c1"># ===== sRGB to XYZ Transformation Matrix (D65 Illuminant) =====</span>
+    <span class="c1"># Linear RGB to XYZ conversion coefficients</span>
+    <span class="n">SRGB_TO_XYZ_R</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.4124564</span><span class="p">,</span> <span class="mf">0.3575761</span><span class="p">,</span> <span class="mf">0.1804375</span><span class="p">)</span>
+    <span class="n">SRGB_TO_XYZ_G</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.2126729</span><span class="p">,</span> <span class="mf">0.7151522</span><span class="p">,</span> <span class="mf">0.0721750</span><span class="p">)</span>
+    <span class="n">SRGB_TO_XYZ_B</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0193339</span><span class="p">,</span> <span class="mf">0.1191920</span><span class="p">,</span> <span class="mf">0.9503041</span><span class="p">)</span>
+    
+    <span class="c1"># ===== XYZ to sRGB Transformation Matrix (Inverse) =====</span>
+    <span class="n">XYZ_TO_SRGB_X</span> <span class="o">=</span> <span class="p">(</span><span class="mf">3.2404542</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.5371385</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.4985314</span><span class="p">)</span>
+    <span class="n">XYZ_TO_SRGB_Y</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mf">0.9692660</span><span class="p">,</span> <span class="mf">1.8760108</span><span class="p">,</span> <span class="mf">0.0415560</span><span class="p">)</span>
+    <span class="n">XYZ_TO_SRGB_Z</span> <span class="o">=</span> <span class="p">(</span><span class="mf">0.0556434</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.2040259</span><span class="p">,</span> <span class="mf">1.0572252</span><span class="p">)</span>
+    
+    <span class="c1"># ===== sRGB Gamma Correction (Companding) =====</span>
+    <span class="c1"># sRGB uses a piecewise function for gamma encoding/decoding</span>
+    <span class="n">SRGB_GAMMA_THRESHOLD</span> <span class="o">=</span> <span class="mf">0.04045</span>      <span class="c1"># Crossover point for piecewise function</span>
+    <span class="n">SRGB_GAMMA_LINEAR_SCALE</span> <span class="o">=</span> <span class="mf">12.92</span>     <span class="c1"># Scale factor for linear segment</span>
+    <span class="n">SRGB_GAMMA_OFFSET</span> <span class="o">=</span> <span class="mf">0.055</span>           <span class="c1"># Offset for power function</span>
+    <span class="n">SRGB_GAMMA_DIVISOR</span> <span class="o">=</span> <span class="mf">1.055</span>          <span class="c1"># Divisor for power function</span>
+    <span class="n">SRGB_GAMMA_POWER</span> <span class="o">=</span> <span class="mf">2.4</span>              <span class="c1"># Gamma exponent</span>
+    
+    <span class="c1"># ===== Inverse sRGB Gamma (Linearization) =====</span>
+    <span class="n">SRGB_INV_GAMMA_THRESHOLD</span> <span class="o">=</span> <span class="mf">0.0031308</span>  <span class="c1"># Different threshold for inverse</span>
+    <span class="c1"># Other constants same as forward direction</span>
+    
+    <span class="c1"># ===== CIE L*a*b* Color Space Constants =====</span>
+    <span class="n">LAB_DELTA</span> <span class="o">=</span> <span class="mf">6.0</span> <span class="o">/</span> <span class="mf">29.0</span>              <span class="c1"># Delta constant (≈ 0.206897)</span>
+    <span class="n">LAB_KAPPA</span> <span class="o">=</span> <span class="mf">116.0</span>                   <span class="c1"># L* scale factor</span>
+    <span class="n">LAB_OFFSET</span> <span class="o">=</span> <span class="mf">16.0</span>                   <span class="c1"># L* offset</span>
+    <span class="n">LAB_A_SCALE</span> <span class="o">=</span> <span class="mf">500.0</span>                 <span class="c1"># a* scale factor</span>
+    <span class="n">LAB_B_SCALE</span> <span class="o">=</span> <span class="mf">200.0</span>                 <span class="c1"># b* scale factor</span>
+    
+    <span class="c1"># ===== Delta E 1994 (CIE94) Constants =====</span>
+    <span class="n">DE94_K1</span> <span class="o">=</span> <span class="mf">0.045</span>                     <span class="c1"># Chroma weighting</span>
+    <span class="n">DE94_K2</span> <span class="o">=</span> <span class="mf">0.015</span>                     <span class="c1"># Hue weighting</span>
+    
+    <span class="c1"># ===== Delta E 2000 (CIEDE2000) Constants =====</span>
+    <span class="c1"># These are empirically derived for perceptual uniformity</span>
+    <span class="n">DE2000_POW7_BASE</span> <span class="o">=</span> <span class="mf">25.0</span>             <span class="c1"># Base for 25^7 calculation</span>
+    <span class="n">DE2000_HUE_OFFSET_1</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">DE2000_HUE_WEIGHT_1</span> <span class="o">=</span> <span class="mf">0.17</span>
+    <span class="n">DE2000_HUE_MULT_2</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">DE2000_HUE_WEIGHT_2</span> <span class="o">=</span> <span class="mf">0.24</span>
+    <span class="n">DE2000_HUE_MULT_3</span> <span class="o">=</span> <span class="mf">3.0</span>
+    <span class="n">DE2000_HUE_OFFSET_3</span> <span class="o">=</span> <span class="mf">6.0</span>
+    <span class="n">DE2000_HUE_WEIGHT_3</span> <span class="o">=</span> <span class="mf">0.32</span>
+    <span class="n">DE2000_HUE_MULT_4</span> <span class="o">=</span> <span class="mf">4.0</span>
+    <span class="n">DE2000_HUE_OFFSET_4</span> <span class="o">=</span> <span class="mf">63.0</span>
+    <span class="n">DE2000_HUE_WEIGHT_4</span> <span class="o">=</span> <span class="mf">0.20</span>
+    <span class="n">DE2000_DRO_MULT</span> <span class="o">=</span> <span class="mf">30.0</span>
+    <span class="n">DE2000_DRO_CENTER</span> <span class="o">=</span> <span class="mf">275.0</span>
+    <span class="n">DE2000_DRO_DIVISOR</span> <span class="o">=</span> <span class="mf">25.0</span>
+    <span class="n">DE2000_L_WEIGHT</span> <span class="o">=</span> <span class="mf">0.015</span>
+    <span class="n">DE2000_L_OFFSET</span> <span class="o">=</span> <span class="mf">50.0</span>
+    <span class="n">DE2000_L_DIVISOR</span> <span class="o">=</span> <span class="mf">20.0</span>
+    <span class="n">DE2000_C_WEIGHT</span> <span class="o">=</span> <span class="mf">0.045</span>
+    <span class="n">DE2000_H_WEIGHT</span> <span class="o">=</span> <span class="mf">0.015</span>
+    
+    <span class="c1"># ===== Delta E CMC Constants =====</span>
+    <span class="c1"># Used in textile industry for color difference</span>
+    <span class="n">CMC_L_THRESHOLD</span> <span class="o">=</span> <span class="mf">16.0</span>
+    <span class="n">CMC_L_LOW</span> <span class="o">=</span> <span class="mf">0.511</span>
+    <span class="n">CMC_L_SCALE</span> <span class="o">=</span> <span class="mf">0.040975</span>
+    <span class="n">CMC_L_DIVISOR</span> <span class="o">=</span> <span class="mf">0.01765</span>
+    <span class="n">CMC_C_SCALE</span> <span class="o">=</span> <span class="mf">0.0638</span>
+    <span class="n">CMC_C_DIVISOR</span> <span class="o">=</span> <span class="mf">0.0131</span>
+    <span class="n">CMC_C_OFFSET</span> <span class="o">=</span> <span class="mf">0.638</span>
+    <span class="n">CMC_HUE_MIN</span> <span class="o">=</span> <span class="mf">164.0</span>
+    <span class="n">CMC_HUE_MAX</span> <span class="o">=</span> <span class="mf">345.0</span>
+    <span class="n">CMC_T_IN_RANGE</span> <span class="o">=</span> <span class="mf">0.56</span>
+    <span class="n">CMC_T_COS_MULT_IN</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">CMC_T_HUE_OFFSET_IN</span> <span class="o">=</span> <span class="mf">168.0</span>
+    <span class="n">CMC_T_OUT_RANGE</span> <span class="o">=</span> <span class="mf">0.36</span>
+    <span class="n">CMC_T_COS_MULT_OUT</span> <span class="o">=</span> <span class="mf">0.4</span>
+    <span class="n">CMC_T_HUE_OFFSET_OUT</span> <span class="o">=</span> <span class="mf">35.0</span>
+    <span class="n">CMC_F_POWER</span> <span class="o">=</span> <span class="mf">4.0</span>
+    <span class="n">CMC_F_DIVISOR</span> <span class="o">=</span> <span class="mf">1900.0</span>
+    
+    <span class="c1"># Default l:c ratios for CMC (2:1 for acceptability, 1:1 for perceptibility)</span>
+    <span class="n">CMC_L_DEFAULT</span> <span class="o">=</span> <span class="mf">2.0</span>
+    <span class="n">CMC_C_DEFAULT</span> <span class="o">=</span> <span class="mf">1.0</span>
+    
+    <span class="c1"># ===== Angle and Range Constants =====</span>
+    <span class="n">HUE_CIRCLE_DEGREES</span> <span class="o">=</span> <span class="mf">360.0</span>          <span class="c1"># Full circle for hue</span>
+    <span class="n">HUE_HALF_CIRCLE_DEGREES</span> <span class="o">=</span> <span class="mf">180.0</span>     <span class="c1"># Half circle</span>
+    <span class="n">RGB_MIN</span> <span class="o">=</span> <span class="mi">0</span>                         <span class="c1"># Minimum RGB value</span>
+    <span class="n">RGB_MAX</span> <span class="o">=</span> <span class="mi">255</span>                       <span class="c1"># Maximum RGB value (8-bit)</span>
+    <span class="n">NORMALIZED_MIN</span> <span class="o">=</span> <span class="mf">0.0</span>                <span class="c1"># Minimum normalized value</span>
+    <span class="n">NORMALIZED_MAX</span> <span class="o">=</span> <span class="mf">1.0</span>                <span class="c1"># Maximum normalized value</span>
+    <span class="n">XYZ_SCALE_FACTOR</span> <span class="o">=</span> <span class="mf">100.0</span>            <span class="c1"># XYZ typically scaled 0-100</span>
+    <span class="n">WIN_HSL_MAX</span> <span class="o">=</span> <span class="mf">240.0</span>                 <span class="c1"># Windows uses 0-240 for HSL</span>
+    
+    <span class="c1"># LAB color space value ranges (8-bit precision)</span>
+    <span class="n">AB_MIN</span> <span class="o">=</span> <span class="o">-</span><span class="mf">128.0</span>                     <span class="c1"># Minimum a*/b* value</span>
+    <span class="n">AB_MAX</span> <span class="o">=</span> <span class="mf">127.0</span>                      <span class="c1"># Maximum a*/b* value</span>
+    <span class="n">CHROMA_MIN</span> <span class="o">=</span> <span class="mf">0.0</span>                    <span class="c1"># Minimum LCH chroma value</span>
+    <span class="n">CHROMA_MAX</span> <span class="o">=</span> <span class="mf">181.0</span>                  <span class="c1"># Maximum LCH chroma value (theoretical 8-bit sRGB gamut)</span>
+    
+    <span class="c1"># ===== Data File Paths =====</span>
+    <span class="c1"># Default filenames for color and filament databases</span>
+    <span class="n">COLORS_JSON_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;colors.json&quot;</span>
+    <span class="n">FILAMENTS_JSON_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;filaments.json&quot;</span>
+    <span class="n">MAKER_SYNONYMS_JSON_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;maker_synonyms.json&quot;</span>
+    
+    <span class="c1"># Computed values (derived from above constants)</span>
+    <span class="n">LAB_DELTA_CUBED</span> <span class="o">=</span> <span class="n">LAB_DELTA</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="n">LAB_F_SCALE</span> <span class="o">=</span> <span class="mf">3.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">LAB_DELTA</span> <span class="o">**</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">LAB_F_OFFSET</span> <span class="o">=</span> <span class="mf">4.0</span> <span class="o">/</span> <span class="mf">29.0</span>
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute SHA-256 hash of all constant values for integrity checking.</span>
+<span class="sd">        </span>
+<span class="sd">        This creates a fingerprint of all the color science constants. If any</span>
+<span class="sd">        constant is accidentally (or maliciously) modified, the hash won&#39;t match.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Collect all UPPERCASE attributes (our constant naming convention)</span>
+        <span class="n">constants</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="bp">cls</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">name</span><span class="o">.</span><span class="n">isupper</span><span class="p">()</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">name</span><span class="o">.</span><span class="n">startswith</span><span class="p">(</span><span class="s1">&#39;_&#39;</span><span class="p">):</span>
+                <span class="n">value</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="c1"># Convert tuples to lists for JSON serialization</span>
+                <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+                    <span class="n">value</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">constants</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        
+        <span class="c1"># Create stable JSON representation (sorted keys for consistency)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">constants</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="ColorConstants.verify_integrity">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.verify_integrity">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_integrity</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify that constants haven&#39;t been modified.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if all constants match expected values, False if tampered with.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_compute_hash</span><span class="p">()</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_EXPECTED_HASH</span></div>
+
+    
+    <span class="c1"># This hash is computed once when the constants are known to be correct</span>
+    <span class="c1"># Computed hash of all color science constants (SHA-256)</span>
+    <span class="c1"># NOTE: This hash is computed from the VALUES of all UPPERCASE constants</span>
+    <span class="c1"># using the _compute_hash() method, NOT from the entire file contents.</span>
+    <span class="c1"># To regenerate: python -c &quot;from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())&quot;</span>
+    <span class="c1"># Updated 2024-12-24: Added 4 new palette hashes (apple2, macintosh, gameboy-color, tandy16), compacted format</span>
+    <span class="n">_EXPECTED_HASH</span> <span class="o">=</span> <span class="s2">&quot;80334d543a3b79fd41ada7d24fa05c765afc8d71c172e6ff2b3957a7bbdc6e07&quot;</span>
+    <span class="c1"># Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure</span>
+    
+    <span class="c1"># ========================================================================</span>
+    <span class="c1"># Data File Integrity Hashes</span>
+    <span class="c1"># ========================================================================</span>
+    <span class="c1"># SHA-256 hashes of core data files for integrity verification</span>
+    <span class="c1"># These hashes are computed from the exact file contents (including whitespace)</span>
+    <span class="c1"># Updated 2025-12-03: Changed cyan to #00B7EB and magenta to #FF0090 to resolve RGB duplication with aqua/fuchsia</span>
+    <span class="c1"># Updated 2025-12-23: Imported 328 new filaments from HueForge data (20 new manufacturers, filtered null hex codes, deduplicated IDs)</span>
+    
+    <span class="n">COLORS_JSON_HASH</span> <span class="o">=</span> <span class="s2">&quot;dc8ce5769a2186008af540c03159d3f24a72e5effc9ce5b611c8b4374da19ffd&quot;</span>
+    <span class="n">FILAMENTS_JSON_HASH</span> <span class="o">=</span> <span class="s2">&quot;8e3e178cf824b7e1bcf34b67bfa929e462964334c79069073806a9a959f3536e&quot;</span>
+    <span class="n">MAKER_SYNONYMS_JSON_HASH</span> <span class="o">=</span> <span class="s2">&quot;27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81&quot;</span>
+    
+    <span class="c1"># Palette file hashes</span>
+    <span class="n">APPLE2_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;d5374e50f76312799c031a8f64fe9537cac2d903c59dbc09f0760e8f5bb581fe&quot;</span>
+    <span class="n">CGA4_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;62624dbeef28b664feca10afe3901b52b2335395134aba88ea21f955f0d17b7d&quot;</span>
+    <span class="n">CGA16_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329&quot;</span>
+    <span class="n">COMMODORE64_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;c4502abaed781535de55f3042cca4d7b3653c5eeb4cec3ecb30f591bfbfdfcca&quot;</span>
+    <span class="n">CRAYOLA_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;65bf4add677a7a8667114b8f813b8afdd6b8e92e8cef1458e53b4a8cd716a4a3&quot;</span>
+    <span class="n">EGA16_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329&quot;</span>
+    <span class="n">EGA64_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;2159e51f89cca4a4fb43a2d80bea030f3d7cd0cc5e1eacd25eb95f0ce2027e7f&quot;</span>
+    <span class="n">GAMEBOY_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;e2911baed15b4d56a27313b6be506c3a1f57bee3b01ecd2ca5995b512822da9b&quot;</span>
+    <span class="n">GAMEBOY_COLOR_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;5c98dd69be991f445aabafe21a0bdddabc8f6e98aa728724e3d0e72a445aadde&quot;</span>
+    <span class="n">GAMEBOY_DMG_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;042d7cfd7b94f8719aa01603ddf5b0d9c73ae59b04e27295132ddac13142e968&quot;</span>
+    <span class="n">GAMEBOY_GBL_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;f2b6a573b09c1efa3529e79f281dcb0ed4e5c788cb10e51526c60e6e5d928231&quot;</span>
+    <span class="n">GAMEBOY_MGB_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;7c556e05e13adcfce0e7aec06ded6c7871acee63771e520319afa67e07080027&quot;</span>
+    <span class="n">MACINTOSH_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;e9b5bce3ce2eda12dec5793b4eb3c588a92d53e8d6ecaf4fa310998fe2dd1ddd&quot;</span>
+    <span class="n">NES_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;3021573a00b158fb6cf694e6546b236c2ec6862d52e08cc860f32d983e1f0a59&quot;</span>
+    <span class="n">SMS_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;95010c348c2f77a209544170da29ee7f5bfccacbcd32ed33c36cb7ef269f72e8&quot;</span>
+    <span class="n">TANDY16_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;820f2f1dcdd3acd7130a88247b09e6bf969779a08c97091800db19c1748f1a03&quot;</span>
+    <span class="n">VGA_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;9eb6055508d5523ceafbb4abe3d2921f09bc61b20485da1052e4d4fd653a5d00&quot;</span>
+    <span class="n">VIRTUALBOY_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;218854f6dc6506649e6ff14f92f56ff996b7c01a36c916b0374880c8524c40a9&quot;</span>
+    <span class="n">WEB_PALETTE_HASH</span> <span class="o">=</span> <span class="s2">&quot;ba4ad53ece01d2f1338ae13221aa04e5c342519d7750d948458074001a465e7d&quot;</span>
+    
+    <span class="c1"># User data files (optional, not verified) - now in user/ subdirectory</span>
+    <span class="n">USER_COLORS_JSON_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;user/user-colors.json&quot;</span>
+    <span class="n">USER_FILAMENTS_JSON_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;user/user-filaments.json&quot;</span>
+    <span class="n">USER_SYNONYMS_JSON_FILENAME</span> <span class="o">=</span> <span class="s2">&quot;user/user-synonyms.json&quot;</span>
+    
+    <span class="c1"># ========================================================================</span>
+    <span class="c1"># Transformation Matrices Integrity Hash</span>
+    <span class="c1"># ========================================================================</span>
+    <span class="c1"># SHA-256 hash of transformation matrices from matrices.py module</span>
+    <span class="c1"># This verifies the 6 CVD matrices haven&#39;t been modified</span>
+    <span class="c1"># To regenerate: python -c &quot;from color_tools.constants import ColorConstants; print(ColorConstants._compute_matrices_hash())&quot;</span>
+    <span class="n">MATRICES_EXPECTED_HASH</span> <span class="o">=</span> <span class="s2">&quot;d177316ade5146a084bb5b92d693c3f9c62ec593fde9b6face567dbd8a633df5&quot;</span>
+    
+<div class="viewcode-block" id="ColorConstants.verify_data_file">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.verify_data_file">[docs]</a>
+    <span class="nd">@staticmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_data_file</span><span class="p">(</span><span class="n">filepath</span><span class="p">:</span> <span class="n">Path</span><span class="p">,</span> <span class="n">expected_hash</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify integrity of a data file using SHA-256 hash.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            filepath: Path to the data file to verify</span>
+<span class="sd">            expected_hash: Expected SHA-256 hash of the file contents</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if file hash matches expected hash, False otherwise</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span><span class="w"> </span><span class="nn">hashlib</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">Path</span><span class="p">(</span><span class="n">filepath</span><span class="p">)</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span>
+            
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">filepath</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">actual_hash</span> <span class="o">=</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">f</span><span class="o">.</span><span class="n">read</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+        
+        <span class="k">return</span> <span class="n">actual_hash</span> <span class="o">==</span> <span class="n">expected_hash</span></div>
+
+    
+<div class="viewcode-block" id="ColorConstants.verify_all_data_files">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.verify_all_data_files">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_all_data_files</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="n">Path</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify integrity of all core data files.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data_dir: Directory containing data files. If None, uses package data directory.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (all_valid, list_of_errors)</span>
+<span class="sd">            - all_valid: True if all files pass verification</span>
+<span class="sd">            - list_of_errors: List of error messages for any failed verifications</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        
+        <span class="k">if</span> <span class="n">data_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Use package data directory</span>
+            <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+        
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Verify colors.json</span>
+        <span class="n">colors_path</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">COLORS_JSON_FILENAME</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verify_data_file</span><span class="p">(</span><span class="n">colors_path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">COLORS_JSON_HASH</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;colors.json integrity check FAILED: </span><span class="si">{</span><span class="n">colors_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Verify filaments.json</span>
+        <span class="n">filaments_path</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FILAMENTS_JSON_FILENAME</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verify_data_file</span><span class="p">(</span><span class="n">filaments_path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">FILAMENTS_JSON_HASH</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;filaments.json integrity check FAILED: </span><span class="si">{</span><span class="n">filaments_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Verify maker_synonyms.json</span>
+        <span class="n">synonyms_path</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAKER_SYNONYMS_JSON_FILENAME</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verify_data_file</span><span class="p">(</span><span class="n">synonyms_path</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MAKER_SYNONYMS_JSON_HASH</span><span class="p">):</span>
+            <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;maker_synonyms.json integrity check FAILED: </span><span class="si">{</span><span class="n">synonyms_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="c1"># Verify palette files</span>
+        <span class="n">palettes_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;palettes&quot;</span>
+        <span class="n">palette_checks</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="p">(</span><span class="s2">&quot;apple2.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">APPLE2_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;cga4.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CGA4_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;cga16.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CGA16_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;commodore64.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">COMMODORE64_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;crayola.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">CRAYOLA_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;ega16.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">EGA16_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;ega64.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">EGA64_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;gameboy.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">GAMEBOY_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;gameboy-color.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">GAMEBOY_COLOR_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;gameboy_dmg.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">GAMEBOY_DMG_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;gameboy_gbl.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">GAMEBOY_GBL_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;gameboy_mgb.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">GAMEBOY_MGB_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;macintosh.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MACINTOSH_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;nes.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">NES_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;sms.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">SMS_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;tandy16.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">TANDY16_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;vga.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VGA_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;virtualboy.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">VIRTUALBOY_PALETTE_HASH</span><span class="p">),</span>
+            <span class="p">(</span><span class="s2">&quot;web.json&quot;</span><span class="p">,</span> <span class="bp">cls</span><span class="o">.</span><span class="n">WEB_PALETTE_HASH</span><span class="p">),</span>
+        <span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">palette_file</span><span class="p">,</span> <span class="n">expected_hash</span> <span class="ow">in</span> <span class="n">palette_checks</span><span class="p">:</span>
+            <span class="n">palette_path</span> <span class="o">=</span> <span class="n">palettes_dir</span> <span class="o">/</span> <span class="n">palette_file</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verify_data_file</span><span class="p">(</span><span class="n">palette_path</span><span class="p">,</span> <span class="n">expected_hash</span><span class="p">):</span>
+                <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">palette_file</span><span class="si">}</span><span class="s2"> integrity check FAILED: </span><span class="si">{</span><span class="n">palette_path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">errors</span><span class="p">)</span></div>
+
+    
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">_compute_matrices_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute SHA-256 hash of transformation matrices for integrity checking.</span>
+<span class="sd">        </span>
+<span class="sd">        This imports all matrices from matrices.py and creates a fingerprint.</span>
+<span class="sd">        If any matrix values are modified, the hash won&#39;t match.</span>
+<span class="sd">        </span>
+<span class="sd">        ⚠️  When adding new matrices to matrices.py:</span>
+<span class="sd">            1. Add the import here</span>
+<span class="sd">            2. Add to matrices_dict below</span>
+<span class="sd">            3. Regenerate MATRICES_EXPECTED_HASH</span>
+<span class="sd">            4. Update _EXPECTED_HASH (you added a new constant)</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            SHA-256 hash of all matrix values</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">.matrices</span><span class="w"> </span><span class="kn">import</span> <span class="p">(</span>
+            <span class="n">PROTANOPIA_SIMULATION</span><span class="p">,</span>
+            <span class="n">DEUTERANOPIA_SIMULATION</span><span class="p">,</span>
+            <span class="n">TRITANOPIA_SIMULATION</span><span class="p">,</span>
+            <span class="n">PROTANOPIA_CORRECTION</span><span class="p">,</span>
+            <span class="n">DEUTERANOPIA_CORRECTION</span><span class="p">,</span>
+            <span class="n">TRITANOPIA_CORRECTION</span><span class="p">,</span>
+        <span class="p">)</span>
+        
+        <span class="c1"># Collect all matrices in a stable order</span>
+        <span class="n">matrices_dict</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s2">&quot;PROTANOPIA_SIMULATION&quot;</span><span class="p">:</span> <span class="n">PROTANOPIA_SIMULATION</span><span class="p">,</span>
+            <span class="s2">&quot;DEUTERANOPIA_SIMULATION&quot;</span><span class="p">:</span> <span class="n">DEUTERANOPIA_SIMULATION</span><span class="p">,</span>
+            <span class="s2">&quot;TRITANOPIA_SIMULATION&quot;</span><span class="p">:</span> <span class="n">TRITANOPIA_SIMULATION</span><span class="p">,</span>
+            <span class="s2">&quot;PROTANOPIA_CORRECTION&quot;</span><span class="p">:</span> <span class="n">PROTANOPIA_CORRECTION</span><span class="p">,</span>
+            <span class="s2">&quot;DEUTERANOPIA_CORRECTION&quot;</span><span class="p">:</span> <span class="n">DEUTERANOPIA_CORRECTION</span><span class="p">,</span>
+            <span class="s2">&quot;TRITANOPIA_CORRECTION&quot;</span><span class="p">:</span> <span class="n">TRITANOPIA_CORRECTION</span><span class="p">,</span>
+        <span class="p">}</span>
+        
+        <span class="c1"># Convert tuples to lists for JSON serialization</span>
+        <span class="n">serializable</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">name</span><span class="p">,</span> <span class="n">matrix</span> <span class="ow">in</span> <span class="n">matrices_dict</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">serializable</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="nb">float</span><span class="p">(</span><span class="n">val</span><span class="p">)</span> <span class="k">for</span> <span class="n">val</span> <span class="ow">in</span> <span class="n">row</span><span class="p">]</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">matrix</span><span class="p">]</span>
+        
+        <span class="c1"># Create stable JSON representation</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">dumps</span><span class="p">(</span><span class="n">serializable</span><span class="p">,</span> <span class="n">sort_keys</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span>
+    
+<div class="viewcode-block" id="ColorConstants.verify_matrices_integrity">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.verify_matrices_integrity">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_matrices_integrity</span><span class="p">(</span><span class="bp">cls</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify that transformation matrices haven&#39;t been modified.</span>
+<span class="sd">        </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            True if all matrices match expected values, False if tampered with.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MATRICES_EXPECTED_HASH</span> <span class="o">==</span> <span class="s2">&quot;TO_BE_COMPUTED&quot;</span><span class="p">:</span>
+            <span class="c1"># Hash hasn&#39;t been set yet - skip verification</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="bp">cls</span><span class="o">.</span><span class="n">_compute_matrices_hash</span><span class="p">()</span> <span class="o">==</span> <span class="bp">cls</span><span class="o">.</span><span class="n">MATRICES_EXPECTED_HASH</span></div>
+
+    
+<div class="viewcode-block" id="ColorConstants.generate_user_data_hash">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.generate_user_data_hash">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">generate_user_data_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="s2">&quot;Path | str&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generate SHA-256 hash for a user data file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Path to user data file</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            SHA-256 hash of the file contents</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: If file doesn&#39;t exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User data file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">hashlib</span><span class="o">.</span><span class="n">sha256</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">read_bytes</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">()</span></div>
+
+    
+<div class="viewcode-block" id="ColorConstants.save_user_data_hash">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.save_user_data_hash">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">save_user_data_hash</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="s2">&quot;Path | str&quot;</span><span class="p">,</span> <span class="n">hash_value</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;Path&quot;</span><span class="p">:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Save SHA-256 hash for a user data file to a .sha256 file.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Path to user data file</span>
+<span class="sd">            hash_value: Optional pre-computed hash. If None, will compute from file.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Path to the created .sha256 file</span>
+<span class="sd">            </span>
+<span class="sd">        Raises:</span>
+<span class="sd">            FileNotFoundError: If file doesn&#39;t exist</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">FileNotFoundError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;User data file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="k">if</span> <span class="n">hash_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">hash_value</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_user_data_hash</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+        
+        <span class="n">hash_file</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s2">&quot;.sha256&quot;</span><span class="p">)</span>
+        <span class="n">hash_file</span><span class="o">.</span><span class="n">write_text</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">hash_value</span><span class="si">}</span><span class="s2">  </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="n">hash_file</span></div>
+
+    
+<div class="viewcode-block" id="ColorConstants.verify_user_data_file">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.verify_user_data_file">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_user_data_file</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">file_path</span><span class="p">:</span> <span class="s2">&quot;Path | str&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">str</span> <span class="o">|</span> <span class="kc">None</span><span class="p">]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify user data file against its .sha256 file if it exists.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            file_path: Path to user data file</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (is_valid, error_message)</span>
+<span class="sd">            - is_valid: True if file is valid or no hash file exists</span>
+<span class="sd">            - error_message: None if valid, error description if invalid</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        
+        <span class="n">path</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;User data file not found: </span><span class="si">{</span><span class="n">path</span><span class="si">}</span><span class="s2">&quot;</span>
+        
+        <span class="n">hash_file</span> <span class="o">=</span> <span class="n">path</span><span class="o">.</span><span class="n">with_suffix</span><span class="p">(</span><span class="n">path</span><span class="o">.</span><span class="n">suffix</span> <span class="o">+</span> <span class="s2">&quot;.sha256&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">hash_file</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># No hash file means no verification required</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span>
+        
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">hash_content</span> <span class="o">=</span> <span class="n">hash_file</span><span class="o">.</span><span class="n">read_text</span><span class="p">()</span><span class="o">.</span><span class="n">strip</span><span class="p">()</span>
+            <span class="c1"># Extract hash from &quot;hash  filename&quot; format</span>
+            <span class="n">expected_hash</span> <span class="o">=</span> <span class="n">hash_content</span><span class="o">.</span><span class="n">split</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span> <span class="k">if</span> <span class="n">hash_content</span> <span class="k">else</span> <span class="s2">&quot;&quot;</span>
+            
+            <span class="n">actual_hash</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">generate_user_data_hash</span><span class="p">(</span><span class="n">path</span><span class="p">)</span>
+            
+            <span class="k">if</span> <span class="n">actual_hash</span> <span class="o">==</span> <span class="n">expected_hash</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">None</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Hash mismatch for </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: expected </span><span class="si">{</span><span class="n">expected_hash</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">..., got </span><span class="si">{</span><span class="n">actual_hash</span><span class="p">[:</span><span class="mi">8</span><span class="p">]</span><span class="si">}</span><span class="s2">...&quot;</span>
+                
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span><span class="p">,</span> <span class="sa">f</span><span class="s2">&quot;Error verifying </span><span class="si">{</span><span class="n">path</span><span class="o">.</span><span class="n">name</span><span class="si">}</span><span class="s2">: </span><span class="si">{</span><span class="n">e</span><span class="si">}</span><span class="s2">&quot;</span></div>
+
+    
+<div class="viewcode-block" id="ColorConstants.verify_all_user_data">
+<a class="viewcode-back" href="../../api/color_tools.constants.html#color_tools.constants.ColorConstants.verify_all_user_data">[docs]</a>
+    <span class="nd">@classmethod</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">verify_all_user_data</span><span class="p">(</span><span class="bp">cls</span><span class="p">,</span> <span class="n">data_dir</span><span class="p">:</span> <span class="s2">&quot;Path | str | None&quot;</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">tuple</span><span class="p">[</span><span class="nb">bool</span><span class="p">,</span> <span class="nb">list</span><span class="p">[</span><span class="nb">str</span><span class="p">]]:</span>
+<span class="w">        </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Verify integrity of all user data files in the user/ subdirectory.</span>
+<span class="sd">        </span>
+<span class="sd">        Only files with corresponding .sha256 files are verified.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            data_dir: Optional custom data directory. If None, uses package data directory.</span>
+<span class="sd">            </span>
+<span class="sd">        Returns:</span>
+<span class="sd">            Tuple of (all_valid, list_of_errors)</span>
+<span class="sd">            - all_valid: True if all files with hash files pass verification</span>
+<span class="sd">            - list_of_errors: List of error messages for any failed verifications</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span><span class="w"> </span><span class="nn">pathlib</span><span class="w"> </span><span class="kn">import</span> <span class="n">Path</span>
+        
+        <span class="k">if</span> <span class="n">data_dir</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Use package data directory</span>
+            <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="vm">__file__</span><span class="p">)</span><span class="o">.</span><span class="n">parent</span> <span class="o">/</span> <span class="s2">&quot;data&quot;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">data_dir</span> <span class="o">=</span> <span class="n">Path</span><span class="p">(</span><span class="n">data_dir</span><span class="p">)</span>
+        
+        <span class="n">user_dir</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="s2">&quot;user&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">user_dir</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+            <span class="c1"># No user directory means no user files to verify</span>
+            <span class="k">return</span> <span class="kc">True</span><span class="p">,</span> <span class="p">[]</span>
+        
+        <span class="n">errors</span> <span class="o">=</span> <span class="p">[]</span>
+        
+        <span class="c1"># Check all user data files</span>
+        <span class="n">user_files</span> <span class="o">=</span> <span class="p">[</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">USER_COLORS_JSON_FILENAME</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">USER_FILAMENTS_JSON_FILENAME</span><span class="p">,</span>
+            <span class="bp">cls</span><span class="o">.</span><span class="n">USER_SYNONYMS_JSON_FILENAME</span>
+        <span class="p">]</span>
+        
+        <span class="k">for</span> <span class="n">filename</span> <span class="ow">in</span> <span class="n">user_files</span><span class="p">:</span>
+            <span class="n">file_path</span> <span class="o">=</span> <span class="n">data_dir</span> <span class="o">/</span> <span class="n">filename</span>
+            <span class="k">if</span> <span class="n">file_path</span><span class="o">.</span><span class="n">exists</span><span class="p">():</span>
+                <span class="n">is_valid</span><span class="p">,</span> <span class="n">error_msg</span> <span class="o">=</span> <span class="bp">cls</span><span class="o">.</span><span class="n">verify_user_data_file</span><span class="p">(</span><span class="n">file_path</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">is_valid</span> <span class="ow">and</span> <span class="n">error_msg</span><span class="p">:</span>
+                    <span class="n">errors</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+        
+        <span class="k">return</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">errors</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">,</span> <span class="n">errors</span><span class="p">)</span></div>
+</div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

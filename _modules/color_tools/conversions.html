@@ -1,0 +1,581 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" data-content_root="../../">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>color_tools.conversions &mdash; Color Tools 5.2.0 documentation</title>
+      <link rel="stylesheet" type="text/css" href="../../_static/pygments.css?v=b86133f3" />
+      <link rel="stylesheet" type="text/css" href="../../_static/css/theme.css?v=e59714d7" />
+      <link rel="stylesheet" type="text/css" href="../../_static/custom.css?v=08153a50" />
+
+  
+      <script src="../../_static/jquery.js?v=5d32c60e"></script>
+      <script src="../../_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+      <script src="../../_static/documentation_options.js?v=2dde5210"></script>
+      <script src="../../_static/doctools.js?v=9bcbadda"></script>
+      <script src="../../_static/sphinx_highlight.js?v=dc90522c"></script>
+    <script src="../../_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="../../index.html" class="icon icon-home">
+            Color Tools
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.conversions.html">color_tools.conversions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.distance.html">color_tools.distance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.palette.html">color_tools.palette</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.gamut.html">color_tools.gamut</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.validation.html">color_tools.validation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.naming.html">color_tools.naming</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.color_deficiency.html">color_tools.color_deficiency</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.export.html">color_tools.export</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.config.html">color_tools.config</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.constants.html">color_tools.constants</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.matrices.html">color_tools.matrices</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../api/color_tools.image.html">color_tools.image</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Color Tools</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="../../index.html" class="icon icon-home" aria-label="Home"></a></li>
+          <li class="breadcrumb-item"><a href="../index.html">Module code</a></li>
+      <li class="breadcrumb-item active">color_tools.conversions</li>
+      <li class="wy-breadcrumbs-aside">
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <h1>Source code for color_tools.conversions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Color space conversion functions.</span>
+
+<span class="sd">Handles conversions between:</span>
+<span class="sd">- sRGB (0-255) ↔ XYZ ↔ LAB ↔ LCH</span>
+<span class="sd">- sRGB ↔ HSL (various formats)</span>
+<span class="sd">- Gamma correction (sRGB companding)</span>
+
+<span class="sd">All conversions use D65 illuminant and proper color science math.</span>
+
+<span class="sd">Example:</span>
+<span class="sd">    &gt;&gt;&gt; from color_tools import rgb_to_lab, lab_to_lch, rgb_to_hsl</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # Convert vibrant orange from web color</span>
+<span class="sd">    &gt;&gt;&gt; orange_rgb = (255, 128, 0)</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # To LAB for perceptual analysis</span>
+<span class="sd">    &gt;&gt;&gt; lab = rgb_to_lab(orange_rgb)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;LAB: L={lab[0]:.1f} a={lab[1]:.1f} b={lab[2]:.1f}&quot;)</span>
+<span class="sd">    LAB: L=67.8 a=43.4 b=78.0</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # To LCH for hue/chroma work</span>
+<span class="sd">    &gt;&gt;&gt; lch = lab_to_lch(lab)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;LCH: L={lch[0]:.1f} C={lch[1]:.1f} H={lch[2]:.1f}°&quot;)</span>
+<span class="sd">    LCH: L=67.8 C=88.6 H=60.9°</span>
+<span class="sd">    &gt;&gt;&gt; </span>
+<span class="sd">    &gt;&gt;&gt; # To HSL for web design</span>
+<span class="sd">    &gt;&gt;&gt; hsl = rgb_to_hsl(orange_rgb)</span>
+<span class="sd">    &gt;&gt;&gt; print(f&quot;HSL: {hsl[0]:.0f}° {hsl[1]:.0f}% {hsl[2]:.0f}%&quot;)</span>
+<span class="sd">    HSL: 30° 100% 50%</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">__future__</span><span class="w"> </span><span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">from</span><span class="w"> </span><span class="nn">typing</span><span class="w"> </span><span class="kn">import</span> <span class="n">Optional</span><span class="p">,</span> <span class="n">Tuple</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">math</span>
+<span class="kn">import</span><span class="w"> </span><span class="nn">colorsys</span>
+
+<span class="kn">from</span><span class="w"> </span><span class="nn">.constants</span><span class="w"> </span><span class="kn">import</span> <span class="n">ColorConstants</span>
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># General Helpers</span>
+<span class="c1"># ============================================================================</span>
+
+<div class="viewcode-block" id="hex_to_rgb">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.hex_to_rgb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hex_to_rgb</span><span class="p">(</span><span class="n">hex_code</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Optional</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts a hex color string to an RGB tuple.</span>
+
+<span class="sd">    Args:</span>
+<span class="sd">        hex_code: Hex color string in the format &quot;#RGB&quot;, &quot;RGB&quot;, &quot;#RRGGBB&quot; or &quot;RRGGBB&quot;.</span>
+<span class="sd">                  3-character codes are expanded (e.g., &quot;#24c&quot; -&gt; &quot;#2244cc&quot;).</span>
+
+<span class="sd">    Returns:</span>
+<span class="sd">        rgb: Tuple of (R, G, B) where each component is 0-255.</span>
+<span class="sd">        None if the hex code is invalid.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">hex_clean</span> <span class="o">=</span> <span class="n">hex_code</span><span class="o">.</span><span class="n">lstrip</span><span class="p">(</span><span class="s1">&#39;#&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span><span class="p">:</span>
+        <span class="c1"># Expand 3-character hex to 6-character (e.g., &quot;24c&quot; -&gt; &quot;2244cc&quot;)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">*</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">)</span> <span class="o">==</span> <span class="mi">6</span><span class="p">:</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">[</span><span class="mi">2</span><span class="p">:</span><span class="mi">4</span><span class="p">],</span> <span class="mi">16</span><span class="p">),</span>
+                <span class="nb">int</span><span class="p">(</span><span class="n">hex_clean</span><span class="p">[</span><span class="mi">4</span><span class="p">:</span><span class="mi">6</span><span class="p">],</span> <span class="mi">16</span><span class="p">)</span>
+            <span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="kc">None</span></div>
+
+    
+<div class="viewcode-block" id="rgb_to_hex">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.rgb_to_hex">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_hex</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="nb">str</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts an RGB tuple to a hex color string.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        rgb: Tuple of (R, G, B) where each component is 0-255.</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        Hex color string in the format &quot;#RRGGBB&quot;.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">rgb</span>
+    <span class="k">return</span> <span class="s2">&quot;#</span><span class="si">{:02X}{:02X}{:02X}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+        <span class="nb">max</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="n">r</span><span class="p">)),</span>
+        <span class="nb">max</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="n">g</span><span class="p">)),</span>
+        <span class="nb">max</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="n">b</span><span class="p">))</span>
+    <span class="p">)</span>    </div>
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Forward Conversions (RGB → LAB)</span>
+<span class="c1"># ============================================================================</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_srgb_to_linear</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert sRGB value to linear RGB (gamma correction removal).</span>
+<span class="sd">    </span>
+<span class="sd">    sRGB uses a piecewise function to approximate gamma 2.2 encoding.</span>
+<span class="sd">    This function reverses that to get linear light values.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_THRESHOLD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">c</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_LINEAR_SCALE</span>
+    <span class="k">return</span> <span class="p">((</span><span class="n">c</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_OFFSET</span><span class="p">)</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_DIVISOR</span><span class="p">)</span> <span class="o">**</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_POWER</span>
+
+
+<div class="viewcode-block" id="rgb_to_xyz">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.rgb_to_xyz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert sRGB (0-255) to CIE XYZ using D65 illuminant.</span>
+<span class="sd">    </span>
+<span class="sd">    XYZ is a device-independent color space that represents how the human</span>
+<span class="sd">    eye responds to light. It&#39;s the bridge between RGB and LAB.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Normalize to 0-1 range</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">]</span>
+    
+    <span class="c1"># Remove gamma correction (linearize)</span>
+    <span class="n">r_lin</span><span class="p">,</span> <span class="n">g_lin</span><span class="p">,</span> <span class="n">b_lin</span> <span class="o">=</span> <span class="n">_srgb_to_linear</span><span class="p">(</span><span class="n">r</span><span class="p">),</span> <span class="n">_srgb_to_linear</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="n">_srgb_to_linear</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    
+    <span class="c1"># Matrix multiplication using sRGB → XYZ coefficients</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">r_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_R</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">g_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_R</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">b_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_R</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">r_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_G</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">g_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_G</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">b_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_G</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">r_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_B</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">g_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_B</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">b_lin</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_TO_XYZ_B</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    
+    <span class="c1"># Scale to 0-100 range (standard for XYZ)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">X</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_SCALE_FACTOR</span><span class="p">,</span> <span class="n">Y</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_SCALE_FACTOR</span><span class="p">,</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_SCALE_FACTOR</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_f_lab</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LAB conversion helper function.</span>
+<span class="sd">    </span>
+<span class="sd">    This piecewise function handles the nonlinear transformation from XYZ to LAB.</span>
+<span class="sd">    The cube root section makes LAB perceptually uniform.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_DELTA_CUBED</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">t</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="mf">3.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">t</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_F_SCALE</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_F_OFFSET</span>
+
+
+<div class="viewcode-block" id="xyz_to_lab">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.xyz_to_lab">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_lab</span><span class="p">(</span><span class="n">xyz</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert CIE XYZ to L*a*b* using D65 illuminant.</span>
+<span class="sd">    </span>
+<span class="sd">    LAB is perceptually uniform - equal distances in LAB space correspond</span>
+<span class="sd">    to roughly equal perceived color differences. Perfect for color matching!</span>
+<span class="sd">    </span>
+<span class="sd">    - L*: Lightness (0=black, 100=white)</span>
+<span class="sd">    - a*: Green←→Red axis</span>
+<span class="sd">    - b*: Blue←→Yellow axis</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="n">xyz</span>
+    
+    <span class="c1"># Normalize by D65 white point and apply nonlinear transformation</span>
+    <span class="n">fx</span> <span class="o">=</span> <span class="n">_f_lab</span><span class="p">(</span><span class="n">X</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">D65_WHITE_X</span><span class="p">)</span>
+    <span class="n">fy</span> <span class="o">=</span> <span class="n">_f_lab</span><span class="p">(</span><span class="n">Y</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">D65_WHITE_Y</span><span class="p">)</span>
+    <span class="n">fz</span> <span class="o">=</span> <span class="n">_f_lab</span><span class="p">(</span><span class="n">Z</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">D65_WHITE_Z</span><span class="p">)</span>
+    
+    <span class="c1"># Calculate LAB components</span>
+    <span class="n">L</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_KAPPA</span> <span class="o">*</span> <span class="n">fy</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_OFFSET</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_A_SCALE</span> <span class="o">*</span> <span class="p">(</span><span class="n">fx</span> <span class="o">-</span> <span class="n">fy</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_B_SCALE</span> <span class="o">*</span> <span class="p">(</span><span class="n">fy</span> <span class="o">-</span> <span class="n">fz</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rgb_to_lab">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.rgb_to_lab">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_lab</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert sRGB (0-255) to CIE L*a*b*.</span>
+<span class="sd">    </span>
+<span class="sd">    This is the main conversion you&#39;ll use for color matching!</span>
+<span class="sd">    Goes RGB → XYZ → LAB in one shot.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">xyz_to_lab</span><span class="p">(</span><span class="n">rgb_to_xyz</span><span class="p">(</span><span class="n">rgb</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># Reverse Conversions (LAB → RGB)</span>
+<span class="c1"># ============================================================================</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_f_lab_inverse</span><span class="p">(</span><span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Inverse of the f function used in LAB conversion.</span>
+<span class="sd">    </span>
+<span class="sd">    This reverses the nonlinear transformation to go from LAB back to XYZ.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_DELTA</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">t</span> <span class="o">**</span> <span class="mi">3</span>
+    <span class="k">return</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_F_SCALE</span> <span class="o">*</span> <span class="p">(</span><span class="n">t</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_F_OFFSET</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="lab_to_xyz">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.lab_to_xyz">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lab_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert CIE L*a*b* to XYZ using D65 illuminant.</span>
+<span class="sd">    </span>
+<span class="sd">    Reverses the LAB → XYZ transformation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">lab</span>
+    
+    <span class="c1"># Calculate intermediate values</span>
+    <span class="n">fy</span> <span class="o">=</span> <span class="p">(</span><span class="n">L</span> <span class="o">+</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_OFFSET</span><span class="p">)</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_KAPPA</span>
+    <span class="n">fx</span> <span class="o">=</span> <span class="n">a</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_A_SCALE</span> <span class="o">+</span> <span class="n">fy</span>
+    <span class="n">fz</span> <span class="o">=</span> <span class="n">fy</span> <span class="o">-</span> <span class="n">b</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">LAB_B_SCALE</span>
+    
+    <span class="c1"># Apply inverse transformation and scale by D65 white point</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">D65_WHITE_X</span> <span class="o">*</span> <span class="n">_f_lab_inverse</span><span class="p">(</span><span class="n">fx</span><span class="p">)</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">D65_WHITE_Y</span> <span class="o">*</span> <span class="n">_f_lab_inverse</span><span class="p">(</span><span class="n">fy</span><span class="p">)</span>
+    <span class="n">Z</span> <span class="o">=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">D65_WHITE_Z</span> <span class="o">*</span> <span class="n">_f_lab_inverse</span><span class="p">(</span><span class="n">fz</span><span class="p">)</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span><span class="p">)</span></div>
+
+
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_linear_to_srgb</span><span class="p">(</span><span class="n">c</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert linear RGB to sRGB (inverse gamma correction).</span>
+<span class="sd">    </span>
+<span class="sd">    This applies the sRGB gamma curve to convert from linear light</span>
+<span class="sd">    back to the nonlinear sRGB encoding.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">c</span> <span class="o">&lt;=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_INV_GAMMA_THRESHOLD</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_LINEAR_SCALE</span> <span class="o">*</span> <span class="n">c</span>
+    <span class="k">return</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_DIVISOR</span> <span class="o">*</span> <span class="p">(</span><span class="n">c</span> <span class="o">**</span> <span class="p">(</span><span class="mf">1.0</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_POWER</span><span class="p">))</span> <span class="o">-</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">SRGB_GAMMA_OFFSET</span>
+
+
+<div class="viewcode-block" id="xyz_to_rgb">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.xyz_to_rgb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">xyz_to_rgb</span><span class="p">(</span><span class="n">xyz</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">clamp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert CIE XYZ to sRGB (0-255).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        xyz: XYZ color tuple</span>
+<span class="sd">        clamp: If True, clamp out-of-gamut values to 0-255. If False, may return</span>
+<span class="sd">               values outside valid range (useful for gamut checking).</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB tuple (0-255)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># Scale from 0-100 to 0-1 range</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">Z</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_SCALE_FACTOR</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">xyz</span><span class="p">]</span>
+    
+    <span class="c1"># Matrix multiplication using XYZ → sRGB coefficients</span>
+    <span class="n">r_lin</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_X</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">Y</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_X</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_X</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">g_lin</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_Y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">Y</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_Y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_Y</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">b_lin</span> <span class="o">=</span> <span class="n">X</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_Z</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">Y</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_Z</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="n">Z</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_TO_SRGB_Z</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    
+    <span class="c1"># Apply gamma correction</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">_linear_to_srgb</span><span class="p">(</span><span class="n">r_lin</span><span class="p">)</span>
+    <span class="n">g</span> <span class="o">=</span> <span class="n">_linear_to_srgb</span><span class="p">(</span><span class="n">g_lin</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">_linear_to_srgb</span><span class="p">(</span><span class="n">b_lin</span><span class="p">)</span>
+    
+    <span class="c1"># Convert to 0-255 range</span>
+    <span class="n">r_255</span> <span class="o">=</span> <span class="n">r</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span>
+    <span class="n">g_255</span> <span class="o">=</span> <span class="n">g</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span>
+    <span class="n">b_255</span> <span class="o">=</span> <span class="n">b</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span>
+    
+    <span class="k">if</span> <span class="n">clamp</span><span class="p">:</span>
+        <span class="c1"># Clamp to valid range</span>
+        <span class="n">r_255</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="n">r_255</span><span class="p">))</span>
+        <span class="n">g_255</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="n">g_255</span><span class="p">))</span>
+        <span class="n">b_255</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MIN</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span><span class="p">,</span> <span class="n">b_255</span><span class="p">))</span>
+    
+    <span class="k">return</span> <span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">r_255</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">g_255</span><span class="p">)),</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">b_255</span><span class="p">)))</span></div>
+
+
+
+<div class="viewcode-block" id="lab_to_rgb">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.lab_to_rgb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lab_to_rgb</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">clamp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert CIE L*a*b* to sRGB (0-255).</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lab: L*a*b* color tuple</span>
+<span class="sd">        clamp: If True, clamp out-of-gamut colors to valid RGB range</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB tuple (0-255)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">xyz_to_rgb</span><span class="p">(</span><span class="n">lab_to_xyz</span><span class="p">(</span><span class="n">lab</span><span class="p">),</span> <span class="n">clamp</span><span class="o">=</span><span class="n">clamp</span><span class="p">)</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># LCH Color Space (Cylindrical LAB)</span>
+<span class="c1"># ============================================================================</span>
+
+<div class="viewcode-block" id="lab_to_lch">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.lab_to_lch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lab_to_lch</span><span class="p">(</span><span class="n">lab</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert L*a*b* to L*C*h° (cylindrical LAB).</span>
+<span class="sd">    </span>
+<span class="sd">    LCH is more intuitive than LAB for certain operations:</span>
+<span class="sd">    - L* (Lightness): Same as LAB, 0-100</span>
+<span class="sd">    - C* (Chroma): Color intensity/saturation, sqrt(a² + b²)</span>
+<span class="sd">    - h° (Hue): Hue angle in degrees, 0-360</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (L*, C*, h°) tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">lab</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="o">*</span><span class="n">a</span> <span class="o">+</span> <span class="n">b</span><span class="o">*</span><span class="n">b</span><span class="p">)</span>  <span class="c1"># Chroma (color intensity)</span>
+    <span class="n">h</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">degrees</span><span class="p">(</span><span class="n">math</span><span class="o">.</span><span class="n">atan2</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">a</span><span class="p">))</span>  <span class="c1"># Hue angle</span>
+    <span class="k">if</span> <span class="n">h</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">h</span> <span class="o">+=</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span>  <span class="c1"># Normalize to 0-360</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lch_to_lab">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.lch_to_lab">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lch_to_lab</span><span class="p">(</span><span class="n">lch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert L*C*h° to L*a*b*.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        lch: (L*, C*, h°) tuple</span>
+<span class="sd">    </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        (L*, a*, b*) tuple</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">L</span><span class="p">,</span> <span class="n">C</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="n">lch</span>
+    <span class="n">h_rad</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">radians</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">h_rad</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">C</span> <span class="o">*</span> <span class="n">math</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">h_rad</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">L</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="lch_to_rgb">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.lch_to_rgb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">lch_to_rgb</span><span class="p">(</span><span class="n">lch</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">],</span> <span class="n">clamp</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert L*C*h° directly to sRGB (0-255).&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">lab_to_rgb</span><span class="p">(</span><span class="n">lch_to_lab</span><span class="p">(</span><span class="n">lch</span><span class="p">),</span> <span class="n">clamp</span><span class="o">=</span><span class="n">clamp</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rgb_to_lch">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.rgb_to_lch">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_lch</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;Convert sRGB (0-255) directly to L*C*h°.&quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">lab_to_lch</span><span class="p">(</span><span class="n">rgb_to_lab</span><span class="p">(</span><span class="n">rgb</span><span class="p">))</span></div>
+
+
+
+<span class="c1"># ============================================================================</span>
+<span class="c1"># HSL Conversions</span>
+<span class="c1"># ============================================================================</span>
+
+<span class="k">def</span><span class="w"> </span><span class="nf">_rgb_to_rawhsl</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert RGB to raw HSL (all values 0-1).</span>
+<span class="sd">    </span>
+<span class="sd">    Uses Python&#39;s colorsys module for the conversion.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="p">[</span><span class="n">v</span> <span class="o">/</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">RGB_MAX</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">rgb</span><span class="p">]</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">s</span> <span class="o">=</span> <span class="n">colorsys</span><span class="o">.</span><span class="n">rgb_to_hls</span><span class="p">(</span><span class="n">r</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="rgb_to_hsl">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.rgb_to_hsl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_hsl</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert RGB (0-255) to HSL (H: 0-360, S: 0-100, L: 0-100).</span>
+<span class="sd">    </span>
+<span class="sd">    This is the standard HSL representation:</span>
+<span class="sd">    - H: Hue in degrees (0° = red, 120° = green, 240° = blue)</span>
+<span class="sd">    - S: Saturation as percentage (0% = gray, 100% = pure color)</span>
+<span class="sd">    - L: Lightness as percentage (0% = black, 50% = pure color, 100% = white)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">_rgb_to_rawhsl</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">HUE_CIRCLE_DEGREES</span><span class="p">,</span> <span class="n">s</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_SCALE_FACTOR</span><span class="p">,</span> <span class="n">l</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">XYZ_SCALE_FACTOR</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="rgb_to_winhsl">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.rgb_to_winhsl">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">rgb_to_winhsl</span><span class="p">(</span><span class="n">rgb</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert RGB (0-255) to Windows HSL (all components 0-240).</span>
+<span class="sd">    </span>
+<span class="sd">    Windows HSL is used in Win32 COLORREF and some GDI APIs.</span>
+<span class="sd">    Each component is scaled to the 0-240 range instead of the usual</span>
+<span class="sd">    H:0-360, S:0-100, L:0-100 representation.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">_rgb_to_rawhsl</span><span class="p">(</span><span class="n">rgb</span><span class="p">)</span>
+    <span class="n">win_h</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">WIN_HSL_MAX</span><span class="p">))</span>
+    <span class="n">win_s</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">s</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">WIN_HSL_MAX</span><span class="p">))</span>
+    <span class="n">win_l</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">l</span> <span class="o">*</span> <span class="n">ColorConstants</span><span class="o">.</span><span class="n">WIN_HSL_MAX</span><span class="p">))</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">win_h</span><span class="p">,</span> <span class="n">win_s</span><span class="p">,</span> <span class="n">win_l</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="hsl_to_rgb">
+<a class="viewcode-back" href="../../api/color_tools.conversions.html#color_tools.conversions.hsl_to_rgb">[docs]</a>
+<span class="k">def</span><span class="w"> </span><span class="nf">hsl_to_rgb</span><span class="p">(</span><span class="n">hsl</span><span class="p">:</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">,</span> <span class="nb">float</span><span class="p">])</span> <span class="o">-&gt;</span> <span class="n">Tuple</span><span class="p">[</span><span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">,</span> <span class="nb">int</span><span class="p">]:</span>
+<span class="w">    </span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Convert HSL (H: 0-360, S: 0-100, L: 0-100) to RGB (0-255).</span>
+<span class="sd">    </span>
+<span class="sd">    This is the inverse of rgb_to_hsl(), converting from the standard</span>
+<span class="sd">    HSL representation back to 8-bit RGB values.</span>
+<span class="sd">    </span>
+<span class="sd">    Args:</span>
+<span class="sd">        hsl: HSL tuple (Hue 0-360°, Saturation 0-100%, Lightness 0-100%)</span>
+<span class="sd">        </span>
+<span class="sd">    Returns:</span>
+<span class="sd">        RGB tuple (0-255 for each component)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">h</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">l</span> <span class="o">=</span> <span class="n">hsl</span>
+    <span class="c1"># Normalize to 0-1 range</span>
+    <span class="n">h_norm</span> <span class="o">=</span> <span class="n">h</span> <span class="o">/</span> <span class="mf">360.0</span>
+    <span class="n">s_norm</span> <span class="o">=</span> <span class="n">s</span> <span class="o">/</span> <span class="mf">100.0</span>
+    <span class="n">l_norm</span> <span class="o">=</span> <span class="n">l</span> <span class="o">/</span> <span class="mf">100.0</span>
+    
+    <span class="c1"># Use the standard HSL to RGB algorithm</span>
+    <span class="k">def</span><span class="w"> </span><span class="nf">hue_to_rgb</span><span class="p">(</span><span class="n">p</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">q</span><span class="p">:</span> <span class="nb">float</span><span class="p">,</span> <span class="n">t</span><span class="p">:</span> <span class="nb">float</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">float</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">-=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">/</span><span class="mi">6</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">t</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="o">/</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">q</span>
+        <span class="k">if</span> <span class="n">t</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="o">/</span><span class="mi">3</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">p</span> <span class="o">+</span> <span class="p">(</span><span class="n">q</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">2</span><span class="o">/</span><span class="mi">3</span> <span class="o">-</span> <span class="n">t</span><span class="p">)</span> <span class="o">*</span> <span class="mi">6</span>
+        <span class="k">return</span> <span class="n">p</span>
+    
+    <span class="k">if</span> <span class="n">s_norm</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="c1"># Achromatic (gray)</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">g</span> <span class="o">=</span> <span class="n">b</span> <span class="o">=</span> <span class="n">l_norm</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">q</span> <span class="o">=</span> <span class="n">l_norm</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">s_norm</span><span class="p">)</span> <span class="k">if</span> <span class="n">l_norm</span> <span class="o">&lt;</span> <span class="mf">0.5</span> <span class="k">else</span> <span class="n">l_norm</span> <span class="o">+</span> <span class="n">s_norm</span> <span class="o">-</span> <span class="n">l_norm</span> <span class="o">*</span> <span class="n">s_norm</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">l_norm</span> <span class="o">-</span> <span class="n">q</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">hue_to_rgb</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">h_norm</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">g</span> <span class="o">=</span> <span class="n">hue_to_rgb</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">h_norm</span><span class="p">)</span>
+        <span class="n">b</span> <span class="o">=</span> <span class="n">hue_to_rgb</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">h_norm</span> <span class="o">-</span> <span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+    
+    <span class="c1"># Convert to 0-255 range and clamp</span>
+    <span class="k">return</span> <span class="p">(</span>
+        <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)))),</span>
+        <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">g</span> <span class="o">*</span> <span class="mi">255</span><span class="p">)))),</span>
+        <span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">min</span><span class="p">(</span><span class="mi">255</span><span class="p">,</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">b</span> <span class="o">*</span> <span class="mi">255</span><span class="p">))))</span>
+    <span class="p">)</span></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2024, David Terracino.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
