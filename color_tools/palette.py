@@ -162,6 +162,8 @@ class FilamentRecord:
             Scale is open-ended and can exceed 100 for highly transparent materials.
             None indicates opaque or unknown transmission characteristics.
         other_names: Alternative color names (regional variants, historical names) or None
+        owned: Whether this filament is owned by the user (default: False).
+            Used to filter searches to only owned filaments.
         source: JSON filename where this record originated (default: "filaments.json")
     
     Properties:
@@ -187,6 +189,7 @@ class FilamentRecord:
     hex: str
     td_value: Optional[float] = None  # Translucency/transparency value
     other_names: Optional[List[str]] = None  # Alternative names (regional, historical, etc.)
+    owned: bool = False  # Whether this filament is owned by the user
     source: str = "filaments.json"   # JSON filename where this record originated
     
     @property
@@ -367,6 +370,7 @@ def _parse_filament_records(data: list, source_file: str = "JSON data") -> List[
                 hex=f["hex"],
                 td_value=f.get("td_value"),
                 other_names=f.get("other_names"),
+                owned=f.get("owned", False),  # Default to False if not specified
                 source=source_filename,
             ))
         except KeyError as e:
@@ -1256,7 +1260,8 @@ class FilamentPalette:
         maker: Optional[Union[str, List[str]]] = None,
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
-        color: Optional[str] = None
+        color: Optional[str] = None,
+        owned_only: bool = False
     ) -> List[FilamentRecord]:
         """
         Filter filaments by multiple criteria.
@@ -1272,6 +1277,7 @@ class FilamentPalette:
             type_name: A filament type or list of types.
             finish: A filament finish or list of finishes.
             color: A single color name to match (case-insensitive).
+            owned_only: If True, only return filaments marked as owned (default: False).
         
         Returns:
             A list of FilamentRecord objects matching the criteria.
@@ -1294,6 +1300,8 @@ class FilamentPalette:
             results = [r for r in results if r.finish and r.finish in finishes_set]
         if color:
             results = [r for r in results if r.color.lower() == color.lower()]
+        if owned_only:
+            results = [r for r in results if r.owned]
             
         return results
 
@@ -1305,6 +1313,7 @@ class FilamentPalette:
         maker: Optional[Union[str, List[str]]] = None,
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
+        owned_only: bool = False,
         cmc_l: float = ColorConstants.CMC_L_DEFAULT,
         cmc_c: float = ColorConstants.CMC_C_DEFAULT,
     ) -> Tuple[FilamentRecord, float]:
@@ -1320,6 +1329,7 @@ class FilamentPalette:
             maker: Optional maker name or list of names to filter by. Use "*" to ignore filter.
             type_name: Optional filament type or list of types to filter by. Use "*" to ignore filter.
             finish: Optional filament finish or list of finishes to filter by. Use "*" to ignore filter.
+            owned_only: If True, only search among filaments marked as owned (default: False).
             cmc_l, cmc_c: Parameters for CMC metric.
         
         Returns:
@@ -1333,7 +1343,7 @@ class FilamentPalette:
         finish_filter = None if finish == "*" else finish
         
         # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter)
+        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter, owned_only=owned_only)
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
@@ -1379,6 +1389,7 @@ class FilamentPalette:
         maker: Optional[Union[str, List[str]]] = None,
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
+        owned_only: bool = False,
         cmc_l: float = ColorConstants.CMC_L_DEFAULT,
         cmc_c: float = ColorConstants.CMC_C_DEFAULT,
     ) -> List[Tuple[FilamentRecord, float]]:
@@ -1394,6 +1405,7 @@ class FilamentPalette:
             maker: Optional maker name or list of names to filter by. Use "*" to ignore filter.
             type_name: Optional filament type or list of types to filter by. Use "*" to ignore filter.
             finish: Optional filament finish or list of finishes to filter by. Use "*" to ignore filter.
+            owned_only: If True, only search among filaments marked as owned (default: False).
             cmc_l, cmc_c: Parameters for CMC metric.
         
         Returns:
@@ -1411,7 +1423,7 @@ class FilamentPalette:
         finish_filter = None if finish == "*" else finish
         
         # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter)
+        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter, owned_only=owned_only)
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")

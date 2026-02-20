@@ -87,6 +87,9 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
             type_filter = "*" if args.type == ["*"] else args.type  
             finish_filter = "*" if args.finish == ["*"] else args.finish
             
+            # Get owned_only flag (default to False if not present)
+            owned_only = getattr(args, 'owned_only', False)
+            
             if args.count > 1:
                 # Multiple results
                 results = filament_palette.nearest_filaments(
@@ -96,6 +99,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     maker=maker_filter,
                     type_name=type_filter,
                     finish=finish_filter,
+                    owned_only=owned_only,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
                 )
@@ -111,6 +115,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     maker=maker_filter,
                     type_name=type_filter,
                     finish=finish_filter,
+                    owned_only=owned_only,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
                 )
@@ -121,14 +126,18 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
             sys.exit(1)
         sys.exit(0)
 
-    if args.maker or args.type or args.finish or args.color or args.export:
+    if args.maker or args.type or args.finish or args.color or args.export or getattr(args, 'owned_only', False):
+        # Get owned_only flag (default to False if not present)
+        owned_only = getattr(args, 'owned_only', False)
+        
         # Filter filaments (or get all if no filters and exporting)
-        if args.maker or args.type or args.finish or args.color:
+        if args.maker or args.type or args.finish or args.color or owned_only:
             results = filament_palette.filter(
                 maker=args.maker,
                 type_name=args.type,
                 finish=args.finish,
-                color=args.color
+                color=args.color,
+                owned_only=owned_only
             )
         elif args.export:
             # Export all filaments if --export specified without filters
@@ -138,7 +147,8 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                 maker=args.maker,
                 type_name=args.type,
                 finish=args.finish,
-                color=args.color
+                color=args.color,
+                owned_only=owned_only
             )
         
         if not results:

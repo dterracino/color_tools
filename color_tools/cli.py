@@ -353,6 +353,11 @@ Examples:
         help="Filter by color name"
     )
     filament_parser.add_argument(
+        "--owned-only",
+        action="store_true",
+        help="Only show filaments marked as owned"
+    )
+    filament_parser.add_argument(
         "--dual-color-mode",
         choices=["first", "last", "mix"],
         default="first",
