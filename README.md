@@ -15,7 +15,6 @@ A comprehensive Python library for color science operations, color space convers
 | [Installation](https://github.com/dterracino/color_tools/blob/main/docs/Installation.md) | Setup, dependencies, development install |
 | [Usage](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) | Library API, CLI commands, examples |
 | [Customization](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md) | Data files, custom palettes, configuration |
-| [Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/OwnedFilaments.md) | Managing your personal filament inventory |
 | [Troubleshooting](https://github.com/dterracino/color_tools/blob/main/docs/Troubleshooting.md) | Error handling, performance, technical notes |
 | [FAQ](https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md) | Color spaces, distance metrics, contributing |
 
@@ -130,55 +129,6 @@ The library includes extensive color databases:
 - **Retro Palettes**: CGA, EGA, VGA, Game Boy, Commodore 64, and more
 
 Extend with your own data using [User Data Files](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#user-data-files-optional-extensions).
-
-### 📋 Managing Owned Filaments
-
-Track which filaments you own to filter search results to your personal inventory:
-
-```bash
-# Search only among owned filaments
-color-tools filament --nearest --value 255 128 64 --owned-only
-
-# List owned filaments by maker
-color-tools filament --maker "Bambu Lab" --owned-only
-```
-
-**Setup**: Create `color_tools/data/user/owned-filaments.json` with filament IDs:
-
-```json
-{
-  "owned_ids": [
-    "bambu-lab-pla-basic-black",
-    "bambu-lab-pla-silk-plus-red",
-    "polymaker-pla-matte-blue"
-  ]
-}
-```
-
-**Important**: This is different from `user-filaments.json`:
-- **`owned-filaments.json`** - References existing filaments by ID (tracks ownership)
-- **`user-filaments.json`** - Adds custom filaments to the database (extends database)
-
-See [Owned Filaments Guide](https://github.com/dterracino/color_tools/blob/main/docs/OwnedFilaments.md) for complete documentation.
-
-**Library usage**:
-
-```python
-from color_tools import FilamentPalette
-
-palette = FilamentPalette.load_default()
-
-# Filter to owned filaments only
-owned = palette.filter(owned_only=True)
-print(f"You own {len(owned)} filaments")
-
-# Find nearest owned filament to a color
-filament, distance = palette.nearest_filament(
-    (255, 128, 64),
-    owned_only=True
-)
-print(f"Best match: {filament.maker} {filament.color}")
-```
 
 ## 🔒 Data Integrity
 
