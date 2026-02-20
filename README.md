@@ -130,6 +130,54 @@ The library includes extensive color databases:
 
 Extend with your own data using [User Data Files](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#user-data-files-optional-extensions).
 
+### 📋 Managing Owned Filaments
+
+Track which filaments you own to narrow search results:
+
+```bash
+# Search only among owned filaments
+color-tools filament --nearest --value 255 128 64 --owned-only
+
+# List owned filaments by maker
+color-tools filament --maker "Bambu Lab" --owned-only
+```
+
+**Setup**: Add filaments to `color_tools/data/user/user-filaments.json` with `"owned": true`:
+
+```json
+[
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#1A1A1A",
+    "owned": true
+  }
+]
+```
+
+See [example-owned-filaments.json](https://github.com/dterracino/color_tools/blob/main/docs/example-owned-filaments.json) for a complete example.
+
+**Library usage**:
+
+```python
+from color_tools import FilamentPalette
+
+palette = FilamentPalette.load_default()
+
+# Filter to owned filaments only
+owned = palette.filter(owned_only=True)
+print(f"You own {len(owned)} filaments")
+
+# Find nearest owned filament to a color
+filament, distance = palette.nearest_filament(
+    (255, 128, 64),
+    owned_only=True
+)
+print(f"Best match: {filament.maker} {filament.color}")
+```
+
 ## 🔒 Data Integrity
 
 All core data files are protected with SHA-256 hashes:

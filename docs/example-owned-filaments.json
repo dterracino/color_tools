@@ -1,0 +1,34 @@
+[
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#1A1A1A",
+    "owned": true
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#F0F0F0",
+    "owned": true
+  },
+  {
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Red",
+    "hex": "#C41E3A",
+    "owned": true
+  },
+  {
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Galaxy Blue",
+    "hex": "#2A52BE",
+    "owned": false
+  }
+]
