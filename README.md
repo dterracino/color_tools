@@ -15,6 +15,7 @@ A comprehensive Python library for color science operations, color space convers
 | [Installation](https://github.com/dterracino/color_tools/blob/main/docs/Installation.md) | Setup, dependencies, development install |
 | [Usage](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) | Library API, CLI commands, examples |
 | [Customization](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md) | Data files, custom palettes, configuration |
+| [Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/OwnedFilaments.md) | Managing your personal filament inventory |
 | [Troubleshooting](https://github.com/dterracino/color_tools/blob/main/docs/Troubleshooting.md) | Error handling, performance, technical notes |
 | [FAQ](https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md) | Color spaces, distance metrics, contributing |
 
