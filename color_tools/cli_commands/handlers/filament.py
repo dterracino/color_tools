@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ..utils import parse_hex_or_exit
 from ...config import set_dual_color_mode
-from ...palette import FilamentPalette, load_filaments, load_maker_synonyms
+from ...palette import FilamentPalette, load_filaments, load_maker_synonyms, load_owned_filaments
 from ...export import export_filaments, list_export_formats
 
 
@@ -28,8 +28,12 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
     if hasattr(args, 'dual_color_mode'):
         set_dual_color_mode(args.dual_color_mode)
     
-    # Load filament palette with maker synonyms
-    filament_palette = FilamentPalette(load_filaments(json_path), load_maker_synonyms(json_path))
+    # Load filament palette with maker synonyms and owned IDs
+    filament_palette = FilamentPalette(
+        load_filaments(json_path), 
+        load_maker_synonyms(json_path),
+        load_owned_filaments(json_path)
+    )
     
     # Handle --list-export-formats
     if args.list_export_formats:

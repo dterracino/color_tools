@@ -1,57 +1,69 @@
 # Managing Owned Filaments
 
-This guide explains how to track and manage your personal filament inventory in color_tools.
+This guide explains how to track and filter filaments you own using the owned filaments system.
 
 ## Overview
 
 The owned filaments feature allows you to:
-- Mark which filaments you own
-- Filter searches to only show owned filaments
-- Find the best match from your personal inventory
-- Maintain a separate list from the core database
+- Track which filaments from the database you actually own
+- Filter searches to show only owned filaments
+- Find the best color match from your personal inventory
+
+## Important Distinction
+
+**owned-filaments.json vs user-filaments.json:**
+
+- **`owned-filaments.json`** (this guide) - References filaments **by ID** from the database
+  - Tracks which existing filaments you own
+  - Uses filament IDs to reference core or user-defined filaments
+  - Located at `color_tools/data/user/owned-filaments.json`
+
+- **`user-filaments.json`** (different purpose) - Adds **new custom filaments** to the database
+  - For filaments NOT in the core database
+  - Extends the database with your own filament definitions
+  - See [Customization Guide](Customization.md) for details
 
 ## Setup
 
-### 1. Create Your User Filament File
+### 1. Find Filament IDs
 
-Create or edit `color_tools/data/user/user-filaments.json`:
+First, find the IDs of filaments you want to mark as owned. Every filament in the database has a unique ID.
 
-```json
-[
-  {
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Basic",
-    "color": "Black",
-    "hex": "#1A1A1A",
-    "owned": true
-  },
-  {
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Silk",
-    "color": "Red",
-    "hex": "#C41E3A",
-    "owned": true
-  }
-]
+**View filaments with their IDs:**
+```bash
+# List all Bambu Lab PLA filaments
+python -m color_tools filament --maker "Bambu Lab" --type PLA
+
+# The ID is the unique identifier like: bambu-lab-pla-basic-black
 ```
 
-### 2. Field Reference
+**ID Format:**
+- Generated from: `maker-type-finish-color`
+- Lowercase, hyphen-separated
+- Example: `"bambu-lab-pla-silk-plus-red"`
 
-| Field | Required | Description |
-|-------|----------|-------------|
-| `maker` | ✅ Yes | Manufacturer name (e.g., "Bambu Lab") |
-| `type` | ✅ Yes | Filament material (e.g., "PLA", "PETG") |
-| `finish` | ❌ No | Surface finish (e.g., "Matte", "Silk") |
-| `color` | ✅ Yes | Color name as labeled by manufacturer |
-| `hex` | ✅ Yes | Hex color code (e.g., "#FF0000") |
-| `owned` | ❌ No | Set to `true` for owned filaments (default: `false`) |
-| `id` | ❌ No | Unique identifier (auto-generated if omitted) |
-| `td_value` | ❌ No | Translucency depth for HueForge printing |
-| `other_names` | ❌ No | Alternative color names |
+### 2. Create owned-filaments.json
 
-**Important**: The `owned` field is what enables filtering. Set it to `true` for filaments you own.
+Create the file at `color_tools/data/user/owned-filaments.json`:
+
+```json
+{
+  "owned_ids": [
+    "bambu-lab-pla-basic-black",
+    "bambu-lab-pla-basic-white",
+    "polymaker-pla-matte-red"
+  ]
+}
+```
+
+**Alternative format** (simple list):
+```json
+[
+  "bambu-lab-pla-basic-black",
+  "bambu-lab-pla-basic-white",
+  "polymaker-pla-matte-red"
+]
+```
 
 ## Command-Line Usage
 
@@ -67,8 +79,8 @@ color-tools filament --maker "Bambu Lab" --owned-only
 # List owned PLA filaments
 color-tools filament --type PLA --owned-only
 
-# List owned filaments with specific finish
-color-tools filament --finish Silk --owned-only
+# Combine filters
+color-tools filament --maker "Bambu Lab" --type PLA --finish Silk --owned-only
 ```
 
 ### Find Nearest Owned Filament
@@ -95,7 +107,7 @@ color-tools filament --nearest --value 255 128 64 \
   --maker "Bambu Lab" --type PLA --owned-only
 
 # Export owned filaments to CSV
-color-tools filament --owned-only --export csv --output my-filaments.csv
+color-tools filament --owned-only --export csv --output my-inventory.csv
 ```
 
 ## Library Usage
@@ -105,12 +117,16 @@ color-tools filament --owned-only --export csv --output my-filaments.csv
 ```python
 from color_tools import FilamentPalette
 
-# Load palette with all filaments
+# Load palette with owned IDs
 palette = FilamentPalette.load_default()
+
+# Check how many you own
+owned_count = len([f for f in palette.records if f.id in palette.owned_ids])
+print(f"You own {owned_count} filaments")
 
 # Get only owned filaments
 owned = palette.filter(owned_only=True)
-print(f"You own {len(owned)} filaments")
+print(f"Owned filaments: {len(owned)}")
 
 # List owned filaments
 for filament in owned:
@@ -134,6 +150,7 @@ filament, distance = palette.nearest_filament(
 print(f"Best match: {filament.maker} {filament.color}")
 print(f"Distance: ΔE {distance:.2f}")
 print(f"Hex: {filament.hex}")
+print(f"ID: {filament.id}")
 ```
 
 ### Finding Multiple Matches
@@ -156,126 +173,118 @@ for i, (filament, distance) in enumerate(results, 1):
     print(f"{i}. {filament.maker} {filament.color} (ΔE: {distance:.2f})")
 ```
 
-### Combined Filtering
+### Manual Loading
 
 ```python
-from color_tools import FilamentPalette
+from color_tools import FilamentPalette, load_filaments, load_maker_synonyms, load_owned_filaments
 
-palette = FilamentPalette.load_default()
+# Load everything manually
+filaments = load_filaments()
+synonyms = load_maker_synonyms()
+owned_ids = load_owned_filaments()
 
-# Find closest owned Bambu Lab PLA
-filament, distance = palette.nearest_filament(
-    (255, 0, 0),  # Red
-    maker="Bambu Lab",
-    type_name="PLA",
-    owned_only=True
-)
+# Create palette
+palette = FilamentPalette(filaments, synonyms, owned_ids)
 
-# Or filter first, then search
-owned_bambu_pla = palette.filter(
-    maker="Bambu Lab",
-    type_name="PLA",
-    owned_only=True
-)
-print(f"You own {len(owned_bambu_pla)} Bambu Lab PLA filaments")
+print(f"Total filaments in database: {len(filaments)}")
+print(f"Filaments you own: {len(owned_ids)}")
 ```
 
 ## Tips and Best Practices
 
-### 1. Start Simple
+### 1. Finding Filament IDs
 
-Begin by adding just your most-used filaments with `"owned": true`. You can expand over time.
-
-### 2. Use Accurate Colors
-
-Use the actual hex color from the manufacturer or measure it yourself. Accurate colors lead to better matching.
-
-### 3. Reference Existing Filaments
-
-Check `color_tools/data/filaments.json` for examples of how manufacturers name their filaments and finishes.
-
-### 4. Combine with Other Filters
-
-The `owned_only` filter works seamlessly with maker, type, and finish filters:
+The easiest way to find filament IDs is to search for them:
 
 ```bash
-# Find owned Bambu Lab Silk filaments only
-color-tools filament --maker "Bambu Lab" --finish Silk --owned-only
+# Search for a specific maker/type
+color-tools filament --maker "Bambu Lab" --type PLA
+
+# The output shows each filament in format:
+# Maker Type Finish - Color (#hex)
+# The ID follows the pattern: maker-type-finish-color (lowercase, hyphens)
 ```
 
-### 5. Export for Tracking
+### 2. Tracking Custom Filaments
 
-Export your owned filaments to CSV for inventory management:
+If you've added custom filaments via `user-filaments.json`, you can track those as owned too:
+
+1. Add your custom filament to `user-filaments.json` with an ID
+2. Add that same ID to `owned-filaments.json`
+
+Example custom filament in `user-filaments.json`:
+```json
+[
+  {
+    "id": "my-local-shop-pla-basic-red",
+    "maker": "My Local Shop",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Red",
+    "hex": "#CC0000"
+  }
+]
+```
+
+Then reference it in `owned-filaments.json`:
+```json
+{
+  "owned_ids": [
+    "my-local-shop-pla-basic-red"
+  ]
+}
+```
+
+### 3. Maintaining Your Inventory
 
 ```bash
+# Periodically review your owned list
+color-tools filament --owned-only
+
+# Export for spreadsheet tracking
 color-tools filament --owned-only --export csv --output inventory.csv
 ```
 
-### 6. Mix Owned and Reference Filaments
+### 4. Workflow Example
 
-Your `user-filaments.json` can contain both owned and non-owned filaments. This is useful for:
-- Filaments you're considering purchasing (`"owned": false`)
-- Custom or experimental filaments
-- Filaments not in the core database
+```bash
+# 1. Find filament ID you want to add
+color-tools filament --maker "Bambu Lab" --color "Black"
+
+# 2. Add the ID to owned-filaments.json
+# Edit: color_tools/data/user/owned-filaments.json
+
+# 3. Verify it's tracked
+color-tools filament --owned-only | grep "Black"
+
+# 4. Use it for color matching
+color-tools filament --nearest --hex "#FF6B35" --owned-only
+```
 
 ## Error Handling
 
 ### No Owned Filaments Found
 
-If you get "No filaments match the specified filters" when using `--owned-only`, it means:
-1. You haven't set `"owned": true` for any filaments
-2. Your filters are too restrictive (e.g., searching for a maker you don't own)
+If you get "No filaments match the specified filters":
+- Check that `owned-filaments.json` exists
+- Verify the IDs in the file are correct
+- Make sure the filaments exist in the database
 
-Solution: Check your `user-filaments.json` and ensure you have filaments marked with `"owned": true`.
+### Invalid ID
 
-### Filament Not Loading
+If a filament ID doesn't match any filament:
+- The ID is silently ignored (no error)
+- Only valid IDs are used for filtering
 
-If your filaments don't appear:
-1. Verify JSON syntax is valid (use a JSON validator)
-2. Check that required fields (maker, type, color, hex) are present
-3. Ensure the file is at `color_tools/data/user/user-filaments.json`
+### File Format Error
 
-## Example Workflow
-
-Here's a complete workflow for managing owned filaments:
-
-```bash
-# 1. Create your inventory (edit user-filaments.json)
-# 2. Verify it loads correctly
-color-tools filament --owned-only
-
-# 3. Find what you can use for a project color
-color-tools filament --nearest --hex "#FF6B35" --owned-only --count 3
-
-# 4. Filter by material type for your printer
-color-tools filament --nearest --hex "#FF6B35" --type PLA --owned-only
-
-# 5. Export your inventory for reference
-color-tools filament --owned-only --export csv --output my-filaments.csv
-```
-
-## Advanced: Using IDs
-
-For the most precise matching, reference core database filaments by ID:
-
-```json
-[
-  {
-    "id": "bambu-lab-pla-basic-black",
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Basic",
-    "color": "Black",
-    "hex": "#1A1A1A",
-    "owned": true
-  }
-]
-```
-
-This ensures your owned filament exactly matches the core database entry, including color values and metadata.
+If the JSON file is invalid:
+- A warning is logged
+- The function returns an empty set
+- Check JSON syntax with a validator
 
 ## See Also
 
-- [Customization Guide](Customization.md) - User data files in general
-- [Example Owned Filaments](../docs/example-owned-filaments.json) - Complete example file
+- [Customization Guide](Customization.md) - Using user-filaments.json to add custom filaments
 - [Usage Guide](Usage.md) - Full API reference
+- [FAQ](FAQ.md) - Common questions

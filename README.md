@@ -133,7 +133,7 @@ Extend with your own data using [User Data Files](https://github.com/dterracino/
 
 ### 📋 Managing Owned Filaments
 
-Track which filaments you own to narrow search results:
+Track which filaments you own to filter search results to your personal inventory:
 
 ```bash
 # Search only among owned filaments
@@ -143,22 +143,23 @@ color-tools filament --nearest --value 255 128 64 --owned-only
 color-tools filament --maker "Bambu Lab" --owned-only
 ```
 
-**Setup**: Add filaments to `color_tools/data/user/user-filaments.json` with `"owned": true`:
+**Setup**: Create `color_tools/data/user/owned-filaments.json` with filament IDs:
 
 ```json
-[
-  {
-    "maker": "Bambu Lab",
-    "type": "PLA",
-    "finish": "Basic",
-    "color": "Black",
-    "hex": "#1A1A1A",
-    "owned": true
-  }
-]
+{
+  "owned_ids": [
+    "bambu-lab-pla-basic-black",
+    "bambu-lab-pla-silk-plus-red",
+    "polymaker-pla-matte-blue"
+  ]
+}
 ```
 
-See [example-owned-filaments.json](https://github.com/dterracino/color_tools/blob/main/docs/example-owned-filaments.json) for a complete example.
+**Important**: This is different from `user-filaments.json`:
+- **`owned-filaments.json`** - References existing filaments by ID (tracks ownership)
+- **`user-filaments.json`** - Adds custom filaments to the database (extends database)
+
+See [Owned Filaments Guide](https://github.com/dterracino/color_tools/blob/main/docs/OwnedFilaments.md) for complete documentation.
 
 **Library usage**:
 

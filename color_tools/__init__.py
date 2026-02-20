@@ -129,6 +129,7 @@ from .palette import (
     load_colors,
     load_filaments,
     load_maker_synonyms,
+    load_owned_filaments,
     load_palette,
 )
 
@@ -257,6 +258,7 @@ __all__ = [
     "load_colors",
     "load_filaments",
     "load_maker_synonyms",
+    "load_owned_filaments",
     "load_palette",
     
     # Color naming
