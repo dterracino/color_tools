@@ -85,13 +85,21 @@ class TestUserPalettes(unittest.TestCase):
         """Test get_available_palettes function."""
         available = get_available_palettes(self.test_data_dir)
         
+        # get_available_palettes now returns list of (name, color_count) tuples
+        palette_names = [name for name, _ in available]
+        
         # Should include both core and user palettes
-        self.assertIn("test_core", available)
-        self.assertIn("user-test_user", available)
-        self.assertIn("user-test_override", available)
+        self.assertIn("test_core", palette_names)
+        self.assertIn("user-test_user", palette_names)
+        self.assertIn("user-test_override", palette_names)
         
         # Should NOT include non-prefixed user palettes
-        self.assertNotIn("ignored_palette", available)
+        self.assertNotIn("ignored_palette", palette_names)
+        
+        # Verify color counts are present
+        for name, color_count in available:
+            self.assertIsInstance(color_count, int)
+            # Color count should be >= 0 (or -1 for error)
     
     def test_load_core_palette(self):
         """Test loading core palette (user palettes don't override)."""

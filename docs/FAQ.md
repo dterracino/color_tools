@@ -217,7 +217,9 @@ python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --make
 
 ### How do I override a core color with my own custom color?
 
-Place your custom colors in `data/user/user-colors.json` using the same format as the core colors:
+Place your custom colors in `data/user/user-colors.json` using the same format as the core colors.
+
+**Tip:** An example file `user-colors.example.json` is included in `data/user/` - copy/rename it to `user-colors.json` to get started.
 
 ```json
 [
@@ -236,7 +238,9 @@ Your custom "red" will override the core red color completely. Both name and RGB
 
 ### How do I add custom 3D printing filaments or override existing ones?
 
-Create `data/user/user-filaments.json` with your custom filaments:
+Create `data/user/user-filaments.json` with your custom filaments.
+
+**Tip:** An example file `user-filaments.example.json` is included in `data/user/` - copy/rename it to `user-filaments.json` to get started.
 
 ```json
 [
@@ -254,7 +258,9 @@ If you use the same RGB value (`hex`) as a core filament, your filament will app
 
 ### How do I add maker synonyms or change existing ones?
 
-Create `data/user/user-synonyms.json` to add or completely replace maker synonyms:
+Create `data/user/user-synonyms.json` to add or completely replace maker synonyms.
+
+**Tip:** An example file `user-synonyms.example.json` is included in `data/user/` - copy/rename it to `user-synonyms.json` to get started.
 
 ```json
 {
@@ -358,9 +364,24 @@ python -m color_tools image --file photo.jpg --quantize-palette gameboy --dither
 
 ### What palettes are available for image quantization?
 
-- Classic PC: `cga4`, `cga16`, `ega16`, `ega64`, `vga`
-- Game consoles: `gameboy_dmg`, `gameboy_gbl`, `gameboy_mgb`, `commodore64`
+**To see all available palettes (core + user) with color counts:**
+
+```bash
+# Using color command
+color-tools color --palette list
+
+# Using image command
+color-tools image --list-palettes
+```
+
+Both commands show the same information: palette names and the number of colors in each.
+
+**Core palettes include:**
+
+- Classic PC: `apple2`, `cga4`, `cga16`, `ega16`, `ega64`, `macintosh`, `tandy16`, `vga`
+- Game consoles: `commodore64`, `gameboy`, `gameboy-color`, `gameboy_dmg`, `gameboy_gbl`, `gameboy_mgb`, `nes`, `pico8`, `sms`, `virtualboy`
 - Web: `web` (216-color web-safe palette)
+- Other: `crayola` (120 classic Crayola colors)
 
 ### Can I create custom retro palettes?
 

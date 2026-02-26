@@ -32,6 +32,7 @@ except ImportError:
     IMAGE_AVAILABLE = False
 
 from ...palette import load_palette
+from ..reporting import get_available_palettes
 
 
 def handle_image_command(args):
@@ -44,15 +45,16 @@ def handle_image_command(args):
     # Handle --list-palettes first (doesn not require file)
     if args.list_palettes:
         try:
-            palettes_dir = Path(__file__).parent.parent.parent / "data" / "palettes"
-            available = sorted([p.stem for p in palettes_dir.glob("*.json")])
-            print("Available retro palettes:")
-            for palette_name in available:
-                try:
-                    pal = load_palette(palette_name)
-                    print(f"  {palette_name:<15} - {len(pal.records)} colors")
-                except Exception:
-                    print(f"  {palette_name:<15} - (error loading)")
+            available_palettes = get_available_palettes()
+            if available_palettes:
+                print("Available retro palettes:")
+                for palette_name, color_count in available_palettes:
+                    if color_count >= 0:
+                        print(f"  {palette_name:<15} - {color_count} colors")
+                    else:
+                        print(f"  {palette_name:<15} - (error loading)")
+            else:
+                print("No palettes found")
         except Exception as e:
             print(f"Error listing palettes: {e}", file=sys.stderr)
             sys.exit(1)

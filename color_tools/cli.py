@@ -231,7 +231,7 @@ Examples:
     color_parser.add_argument(
         "--palette",
         type=str,
-        help="Use a retro palette instead of CSS colors. Common palettes include: cga4, cga16, ega16, ega64, vga, web, gameboy. Use '--palette list' to see all available palettes including user-created ones."
+        help="Use a retro palette instead of CSS colors. Common palettes include: cga4, cga16, ega16, ega64, vga, web, gameboy, pico8. Use '--palette list' to see all available palettes including user-created ones."
     )
     color_parser.add_argument(
         "--count",

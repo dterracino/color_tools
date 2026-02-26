@@ -10,6 +10,7 @@
 ## Problem Statement
 
 Users need a way to:
+
 1. Track which filaments from the database they personally own
 2. Filter filament searches to show only owned filaments
 3. Get color matching results from their personal inventory
@@ -70,11 +71,13 @@ FilamentPalette.nearest_filaments(target_rgb, count=5, maker=..., ...)
 ## Approach 1: Separate Tracking File (ID-Based References)
 
 ### Concept
+
 Create a new file `owned-filaments.json` that contains a list of filament IDs.
 
 ### File Format Options
 
-**Option A: Simple List**
+#### Option A: Simple List
+
 ```json
 [
   "bambu-lab-pla-basic-black",
@@ -83,7 +86,8 @@ Create a new file `owned-filaments.json` that contains a list of filament IDs.
 ]
 ```
 
-**Option B: Structured**
+#### Option B: Structured
+
 ```json
 {
   "owned_ids": [
@@ -97,6 +101,7 @@ Create a new file `owned-filaments.json` that contains a list of filament IDs.
 ```
 
 ### Pros
+
 ✅ Lightweight - just references, not full records  
 ✅ Works with core and user-defined filaments  
 ✅ Clear separation from user-filaments.json  
@@ -105,12 +110,14 @@ Create a new file `owned-filaments.json` that contains a list of filament IDs.
 ✅ Can track custom filaments too
 
 ### Cons
+
 ❌ Requires users to know filament IDs  
 ❌ No rich metadata (quantity, location, purchase date)  
 ❌ IDs can be long and complex  
 ❌ Needs CLI help to find IDs
 
 ### Possible Workflows
+
 - **Basic filtering**: `--owned` flag
 - **Finding IDs**: CLI command to list/search
 - **Managing**: CLI commands to add/remove
@@ -121,9 +128,11 @@ Create a new file `owned-filaments.json` that contains a list of filament IDs.
 ## Approach 2: Extended FilamentRecord with Metadata
 
 ### Concept
+
 Add optional metadata to FilamentRecord and store in user-filaments.json.
 
 ### Extended Record Format
+
 ```json
 {
   "id": "bambu-lab-pla-basic-black",
@@ -143,12 +152,14 @@ Add optional metadata to FilamentRecord and store in user-filaments.json.
 ```
 
 ### Pros
+
 ✅ Rich metadata support  
 ✅ Single file for user additions  
 ✅ Can track quantities and locations  
 ✅ Natural extension of existing pattern
 
 ### Cons
+
 ❌ Conflates two different purposes (adding vs tracking)  
 ❌ Duplicates core filament data in user file  
 ❌ Larger files  
@@ -156,6 +167,7 @@ Add optional metadata to FilamentRecord and store in user-filaments.json.
 ❌ Violates single responsibility principle
 
 ### Possible Workflows
+
 - **Inventory management**: Track quantities, locations
 - **Purchase tracking**: Costs, dates
 - **Project planning**: Allocate filaments to projects
@@ -165,9 +177,11 @@ Add optional metadata to FilamentRecord and store in user-filaments.json.
 ## Approach 3: SQLite Database for Inventory
 
 ### Concept
+
 Use a lightweight SQLite database for inventory management.
 
 ### Database Schema
+
 ```sql
 CREATE TABLE owned_filaments (
     filament_id TEXT PRIMARY KEY,
@@ -180,6 +194,7 @@ CREATE TABLE owned_filaments (
 ```
 
 ### Pros
+
 ✅ Proper database with query capabilities  
 ✅ Rich metadata and relationships  
 ✅ Can track history (purchases, usage)  
@@ -187,6 +202,7 @@ CREATE TABLE owned_filaments (
 ✅ Scales well to large inventories
 
 ### Cons
+
 ❌ Adds dependency (though SQLite is built-in)  
 ❌ More complex for users to edit manually  
 ❌ Breaks the "plain text files" philosophy  
@@ -194,6 +210,7 @@ CREATE TABLE owned_filaments (
 ❌ Overkill for simple use cases
 
 ### Possible Workflows
+
 - **Advanced inventory**: Full CRUD operations
 - **Reporting**: Generate usage reports
 - **Multi-user**: Share database across team
@@ -203,9 +220,11 @@ CREATE TABLE owned_filaments (
 ## Approach 4: Multi-Level Tagging System
 
 ### Concept
+
 Allow users to tag filaments with multiple categories beyond just "owned".
 
 ### File Format
+
 ```json
 {
   "tags": {
@@ -227,17 +246,20 @@ Allow users to tag filaments with multiple categories beyond just "owned".
 ```
 
 ### Pros
+
 ✅ Flexible - supports multiple workflows  
 ✅ User can create custom tags  
 ✅ Future-proof  
 ✅ One file for all categorizations
 
 ### Cons
+
 ❌ More complex mental model  
 ❌ Might be over-engineered for initial need  
 ❌ Needs UI/CLI for tag management
 
 ### Possible Workflows
+
 - **Multi-category**: owned, favorites, wishlist, low-stock
 - **Projects**: Tag by project name
 - **Custom organization**: User-defined tags
@@ -248,9 +270,11 @@ Allow users to tag filaments with multiple categories beyond just "owned".
 ## Approach 5: Inventory Configuration with Multiple Lists
 
 ### Concept
+
 Structured config file with multiple named inventories.
 
 ### File Format
+
 ```json
 {
   "inventories": {
@@ -272,16 +296,19 @@ Structured config file with multiple named inventories.
 ```
 
 ### Pros
+
 ✅ Supports complex workflows (multiple locations)  
 ✅ Flexible for different use cases  
 ✅ Named inventories are self-documenting
 
 ### Cons
+
 ❌ More complex than single list  
 ❌ Might be confusing for simple cases  
 ❌ Requires inventory management commands
 
 ### Possible Workflows
+
 - **Multiple locations**: Per-location inventories
 - **Wishlists**: Separate from owned
 - **Projects**: Project-specific inventories
@@ -292,7 +319,7 @@ Structured config file with multiple named inventories.
 ## Comparison Matrix
 
 | Feature | Approach 1 | Approach 2 | Approach 3 | Approach 4 | Approach 5 |
-|---------|------------|------------|------------|------------|------------|
+| --- | --- | --- | --- | --- | --- |
 | **Simplicity** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐ |
 | **Manual Editing** | ⭐⭐⭐⭐⭐ | ⭐⭐⭐ | ⭐ | ⭐⭐⭐⭐ | ⭐⭐⭐⭐ |
 | **Metadata Support** | ⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐⭐⭐⭐ | ⭐⭐ | ⭐⭐ |
@@ -332,6 +359,7 @@ Beyond simple owned/not-owned filtering, users might want:
 ## Recommended Approach (If I Had to Choose)
 
 **Approach 1** (ID-based references) for MVP, with path to expand:
+
 - Simplest to start
 - Clear separation of concerns
 - Can evolve format later
@@ -353,6 +381,6 @@ Beyond simple owned/not-owned filtering, users might want:
 
 ---
 
-**End of Planning Document**
+## End of Planning Document
 
 *This is a planning document only. No code has been implemented.*

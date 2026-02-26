@@ -116,7 +116,28 @@ You can extend the core databases with your own custom data by creating optional
 - **user-filaments.json** - Add custom filaments (same format as filaments.json)
 - **user-synonyms.json** - Add or extend maker synonyms (same format as maker_synonyms.json)
 
-User data is automatically loaded and merged with core data. User files are optional and ignored if they don't exist. These files are **not** verified for integrity - only core data files are protected by SHA-256 hashes.
+User data is automatically loaded and merged with core data. User files are optional and ignored if they don't exist.
+
+**Integrity Verification:** User data verification is **optional** - you can generate `.sha256` hash files for your user data and verify them later:
+
+```bash
+# Generate .sha256 files for all user data
+color-tools --generate-user-hashes
+
+# Verify user data integrity
+color-tools --verify-user-data
+
+# Verify everything (core + user data)
+color-tools --verify-all
+```
+
+If no `.sha256` file exists, user files work without verification - giving you full control.
+
+**Getting Started:** Example files are included in the `data/user/` directory:
+
+- `user-colors.example.json` - Copy/rename to `user-colors.json` to start adding custom colors
+- `user-filaments.example.json` - Copy/rename to `user-filaments.json` to start adding custom filaments
+- `user-synonyms.example.json` - Copy/rename to `user-synonyms.json` to start adding maker synonyms
 
 **Example user-colors.json:**
 
@@ -248,8 +269,9 @@ Color Tools supports custom color palettes for retro graphics, pixel art, or spe
 # Find nearest color in a custom palette
 python -m color_tools color --palette cga4 --nearest --value 128 64 200 --space rgb
 
-# List all available palettes
-python -m color_tools image --list-palettes
+# List all available palettes (both commands show the same information)
+color-tools color --palette list
+color-tools image --list-palettes
 ```
 
 **Via Python API:**

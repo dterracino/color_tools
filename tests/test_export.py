@@ -450,5 +450,394 @@ class TestExportIntegration(unittest.TestCase):
             Path(output_path).unlink(missing_ok=True)
 
 
+class TestExporterPluginSystem(unittest.TestCase):
+    """Test the plugin-based exporter architecture."""
+    
+    def test_get_exporter_returns_instance(self):
+        """Test get_exporter returns exporter instances."""
+        from color_tools.exporters import get_exporter
+        
+        exporter = get_exporter('csv')
+        self.assertIsNotNone(exporter)
+        
+        # Should have metadata
+        self.assertIsNotNone(exporter.metadata)
+        self.assertEqual(exporter.metadata.name, 'csv')
+    
+    def test_get_exporter_unknown_format(self):
+        """Test get_exporter raises error for unknown format."""
+        from color_tools.exporters import get_exporter
+        
+        with self.assertRaises(ValueError) as ctx:
+            get_exporter('nonexistent-format')
+        
+        self.assertIn('Unknown export format', str(ctx.exception))
+        self.assertIn('nonexistent-format', str(ctx.exception))
+    
+    def test_get_exporter_fresh_instances(self):
+        """Test get_exporter returns fresh instances each time."""
+        from color_tools.exporters import get_exporter
+        
+        exporter1 = get_exporter('csv')
+        exporter2 = get_exporter('csv')
+        
+        # Should be different instances
+        self.assertIsNot(exporter1, exporter2)
+        
+        # But same metadata
+        self.assertEqual(exporter1.metadata.name, exporter2.metadata.name)
+    
+    def test_exporter_metadata_structure(self):
+        """Test exporter metadata has required fields."""
+        from color_tools.exporters import get_exporter
+        
+        exporter = get_exporter('csv')
+        meta = exporter.metadata
+        
+        # Check all required fields
+        self.assertIsInstance(meta.name, str)
+        self.assertIsInstance(meta.description, str)
+        self.assertIsInstance(meta.file_extension, str)
+        self.assertIsInstance(meta.supports_colors, bool)
+        self.assertIsInstance(meta.supports_filaments, bool)
+        
+        # CSV should support both
+        self.assertTrue(meta.supports_colors)
+        self.assertTrue(meta.supports_filaments)
+    
+    def test_all_exporters_have_valid_metadata(self):
+        """Test all registered exporters have valid metadata."""
+        from color_tools.exporters import list_export_formats, get_exporter
+        
+        formats = list_export_formats('both')
+        
+        for format_name in formats.keys():
+            exporter = get_exporter(format_name)
+            meta = exporter.metadata
+            
+            # Name should match
+            self.assertEqual(meta.name, format_name)
+            
+            # Description should be non-empty
+            self.assertTrue(len(meta.description) > 0)
+            
+            # Extension should be non-empty
+            self.assertTrue(len(meta.file_extension) > 0)
+            
+            # Should support at least one data type
+            self.assertTrue(
+                meta.supports_colors or meta.supports_filaments,
+                f"{format_name} must support colors or filaments"
+            )
+    
+    def test_registry_filtering(self):
+        """Test list_export_formats filters correctly."""
+        from color_tools.exporters import list_export_formats
+        
+        all_formats = list_export_formats('both')
+        color_formats = list_export_formats('colors')
+        filament_formats = list_export_formats('filaments')
+        
+        # All should include everything
+        self.assertIn('csv', all_formats)
+        self.assertIn('json', all_formats)
+        
+        # Colors should exclude filament-only formats
+        self.assertIn('csv', color_formats)  # Supports both
+        self.assertIn('json', color_formats)  # Supports both
+        
+        # Filaments should exclude color-only formats
+        self.assertIn('csv', filament_formats)  # Supports both
+        self.assertIn('json', filament_formats)  # Supports both
+        self.assertIn('autoforge', filament_formats)  # Filament-only
+
+
+class TestCSVExporter(unittest.TestCase):
+    """Test CSV exporter implementation."""
+    
+    def test_csv_color_export_structure(self):
+        """Test CSV color export has correct structure."""
+        from color_tools.exporters import get_exporter
+        
+        colors = [
+            ColorRecord(
+                name='red',
+                hex='#FF0000',
+                rgb=(255, 0, 0),
+                hsl=(0.0, 100.0, 50.0),
+                lab=(53.2, 80.1, 67.2),
+                lch=(53.2, 104.6, 40.0)
+            ),
+            ColorRecord(
+                name='blue',
+                hex='#0000FF',
+                rgb=(0, 0, 255),
+                hsl=(240.0, 100.0, 50.0),
+                lab=(32.3, 79.2, -107.9),
+                lch=(32.3, 133.8, 306.3)
+            ),
+        ]
+        
+        exporter = get_exporter('csv')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'colors.csv'
+            result_path = exporter.export_colors(colors, output_path)
+            
+            self.assertEqual(result_path, str(output_path))
+            self.assertTrue(output_path.exists())
+            
+            # Read and validate CSV
+            with open(output_path, 'r', encoding='utf-8', newline='') as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+            
+            self.assertEqual(len(rows), 2)
+            
+            # Check first row
+            row1 = rows[0]
+            self.assertEqual(row1['name'], 'red')
+            self.assertEqual(row1['hex'], '#FF0000')
+            self.assertIn('255,0,0', row1['rgb'])
+            self.assertIn('0.0', row1['hsl'])
+            
+            # Check second row
+            row2 = rows[1]
+            self.assertEqual(row2['name'], 'blue')
+            self.assertEqual(row2['hex'], '#0000FF')
+    
+    def test_csv_filament_export_structure(self):
+        """Test CSV filament export has correct structure."""
+        from color_tools.exporters import get_exporter
+        
+        filaments = [
+            FilamentRecord(
+                id='bam-pla-mat-blk',
+                maker='Bambu Lab',
+                type='PLA',
+                finish='Matte',
+                color='Black',
+                hex='#000000',
+                td_value=0.1
+            ),
+            FilamentRecord(
+                id='bam-pla-mat-wht',
+                maker='Bambu Lab',
+                type='PLA',
+                finish='Matte',
+                color='White',
+                hex='#FFFFFF',
+                td_value=99.0
+            ),
+        ]
+        
+        exporter = get_exporter('csv')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'filaments.csv'
+            result_path = exporter.export_filaments(filaments, output_path)
+            
+            self.assertTrue(Path(output_path).exists())
+            
+            # Read and validate CSV
+            with open(output_path, 'r', encoding='utf-8', newline='') as f:
+                reader = csv.DictReader(f)
+                rows = list(reader)
+            
+            self.assertEqual(len(rows), 2)
+            
+            # Check headers include all fields
+            self.assertIn('id', rows[0])
+            self.assertIn('maker', rows[0])
+            self.assertIn('type', rows[0])
+            self.assertIn('finish', rows[0])
+            self.assertIn('color', rows[0])
+            self.assertIn('hex', rows[0])
+            self.assertIn('td_value', rows[0])
+            
+            # Check first row values
+            self.assertEqual(rows[0]['maker'], 'Bambu Lab')
+            self.assertEqual(rows[0]['hex'], '#000000')
+    
+    def test_csv_empty_export(self):
+        """Test CSV export with empty list creates file with header."""
+        from color_tools.exporters import get_exporter
+        
+        exporter = get_exporter('csv')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'empty.csv'
+            exporter.export_colors([], output_path)
+            
+            self.assertTrue(output_path.exists())
+            
+            # Should have header row
+            with open(output_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+                self.assertIn('name', content)
+                self.assertIn('hex', content)
+
+
+class TestJSONExporter(unittest.TestCase):
+    """Test JSON exporter implementation."""
+    
+    def test_json_color_export_structure(self):
+        """Test JSON color export structure."""
+        from color_tools.exporters import get_exporter
+        
+        colors = [
+            ColorRecord(
+                name='red',
+                hex='#FF0000',
+                rgb=(255, 0, 0),
+                hsl=(0.0, 100.0, 50.0),
+                lab=(53.2, 80.1, 67.2),
+                lch=(53.2, 104.6, 40.0)
+            ),
+        ]
+        
+        exporter = get_exporter('json')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'colors.json'
+            result_path = exporter.export_colors(colors, output_path)
+            
+            self.assertTrue(Path(output_path).exists())
+            
+            # Read and validate JSON
+            with open(output_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            self.assertIsInstance(data, list)
+            self.assertEqual(len(data), 1)
+            
+            color_data = data[0]
+            self.assertEqual(color_data['name'], 'red')
+            self.assertEqual(color_data['hex'], '#FF0000')
+            self.assertEqual(color_data['rgb'], [255, 0, 0])
+    
+    def test_json_filament_export_structure(self):
+        """Test JSON filament export structure."""
+        from color_tools.exporters import get_exporter
+        
+        filaments = [
+            FilamentRecord(
+                id='test-fil',
+                maker='Test Maker',
+                type='PLA',
+                finish='Matte',
+                color='Red',
+                hex='#FF0000',
+                td_value=1.5
+            ),
+        ]
+        
+        exporter = get_exporter('json')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'filaments.json'
+            exporter.export_filaments(filaments, output_path)
+            
+            # Read and validate
+            with open(output_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            self.assertIsInstance(data, list)
+            self.assertEqual(len(data), 1)
+            
+            fil_data = data[0]
+            self.assertEqual(fil_data['id'], 'test-fil')
+            self.assertEqual(fil_data['maker'], 'Test Maker')
+            self.assertEqual(fil_data['hex'], '#FF0000')
+            self.assertEqual(fil_data['td_value'], 1.5)
+    
+    def test_json_unicode_handling(self):
+        """Test JSON exports non-ASCII characters correctly."""
+        from color_tools.exporters import get_exporter
+        
+        colors = [
+            ColorRecord(
+                name='café',  # Unicode character
+                hex='#FF0000',
+                rgb=(255, 0, 0),
+                hsl=(0.0, 100.0, 50.0),
+                lab=(53.2, 80.1, 67.2),
+                lch=(53.2, 104.6, 40.0)
+            ),
+        ]
+        
+        exporter = get_exporter('json')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'unicode.json'
+            exporter.export_colors(colors, output_path)
+            
+            # Read and verify unicode preserved
+            with open(output_path, 'r', encoding='utf-8') as f:
+                data = json.load(f)
+            
+            self.assertEqual(data[0]['name'], 'café')
+
+
+class TestExporterErrorHandling(unittest.TestCase):
+    """Test error handling in exporter system."""
+    
+    def test_filament_only_exporter_rejects_colors(self):
+        """Test filament-only exporter rejects color export."""
+        from color_tools.exporters import get_exporter
+        
+        colors = [
+            ColorRecord(
+                name='red',
+                hex='#FF0000',
+                rgb=(255, 0, 0),
+                hsl=(0.0, 100.0, 50.0),
+                lab=(53.2, 80.1, 67.2),
+                lch=(53.2, 104.6, 40.0)
+            ),
+        ]
+        
+        # AutoForge is filament-only
+        exporter = get_exporter('autoforge')
+        
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / 'test.csv'
+            
+            with self.assertRaises(NotImplementedError) as ctx:
+                exporter.export_colors(colors, output_path)
+            
+            self.assertIn('does not support color', str(ctx.exception))
+    
+    def test_auto_filename_generation(self):
+        """Test exporters generate filenames when not provided."""
+        from color_tools.exporters import get_exporter
+        
+        colors = [
+            ColorRecord(
+                name='red',
+                hex='#FF0000',
+                rgb=(255, 0, 0),
+                hsl=(0.0, 100.0, 50.0),
+                lab=(53.2, 80.1, 67.2),
+                lch=(53.2, 104.6, 40.0)
+            ),
+        ]
+        
+        exporter = get_exporter('csv')
+        
+        try:
+            # Pass None for output_path
+            result_path = exporter.export_colors(colors, None)
+            
+            # Should have generated a filename
+            self.assertTrue(Path(result_path).exists())
+            self.assertTrue(result_path.endswith('.csv'))
+            self.assertIn('colors', result_path)
+        
+        finally:
+            # Cleanup
+            Path(result_path).unlink(missing_ok=True)
+
+
 if __name__ == '__main__':
     unittest.main()

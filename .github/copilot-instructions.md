@@ -112,7 +112,15 @@ matrices.py         # Transformation matrices (CVD, etc.)
 color_deficiency.py # Color vision deficiency simulation/correction
 naming.py           # Color name generation
 validation.py       # Color validation utilities
+export.py           # Export facade (delegates to exporters/)
 cli.py              # Command-line interface (imports from everywhere)
+exporters/          # Plugin-based exporter system (v6.0.0+)
+  __init__.py       # Registry system and public API
+  base.py           # PaletteExporter base class, ExporterMetadata
+  csv_exporter.py   # CSV and AutoForge exporters
+  json_exporter.py  # JSON exporter
+  gpl_exporter.py   # GIMP Palette exporter (.gpl)
+  # Future: ase_exporter.py, act_exporter.py, png_exporter.py, etc.
 image/              # Image processing (optional [image] extra)
   __init__.py       # Public API exports
   README.md         # Image module documentation
@@ -151,6 +159,85 @@ pip install color-match-tools[all]         # Everything
   - Run with: `python -m color_tools.mcp`
   - Access via Python: `from color_tools.mcp import run_server`
   - See `mcp/README.md` for full documentation
+
+- `exporters/` - Plugin-based exporter system (v6.0.0+)
+  - Access via: `from color_tools.exporters import get_exporter`
+  - Base classes in `base.py` for creating new exporters
+  - Auto-registration with `@register_exporter` decorator
+
+### Exporter System Architecture (v6.0.0+)
+
+The project uses a **plugin-based exporter architecture** for maximum extensibility:
+
+**Design Principles:**
+1. **Plugin Pattern** - New exporters auto-register without modifying existing code
+2. **Metadata-Driven** - Each exporter declares capabilities (colors/filaments, binary/text)
+3. **Backward Compatible** - `export.py` is a facade that delegates to new system
+4. **DRY** - All export logic centralized in individual exporter classes
+
+**Core Components:**
+- `exporters/base.py` - Base classes and metadata
+  - `PaletteExporter` - Abstract base class all exporters inherit from
+  - `ExporterMetadata` - Dataclass describing exporter capabilities
+- `exporters/__init__.py` - Registry system
+  - `@register_exporter` - Decorator for auto-registration
+  - `get_exporter(name)` - Get exporter instance by format name
+  - `list_export_formats(data_type)` - List available formats
+- `export.py` - **Backward compatibility facade**
+  - All functions (export_colors_csv, etc.) delegate to new system
+  - **DELEGATION NOTE** comments document this pattern
+
+**Adding New Exporters:**
+1. Create file in `exporters/` (e.g., `ase_exporter.py`)
+2. Subclass `PaletteExporter` from `base.py`
+3. Implement `metadata` property and export methods
+4. Use `@register_exporter` decorator
+5. Import in `exporters/__init__.py`
+6. Exporter automatically available everywhere!
+
+**Example:**
+```python
+# exporters/gpl_exporter.py
+from color_tools.exporters import register_exporter
+from color_tools.exporters.base import PaletteExporter, ExporterMetadata
+
+@register_exporter
+class GPLExporter(PaletteExporter):
+    @property
+    def metadata(self):
+        return ExporterMetadata(
+            name='gpl',
+            description='GIMP Palette format',
+            file_extension='gpl',
+            supports_colors=True,
+            supports_filaments=False,
+        )
+    
+    def _export_colors_impl(self, colors, output_path):
+        # Implementation here
+        pass
+```
+
+**Current Exporters:**
+- `csv` - Generic CSV (universal: colors + filaments with full metadata)
+- `json` - JSON format (universal: colors + filaments with full metadata)
+- `gpl` - GIMP Palette (colors only)
+- `hex` - Simple hex color list (colors only, loses filament metadata)
+- `pal` - JASC-PAL format (colors only, loses filament metadata, Paint Shop Pro/Aseprite)
+- `paintnet` - PAINT.NET palette format (colors only, loses filament metadata)
+- `lospec` - Lospec.com JSON format (colors only, loses filament metadata)
+- `autoforge` - AutoForge CSV (filaments only, specialized 3D printing format)
+
+> **Note:** Only CSV and JSON preserve full filament metadata (maker, type, finish, TD values).
+> Palette formats (hex, pal, paintnet, lospec, gpl) are colors-only and lose filament metadata.
+
+**Future Exporters (Planned):**
+- Adobe Swatch Exchange (.ase) - Binary format
+- Adobe Color Table (.act) - Binary format  
+- Adobe Color Swatch (.aco) - Binary format
+- PNG swatch images (1x, 8x, 32x) - Horizontal strips of color squares
+- Aseprite (.aseprite) - Full sprite format (complex, deferred)
+- And more!
 
 ## Critical Requirements
 

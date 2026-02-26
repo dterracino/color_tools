@@ -10,7 +10,7 @@ import logging
 from pathlib import Path
 
 from ..constants import ColorConstants
-from ..palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms
+from ..palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
 
 
 def show_override_report(json_dir: str | None = None) -> None:
@@ -173,37 +173,48 @@ def generate_user_hashes(json_dir: str | None = None) -> None:
         print("Create user data files (user/user-colors.json, etc.) first.")
 
 
-def get_available_palettes(json_path: Path | str | None = None) -> list[str]:
+def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[str, int]]:
     """
-    Get list of available palette names from both core and user palettes.
+    Get list of available palette names from both core and user palettes with color counts.
     
     Args:
         json_path: Optional custom data directory. If None, uses package default.
     
     Returns:
-        Sorted list of available palette names
+        Sorted list of tuples (palette_name, color_count). If a palette fails to load,
+        color_count will be -1.
     """
     # Determine data directory
     if json_path is None:
-        data_dir = Path(__file__).parent / "data"
+        data_dir = Path(__file__).parent.parent / "data"
     else:
         data_dir = Path(json_path)
     
-    available = []
+    palette_names = []
     
     # Core palettes
     core_palettes_dir = data_dir / "palettes"
     if core_palettes_dir.exists():
-        available.extend([p.stem for p in core_palettes_dir.glob("*.json")])
+        palette_names.extend([p.stem for p in core_palettes_dir.glob("*.json")])
     
     # User palettes (only user-*.json files)
     user_palettes_dir = data_dir / "user" / "palettes"
     if user_palettes_dir.exists():
         user_palettes = [p.stem for p in user_palettes_dir.glob("user-*.json")]
-        available.extend(user_palettes)
+        palette_names.extend(user_palettes)
     
-    # No need to remove duplicates since user palettes have user- prefix
-    return sorted(available)
+    # Load each palette and count colors
+    palette_data = []
+    for name in sorted(palette_names):
+        try:
+            palette = load_palette(name, json_path)
+            color_count = len(palette.records)
+            palette_data.append((name, color_count))
+        except Exception:
+            # If palette fails to load, include it with -1 count
+            palette_data.append((name, -1))
+    
+    return palette_data
 
 
 def handle_verification_flags(args) -> bool:
@@ -261,7 +272,7 @@ def handle_verification_flags(args) -> bool:
             for error in errors:
                 print(f"  {error}", file=sys.stderr)
             sys.exit(1)
-        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 19 palettes)")
+        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 20 palettes)")
     
     # Verify user data files integrity if requested
     if args.verify_user_data:

@@ -1,48 +1,50 @@
 """
 Export system for filaments and colors.
 
-Provides export functionality to various formats (CSV, JSON) for integration
-with external tools like AutoForge, HueForge, and other color management systems.
+Provides export functionality to various formats (CSV, JSON, GPL, etc.) for integration
+with external tools like AutoForge, HueForge, GIMP, and other color management systems.
 
-Version 1.0 - Simple hardcoded formats, extensible architecture for future enhancements.
+ARCHITECTURE NOTE (v6.0.0):
+This module now serves as a backward-compatibility facade over the new plugin-based
+exporter system located in color_tools/exporters/. All export logic has been moved
+to individual exporter classes in the exporters/ folder.
+
+The functions in this file (export_filaments_csv, export_colors_json, etc.) are
+now STUBS that delegate to the new exporter implementations. This preserves
+backward compatibility while allowing new exporters to be added as plugins
+without modifying this file.
+
+New exporters can be added by:
+    1. Creating a new file in exporters/ (e.g., exporters/ase_exporter.py)
+    2. Subclassing PaletteExporter from exporters/base.py
+    3. Using @register_exporter decorator
+    4. The exporter automatically appears in list_export_formats()
+
+For the new plugin architecture, see color_tools/exporters/
+For adding new exporters, see color_tools/exporters/base.py
 """
 
 from __future__ import annotations
 
-import csv
-import json
-from dataclasses import asdict
-from datetime import datetime
 from pathlib import Path
 from typing import TYPE_CHECKING
+
+# Import the new exporter system
+from color_tools.exporters import (
+    get_exporter,
+    list_export_formats as _list_export_formats,
+    EXPORT_FORMATS,
+)
 
 if TYPE_CHECKING:
     from color_tools.palette import ColorRecord, FilamentRecord
 
 
-# Export format definitions
-EXPORT_FORMATS = {
-    'autoforge': {
-        'description': 'AutoForge filament library CSV format',
-        'file_extension': 'csv',
-        'applies_to': 'filaments',
-    },
-    'csv': {
-        'description': 'Generic CSV with all fields',
-        'file_extension': 'csv',
-        'applies_to': 'both',
-    },
-    'json': {
-        'description': 'JSON format (raw data, backup/restore)',
-        'file_extension': 'json',
-        'applies_to': 'both',
-    },
-}
-
-
 def list_export_formats(data_type: str = 'both') -> dict[str, str]:
     """
     List available export formats.
+    
+    DELEGATION NOTE: This function delegates to the exporter registry.
     
     Args:
         data_type: Filter by 'filaments', 'colors', or 'both'
@@ -55,18 +57,15 @@ def list_export_formats(data_type: str = 'both') -> dict[str, str]:
         >>> print(formats['autoforge'])
         AutoForge filament library CSV format
     """
-    result = {}
-    for name, info in EXPORT_FORMATS.items():
-        applies_to = info['applies_to']
-        # Include format if data_type is 'both', or if format applies to requested type
-        if data_type == 'both' or applies_to == 'both' or applies_to == data_type:
-            result[name] = info['description']
-    return result
+    # Delegate to new exporter registry
+    return _list_export_formats(data_type)
 
 
 def generate_filename(data_type: str, format_name: str) -> str:
     """
     Generate timestamped filename for export.
+    
+    DELEGATION NOTE: This function delegates to the exporter's generate_filename method.
     
     Args:
         data_type: 'filaments' or 'colors'
@@ -79,9 +78,9 @@ def generate_filename(data_type: str, format_name: str) -> str:
         >>> generate_filename('filaments', 'autoforge')
         'filaments_autoforge_20251223_143022.csv'
     """
-    timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
-    ext = EXPORT_FORMATS[format_name]['file_extension']
-    return f"{data_type}_{format_name}_{timestamp}.{ext}"
+    # Delegate to exporter's generate_filename method
+    exporter = get_exporter(format_name)
+    return exporter.generate_filename(data_type)
 
 
 def export_filaments_autoforge(
@@ -90,6 +89,9 @@ def export_filaments_autoforge(
 ) -> str:
     """
     Export filaments to AutoForge CSV format.
+    
+    DELEGATION NOTE: This function is a stub that delegates to AutoForgeExporter
+    in exporters/csv_exporter.py. Kept for backward compatibility.
     
     Format:
         Brand,Name,TD,Color,Owned
@@ -109,35 +111,9 @@ def export_filaments_autoforge(
         >>> path = export_filaments_autoforge(bambu)
         >>> print(f"Exported {len(bambu)} filaments to {path}")
     """
-    if output_path is None:
-        output_path = generate_filename('filaments', 'autoforge')
-    
-    output_path = Path(output_path)
-    
-    with open(output_path, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.writer(f)
-        
-        # Write header
-        writer.writerow(['Brand', 'Name', 'TD', 'Color', 'Owned'])
-        
-        # Write data rows
-        for filament in filaments:
-            # Combine maker, type, and finish for Brand column
-            brand_parts = [filament.maker]
-            if filament.type:
-                brand_parts.append(filament.type)
-            if filament.finish:
-                brand_parts.append(filament.finish)
-            brand = ' '.join(brand_parts)
-            
-            name = filament.color
-            td = filament.td_value if filament.td_value is not None else ''
-            color = filament.hex
-            owned = 'TRUE'
-            
-            writer.writerow([brand, name, td, color, owned])
-    
-    return str(output_path)
+    # Delegate to AutoForgeExporter in exporters/csv_exporter.py
+    exporter = get_exporter('autoforge')
+    return exporter.export_filaments(filaments, output_path)
 
 
 def export_filaments_csv(
@@ -146,6 +122,9 @@ def export_filaments_csv(
 ) -> str:
     """
     Export filaments to generic CSV format with all fields.
+    
+    DELEGATION NOTE: This function is a stub that delegates to CSVExporter
+    in exporters/csv_exporter.py. Kept for backward compatibility.
     
     Args:
         filaments: List of FilamentRecord objects to export
@@ -159,29 +138,9 @@ def export_filaments_csv(
         >>> palette = FilamentPalette.load_default()
         >>> path = export_filaments_csv(palette.filaments)
     """
-    if output_path is None:
-        output_path = generate_filename('filaments', 'csv')
-    
-    output_path = Path(output_path)
-    
-    if not filaments:
-        # Create empty file with header
-        with open(output_path, 'w', encoding='utf-8', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(['id', 'maker', 'type', 'finish', 'color', 'hex', 'td_value'])
-        return str(output_path)
-    
-    # Get all field names from first filament (dataclass)
-    fieldnames = list(asdict(filaments[0]).keys())
-    
-    with open(output_path, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.DictWriter(f, fieldnames=fieldnames)
-        writer.writeheader()
-        
-        for filament in filaments:
-            writer.writerow(asdict(filament))
-    
-    return str(output_path)
+    # Delegate to CSVExporter in exporters/csv_exporter.py
+    exporter = get_exporter('csv')
+    return exporter.export_filaments(filaments, output_path)
 
 
 def export_filaments_json(
@@ -190,6 +149,9 @@ def export_filaments_json(
 ) -> str:
     """
     Export filaments to JSON format.
+    
+    DELEGATION NOTE: This function is a stub that delegates to JSONExporter
+    in exporters/json_exporter.py. Kept for backward compatibility.
     
     Args:
         filaments: List of FilamentRecord objects to export
@@ -203,17 +165,9 @@ def export_filaments_json(
         >>> palette = FilamentPalette.load_default()
         >>> path = export_filaments_json(palette.filaments, 'backup.json')
     """
-    if output_path is None:
-        output_path = generate_filename('filaments', 'json')
-    
-    output_path = Path(output_path)
-    
-    data = [asdict(f) for f in filaments]
-    
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    
-    return str(output_path)
+    # Delegate to JSONExporter in exporters/json_exporter.py
+    exporter = get_exporter('json')
+    return exporter.export_filaments(filaments, output_path)
 
 
 def export_colors_csv(
@@ -222,6 +176,9 @@ def export_colors_csv(
 ) -> str:
     """
     Export colors to generic CSV format with all fields.
+    
+    DELEGATION NOTE: This function is a stub that delegates to CSVExporter
+    in exporters/csv_exporter.py. Kept for backward compatibility.
     
     Args:
         colors: List of ColorRecord objects to export
@@ -235,43 +192,9 @@ def export_colors_csv(
         >>> palette = Palette.load_default()
         >>> path = export_colors_csv(palette.colors)
     """
-    if output_path is None:
-        output_path = generate_filename('colors', 'csv')
-    
-    output_path = Path(output_path)
-    
-    if not colors:
-        # Create empty file with header
-        with open(output_path, 'w', encoding='utf-8', newline='') as f:
-            writer = csv.writer(f)
-            writer.writerow(['name', 'hex', 'rgb', 'hsl', 'lab', 'lch'])
-        return str(output_path)
-    
-    # Colors have tuples, need custom handling
-    with open(output_path, 'w', encoding='utf-8', newline='') as f:
-        writer = csv.writer(f)
-        
-        # Write header
-        writer.writerow(['name', 'hex', 'rgb', 'hsl', 'lab', 'lch'])
-        
-        # Write data rows
-        for color in colors:
-            # Convert tuples to comma-separated strings
-            rgb_str = ','.join(map(str, color.rgb))
-            hsl_str = ','.join(f'{v:.1f}' for v in color.hsl)
-            lab_str = ','.join(f'{v:.1f}' for v in color.lab)
-            lch_str = ','.join(f'{v:.1f}' for v in color.lch)
-            
-            writer.writerow([
-                color.name,
-                color.hex,
-                rgb_str,
-                hsl_str,
-                lab_str,
-                lch_str
-            ])
-    
-    return str(output_path)
+    # Delegate to CSVExporter in exporters/csv_exporter.py
+    exporter = get_exporter('csv')
+    return exporter.export_colors(colors, output_path)
 
 
 def export_colors_json(
@@ -280,6 +203,9 @@ def export_colors_json(
 ) -> str:
     """
     Export colors to JSON format.
+    
+    DELEGATION NOTE: This function is a stub that delegates to JSONExporter
+    in exporters/json_exporter.py. Kept for backward compatibility.
     
     Args:
         colors: List of ColorRecord objects to export
@@ -293,17 +219,9 @@ def export_colors_json(
         >>> palette = Palette.load_default()
         >>> path = export_colors_json(palette.colors, 'my_colors.json')
     """
-    if output_path is None:
-        output_path = generate_filename('colors', 'json')
-    
-    output_path = Path(output_path)
-    
-    data = [asdict(c) for c in colors]
-    
-    with open(output_path, 'w', encoding='utf-8') as f:
-        json.dump(data, f, indent=2, ensure_ascii=False)
-    
-    return str(output_path)
+    # Delegate to JSONExporter in exporters/json_exporter.py
+    exporter = get_exporter('json')
+    return exporter.export_colors(colors, output_path)
 
 
 def export_filaments(
@@ -314,9 +232,12 @@ def export_filaments(
     """
     Export filaments to specified format.
     
+    DELEGATION NOTE: This function delegates to the exporter registry.
+    Now supports any format registered in the exporters/ folder.
+    
     Args:
         filaments: List of FilamentRecord objects to export
-        format_name: Export format ('autoforge', 'csv', 'json')
+        format_name: Export format ('autoforge', 'csv', 'json', etc.)
         output_path: Output file path (auto-generated if None)
     
     Returns:
@@ -333,23 +254,18 @@ def export_filaments(
     """
     format_name = format_name.lower()
     
-    if format_name not in EXPORT_FORMATS:
-        raise ValueError(f"Unknown export format: {format_name}")
+    # Use new exporter system
+    try:
+        exporter = get_exporter(format_name)
+    except ValueError as e:
+        raise ValueError(f"Unknown export format: {format_name}") from e
     
-    format_info = EXPORT_FORMATS[format_name]
-    applies_to = format_info['applies_to']
-    
-    if applies_to != 'filaments' and applies_to != 'both':
+    # Check if this exporter supports filaments
+    if not exporter.metadata.supports_filaments:
         raise ValueError(f"Format '{format_name}' does not support filaments")
     
-    if format_name == 'autoforge':
-        return export_filaments_autoforge(filaments, output_path)
-    elif format_name == 'csv':
-        return export_filaments_csv(filaments, output_path)
-    elif format_name == 'json':
-        return export_filaments_json(filaments, output_path)
-    else:
-        raise ValueError(f"Format '{format_name}' not implemented yet")
+    # Delegate to exporter
+    return exporter.export_filaments(filaments, output_path)
 
 
 def export_colors(
@@ -360,9 +276,12 @@ def export_colors(
     """
     Export colors to specified format.
     
+    DELEGATION NOTE: This function delegates to the exporter registry.
+    Now supports any format registered in the exporters/ folder.
+    
     Args:
         colors: List of ColorRecord objects to export
-        format_name: Export format ('csv', 'json')
+        format_name: Export format ('csv', 'json', 'gpl', etc.)
         output_path: Output file path (auto-generated if None)
     
     Returns:
@@ -379,18 +298,16 @@ def export_colors(
     """
     format_name = format_name.lower()
     
-    if format_name not in EXPORT_FORMATS:
-        raise ValueError(f"Unknown export format: {format_name}")
+    # Use new exporter system
+    try:
+        exporter = get_exporter(format_name)
+    except ValueError as e:
+        raise ValueError(f"Unknown export format: {format_name}") from e
     
-    format_info = EXPORT_FORMATS[format_name]
-    applies_to = format_info['applies_to']
-    
-    if applies_to != 'colors' and applies_to != 'both':
+    # Check if this exporter supports colors
+    if not exporter.metadata.supports_colors:
         raise ValueError(f"Format '{format_name}' does not support colors")
     
-    if format_name == 'csv':
-        return export_colors_csv(colors, output_path)
-    elif format_name == 'json':
-        return export_colors_json(colors, output_path)
-    else:
-        raise ValueError(f"Format '{format_name}' not implemented yet")
+    # Delegate to exporter
+    return exporter.export_colors(colors, output_path)
+

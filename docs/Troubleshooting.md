@@ -136,7 +136,17 @@ python -m color_tools --verify-all
 
 ### User Data Files
 
-User data files (`user-colors.json`, `user-filaments.json`, `user-synonyms.json`) are **not** verified - you have full control over their contents.
+User data files are **optionally** verified - you can generate `.sha256` hash files for integrity checking:
+
+```bash
+# Generate .sha256 files for all user data
+color-tools --generate-user-hashes
+
+# Verify user data integrity
+color-tools --verify-user-data
+```
+
+If no `.sha256` file exists, user files work without verification - giving you full control over their contents.
 
 ---
 
@@ -144,12 +154,12 @@ User data files (`user-colors.json`, `user-filaments.json`, `user-synonyms.json`
 
 The tool uses indexed lookups for fast color matching:
 
-| Operation | Complexity | Notes |
-|-----------|------------|-------|
-| Color name lookup | O(1) | Hash-based index |
-| RGB exact match | O(1) | Hash-based index |
-| LAB/LCH lookup | O(1) | Hash-based with rounding |
-| Nearest neighbor | O(n) | Optimized distance calculations |
+ | Operation | Complexity | Notes |
+ | --- | --- | --- |
+ | Color name lookup | O(1) | Hash-based index |
+ | RGB exact match | O(1) | Hash-based index |
+ | LAB/LCH lookup | O(1) | Hash-based with rounding |
+ | Nearest neighbor | O(n) | Optimized distance calculations |
 
 ### Optimization Tips
 

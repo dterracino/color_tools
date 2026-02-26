@@ -8,6 +8,184 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Plugin-based exporter architecture** - New extensible exporter system in `exporters/` folder
+  - **Plugin pattern:** Add new exporters without modifying existing code
+  - **Auto-registration:** Exporters use `@register_exporter` decorator for automatic discovery
+  - **Metadata-driven:** Each exporter declares capabilities (colors/filaments, binary/text, file extension)
+  - **Base classes:** `PaletteExporter` abstract base class and `ExporterMetadata` dataclass
+  - **Registry system:** `get_exporter()` and `list_export_formats()` for format discovery
+  - **Backward compatible:** All existing export functions work identically (delegate to new system)
+  - **Easy to extend:** See exporter files in `color_tools/exporters/` for examples
+  - **Future-ready:** Designed for binary formats (Adobe ACO/ACT), image formats (PNG swatches), etc.
+  
+  Example usage:
+
+  ```python
+  from color_tools.exporters import get_exporter, list_export_formats
+  from color_tools import Palette
+  
+  # List available formats
+  formats = list_export_formats('colors')
+  # {'csv': '...', 'json': '...', 'gpl': '...', 'hex': '...', ...}
+  
+  # Use any exporter
+  exporter = get_exporter('gpl')
+  palette = Palette.load_default()
+  path = exporter.export_colors(palette.records[:20], 'my_palette.gpl')
+  ```
+  
+  For developers: Create new exporters by subclassing `PaletteExporter` - see `color_tools/exporters/base.py`
+
+- **Five new palette export formats** - Text-based formats for graphics tools and palette sharing:
+  
+  **1. Hex format (.hex)** - Simple hex color list
+
+  ```python
+  from color_tools.exporters import get_exporter
+  exporter = get_exporter('hex')
+  exporter.export_colors(colors, 'palette.hex')
+  # Output: Uppercase hex codes, one per line (no # prefix)
+  # 000000
+  # FF0000
+  # 00FF00
+  ```
+  
+  **2. JASC-PAL (.pal)** - Paint Shop Pro palette format
+
+  ```python
+  exporter = get_exporter('pal')
+  exporter.export_colors(colors, 'palette.pal')
+  # Format: JASC-PAL header + RGB decimal values
+  # Compatible with Paint Shop Pro, Aseprite, and many image editors
+  ```
+  
+  **3. PAINT.NET (.txt)** - PAINT.NET palette format
+
+  ```python
+  exporter = get_exporter('paintnet')
+  exporter.export_colors(colors, 'palette.txt')
+  # Format: AARRGGBB hex codes with comment headers
+  # FF000000 (fully opaque black)
+  ```
+  
+  **4. Lospec JSON (.json)** - Lospec.com palette format
+
+  ```python
+  exporter = get_exporter('lospec')
+  exporter.export_colors(colors, 'palette.json')
+  # Format: {"name": "...", "author": "", "colors": ["hex", ...]}
+  # Perfect for sharing palettes on Lospec.com/palette-list
+  ```
+  
+  **5. GIMP Palette (.gpl)** - GIMP/Inkscape/Krita format
+
+  ```python
+  exporter = get_exporter('gpl')
+  exporter.export_colors(colors, 'palette.gpl')
+  # Format: GIMP Palette with RGB values and color names
+  # Compatible with GIMP, Inkscape, Krita, and other graphics applications
+  ```
+  
+  All formats support both colors and filaments (except where noted).
+  Use `list_export_formats('colors')` or `list_export_formats('filaments')` to see available formats.
+
+- **Comprehensive exporter test coverage** - Added 14 new unit tests for plugin architecture
+  - Registry system tests (get_exporter, metadata validation, filtering)
+  - CSV exporter tests (structure, empty exports, field validation)
+  - JSON exporter tests (structure, Unicode handling)
+  - Error handling tests (unsupported formats, type mismatches)
+  - Total export tests: 32 (increased from 18, 78% increase)
+  - All tests passing with 100% backward compatibility
+
+### Changed
+
+- **Exporter code organization** - Separated AutoForge exporter into dedicated file
+  - `csv_exporter.py` now only handles generic CSV export (single responsibility)
+  - `autoforge_exporter.py` contains specialized AutoForge filament export format
+  - Each exporter file has one clear purpose following separation of concerns
+  - No user-facing changes - all functionality remains identical
+
+### Fixed
+
+- **Exporter format categorization** - Corrected which formats support filaments
+  - **Universal formats** (preserve full metadata): CSV, JSON only
+  - **Palette formats** (colors-only): Hex, JASC-PAL, PAINT.NET, Lospec, GIMP Palette
+  - **Filament formats**: AutoForge
+  - Palette formats technically could export filament color values but lose critical metadata (maker, type, finish, TD values)
+  - Changed `supports_filaments=False` for hex, pal, paintnet, lospec exporters
+  - Documentation and behavior now correctly reflect that only CSV and JSON preserve full filament data
+
+## [6.0.0] - 2026-02-26
+
+### Added
+
+- **PICO-8 retro palette** - Added official PICO-8 fantasy console palette (16 colors)
+  - Palette name: `pico8`
+  - Includes all 16 official PICO-8 colors with proper names (black, dark-blue, dark-purple, dark-green, brown, dark-grey, light-grey, white, red, orange, yellow, green, blue, lavender, pink, light-peach)
+  - Available for color matching, image quantization, and all palette operations
+  - Added `PICO8_PALETTE_HASH` constant for data integrity verification
+  - Example: `color-tools color --palette pico8 --name orange`
+
+- **User data example files** - Added example files to help users get started with custom data
+  - `data/user/user-colors.example.json` - Example custom color entries
+  - `data/user/user-filaments.example.json` - Example custom filament entries (shows full, minimal, and null optional fields)
+  - `data/user/user-synonyms.example.json` - Example maker name synonyms
+  - Copy/rename these `.example.json` files to the actual filenames to start adding custom data
+
+### Changed
+
+- **BREAKING: Palette listing output format** - Both `color --palette list` and `image --list-palettes` now display color counts
+  - **Old format:** Simple list of palette names
+  - **New format:** Aligned table with palette names and color counts (e.g., "pico8 - 16 colors")
+  - **Impact:** Scripts parsing palette list output will need updates
+  - **Benefit:** Users can now see palette sizes at a glance, and both commands show identical output
+  - Both commands now use the same underlying function (`get_available_palettes()`) for consistency (DRY)
+
+### Fixed
+
+- **Palette listing bug** - Fixed `get_available_palettes()` path calculation
+  - Was looking in wrong directory (`cli_commands/data/` instead of `color_tools/data/`)
+  - Now correctly finds all core and user palettes
+  - Fixed `color --palette list` to show all palettes (was returning "No palettes found")
+  - Fixed `image --list-palettes` to include user palettes (previously only showed core palettes)
+
+- **Documentation correction** - Updated documentation to correctly reflect that user data verification is optional (not disabled)
+  - Corrected `docs/Customization.md` to explain optional `.sha256` verification for user data
+  - Corrected `docs/Troubleshooting.md` to clarify user files are "optionally verified" not "not verified"
+  - Added code examples for `--generate-user-hashes` and `--verify-user-data` commands
+  - Previous docs incorrectly stated user files weren't verified, but v4.0.0 added optional hash verification
+  - Updated `docs/FAQ.md` to document both palette listing commands and include pico8 in palette list
+
+### Migration Guide
+
+If you have scripts that parse the output of `color --palette list` or `image --list-palettes`:
+
+**Before (5.x):**
+
+```text
+Available palettes:
+  cga4
+  ega16
+  vga
+```
+
+**After (6.0.0):**
+
+```text
+Available palettes:
+  cga4            - 4 colors
+  ega16           - 16 colors
+  vga             - 256 colors
+```
+
+**To adapt your scripts:**
+
+- Parse the first column (palette name) only
+- Or use `awk '{print $1}'` to extract just the palette name
+- Example: `color-tools color --palette list | grep -v "Available" | awk '{print $1}'`
+
 ## [5.6.1] - 2024-12-24
 
 ### Fixed
@@ -222,7 +400,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - **Tandy 16** (16 colors): Full Tandy RGB/CGA-compatible 16-color palette
   - All palettes work with `--quantize-palette` image command
   - Example: `color-tools image --file photo.jpg --quantize-palette apple2`
-  - Total retro palettes available: 19
+  - Total retro palettes available: 19 (now 20 with pico8 added in v6.0.0)
 
 ### Changed
 

@@ -63,11 +63,12 @@ cga = load_palette('cga4')  # Classic CGA 4-color palette
 color, distance = cga.nearest_color((128, 64, 200), space='rgb')
 print(f"Nearest CGA color: {color.name} ({color.hex})")
 
-# Available palettes: cga4, cga16, crayola, ega16, ega64, vga, web, and more
+# Available palettes: Use color-tools color --palette list to see all 20 core palettes
 ega = load_palette('ega16')     # Standard EGA 16-color palette
 vga = load_palette('vga')       # VGA 256-color palette (Mode 13h)
 web = load_palette('web')       # Web-safe 216-color palette
 crayola = load_palette('crayola')  # 120 Crayola crayon colors
+pico8 = load_palette('pico8')   # PICO-8 fantasy console 16-color palette
 
 # Error handling - helpful messages if palette doesn't exist
 try:
@@ -144,7 +145,7 @@ gameboy_image.save("gameboy_style.png")
 #### Palettes
 
 - `Palette.load_default()` - Load CSS color database
-- `load_palette(name)` - Load retro/classic palette (cga4, cga16, ega16, ega64, vga, web)
+- `load_palette(name)` - Load retro/classic palette (use `color-tools color --palette list` to see all 20 available)
 - `FilamentPalette.load_default()` - Load filament database
 - `palette.nearest_color()` - Find nearest color match
 - `palette.find_by_name()` - Look up color by name
@@ -300,7 +301,7 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--count N`: Return top N nearest colors instead of just one (default: 1, max: 50)
-- `--palette {cga4,cga16,ega16,ega64,vga,web}`: Use retro/classic palette instead of CSS colors
+- `--palette NAME`: Use retro/classic palette instead of CSS colors (use `--palette list` to see all available)
 
 #### Custom Palettes
 
@@ -474,8 +475,9 @@ Process images with color transformations, CVD simulation/correction, and retro 
 #### List Available Palettes
 
 ```bash
-# Show all available retro palettes
-python -m color_tools image --list-palettes
+# Show all available retro palettes (both commands work identically)
+color-tools color --palette list
+color-tools image --list-palettes
 ```
 
 #### Color Vision Deficiency (CVD) Operations
@@ -522,9 +524,9 @@ python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
 - `--quantize-palette NAME`: Convert to specified retro palette
 - `--metric {de2000,de94,de76,cmc,euclidean,hsl_euclidean}`: Color distance metric (default: de2000)
 - `--dither`: Apply Floyd-Steinberg dithering for palette quantization
-- `--list-palettes`: List all available retro palettes
+- `--list-palettes`: List all available retro palettes with color counts
 
-**Available Palettes:** cga4, cga16, ega16, ega64, vga, web, gameboy_dmg, gameboy_gbl, gameboy_mgb, commodore64 (plus any custom palettes in data/palettes/)
+**Available Palettes:** Use `color-tools color --palette list` or `color-tools image --list-palettes` to see all 20 core palettes (including apple2, cga4, cga16, commodore64, crayola, ega16, ega64, gameboy variants, macintosh, nes, pico8, sms, tandy16, vga, virtualboy, web) plus any custom user palettes
 
 ### Global Arguments
 

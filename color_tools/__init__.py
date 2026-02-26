@@ -42,13 +42,29 @@ Image Processing (requires pip install color-match-tools[image]):
     >>> retro_image = quantize_image_to_palette("photo.jpg", "cga4", dither=True)
     >>> retro_image.save("retro_art.png")
 
+Export & Integration (v6.0.0+ plugin system):
+    >>> from color_tools import Palette, get_exporter, list_export_formats
+    >>> 
+    >>> # List available export formats
+    >>> formats = list_export_formats('colors')
+    >>> # {'csv': '...', 'json': '...', 'gpl': 'GIMP Palette format...'}
+    >>> 
+    >>> # Export to GIMP Palette format (.gpl)
+    >>> palette = Palette.load_default()
+    >>> exporter = get_exporter('gpl')
+    >>> exporter.export_colors(palette.records[:20], 'my_colors.gpl')
+    >>> 
+    >>> # Create custom exporters with plugin architecture
+    >>> from color_tools import register_exporter, PaletteExporter, ExporterMetadata
+    >>> # See exporters/gpl_exporter.py for complete example
+
 Three Ways to Use:
     1. As a library: from color_tools import rgb_to_lab
     2. As a CLI tool: python -m color_tools color --name coral
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "5.6.1"
+__version__ = "6.0.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -161,6 +177,17 @@ from .export import (
     
     # Filename generation
     generate_filename,
+)
+
+# Exporter registry (v6.0.0+ plugin system)
+from .exporters import (
+    # Registry functions
+    get_exporter,
+    
+    # Base classes for custom exporters (advanced use)
+    PaletteExporter,
+    ExporterMetadata,
+    register_exporter,
 )
 
 # ============================================================================
@@ -276,6 +303,12 @@ __all__ = [
     "export_colors_csv",
     "export_colors_json",
     "generate_filename",
+    
+    # Exporter registry (v6.0.0+ plugin system)
+    "get_exporter",
+    "PaletteExporter",
+    "ExporterMetadata",
+    "register_exporter",
     
     # Color vision deficiency
     "simulate_cvd",
