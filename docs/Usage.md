@@ -490,6 +490,149 @@ python -m color_tools filament --nearest --value 255 128 64 --type "PLA" --all-f
 
 See [Customization Guide - Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#owned-filamentsjson---filament-ownership-tracking) for file format and Python API usage.
 
+#### Interactive Filament Library Manager (v6.0.0+)
+
+Manage your owned filaments with a full-featured terminal user interface (TUI). The interactive manager provides a visual, keyboard-driven interface for browsing, filtering, and managing your filament collection.
+
+**Requirements:**
+
+Install the `[interactive]` extra:
+
+```bash
+pip install color-match-tools[interactive]
+```
+
+**Launch the Manager:**
+
+```bash
+color-tools filament --manage
+# or
+python -m color_tools filament --manage
+```
+
+**Interface Overview:**
+
+````text
+╭─── Filament Library Manager ─────────────────────────────────────────────────╮
+│ 913 total | 42 owned* | Showing 913 filaments                                │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ > [✓] Bambu Lab - PLA Matte - Jet Black                                      │
+│   [ ] Bambu Lab - PLA Matte - White                                          │
+│   [✓] Polymaker - PolyTerra PLA - Charcoal Black                             │
+│   [ ] Polymaker - PolyTerra PLA - Savannah Yellow                            │
+│                                                                               │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Spc=toggle | ↑↓Pg/Home/End | (f)ilter | (c)lear | (r)evert | (s)ave | (q)uit│
+╰──────────────────────────────────────────────────────────────────────────────╯
+````
+
+**Key Bindings:**
+
+| Key | Action |
+| ----- | -------- |
+| **Space** | Toggle owned status of selected filament |
+| **↑ / ↓** | Move selection up/down |
+| **PgUp / PgDn** | Jump up/down by one page (12 filaments) |
+| **Home / End** | Jump to first/last filament |
+| **(f)** | Enter filter mode |
+| **(c)** | Clear all active filters |
+| **(r)** | Revert unsaved ownership changes |
+| **(s)** | Save changes to owned-filaments.json |
+| **(q)** | Quit (prompts to save if changes exist) |
+| **Esc** | Exit filter mode or quit (if no changes) |
+
+**Filter Mode:**
+
+Press `f` to enter filter mode and narrow down the filament list:
+
+````text
+│ FILTER MODE (Tab=next field, Esc=exit)                                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Maker : Bambu_                                                                │
+│ Type  : PLA                                                                   │
+│ Finish:                                                                       │
+│ Color :                                                                       │
+````
+
+**Filter Mode Key Bindings:**
+
+| Key | Action |
+| ----- | -------- |
+| **Type** | Enter text to filter (case-insensitive substring match) |
+| **Tab** | Move to next filter field (cycles through Maker/Type/Finish/Color) |
+| **Shift+Tab** | Move to previous filter field |
+| **Backspace** | Delete last character from active field |
+| **Esc** | Exit filter mode (keeps filters active) |
+
+**Visual Indicators:**
+
+- **Cyan text** - Owned filaments
+- **Reverse video** - Selected filament (current cursor position)
+- **Yellow asterisk** (*) - Unsaved changes (appears next to owned count)
+- **Yellow bold reverse** - Active filter field (in filter mode)
+
+**Exit Summary:**
+
+When you quit the manager, you'll see a summary of all changes made during the session:
+
+```text
+📊 Session Summary:
+────────────────────────────────────────────────────────────
+✅ Added 3 filament(s) to owned list:
+   + Bambu Lab - PLA Matte - White
+   + Polymaker - PolyTerra PLA - Savannah Yellow
+   + eSun - PLA+ - Silver
+
+❌ Removed 1 filament(s) from owned list:
+   - Bambu Lab - PLA Matte - Jet Black
+
+Total owned: 42 → 44
+────────────────────────────────────────────────────────────
+```
+
+**Example Workflows:**
+
+**Browse and add filaments:**
+
+1. Launch manager: `color-tools filament --manage`
+2. Use arrow keys or Page Up/Down to browse
+3. Press Space to mark filaments as owned (checkboxes toggle)
+4. Press `s` to save changes
+5. Press `q` to quit and see summary
+
+**Filter by maker:**
+
+1. Launch manager
+2. Press `f` to enter filter mode
+3. Type "Bambu" in Maker field
+4. Press Esc to exit filter mode (only Bambu Lab filaments shown)
+5. Browse and toggle owned status
+6. Press `c` to clear filter (see all filaments again)
+
+**Filter by multiple criteria:**
+
+1. Press `f` to enter filter mode
+2. Type "Polymaker" in Maker field
+3. Press Tab to move to Type field
+4. Type "PLA" in Type field
+5. Press Esc to see results (only Polymaker PLA filaments)
+6. Toggle owned status as needed
+
+**Revert mistakes:**
+
+1. Toggle several filaments by accident
+2. Press `r` to revert all unsaved changes (restores last saved state)
+3. Or press `q`, then `n` to quit without saving
+
+**Tips:**
+
+- The manager automatically loads `owned-filaments.json` if it exists
+- Changes are only saved when you press `s` or confirm save on quit
+- Filter is case-insensitive and matches substrings (e.g., "poly" matches "Polymaker" and "PolyTerra")
+- Press `c` to quickly clear all filters and see the full list again
+- The yellow asterisk (*) next to owned count reminds you of unsaved changes
+- Exit summary compares original state to final saved state (captures all saves during session)
+
 ### Convert Command
 
 Convert between color spaces and check gamut constraints.

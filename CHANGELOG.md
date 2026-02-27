@@ -148,6 +148,54 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   save_owned_filaments(owned_ids)
   ```
 
+- **Interactive filament library manager** - Full-featured TUI for managing owned filaments (requires `[interactive]` extra)
+  - **Rich terminal UI:** Built with prompt_toolkit for modern, responsive interface
+  - **Visual feedback:** Cyan highlighting for owned filaments, yellow asterisk for unsaved changes
+  - **Quick navigation:** Arrow keys, Page Up/Down, Home/End for fast browsing
+  - **Live filtering:** Press `f` to filter by Maker/Type/Finish/Color with Tab navigation
+  - **Batch operations:** Space to toggle owned status, works with all 913 filaments
+  - **Safe editing:** Changes tracked with visual indicator, prompt to save on quit
+  - **Session summary:** Shows added/removed filaments with full details on exit
+  - **Zero dependencies:** Only requires prompt_toolkit (installed with `[interactive]` extra)
+  
+  Launch the manager:
+
+  ```bash
+  # Install the interactive extra first
+  pip install color-match-tools[interactive]
+  
+  # Launch interactive manager
+  color-tools filament --manage
+  ```
+  
+  Key bindings:
+  - **Spc** - Toggle owned status of selected filament
+  - **↑↓/PgUp/PgDn/Home/End** - Navigate filament list
+  - **(f)** - Enter filter mode (Maker/Type/Finish/Color fields)
+  - **Tab** - Navigate between filter fields (in filter mode)
+  - **Esc** - Exit filter mode or quit (if no unsaved changes)
+  - **(c)** - Clear all active filters
+  - **(r)** - Revert unsaved ownership changes
+  - **(s)** - Save changes to owned-filaments.json
+  - **(q)** - Quit (prompts to save if changes exist)
+  
+  Features:
+  - **Live filtering** - Type in filter fields to narrow down 913 filaments instantly
+  - **Visual indicators** - Owned filaments shown in cyan, asterisk shows unsaved changes
+  - **Smart confirmation** - Prompts y/n/Esc when quitting with unsaved changes
+  - **Exit summary** - Shows detailed list of added/removed filaments on exit
+  - **Frame-perfect UI** - Clean bordered display that adapts to filter state
+  
+  Example workflow:
+  1. `color-tools filament --manage` - Launch manager
+  2. Press `f` - Enter filter mode
+  3. Type "Bambu" in Maker field - See only Bambu Lab filaments
+  4. Tab to Type field, type "PLA" - Narrow to just PLA
+  5. Esc - Exit filter mode
+  6. Space - Toggle owned status on visible filaments
+  7. `s` - Save changes
+  8. `q` - Quit and see summary of changes
+
 - **Comprehensive exporter test coverage** - Added 14 new unit tests for plugin architecture
   - Registry system tests (get_exporter, metadata validation, filtering)
   - CSV exporter tests (structure, empty exports, field validation)
