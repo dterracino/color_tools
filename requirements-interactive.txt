@@ -1,0 +1,9 @@
+# Interactive filament library management interface
+# Install with: pip install -r requirements-interactive.txt
+# Or via extras: pip install color-match-tools[interactive]
+
+# Base requirements
+-r requirements.txt
+
+# Interactive TUI for filament management
+prompt_toolkit>=3.0.0

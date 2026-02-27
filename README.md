@@ -48,6 +48,9 @@ pip install color-match-tools
 # With image processing support
 pip install color-match-tools[image]
 
+# With interactive filament library manager
+pip install color-match-tools[interactive]
+
 # With all optional features
 pip install color-match-tools[all]
 ```

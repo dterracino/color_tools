@@ -23,6 +23,12 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
         1: Filament not found or error
         2: Invalid input
     """
+    # Handle --manage (interactive mode) early - doesn't need palette loaded yet
+    if hasattr(args, 'manage') and args.manage:
+        from ...interactive_manager import run_interactive_manager
+        run_interactive_manager(json_dir=json_path)
+        return  # run_interactive_manager handles exit
+    
     # Set dual-color mode BEFORE loading any filaments
     # This is CRITICAL - the mode affects how FilamentRecord.rgb works!
     if hasattr(args, 'dual_color_mode'):

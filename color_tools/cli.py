@@ -348,6 +348,11 @@ Examples:
         help="Remove filament ID from owned list (saves to owned-filaments.json)"
     )
     filament_parser.add_argument(
+        "--manage",
+        action="store_true",
+        help="Launch interactive filament library manager (requires [interactive] extra)"
+    )
+    filament_parser.add_argument(
         "--all-filaments",
         action="store_true",
         help="Search all filaments (override owned filtering even if owned-filaments.json exists)"
