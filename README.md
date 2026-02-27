@@ -130,7 +130,9 @@ The library includes extensive color databases:
 
 Extend with your own data using [User Data Files](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#user-data-files-optional-extensions).
 
-## � Export & Integration
+**Track your owned filaments** for personalized color matching - create an `owned-filaments.json` file to automatically filter searches to filaments you already have. See [Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#owned-filamentsjson---filament-ownership-tracking) in the Customization Guide.
+
+## 🔧 Export & Integration
 
 Export colors and filaments to various formats for use with external tools:
 

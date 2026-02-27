@@ -643,6 +643,89 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     return synonyms
 
 
+def load_owned_filaments(json_path: Path | str | None = None) -> Set[str]:
+    """
+    Load owned filament IDs from JSON file.
+    
+    Loads a list of filament IDs that the user owns from owned-filaments.json.
+    This file is optional - if it doesn't exist, an empty set is returned.
+    
+    The JSON format is:
+    ```json
+    {
+        "owned_filaments": ["id1", "id2", "id3"]
+    }
+    ```
+    
+    Args:
+        json_path: Path to directory containing owned-filaments.json, or path to
+                   specific owned filaments JSON file. If None, looks for
+                   owned-filaments.json in the package's data/ directory.
+    
+    Returns:
+        Set of owned filament IDs (empty set if file doesn't exist)
+    """
+    if json_path is None:
+        # Default: look in package's data/ directory
+        data_dir = Path(__file__).parent / "data"
+        json_path = data_dir / ColorConstants.OWNED_FILAMENTS_JSON_FILENAME
+    else:
+        json_path = Path(json_path)
+        # If it's a directory, append the filename
+        if json_path.is_dir():
+            json_path = json_path / ColorConstants.OWNED_FILAMENTS_JSON_FILENAME
+    
+    # Return empty set if file doesn't exist (optional file)
+    if not json_path.exists():
+        return set()
+    
+    # Load owned filaments
+    with open(json_path, "r", encoding="utf-8") as f:
+        data = json.load(f)
+    
+    # Validate structure
+    if not isinstance(data, dict) or "owned_filaments" not in data:
+        raise ValueError(f"Expected {{'owned_filaments': [...]}} structure in {json_path}")
+    
+    owned_ids = data["owned_filaments"]
+    if not isinstance(owned_ids, list):
+        raise ValueError(f"Expected 'owned_filaments' to be a list in {json_path}")
+    
+    return set(owned_ids)
+
+
+def save_owned_filaments(owned_ids: Set[str], json_path: Path | str | None = None) -> None:
+    """
+    Save owned filament IDs to JSON file.
+    
+    Saves the list of owned filament IDs to owned-filaments.json.
+    
+    Args:
+        owned_ids: Set of filament IDs to save
+        json_path: Path to directory for owned-filaments.json, or path to
+                   specific file. If None, saves to package's data/ directory.
+    """
+    if json_path is None:
+        # Default: save to package's data/ directory
+        data_dir = Path(__file__).parent / "data"
+        json_path = data_dir / ColorConstants.OWNED_FILAMENTS_JSON_FILENAME
+    else:
+        json_path = Path(json_path)
+        # If it's a directory, append the filename
+        if json_path.is_dir():
+            json_path = json_path / ColorConstants.OWNED_FILAMENTS_JSON_FILENAME
+    
+    # Sort IDs for consistent output
+    sorted_ids = sorted(owned_ids)
+    
+    # Create data structure
+    data = {"owned_filaments": sorted_ids}
+    
+    # Save to file
+    with open(json_path, "w", encoding="utf-8") as f:
+        json.dump(data, f, indent=2)
+
+
 def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     """
     Load a named retro palette from the palettes directory.
@@ -1079,9 +1162,10 @@ class FilamentPalette:
     filaments automatically.
     """
     
-    def __init__(self, records: List[FilamentRecord], maker_synonyms: Optional[Dict[str, List[str]]] = None) -> None:
+    def __init__(self, records: List[FilamentRecord], maker_synonyms: Optional[Dict[str, List[str]]] = None, owned_filaments: Optional[Set[str]] = None) -> None:
         self.records = records
         self.maker_synonyms = maker_synonyms or {}
+        self.owned_filaments = owned_filaments if owned_filaments is not None else set()
         
         # Create various lookup indices (note: Lists, not single items!)
         # Multiple filaments can share the same maker/type/color
@@ -1090,6 +1174,7 @@ class FilamentPalette:
         self._by_color: Dict[str, List[FilamentRecord]] = {}
         self._by_rgb: Dict[Tuple[int, int, int], List[FilamentRecord]] = {}
         self._by_finish: Dict[str, List[FilamentRecord]] = {}
+        self._by_id: Dict[str, FilamentRecord] = {}
         
         # Build indices
         for rec in records:
@@ -1120,6 +1205,10 @@ class FilamentPalette:
                 if rec.finish not in self._by_finish:
                     self._by_finish[rec.finish] = []
                 self._by_finish[rec.finish].append(rec)
+            
+            # By ID (unique lookup for owned filaments management)
+            if rec.id:
+                self._by_id[rec.id] = rec
     
     def _expand_maker_names(self, makers: List[str]) -> Set[str]:
         """
@@ -1173,9 +1262,13 @@ class FilamentPalette:
         Load the default filament palette from the package data.
         
         Convenience method for quick loading without worrying about paths.
-        Also loads maker synonyms automatically.
+        Also loads maker synonyms and owned filaments automatically.
+        
+        Auto-detects owned filaments: If owned-filaments.json exists and contains IDs,
+        owned filtering will be the default behavior in filter/nearest methods.
         """
-        return cls(load_filaments(), load_maker_synonyms())
+        owned = load_owned_filaments()
+        return cls(load_filaments(), load_maker_synonyms(), owned)
 
     def find_by_maker(self, maker: Union[str, List[str]]) -> List[FilamentRecord]:
         """
@@ -1256,7 +1349,8 @@ class FilamentPalette:
         maker: Optional[Union[str, List[str]]] = None,
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
-        color: Optional[str] = None
+        color: Optional[str] = None,
+        owned: Optional[bool] = None
     ) -> List[FilamentRecord]:
         """
         Filter filaments by multiple criteria.
@@ -1267,16 +1361,29 @@ class FilamentPalette:
         
         Supports maker synonyms: filtering by "Bambu" will include "Bambu Lab".
         
+        Auto-detects owned filtering: If owned-filaments.json exists with IDs,
+        defaults to owned filaments only unless owned=False is explicitly passed.
+        
         Args:
             maker: A maker name or list of maker names (can use synonyms).
             type_name: A filament type or list of types.
             finish: A filament finish or list of finishes.
             color: A single color name to match (case-insensitive).
+            owned: Filter to owned filaments only. None (default) = auto-detect,
+                   True = owned only, False = all filaments.
         
         Returns:
             A list of FilamentRecord objects matching the criteria.
         """
-        results = self.records
+        # Auto-detect owned filtering if not explicitly specified
+        if owned is None:
+            owned = len(self.owned_filaments) > 0
+        
+        # Start with owned or all records
+        if owned:
+            results = [r for r in self.records if r.id in self.owned_filaments]
+        else:
+            results = self.records
         
         makers_set = self._normalize_filter_values(maker)
         types_set = self._normalize_filter_values(type_name)
@@ -1305,6 +1412,7 @@ class FilamentPalette:
         maker: Optional[Union[str, List[str]]] = None,
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
+        owned: Optional[bool] = None,
         cmc_l: float = ColorConstants.CMC_L_DEFAULT,
         cmc_c: float = ColorConstants.CMC_C_DEFAULT,
     ) -> Tuple[FilamentRecord, float]:
@@ -1314,12 +1422,17 @@ class FilamentPalette:
         The killer feature for 3D printing! "I want this exact color... what
         filament should I buy?" 🎨🖨️
         
+        Auto-detects owned filtering: If owned-filaments.json exists with IDs,
+        defaults to searching owned filaments only unless owned=False is explicitly passed.
+        
         Args:
             target_rgb: Target RGB color tuple.
             metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'.
             maker: Optional maker name or list of names to filter by. Use "*" to ignore filter.
             type_name: Optional filament type or list of types to filter by. Use "*" to ignore filter.
             finish: Optional filament finish or list of finishes to filter by. Use "*" to ignore filter.
+            owned: Filter to owned filaments only. None (default) = auto-detect,
+                   True = owned only, False = all filaments.
             cmc_l, cmc_c: Parameters for CMC metric.
         
         Returns:
@@ -1333,7 +1446,7 @@ class FilamentPalette:
         finish_filter = None if finish == "*" else finish
         
         # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter)
+        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter, owned=owned)
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
@@ -1379,6 +1492,7 @@ class FilamentPalette:
         maker: Optional[Union[str, List[str]]] = None,
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
+        owned: Optional[bool] = None,
         cmc_l: float = ColorConstants.CMC_L_DEFAULT,
         cmc_c: float = ColorConstants.CMC_C_DEFAULT,
     ) -> List[Tuple[FilamentRecord, float]]:
@@ -1387,6 +1501,9 @@ class FilamentPalette:
         
         Similar to nearest_filament but returns multiple results sorted by distance.
         
+        Auto-detects owned filtering: If owned-filaments.json exists with IDs,
+        defaults to searching owned filaments only unless owned=False is explicitly passed.
+        
         Args:
             target_rgb: Target RGB color tuple.
             metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'.
@@ -1394,6 +1511,8 @@ class FilamentPalette:
             maker: Optional maker name or list of names to filter by. Use "*" to ignore filter.
             type_name: Optional filament type or list of types to filter by. Use "*" to ignore filter.
             finish: Optional filament finish or list of finishes to filter by. Use "*" to ignore filter.
+            owned: Filter to owned filaments only. None (default) = auto-detect,
+                   True = owned only, False = all filaments.
             cmc_l, cmc_c: Parameters for CMC metric.
         
         Returns:
@@ -1411,7 +1530,7 @@ class FilamentPalette:
         finish_filter = None if finish == "*" else finish
         
         # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter)
+        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter, owned=owned)
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
@@ -1543,4 +1662,72 @@ class FilamentPalette:
                 pass
         
         return overrides
+
+    def get_filament_by_id(self, filament_id: str) -> Optional[FilamentRecord]:
+        """
+        Get a filament by its ID.
+        
+        Args:
+            filament_id: Filament ID to look up
+        
+        Returns:
+            FilamentRecord if found, None otherwise
+        """
+        return self._by_id.get(filament_id)
+
+    def list_owned(self) -> List[FilamentRecord]:
+        """
+        Get list of all owned filament records.
+        
+        Returns:
+            List of FilamentRecord objects that are marked as owned (sorted by maker, type, color)
+        """
+        owned_records = [self._by_id[fid] for fid in self.owned_filaments if fid in self._by_id]
+        # Sort for consistent output
+        return sorted(owned_records, key=lambda r: (r.maker, r.type, r.color))
+
+    def add_owned(self, filament_id: str, json_path: Path | str | None = None) -> None:
+        """
+        Add a filament ID to the owned list and save to file.
+        
+        Args:
+            filament_id: Filament ID to add
+            json_path: Optional path to owned-filaments.json file (uses default if None)
+        
+        Raises:
+            ValueError: If the filament ID doesn't exist in the database
+        """
+        if filament_id not in self._by_id:
+            raise ValueError(f"Filament ID '{filament_id}' not found in database")
+        
+        self.owned_filaments.add(filament_id)
+        save_owned_filaments(self.owned_filaments, json_path)
+
+    def remove_owned(self, filament_id: str, json_path: Path | str | None = None) -> None:
+        """
+        Remove a filament ID from the owned list and save to file.
+        
+        Args:
+            filament_id: Filament ID to remove
+            json_path: Optional path to owned-filaments.json file (uses default if None)
+        
+        Raises:
+            ValueError: If the filament ID is not in the owned list
+        """
+        if filament_id not in self.owned_filaments:
+            raise ValueError(f"Filament ID '{filament_id}' is not in owned list")
+        
+        self.owned_filaments.remove(filament_id)
+        save_owned_filaments(self.owned_filaments, json_path)
+
+    def save_owned(self, json_path: Path | str | None = None) -> None:
+        """
+        Save the current owned filaments list to file.
+        
+        Useful after programmatic modifications to owned_filaments set.
+        
+        Args:
+            json_path: Optional path to owned-filaments.json file (uses default if None)
+        """
+        save_owned_filaments(self.owned_filaments, json_path)
 

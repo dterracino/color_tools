@@ -217,6 +217,7 @@ class ColorConstants:
     USER_COLORS_JSON_FILENAME = "user/user-colors.json"
     USER_FILAMENTS_JSON_FILENAME = "user/user-filaments.json"
     USER_SYNONYMS_JSON_FILENAME = "user/user-synonyms.json"
+    OWNED_FILAMENTS_JSON_FILENAME = "user/owned-filaments.json"
     
     # ========================================================================
     # Transformation Matrices Integrity Hash

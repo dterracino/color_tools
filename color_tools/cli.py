@@ -327,6 +327,30 @@ Examples:
         action="store_true", 
         help="List all filament finishes"
     )
+    filament_parser.add_argument(
+        "--list-owned",
+        action="store_true",
+        help="List all owned filaments from owned-filaments.json"
+    )
+    
+    # Owned filaments management
+    filament_parser.add_argument(
+        "--add-owned",
+        type=str,
+        metavar="ID",
+        help="Add filament ID to owned list (saves to owned-filaments.json)"
+    )
+    filament_parser.add_argument(
+        "--remove-owned",
+        type=str,
+        metavar="ID",
+        help="Remove filament ID from owned list (saves to owned-filaments.json)"
+    )
+    filament_parser.add_argument(
+        "--all-filaments",
+        action="store_true",
+        help="Search all filaments (override owned filtering even if owned-filaments.json exists)"
+    )
     
     # Filter operations
     filament_parser.add_argument(

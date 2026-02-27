@@ -19,6 +19,7 @@ Color Tools can be used in three ways:
 - [CLI Usage](#cli-usage)
   - [Color Command](#color-command)
   - [Filament Command](#filament-command)
+    - [Owned Filaments Tracking](#owned-filaments-tracking-v600)
   - [Convert Command](#convert-command)
   - [Image Command](#image-command-requires-image-extra)
   - [Global Arguments](#global-arguments)
@@ -419,6 +420,13 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+"). Use "*" to bypass this filter.
 - `--color NAME`: Filter by color name
 
+**Owned Filaments (v6.0.0+):**
+
+- `--add-owned ID`: Add a filament ID to your owned list and save to file
+- `--remove-owned ID`: Remove a filament ID from your owned list and save to file
+- `--list-owned`: Display all filaments you currently own
+- `--all-filaments`: Override owned filtering to search all filaments (shopping mode)
+
 **Combining Multiple Results with Filtering:**
 
 ```bash
@@ -433,6 +441,54 @@ python -m color_tools filament --nearest --value 0 255 0 --finish "Matte" --make
 ```
 
 **Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments. Use "*" as a wildcard to bypass individual filters while keeping others active.
+
+#### Owned Filaments Tracking (v6.0.0+)
+
+Track which filaments you own for personalized color matching. When you create an `owned-filaments.json` file, all filament searches automatically filter to your owned filaments by default.
+
+**Manage Owned Filaments:**
+
+```bash
+# Add filaments you own
+python -m color_tools filament --add-owned "bambu-lab_pla-matte_jet-black"
+python -m color_tools filament --add-owned "polymaker_polyterra-pla_charcoal-black"
+
+# List your owned filaments
+python -m color_tools filament --list-owned
+
+# Remove a filament from your owned list
+python -m color_tools filament --remove-owned "bambu-lab_pla-matte_jet-black"
+```
+
+**Search Behavior with Owned Filaments:**
+
+```bash
+# Find nearest match (automatically uses owned filaments if file exists)
+python -m color_tools filament --nearest --value 255 128 64
+
+# Find nearest with filters (still respects owned filaments)
+python -m color_tools filament --nearest --value 255 128 64 --type "PLA"
+
+# Override to search ALL filaments (shopping/browsing mode)
+python -m color_tools filament --nearest --value 255 128 64 --all-filaments
+python -m color_tools filament --nearest --value 255 128 64 --type "PLA" --all-filaments
+```
+
+**Owned Filaments Arguments:**
+
+- `--add-owned ID`: Add a filament ID to your owned list
+- `--remove-owned ID`: Remove a filament ID from your owned list
+- `--list-owned`: Display all filaments you own
+- `--all-filaments`: Override owned filtering to search all filaments (use when shopping)
+
+**How It Works:**
+
+1. Create `data/user/owned-filaments.json` with your filament IDs
+2. All `--nearest` searches automatically filter to owned filaments only
+3. Use `--all-filaments` flag when you want to browse the full catalog (shopping mode)
+4. No file? Everything works exactly as before (backward compatible)
+
+See [Customization Guide - Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#owned-filamentsjson---filament-ownership-tracking) for file format and Python API usage.
 
 ### Convert Command
 

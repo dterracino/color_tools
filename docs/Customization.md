@@ -13,6 +13,7 @@ This document covers the data file formats, user extensions, custom palettes, an
   - [filaments.json](#filamentsjson---3d-printing-filament-database)
   - [maker_synonyms.json](#maker_synonymsjson---maker-name-synonyms)
 - [User Data Files (Optional Extensions)](#user-data-files-optional-extensions)
+  - [owned-filaments.json](#owned-filamentsjson---filament-ownership-tracking)
 - [Custom Palettes](#custom-palettes)
 - [Configuration Options](#configuration-options)
 
@@ -115,6 +116,7 @@ You can extend the core databases with your own custom data by creating optional
 - **user-colors.json** - Add custom colors (same format as colors.json)
 - **user-filaments.json** - Add custom filaments (same format as filaments.json)
 - **user-synonyms.json** - Add or extend maker synonyms (same format as maker_synonyms.json)
+- **owned-filaments.json** - Track which filaments you own (v6.0.0+)
 
 User data is automatically loaded and merged with core data. User files are optional and ignored if they don't exist.
 
@@ -138,6 +140,7 @@ If no `.sha256` file exists, user files work without verification - giving you f
 - `user-colors.example.json` - Copy/rename to `user-colors.json` to start adding custom colors
 - `user-filaments.example.json` - Copy/rename to `user-filaments.json` to start adding custom filaments
 - `user-synonyms.example.json` - Copy/rename to `user-synonyms.json` to start adding maker synonyms
+- `owned-filaments.example.json` - Copy/rename to `owned-filaments.json` to start tracking owned filaments (v6.0.0+)
 
 **Example user-colors.json:**
 
@@ -181,6 +184,87 @@ If no `.sha256` file exists, user files work without verification - giving you f
 ```
 
 **Note:** Users are responsible for avoiding duplicate entries between core and user data files.
+
+### owned-filaments.json - Filament Ownership Tracking
+
+**NEW in v6.0.0:** Track which filaments you own for personalized color matching.
+
+When you create an `owned-filaments.json` file with filament IDs, all filament searches automatically default to your owned filaments only - perfect for finding the best match from what you already have on hand!
+
+**Location:** `data/user/owned-filaments.json`
+
+**File Format:**
+
+```json
+{
+  "owned_filaments": [
+    "bambu-lab_pla-matte_jet-black",
+    "polymaker_polyterra-pla_charcoal-black",
+    "hatchbox_pla_true-red"
+  ]
+}
+```
+
+**Getting Started:** An example file is included:
+
+- `owned-filaments.example.json` - Copy/rename to `owned-filaments.json` to start tracking
+
+**How It Works:**
+
+- **Auto-detect:** If file exists with IDs, `filter()` and `nearest_filament()` methods default to `owned=True`
+- **No file?** No change - all filaments are searched (backward compatible)
+- **Shopping mode:** Pass `owned=False` parameter (API) or `--all-filaments` flag (CLI) to search all filaments
+
+**CLI Commands:**
+
+```bash
+# Add filaments you own
+color-tools filament --add-owned "bambu-lab_pla-matte_jet-black"
+
+# List your owned filaments
+color-tools filament --list-owned
+
+# Find nearest match (automatically uses owned filaments if file exists)
+color-tools filament --nearest --value 255 128 64
+
+# Override to search ALL filaments (shopping/browsing)
+color-tools filament --nearest --value 255 128 64 --all-filaments
+
+# Remove a filament from owned list
+color-tools filament --remove-owned "bambu-lab_pla-matte_jet-black"
+```
+
+**Python API:**
+
+```python
+from color_tools import FilamentPalette
+
+# Load palette (auto-loads owned filaments if file exists)
+palette = FilamentPalette.load_default()
+
+# Search owned filaments (auto-detected if file exists)
+filament, distance = palette.nearest_filament((255, 128, 64))
+
+# Explicitly search owned only
+filament, distance = palette.nearest_filament((255, 128, 64), owned=True)
+
+# Override to search ALL filaments
+filament, distance = palette.nearest_filament((255, 128, 64), owned=False)
+
+# Manage owned filaments programmatically
+palette.add_owned("bambu-lab_pla-matte_white")  # Adds and saves
+owned_list = palette.list_owned()  # Returns FilamentRecord objects
+palette.remove_owned("bambu-lab_pla-matte_white")  # Removes and saves
+```
+
+**Use Cases:**
+
+- **Filament selection:** "What filament do I own that's closest to this color?"
+- **Project planning:** Filter to your current inventory when matching colors
+- **Shopping mode:** Use `--all-filaments` to browse the full catalog when shopping
+- **Inventory management:** Track what's in stock vs what needs restocking
+
+See [Usage Guide - Filament Command](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#owned-filaments-tracking-v600) for complete CLI documentation.
 
 ### User Override System (v3.8.0+)
 

@@ -91,6 +91,63 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   All formats support both colors and filaments (except where noted).
   Use `list_export_formats('colors')` or `list_export_formats('filaments')` to see available formats.
 
+- **Owned filaments tracking** - Track which filaments you own for personalized recommendations
+  - **File:** `data/user/owned-filaments.json` - Simple list of filament IDs you own
+  - **Auto-detect:** If file exists with IDs, filament searches default to owned filaments only
+  - **Override:** Use `--all-filaments` flag to search all filaments (shopping/browsing mode)
+  - **Management:** Add/remove filaments with `--add-owned` and `--remove-owned` commands
+  - **List:** See owned filaments with `--list-owned` command
+  - **Format:** `{"owned_filaments": ["id1", "id2", ...]}` - future-proof nested structure
+  - **Zero impact:** Users without owned-filaments.json see no behavior changes
+  - **Fast:** O(1) lookup using set-based filtering
+  
+  Example usage:
+
+  ```bash
+  # Add filaments you own
+  color-tools filament --add-owned "bambu-lab_pla-matte_jet-black"
+  color-tools filament --add-owned "polymaker_polyterra-pla_charcoal-black"
+  
+  # List owned filaments
+  color-tools filament --list-owned
+  
+  # Find nearest match (auto-searches owned only)
+  color-tools filament --nearest --hex "#FF5733"
+  
+  # Override to search ALL filaments (shopping mode)
+  color-tools filament --nearest --hex "#FF5733" --all-filaments
+  
+  # Remove a filament
+  color-tools filament --remove-owned "bambu-lab_pla-matte_jet-black"
+  ```
+  
+  Python API:
+
+  ```python
+  from color_tools import FilamentPalette, load_owned_filaments, save_owned_filaments
+  
+  # Load with auto-detection
+  palette = FilamentPalette.load_default()  # Auto-loads owned filaments if file exists
+  
+  # Filtering auto-detects owned (searches owned if file exists)
+  matches = palette.filter(maker="Bambu Lab")  # Owned only if file exists
+  matches = palette.filter(maker="Bambu Lab", owned=False)  # Force all filaments
+  
+  # Nearest filament searches respect owned by default
+  filament, distance = palette.nearest_filament((255, 87, 51))  # Owned only if file exists
+  filament, distance = palette.nearest_filament((255, 87, 51), owned=False)  # All filaments
+  
+  # Manage owned list programmatically
+  palette.add_owned("bambu-lab_pla-matte_white")  # Auto-saves
+  palette.remove_owned("bambu-lab_pla-matte_white")  # Auto-saves
+  owned_records = palette.list_owned()  # Get FilamentRecord objects
+  
+  # Manual loading/saving
+  owned_ids = load_owned_filaments()  # Returns set of IDs
+  owned_ids.add("new-filament-id")
+  save_owned_filaments(owned_ids)
+  ```
+
 - **Comprehensive exporter test coverage** - Added 14 new unit tests for plugin architecture
   - Registry system tests (get_exporter, metadata validation, filtering)
   - CSV exporter tests (structure, empty exports, field validation)
