@@ -105,7 +105,7 @@ def export_filaments_autoforge(
         Path to the exported file
     
     Example:
-        >>> from color_tools.palette import FilamentPalette
+        >>> from color_tools.filament_palette import FilamentPalette
         >>> palette = FilamentPalette.load_default()
         >>> bambu = [f for f in palette.filaments if f.maker == 'Bambu Lab']
         >>> path = export_filaments_autoforge(bambu)
@@ -134,7 +134,7 @@ def export_filaments_csv(
         Path to the exported file
     
     Example:
-        >>> from color_tools.palette import FilamentPalette
+        >>> from color_tools.filament_palette import FilamentPalette
         >>> palette = FilamentPalette.load_default()
         >>> path = export_filaments_csv(palette.filaments)
     """
@@ -161,7 +161,7 @@ def export_filaments_json(
         Path to the exported file
     
     Example:
-        >>> from color_tools.palette import FilamentPalette
+        >>> from color_tools.filament_palette import FilamentPalette
         >>> palette = FilamentPalette.load_default()
         >>> path = export_filaments_json(palette.filaments, 'backup.json')
     """
@@ -247,7 +247,7 @@ def export_filaments(
         ValueError: If format is not supported for filaments
     
     Example:
-        >>> from color_tools.palette import FilamentPalette
+        >>> from color_tools.filament_palette import FilamentPalette
         >>> palette = FilamentPalette.load_default()
         >>> bambu = [f for f in palette.filaments if f.maker == 'Bambu Lab']
         >>> path = export_filaments(bambu, 'autoforge')

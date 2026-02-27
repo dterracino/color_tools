@@ -24,7 +24,8 @@ from .constants import ColorConstants
 from .config import set_dual_color_mode
 from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
-from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
+from .palette import Palette, load_colors, load_palette
+from .filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 from .color_deficiency import simulate_cvd, correct_cvd
 from .validation import validate_color
 from .export import export_filaments, export_colors, list_export_formats

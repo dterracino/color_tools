@@ -40,7 +40,7 @@ class AutoForgeExporter(PaletteExporter):
     Example:
         >>> from color_tools.exporters import get_exporter
         >>> exporter = get_exporter('autoforge')
-        >>> from color_tools.palette import FilamentPalette
+        >>> from color_tools.filament_palette import FilamentPalette
         >>> palette = FilamentPalette.load_default()
         >>> bambu = [f for f in palette.filaments if f.maker == 'Bambu Lab']
         >>> path = exporter.export_filaments(bambu)

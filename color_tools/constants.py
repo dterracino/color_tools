@@ -176,7 +176,8 @@ class ColorConstants:
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
     # Updated 2024-12-24: Added 4 new palette hashes (apple2, macintosh, gameboy-color, tandy16), compacted format
     # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
-    _EXPECTED_HASH = "e1aa560daad5d6b3df4b9eac4aba401dfcc40cfcf33022b9f28d9d52e643faff"
+    # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
+    _EXPECTED_HASH = "81044b98568e4a9bcc948082bc451edc049df728f08437deffe625a81fd3108d"
     # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================

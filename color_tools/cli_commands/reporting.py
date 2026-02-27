@@ -10,7 +10,8 @@ import logging
 from pathlib import Path
 
 from ..constants import ColorConstants
-from ..palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
+from ..palette import Palette, load_colors, load_palette
+from ..filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 
 
 def show_override_report(json_dir: str | None = None) -> None:

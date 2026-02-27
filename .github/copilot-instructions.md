@@ -90,7 +90,8 @@ This is a color science library for Python 3.10+ that provides:
 - **Separation of Concerns**: Each module has a single, well-defined responsibility
   - `conversions.py`: Color space transformations ONLY
   - `distance.py`: Distance metrics ONLY
-  - `palette.py`: Data loading and search ONLY
+  - `palette.py`: CSS color data loading and search ONLY
+  - `filament_palette.py`: Filament data loading and search ONLY
   - `constants.py`: Immutable constants ONLY
   - `config.py`: Runtime configuration ONLY
   - `cli.py`: User interface ONLY (orchestrates, doesn't implement logic)
@@ -124,7 +125,9 @@ This is a color science library for Python 3.10+ that provides:
 conversions.py      # Color space conversion functions
 distance.py         # Distance metrics (Delta E formulas)
 gamut.py            # sRGB gamut operations
-palette.py          # Color/filament databases and search
+palette.py          # CSS color databases and search
+filament_palette.py # 3D printing filament databases and search
+_palette_utils.py   # Shared palette utilities (private module)
 constants.py        # Immutable color science constants
 config.py           # Thread-safe runtime configuration
 matrices.py         # Transformation matrices (CVD, etc.)
@@ -581,7 +584,8 @@ rgb = xyz_to_rgb(xyz)
 ### Palette Usage
 ```python
 # Load and search palettes
-from color_tools.palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms
+from color_tools.palette import Palette, load_colors
+from color_tools.filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 
 # CSS colors
 palette = Palette.load_default()  # Loads from data/colors.json

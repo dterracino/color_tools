@@ -4,7 +4,7 @@ This directory contains the Sphinx-based documentation for the Color Tools libra
 
 ## 📚 Documentation Structure
 
-```
+```text
 docs/
 ├── sphinx/              # Sphinx source files
 │   ├── conf.py         # Sphinx configuration
@@ -18,7 +18,7 @@ docs/
 ## 🌐 Published Documentation
 
 The documentation is automatically published to GitHub Pages:
-**https://dterracino.github.io/color_tools/**
+**<https://dterracino.github.io/color_tools/>**
 
 ## 🔨 Building Documentation Locally
 
@@ -37,12 +37,14 @@ pip install -r docs/requirements.txt
 ### Build Commands
 
 **Linux/Mac:**
+
 ```bash
 cd docs/sphinx
 python -m sphinx -b html . _build/html
 ```
 
 **Windows (PowerShell):**
+
 ```powershell
 .\docs\build-docs.ps1 -Clean -Open
 ```
@@ -54,14 +56,17 @@ The built documentation will be in `docs/sphinx/_build/html/index.html`.
 Documentation is automatically built and deployed via GitHub Actions:
 
 ### Triggers
+
 - **Push to main branch**: Deploys latest docs
 - **Version tags (v*.*.*)**: Deploys docs for new releases
 - **Manual trigger**: Via GitHub Actions UI
 
 ### Workflow File
+
 See `.github/workflows/docs.yml`
 
 ### Deployment Process
+
 1. Checkout repository
 2. Set up Python 3.11
 3. Install package with `[docs]` extras
@@ -72,17 +77,21 @@ See `.github/workflows/docs.yml`
 ## 📝 Editing Documentation
 
 ### API Documentation
+
 API documentation is auto-generated from docstrings in the source code:
+
 - Edit docstrings in `color_tools/*.py` files
 - Follow Google-style or NumPy-style docstring format
 - Rebuild docs to see changes
 
 ### Content Pages
+
 - Main page: `docs/sphinx/index.rst`
 - Add new pages as `.rst` or `.md` files in `docs/sphinx/`
 - Reference new pages in `index.rst` toctree
 
 ### Styling
+
 - Theme: `sphinx_rtd_theme` (Read the Docs)
 - Custom CSS: `docs/sphinx/_static/custom.css`
 - Configuration: `docs/sphinx/conf.py`
@@ -90,6 +99,7 @@ API documentation is auto-generated from docstrings in the source code:
 ## 🔧 Configuration
 
 ### Sphinx Extensions
+
 - `sphinx.ext.autodoc` - Auto-generate API docs from docstrings
 - `sphinx.ext.autosummary` - Create summary tables
 - `sphinx.ext.napoleon` - Google/NumPy docstring support
@@ -97,11 +107,13 @@ API documentation is auto-generated from docstrings in the source code:
 - `myst_parser` - Markdown support
 
 ### Version Management
+
 The version number in `conf.py` should match `pyproject.toml` and `color_tools/__init__.py`.
 
 ## 🐛 Troubleshooting
 
 ### Build Errors
+
 ```bash
 # Clean build directory
 rm -rf docs/sphinx/_build
@@ -112,12 +124,15 @@ python -m sphinx -b html . _build/html -v
 ```
 
 ### Import Errors
+
 Ensure the package is installed in development mode:
+
 ```bash
 pip install -e .
 ```
 
 ### GitHub Pages Not Updating
+
 - Check GitHub Actions workflow status
 - Verify `gh-pages` branch exists
 - Check repository Settings → Pages → Source is set to `gh-pages` branch

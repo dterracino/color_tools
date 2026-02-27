@@ -158,6 +158,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Palette module architecture** - Split large palette.py (1,733 lines) into focused modules
+  - `palette.py` (654 lines) - CSS color palettes and search (ColorRecord, Palette class)
+  - `filament_palette.py` (1,004 lines) - 3D printing filament palettes and search (FilamentRecord, FilamentPalette class)
+  - `_palette_utils.py` (76 lines) - Shared utility functions (private module)
+  - Each module has a single, well-defined responsibility following separation of concerns
+  - **100% backward compatible** - All imports from `color_tools` package work identically
+  - Updated `constants.py` hash after adding `MATRICES_EXPECTED_HASH` constant
+  - No user-facing changes - all functionality remains identical
+
 - **Exporter code organization** - Separated AutoForge exporter into dedicated file
   - `csv_exporter.py` now only handles generic CSV export (single responsibility)
   - `autoforge_exporter.py` contains specialized AutoForge filament export format

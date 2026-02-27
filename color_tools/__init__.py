@@ -133,21 +133,29 @@ from .gamut import (
 # ============================================================================
 
 from .palette import (
-    # Main palette classes
+    # Color palette class
     Palette,
+    
+    # Color data class
+    ColorRecord,
+    
+    # Color loading functions
+    load_colors,
+    load_palette,
+)
+
+from .filament_palette import (
+    # Filament palette class
     FilamentPalette,
     
-    # Data classes
-    ColorRecord,
+    # Filament data class
     FilamentRecord,
     
-    # Loading functions
-    load_colors,
+    # Filament loading functions
     load_filaments,
     load_maker_synonyms,
     load_owned_filaments,
     save_owned_filaments,
-    load_palette,
 )
 
 # ============================================================================

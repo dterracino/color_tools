@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ..utils import parse_hex_or_exit
 from ...config import set_dual_color_mode
-from ...palette import FilamentPalette, load_filaments, load_maker_synonyms
+from ...filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 from ...export import export_filaments, list_export_formats
 
 
