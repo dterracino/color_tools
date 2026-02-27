@@ -1,0 +1,9 @@
+﻿color\_tools.conversions
+========================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.conversions
+   :members:
+   :undoc-members:
+   :show-inheritance:
