@@ -175,7 +175,9 @@ class ColorConstants:
     # using the _compute_hash() method, NOT from the entire file contents.
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
     # Updated 2024-12-24: Added 4 new palette hashes (apple2, macintosh, gameboy-color, tandy16), compacted format
-    _EXPECTED_HASH = "80334d543a3b79fd41ada7d24fa05c765afc8d71c172e6ff2b3957a7bbdc6e07"
+    # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
+    # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
+    _EXPECTED_HASH = "81044b98568e4a9bcc948082bc451edc049df728f08437deffe625a81fd3108d"
     # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================
@@ -205,6 +207,7 @@ class ColorConstants:
     GAMEBOY_MGB_PALETTE_HASH = "7c556e05e13adcfce0e7aec06ded6c7871acee63771e520319afa67e07080027"
     MACINTOSH_PALETTE_HASH = "e9b5bce3ce2eda12dec5793b4eb3c588a92d53e8d6ecaf4fa310998fe2dd1ddd"
     NES_PALETTE_HASH = "3021573a00b158fb6cf694e6546b236c2ec6862d52e08cc860f32d983e1f0a59"
+    PICO8_PALETTE_HASH = "31ef74f5185363120637c71d5ce8ca07144a458c0a2969a1ce171f7602b6766d"
     SMS_PALETTE_HASH = "95010c348c2f77a209544170da29ee7f5bfccacbcd32ed33c36cb7ef269f72e8"
     TANDY16_PALETTE_HASH = "820f2f1dcdd3acd7130a88247b09e6bf969779a08c97091800db19c1748f1a03"
     VGA_PALETTE_HASH = "9eb6055508d5523ceafbb4abe3d2921f09bc61b20485da1052e4d4fd653a5d00"
@@ -215,6 +218,7 @@ class ColorConstants:
     USER_COLORS_JSON_FILENAME = "user/user-colors.json"
     USER_FILAMENTS_JSON_FILENAME = "user/user-filaments.json"
     USER_SYNONYMS_JSON_FILENAME = "user/user-synonyms.json"
+    OWNED_FILAMENTS_JSON_FILENAME = "user/owned-filaments.json"
     
     # ========================================================================
     # Transformation Matrices Integrity Hash
@@ -302,6 +306,7 @@ class ColorConstants:
             ("gameboy_mgb.json", cls.GAMEBOY_MGB_PALETTE_HASH),
             ("macintosh.json", cls.MACINTOSH_PALETTE_HASH),
             ("nes.json", cls.NES_PALETTE_HASH),
+            ("pico8.json", cls.PICO8_PALETTE_HASH),
             ("sms.json", cls.SMS_PALETTE_HASH),
             ("tandy16.json", cls.TANDY16_PALETTE_HASH),
             ("vga.json", cls.VGA_PALETTE_HASH),

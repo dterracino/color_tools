@@ -32,13 +32,21 @@ pip install color-match-tools[image]
 
 Adds Pillow for image transformations (CVD simulation/correction, palette quantization), color analysis, k-means clustering, and Hueforge optimization.
 
+**With interactive filament library manager:**
+
+```bash
+pip install color-match-tools[interactive]
+```
+
+Adds prompt_toolkit for a beautiful TUI interface to manage your owned filament library with autocomplete, filtering, and multi-select.
+
 **With all optional features:**
 
 ```bash
 pip install color-match-tools[all]
 ```
 
-Installs everything: fuzzy matching + image processing.
+Installs everything: fuzzy matching + image processing + interactive manager.
 
 All variants install the `color-tools` command globally in your terminal.
 
@@ -74,13 +82,15 @@ The core module uses **only Python standard library** - **zero external dependen
 
 - `[fuzzy]`: fuzzywuzzy >= 0.18.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
 - `[image]`: Pillow >= 10.0.0 for image processing features
-- `[all]`: All of the above (fuzzy + image)
+- `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
+- `[all]`: All of the above (fuzzy + image + interactive)
 
 **Requirements files (for development/manual installation):**
 
 - `requirements.txt`: Base package (currently empty - zero dependencies)
 - `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
 - `requirements-image.txt`: Base + Pillow
+- `requirements-interactive.txt`: Base + prompt_toolkit
 - `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
 
 The validation module works without fuzzywuzzy using a built-in Levenshtein distance implementation. Install fuzzywuzzy for better fuzzy matching performance:

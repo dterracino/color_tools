@@ -1,0 +1,29 @@
+[
+  {
+    "id": "my-custom-pla-red",
+    "maker": "My Brand",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Deep Red",
+    "hex": "#C41E3A",
+    "td_value": 2.5,
+    "other_names": ["Crimson", "Dark Red"]
+  },
+  {
+    "id": "local-supplier-petg-blue",
+    "maker": "Local Supplier",
+    "type": "PETG",
+    "finish": null,
+    "color": "Ocean Blue",
+    "hex": "#0077BE",
+    "td_value": null,
+    "other_names": null
+  },
+  {
+    "maker": "Generic Brand",
+    "type": "PLA",
+    "finish": "Glossy",
+    "color": "Sunset Orange",
+    "hex": "#FF6B35"
+  }
+]

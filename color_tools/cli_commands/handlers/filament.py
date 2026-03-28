@@ -6,7 +6,7 @@ from pathlib import Path
 
 from ..utils import parse_hex_or_exit
 from ...config import set_dual_color_mode
-from ...palette import FilamentPalette, load_filaments, load_maker_synonyms
+from ...filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 from ...export import export_filaments, list_export_formats
 
 
@@ -23,13 +23,63 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
         1: Filament not found or error
         2: Invalid input
     """
+    # Handle --manage (interactive mode) early - doesn't need palette loaded yet
+    if hasattr(args, 'manage') and args.manage:
+        from ...interactive_manager import run_interactive_manager
+        run_interactive_manager(json_dir=json_path)
+        return  # run_interactive_manager handles exit
+    
     # Set dual-color mode BEFORE loading any filaments
     # This is CRITICAL - the mode affects how FilamentRecord.rgb works!
     if hasattr(args, 'dual_color_mode'):
         set_dual_color_mode(args.dual_color_mode)
     
-    # Load filament palette with maker synonyms
-    filament_palette = FilamentPalette(load_filaments(json_path), load_maker_synonyms(json_path))
+    # Load filament palette with maker synonyms and owned filaments
+    filament_palette = FilamentPalette.load_default()
+    
+    # Handle --list-owned
+    if hasattr(args, 'list_owned') and args.list_owned:
+        owned = filament_palette.list_owned()
+        if not owned:
+            print("No owned filaments configured")
+            print(f"Add filaments with: color-tools filament --add-owned <ID>")
+            sys.exit(0)
+        
+        print(f"Owned filaments ({len(owned)}):")
+        for rec in owned:
+            print(f"  ID: {rec.id}")
+            print(f"      {rec}")
+            print()
+        sys.exit(0)
+    
+    # Handle --add-owned
+    if hasattr(args, 'add_owned') and args.add_owned:
+        try:
+            filament_palette.add_owned(args.add_owned, json_path)
+            filament = filament_palette.get_filament_by_id(args.add_owned)
+            print(f"✓ Added to owned list: {filament}")
+            print(f"  ID: {args.add_owned}")
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+        sys.exit(0)
+    
+    # Handle --remove-owned
+    if hasattr(args, 'remove_owned') and args.remove_owned:
+        try:
+            filament = filament_palette.get_filament_by_id(args.remove_owned)
+            filament_palette.remove_owned(args.remove_owned, json_path)
+            print(f"✓ Removed from owned list: {filament}")
+            print(f"  ID: {args.remove_owned}")
+        except ValueError as e:
+            print(f"Error: {e}", file=sys.stderr)
+            sys.exit(1)
+        sys.exit(0)
+    
+    # Determine owned filtering mode
+    # --all-filaments forces owned=False (search all)
+    # Otherwise auto-detect (None) or use owned=True if file exists
+    owned_filter = False if hasattr(args, 'all_filaments') and args.all_filaments else None
     
     # Handle --list-export-formats
     if args.list_export_formats:
@@ -96,6 +146,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     maker=maker_filter,
                     type_name=type_filter,
                     finish=finish_filter,
+                    owned=owned_filter,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
                 )
@@ -111,6 +162,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     maker=maker_filter,
                     type_name=type_filter,
                     finish=finish_filter,
+                    owned=owned_filter,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
                 )
@@ -128,17 +180,22 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                 maker=args.maker,
                 type_name=args.type,
                 finish=args.finish,
-                color=args.color
+                color=args.color,
+                owned=owned_filter
             )
         elif args.export:
-            # Export all filaments if --export specified without filters
-            results = filament_palette.records
+            # Export: respect owned filtering unless --all-filaments
+            if owned_filter is False:
+                results = filament_palette.records  # All filaments
+            else:
+                results = filament_palette.filter(owned=owned_filter)  # Owned or auto-detect
         else:
             results = filament_palette.filter(
                 maker=args.maker,
                 type_name=args.type,
                 finish=args.finish,
-                color=args.color
+                color=args.color,
+                owned=owned_filter
             )
         
         if not results:

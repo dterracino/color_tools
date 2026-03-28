@@ -7,9 +7,11 @@ This document captures a comprehensive architectural discussion about expanding 
 ## Current Architecture Limitations
 
 ### Tuple-Based Color Representation
+
 **Current approach:** All colors represented as 3-value tuples `(float, float, float)`
 
 **Breaks with:**
+
 - **CMYK**: 4 values (Cyan, Magenta, Yellow, Key/Black)
 - **RGBA**: 4 values (Red, Green, Blue, Alpha)
 - **Spectral data**: 10+ values for full spectrum representation
@@ -21,6 +23,7 @@ This document captures a comprehensive architectural discussion about expanding 
 Alpha transparency introduces fundamental computational challenges:
 
 #### **Premultiplied vs Straight Alpha**
+
 ```python
 # Straight alpha: color channels independent of alpha
 rgba_straight = (255, 128, 64, 0.5)  # 50% transparent orange
@@ -32,15 +35,18 @@ rgba_premult = (127.5, 64, 32, 0.5)  # same color, premultiplied
 **Impact:** Every color calculation changes based on alpha format. Premultiplied is faster/more accurate for blending, straight is more intuitive.
 
 #### **Alpha in Color Space Conversions**
+
 **Key question:** How does alpha affect color space conversions?
 
 **Option 1:** Ignore alpha, convert RGB portion only
+
 ```python
 rgba = (255, 0, 0, 0.3)  # 30% transparent red
 lab = rgb_to_lab((255, 0, 0))  # Alpha stays separate
 ```
 
 **Option 2:** Blend with background first, then convert
+
 ```python
 background = (255, 255, 255)  # white background
 blended_rgb = blend_alpha(rgba, background)  # (255, 178, 178) 
@@ -50,6 +56,7 @@ lab = rgb_to_lab(blended_rgb)  # Different LAB result!
 ## Proposed Architectural Solutions
 
 ### Option 1: Flexible Color Objects
+
 ```python
 @dataclass
 class Color:
@@ -66,6 +73,7 @@ rgba_color = Color((255, 128, 64), 'rgb', alpha=0.5, alpha_type='straight')
 ```
 
 ### Option 2: Typed Color Spaces
+
 ```python
 @dataclass
 class RGBColor:
@@ -84,6 +92,7 @@ class CMYKColor:
 ```
 
 ### Option 3: Unified Value Container
+
 ```python
 @dataclass
 class ColorValue:
@@ -97,11 +106,13 @@ class ColorValue:
 ## Conversion Metadata Vision
 
 ### The Core Concept
+
 Instead of just converting colors, provide **intelligent conversion with real-world context** - telling users not just *what* the result is, but *how reliable* it is and *what it means*.
 
 ### Rich Conversion Examples
 
 **sRGB → CMYK Print:**
+
 ```python
 result = convert_with_metadata(srgb_color, target="cmyk")
 # result.color = (15, 85, 90, 2)  # CMYK values
@@ -113,6 +124,7 @@ result = convert_with_metadata(srgb_color, target="cmyk")
 ```
 
 **RGB → LED Array:**
+
 ```python
 result = convert_to_led_array(rgb_color, led_types=["red_660nm", "green_525nm", "blue_470nm"])
 # result.led_intensities = {"red": 85.2, "green": 12.1, "blue": 67.8}  # percentages
@@ -122,6 +134,7 @@ result = convert_to_led_array(rgb_color, led_types=["red_660nm", "green_525nm", 
 ```
 
 **Linear RGB → sRGB:**
+
 ```python
 result = convert_with_metadata(linear_rgb, target="srgb")
 # result.color = (245, 132, 89)  # sRGB values  
@@ -131,6 +144,7 @@ result = convert_with_metadata(linear_rgb, target="srgb")
 ```
 
 ### Conversion Metadata Structure
+
 ```python
 @dataclass
 class ConversionResult:
@@ -157,21 +171,25 @@ class QualityMetrics:
 The four standard rendering intents become crucial for intelligent conversions:
 
 ### **Perceptual Intent**
+
 - **Goal:** "Make it look as close as possible overall"
 - **CMYK:** Compress entire color range to fit print gamut
 - **LED:** Optimize for human perception, not spectral accuracy
 
-### **Saturation Intent** 
+### **Saturation Intent**
+
 - **Goal:** "Keep colors punchy, even if not accurate"
 - **CMYK:** Preserve vibrancy for graphics/logos
 - **LED:** Maximize apparent saturation even if wavelengths are off
 
 ### **Relative Colorimetric**
+
 - **Goal:** "Keep colors accurate within shared gamut"
 - **CMYK:** Accurate colors where possible, clip everything else
 - **LED:** Precise wavelengths for shared spectrum, ignore the rest
 
 ### **Absolute Colorimetric**
+
 - **Goal:** "Show exactly what the target device produces"
 - **CMYK:** Simulate actual print appearance (including paper color)
 - **LED:** Show actual LED spectrum limitations
@@ -179,18 +197,21 @@ The four standard rendering intents become crucial for intelligent conversions:
 ## Missing Color Spaces to Add
 
 ### **High Priority:**
+
 1. **CMYK** - Essential for print workflows
 2. **Adobe RGB** - Professional photography standard
 3. **Wavelength** - Unique scientific/educational feature
 4. **RGBA** - Web/graphics essential
 
 ### **Medium Priority:**
+
 5. **CMY** - Subtractive color without black
 6. **ProPhoto RGB** - Extended gamut photography
 7. **Rec2020** - Video/broadcast standard
 8. **KML Colors** - Geographic applications (AABBGGRR format)
 
 ### **Lower Priority:**
+
 9. **BGR** - Graphics API compatibility (trivial conversion)
 10. **Spectral data** - Full spectrum representation
 11. **Multi-ink** - Variable ink channels for specialty printing
@@ -198,6 +219,7 @@ The four standard rendering intents become crucial for intelligent conversions:
 ## Real-World Application Examples
 
 ### **LED Strip Designer**
+
 ```python
 sunset_rgb = (255, 94, 77)
 led_setup = design_led_array(sunset_rgb, 
@@ -207,6 +229,7 @@ led_setup = design_led_array(sunset_rgb,
 ```
 
 ### **Print Shop Workflow**
+
 ```python
 logo_colors = [(255, 0, 128), (0, 255, 100), (100, 100, 255)]
 print_analysis = analyze_for_print(logo_colors, 
@@ -217,6 +240,7 @@ print_analysis = analyze_for_print(logo_colors,
 ```
 
 ### **Translucent Filament Modeling**
+
 ```python
 # Community-contributed data
 translucent_data = {
@@ -231,6 +255,7 @@ def calculate_layered_appearance(base_color, filament_type, layer_thickness):
 ```
 
 ### **Monitor Calibration**
+
 ```python
 test_colors = generate_test_pattern()
 accuracy = analyze_display_gamut(test_colors, 
@@ -242,6 +267,7 @@ accuracy = analyze_display_gamut(test_colors,
 ## Backward Compatibility Strategy
 
 ### **Legacy API Preservation**
+
 ```python
 # Keep existing simple API working
 def rgb_to_lab(rgb: tuple[int, int, int]) -> tuple[float, float, float]:
@@ -257,6 +283,7 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 ```
 
 ### **Gradual Migration Path**
+
 1. **Phase 1:** Add new ColorValue/ConversionResult classes alongside existing code
 2. **Phase 2:** Implement rich conversion functions for existing color spaces
 3. **Phase 3:** Add new color spaces (CMYK, Adobe RGB, wavelength)
@@ -266,22 +293,26 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 ## Alpha Channel Applications
 
 ### **Web Graphics (RGBA)**
+
 - Standard web transparency
 - CSS color compatibility
 - Canvas/WebGL integration
 
-### **Image Processing** 
+### **Image Processing**
+
 - PIL/Pillow integration
 - Blend modes and compositing
 - Alpha premultiplication handling
 
 ### **3D Printing Translucency**
+
 - Empirical translucency data collection
 - Layer thickness calculations
 - Light scattering modeling
 - Community-contributed material properties
 
 ### **Geographic Applications (KML)**
+
 - Google Earth color compatibility
 - AABBGGRR format support
 - Overlay transparency handling
@@ -289,24 +320,28 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 ## Technical Implementation Considerations
 
 ### **Performance Impact**
+
 - Rich objects vs. simple tuples
 - Memory usage for metadata
 - Computational overhead of gamut checking
 - Caching strategies for conversion results
 
 ### **API Design Principles**
+
 - Simple things should stay simple (legacy tuple API)
 - Complex things should be possible (rich conversion API)
 - Progressive disclosure (basic → advanced features)
 - Type safety and IDE support
 
 ### **Thread Safety**
+
 - Immutable color objects
 - Pure conversion functions
 - Thread-local configuration state
 - Concurrent gamut calculations
 
 ### **Testing Strategy**
+
 - Backward compatibility tests
 - Round-trip conversion accuracy
 - Alpha blending correctness
@@ -316,18 +351,21 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 ## Integration with Existing Features
 
 ### **Palette Generation (harmony.py)**
+
 - Alpha-aware palette generation
 - CMYK palette matching
 - Gamut warnings for generated colors
 - Multi-space palette export
 
 ### **Distance Metrics**
+
 - Alpha-aware Delta E calculations
 - CMYK-specific distance metrics
 - Spectral accuracy metrics
 - Cross-space distance comparisons
 
 ### **CLI Integration**
+
 - Backward compatible command structure
 - Rich output format options
 - Metadata display controls
@@ -336,18 +374,21 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 ## Future Research Areas
 
 ### **Color Science**
+
 - Metamerism and observer differences
 - Fluorescent and special effect pigments
 - Color constancy under different illuminants
 - Advanced gamut mapping algorithms
 
 ### **Real-World Applications**
+
 - 3D printing color prediction models
 - Display calibration automation
 - Print quality optimization
 - LED array design optimization
 
 ### **Data Collection**
+
 - Community-contributed material properties
 - Empirical color accuracy measurements
 - Real-world conversion quality metrics
@@ -356,18 +397,21 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 ## Questions for Future Resolution
 
 ### **Architectural Decisions**
+
 1. Which color object architecture to choose?
 2. How to handle alpha in color space conversions?
 3. When to include conversion metadata vs. simple results?
 4. How to balance performance vs. feature richness?
 
 ### **Feature Prioritization**
+
 1. Which color spaces provide most user value?
 2. Which real-world applications to tackle first?
 3. How to structure community data contribution?
 4. What level of backward compatibility to maintain?
 
 ### **Technical Implementation**
+
 1. How to optimize performance for rich color objects?
 2. What level of gamut mapping sophistication to include?
 3. How to structure extensible rendering intent system?

@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 5.6.1 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+**Version:** 6.0.0 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
 ## 📚 Documentation
 
@@ -47,6 +47,9 @@ pip install color-match-tools
 
 # With image processing support
 pip install color-match-tools[image]
+
+# With interactive filament library manager
+pip install color-match-tools[interactive]
 
 # With all optional features
 pip install color-match-tools[all]
@@ -126,11 +129,97 @@ The library includes extensive color databases:
 
 - **CSS Colors**: 147 named colors with full color space representations
 - **3D Printing Filaments**: 584+ filaments from major manufacturers
-- **Retro Palettes**: CGA, EGA, VGA, Game Boy, Commodore 64, and more
+- **Retro Palettes**: 20 official palettes including CGA, EGA, VGA, Game Boy, Commodore 64, PICO-8, and more
 
 Extend with your own data using [User Data Files](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#user-data-files-optional-extensions).
 
-## 🔒 Data Integrity
+**Track your owned filaments** for personalized color matching - create an `owned-filaments.json` file to automatically filter searches to filaments you already have. See [Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#owned-filamentsjson---filament-ownership-tracking) in the Customization Guide.
+
+## 🔧 Export & Integration
+
+Export colors and filaments to various formats for use with external tools:
+
+### Available Formats
+
+**Universal Formats (Colors + Filaments):**
+
+- **CSV** - Generic CSV with all fields (preserves full metadata)
+- **JSON** - Raw data format for backup/restore (preserves full metadata)
+
+**Palette/Graphics Applications (Colors Only):**
+
+- **GIMP Palette (.gpl)** - Import into GIMP, Inkscape, Krita
+- **Hex (.hex)** - Simple hex color list (uppercase, no # prefix)
+- **JASC-PAL (.pal)** - Paint Shop Pro palette format (compatible with Aseprite)
+- **PAINT.NET (.txt)** - PAINT.NET palette format (AARRGGBB hex codes)
+- **Lospec JSON (.json)** - Lospec.com palette format for sharing palettes
+
+**3D Printing (Filaments Only):**
+
+- **AutoForge (.csv)** - Specialized CSV for AutoForge/HueForge lithophane workflow
+
+> **Note:** Palette formats (Hex, JASC-PAL, PAINT.NET, Lospec) only export color values and lose filament metadata (maker, type, finish, TD values). For full filament data preservation, use CSV or JSON.
+
+### Export Examples
+
+```python
+from color_tools import Palette, FilamentPalette
+from color_tools.exporters import get_exporter, list_export_formats
+
+# List available formats for colors
+formats = list_export_formats('colors')
+print(formats)
+# {'csv': '...', 'json': '...', 'gpl': '...', 'hex': '...', 'pal': '...', ...}
+
+# Export to various formats
+palette = Palette.load_default()
+
+# GIMP Palette for graphics work
+get_exporter('gpl').export_colors(palette.records[:20], 'colors.gpl')
+
+# Hex format for web/programming
+get_exporter('hex').export_colors(palette.records[:20], 'colors.hex')
+
+# JASC-PAL for Paint Shop Pro/Aseprite
+get_exporter('pal').export_colors(palette.records[:20], 'colors.pal')
+
+# Lospec JSON for sharing online
+get_exporter('lospec').export_colors(palette.records[:20], 'palette.json')
+
+# Export filaments to AutoForge CSV
+filaments = FilamentPalette.load_default()
+bambu_pla = filaments.filter(maker="Bambu Lab", type_name="PLA")
+get_exporter('autoforge').export_filaments(bambu_pla, 'bambu_pla.csv')
+```
+
+### Plugin Architecture
+
+The exporter system uses a plugin architecture - new formats can be added without modifying existing code:
+
+```python
+from color_tools.exporters import register_exporter
+from color_tools.exporters.base import PaletteExporter, ExporterMetadata
+
+@register_exporter
+class MyExporter(PaletteExporter):
+    @property
+    def metadata(self):
+        return ExporterMetadata(
+            name='myformat',
+            description='My custom format',
+            file_extension='txt',
+            supports_colors=True,
+            supports_filaments=False,
+        )
+    
+    def _export_colors_impl(self, colors, output_path):
+        # Implementation here
+        pass
+```
+
+See [exporters/gpl_exporter.py](https://github.com/dterracino/color_tools/blob/main/color_tools/exporters/gpl_exporter.py) for a complete example.
+
+## �🔒 Data Integrity
 
 All core data files are protected with SHA-256 hashes:
 

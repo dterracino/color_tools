@@ -24,7 +24,8 @@ from .constants import ColorConstants
 from .config import set_dual_color_mode
 from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
-from .palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms, load_palette
+from .palette import Palette, load_colors, load_palette
+from .filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 from .color_deficiency import simulate_cvd, correct_cvd
 from .validation import validate_color
 from .export import export_filaments, export_colors, list_export_formats
@@ -231,7 +232,7 @@ Examples:
     color_parser.add_argument(
         "--palette",
         type=str,
-        help="Use a retro palette instead of CSS colors. Common palettes include: cga4, cga16, ega16, ega64, vga, web, gameboy. Use '--palette list' to see all available palettes including user-created ones."
+        help="Use a retro palette instead of CSS colors. Common palettes include: cga4, cga16, ega16, ega64, vga, web, gameboy, pico8. Use '--palette list' to see all available palettes including user-created ones."
     )
     color_parser.add_argument(
         "--count",
@@ -326,6 +327,35 @@ Examples:
         "--list-finishes", 
         action="store_true", 
         help="List all filament finishes"
+    )
+    filament_parser.add_argument(
+        "--list-owned",
+        action="store_true",
+        help="List all owned filaments from owned-filaments.json"
+    )
+    
+    # Owned filaments management
+    filament_parser.add_argument(
+        "--add-owned",
+        type=str,
+        metavar="ID",
+        help="Add filament ID to owned list (saves to owned-filaments.json)"
+    )
+    filament_parser.add_argument(
+        "--remove-owned",
+        type=str,
+        metavar="ID",
+        help="Remove filament ID from owned list (saves to owned-filaments.json)"
+    )
+    filament_parser.add_argument(
+        "--manage",
+        action="store_true",
+        help="Launch interactive filament library manager (requires [interactive] extra)"
+    )
+    filament_parser.add_argument(
+        "--all-filaments",
+        action="store_true",
+        help="Search all filaments (override owned filtering even if owned-filaments.json exists)"
     )
     
     # Filter operations

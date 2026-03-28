@@ -36,8 +36,11 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
             available_palettes = get_available_palettes(json_path)
             if available_palettes:
                 print("Available palettes:")
-                for palette_name in available_palettes:
-                    print(f"  {palette_name}")
+                for palette_name, color_count in available_palettes:
+                    if color_count >= 0:
+                        print(f"  {palette_name:<15} - {color_count} colors")
+                    else:
+                        print(f"  {palette_name:<15} - (error loading)")
             else:
                 print("No palettes found")
             sys.exit(0)
@@ -49,7 +52,8 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
             print(f"Error: {e}", file=sys.stderr)
             available_palettes = get_available_palettes(json_path)
             if available_palettes:
-                print(f"Available palettes: {', '.join(available_palettes)}", file=sys.stderr)
+                palette_names = [name for name, _ in available_palettes]
+                print(f"Available palettes: {', '.join(palette_names)}", file=sys.stderr)
             sys.exit(1)
         except ValueError as e:
             print(f"Error loading palette: {e}", file=sys.stderr)

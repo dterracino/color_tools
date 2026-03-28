@@ -1,6 +1,7 @@
 # Base package has ZERO dependencies (pure Python stdlib)
 # For optional dependencies, use:
-#   pip install color-match-tools[fuzzy]  # Enhanced fuzzy matching
-#   pip install color-match-tools[image]  # Image processing
-#   pip install color-match-tools[dev]    # Development tools
-#   pip install color-match-tools[all]    # Everything
+#   pip install color-match-tools[fuzzy]       # Enhanced fuzzy matching
+#   pip install color-match-tools[image]       # Image processing
+#   pip install color-match-tools[interactive] # Interactive filament library manager
+#   pip install color-match-tools[dev]         # Development tools
+#   pip install color-match-tools[all]         # Everything

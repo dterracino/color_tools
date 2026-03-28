@@ -1,0 +1,20 @@
+🖤 Black: #000000 – available for PLA, PLA+, Rapid PETG, TPU 95A
+🤍 White: #ffffff – available for PLA, PLA+, Rapid PETG, TPU 95A
+🌑 Grey: #8f949b – available for PLA, PLA+, Rapid PETG
+💚 Neon Green: #08e327 – available for PLA, PLA+, Rapid PETG
+🔵 Dark Blue: #2240af – available for PLA, PLA+, Rapid PETG
+❤️ Red: #ea140e – available for PLA, PLA+, Rapid PETG
+💛 Yellow: #f6d701 – available for PLA, PLA+, Rapid PETG
+🧡 Orange: #fd7c18 – available for PLA, PLA+, Rapid PETG
+🌸 Pink: #f9b0bd – available for PLA, PLA+
+💜 Purple: #603ba0 – available for PLA, PLA+
+💎 Clear: #e9e9e7 – available for PLA, PLA+
+🌊 Sky Blue: #27b2d0 – available for PLA, PLA+
+🍃 Sea Green: #1abc83 – available for PLA, PLA+
+🌌 Space Grey: #5d5d5d – available for PLA, PLA+, Rapid PETG
+🌳 Wood Color: #b19870 – available for PLA, PLA+
+🪵 Wood Filled: #9d8058 – available for PLA
+🤎 Brown: #9e6a4b – available for PLA, PLA+, Rapid PETG
+🤍 Beige: #fee7bf – available for PLA, PLA+, Rapid PETG
+🥉 Bronze Filled: #895837 – available for PLA
+🔮 Transparent: #f3f3f3 – available for Rapid PETG

@@ -150,7 +150,7 @@ Add an optional runtime integrity layer that checks file hashes when data files 
 
 ## CLI Architecture Refactoring
 
-The CLI module (`cli.py`) has grown organically to 453+ lines and needs architectural improvements:
+The CLI module (`cli.py`) has grown organically to 1392+ lines and needs architectural improvements:
 
 ### Critical Design Issues
 
@@ -170,6 +170,10 @@ The `--value` parameter has completely different meanings and validation rules d
 
 - **name command**: `--value` always expects RGB (no space context)
   - `--value 255 128 64` (implicitly RGB 0-255)
+
+- **filament command**: `--value` hardcoded as RGB integers (no `--space` option)
+  - `--value 128 128 0` (always RGB 0-255, type=int)
+  - Inconsistent with color command which defaults to LAB
 
 **Problems**:
 

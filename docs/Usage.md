@@ -19,6 +19,7 @@ Color Tools can be used in three ways:
 - [CLI Usage](#cli-usage)
   - [Color Command](#color-command)
   - [Filament Command](#filament-command)
+    - [Owned Filaments Tracking](#owned-filaments-tracking-v600)
   - [Convert Command](#convert-command)
   - [Image Command](#image-command-requires-image-extra)
   - [Global Arguments](#global-arguments)
@@ -63,11 +64,12 @@ cga = load_palette('cga4')  # Classic CGA 4-color palette
 color, distance = cga.nearest_color((128, 64, 200), space='rgb')
 print(f"Nearest CGA color: {color.name} ({color.hex})")
 
-# Available palettes: cga4, cga16, crayola, ega16, ega64, vga, web, and more
+# Available palettes: Use color-tools color --palette list to see all 20 core palettes
 ega = load_palette('ega16')     # Standard EGA 16-color palette
 vga = load_palette('vga')       # VGA 256-color palette (Mode 13h)
 web = load_palette('web')       # Web-safe 216-color palette
 crayola = load_palette('crayola')  # 120 Crayola crayon colors
+pico8 = load_palette('pico8')   # PICO-8 fantasy console 16-color palette
 
 # Error handling - helpful messages if palette doesn't exist
 try:
@@ -144,7 +146,7 @@ gameboy_image.save("gameboy_style.png")
 #### Palettes
 
 - `Palette.load_default()` - Load CSS color database
-- `load_palette(name)` - Load retro/classic palette (cga4, cga16, ega16, ega64, vga, web)
+- `load_palette(name)` - Load retro/classic palette (use `color-tools color --palette list` to see all 20 available)
 - `FilamentPalette.load_default()` - Load filament database
 - `palette.nearest_color()` - Find nearest color match
 - `palette.find_by_name()` - Look up color by name
@@ -236,7 +238,7 @@ All data classes are immutable (frozen) with comprehensive docstrings. See [API 
 | Class | Module | Purpose | Key Fields | Full Docs |
 | ------- | -------- | --------- | ------------ | ----------- |
 | **ColorRecord** | `palette` | Named CSS color with precomputed color space values | `name`, `hex`, `rgb`, `lab`, `lch`, `hsl` | [API](https://dterracino.github.io/color_tools/api/color_tools.palette.html#color_tools.palette.ColorRecord) |
-| **FilamentRecord** | `palette` | 3D printing filament color (handles dual-color variants) | `maker`, `type`, `color`, `hex`, `rgb` (property), `lab`, `lch` | [API](https://dterracino.github.io/color_tools/api/color_tools.palette.html#color_tools.palette.FilamentRecord) |
+| **FilamentRecord** | `filament_palette` | 3D printing filament color (handles dual-color variants) | `maker`, `type`, `color`, `hex`, `rgb` (property), `lab`, `lch` | [API](https://dterracino.github.io/color_tools/api/color_tools.filament_palette.html#color_tools.filament_palette.FilamentRecord) |
 | **ColorValidationRecord** | `validation` | Color name/hex validation results with fuzzy matching | `is_match`, `name_match`, `name_confidence`, `delta_e`, `message` | [API](https://dterracino.github.io/color_tools/api/color_tools.validation.html#color_tools.validation.ColorValidationRecord) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
 | **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
@@ -300,7 +302,7 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--count N`: Return top N nearest colors instead of just one (default: 1, max: 50)
-- `--palette {cga4,cga16,ega16,ega64,vga,web}`: Use retro/classic palette instead of CSS colors
+- `--palette NAME`: Use retro/classic palette instead of CSS colors (use `--palette list` to see all available)
 
 #### Custom Palettes
 
@@ -418,6 +420,13 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+"). Use "*" to bypass this filter.
 - `--color NAME`: Filter by color name
 
+**Owned Filaments (v6.0.0+):**
+
+- `--add-owned ID`: Add a filament ID to your owned list and save to file
+- `--remove-owned ID`: Remove a filament ID from your owned list and save to file
+- `--list-owned`: Display all filaments you currently own
+- `--all-filaments`: Override owned filtering to search all filaments (shopping mode)
+
 **Combining Multiple Results with Filtering:**
 
 ```bash
@@ -432,6 +441,197 @@ python -m color_tools filament --nearest --value 0 255 0 --finish "Matte" --make
 ```
 
 **Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments. Use "*" as a wildcard to bypass individual filters while keeping others active.
+
+#### Owned Filaments Tracking (v6.0.0+)
+
+Track which filaments you own for personalized color matching. When you create an `owned-filaments.json` file, all filament searches automatically filter to your owned filaments by default.
+
+**Manage Owned Filaments:**
+
+```bash
+# Add filaments you own
+python -m color_tools filament --add-owned "bambu-lab_pla-matte_jet-black"
+python -m color_tools filament --add-owned "polymaker_polyterra-pla_charcoal-black"
+
+# List your owned filaments
+python -m color_tools filament --list-owned
+
+# Remove a filament from your owned list
+python -m color_tools filament --remove-owned "bambu-lab_pla-matte_jet-black"
+```
+
+**Search Behavior with Owned Filaments:**
+
+```bash
+# Find nearest match (automatically uses owned filaments if file exists)
+python -m color_tools filament --nearest --value 255 128 64
+
+# Find nearest with filters (still respects owned filaments)
+python -m color_tools filament --nearest --value 255 128 64 --type "PLA"
+
+# Override to search ALL filaments (shopping/browsing mode)
+python -m color_tools filament --nearest --value 255 128 64 --all-filaments
+python -m color_tools filament --nearest --value 255 128 64 --type "PLA" --all-filaments
+```
+
+**Owned Filaments Arguments:**
+
+- `--add-owned ID`: Add a filament ID to your owned list
+- `--remove-owned ID`: Remove a filament ID from your owned list
+- `--list-owned`: Display all filaments you own
+- `--all-filaments`: Override owned filtering to search all filaments (use when shopping)
+
+**How It Works:**
+
+1. Create `data/user/owned-filaments.json` with your filament IDs
+2. All `--nearest` searches automatically filter to owned filaments only
+3. Use `--all-filaments` flag when you want to browse the full catalog (shopping mode)
+4. No file? Everything works exactly as before (backward compatible)
+
+See [Customization Guide - Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#owned-filamentsjson---filament-ownership-tracking) for file format and Python API usage.
+
+#### Interactive Filament Library Manager (v6.0.0+)
+
+Manage your owned filaments with a full-featured terminal user interface (TUI). The interactive manager provides a visual, keyboard-driven interface for browsing, filtering, and managing your filament collection.
+
+**Requirements:**
+
+Install the `[interactive]` extra:
+
+```bash
+pip install color-match-tools[interactive]
+```
+
+**Launch the Manager:**
+
+```bash
+color-tools filament --manage
+# or
+python -m color_tools filament --manage
+```
+
+**Interface Overview:**
+
+````text
+╭─── Filament Library Manager ─────────────────────────────────────────────────╮
+│ 913 total | 42 owned* | Showing 913 filaments                                │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ > [✓] Bambu Lab - PLA Matte - Jet Black                                      │
+│   [ ] Bambu Lab - PLA Matte - White                                          │
+│   [✓] Polymaker - PolyTerra PLA - Charcoal Black                             │
+│   [ ] Polymaker - PolyTerra PLA - Savannah Yellow                            │
+│                                                                               │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Spc=toggle | ↑↓Pg/Home/End | (f)ilter | (c)lear | (r)evert | (s)ave | (q)uit│
+╰──────────────────────────────────────────────────────────────────────────────╯
+````
+
+**Key Bindings:**
+
+| Key | Action |
+| ----- | -------- |
+| **Space** | Toggle owned status of selected filament |
+| **↑ / ↓** | Move selection up/down |
+| **PgUp / PgDn** | Jump up/down by one page (12 filaments) |
+| **Home / End** | Jump to first/last filament |
+| **(f)** | Enter filter mode |
+| **(c)** | Clear all active filters |
+| **(r)** | Revert unsaved ownership changes |
+| **(s)** | Save changes to owned-filaments.json |
+| **(q)** | Quit (prompts to save if changes exist) |
+| **Esc** | Exit filter mode or quit (if no changes) |
+
+**Filter Mode:**
+
+Press `f` to enter filter mode and narrow down the filament list:
+
+````text
+│ FILTER MODE (Tab=next field, Esc=exit)                                       │
+├──────────────────────────────────────────────────────────────────────────────┤
+│ Maker : Bambu_                                                                │
+│ Type  : PLA                                                                   │
+│ Finish:                                                                       │
+│ Color :                                                                       │
+````
+
+**Filter Mode Key Bindings:**
+
+| Key | Action |
+| ----- | -------- |
+| **Type** | Enter text to filter (case-insensitive substring match) |
+| **Tab** | Move to next filter field (cycles through Maker/Type/Finish/Color) |
+| **Shift+Tab** | Move to previous filter field |
+| **Backspace** | Delete last character from active field |
+| **Esc** | Exit filter mode (keeps filters active) |
+
+**Visual Indicators:**
+
+- **Cyan text** - Owned filaments
+- **Reverse video** - Selected filament (current cursor position)
+- **Yellow asterisk** (*) - Unsaved changes (appears next to owned count)
+- **Yellow bold reverse** - Active filter field (in filter mode)
+
+**Exit Summary:**
+
+When you quit the manager, you'll see a summary of all changes made during the session:
+
+```text
+📊 Session Summary:
+────────────────────────────────────────────────────────────
+✅ Added 3 filament(s) to owned list:
+   + Bambu Lab - PLA Matte - White
+   + Polymaker - PolyTerra PLA - Savannah Yellow
+   + eSun - PLA+ - Silver
+
+❌ Removed 1 filament(s) from owned list:
+   - Bambu Lab - PLA Matte - Jet Black
+
+Total owned: 42 → 44
+────────────────────────────────────────────────────────────
+```
+
+**Example Workflows:**
+
+**Browse and add filaments:**
+
+1. Launch manager: `color-tools filament --manage`
+2. Use arrow keys or Page Up/Down to browse
+3. Press Space to mark filaments as owned (checkboxes toggle)
+4. Press `s` to save changes
+5. Press `q` to quit and see summary
+
+**Filter by maker:**
+
+1. Launch manager
+2. Press `f` to enter filter mode
+3. Type "Bambu" in Maker field
+4. Press Esc to exit filter mode (only Bambu Lab filaments shown)
+5. Browse and toggle owned status
+6. Press `c` to clear filter (see all filaments again)
+
+**Filter by multiple criteria:**
+
+1. Press `f` to enter filter mode
+2. Type "Polymaker" in Maker field
+3. Press Tab to move to Type field
+4. Type "PLA" in Type field
+5. Press Esc to see results (only Polymaker PLA filaments)
+6. Toggle owned status as needed
+
+**Revert mistakes:**
+
+1. Toggle several filaments by accident
+2. Press `r` to revert all unsaved changes (restores last saved state)
+3. Or press `q`, then `n` to quit without saving
+
+**Tips:**
+
+- The manager automatically loads `owned-filaments.json` if it exists
+- Changes are only saved when you press `s` or confirm save on quit
+- Filter is case-insensitive and matches substrings (e.g., "poly" matches "Polymaker" and "PolyTerra")
+- Press `c` to quickly clear all filters and see the full list again
+- The yellow asterisk (*) next to owned count reminds you of unsaved changes
+- Exit summary compares original state to final saved state (captures all saves during session)
 
 ### Convert Command
 
@@ -474,8 +674,9 @@ Process images with color transformations, CVD simulation/correction, and retro 
 #### List Available Palettes
 
 ```bash
-# Show all available retro palettes
-python -m color_tools image --list-palettes
+# Show all available retro palettes (both commands work identically)
+color-tools color --palette list
+color-tools image --list-palettes
 ```
 
 #### Color Vision Deficiency (CVD) Operations
@@ -522,9 +723,9 @@ python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
 - `--quantize-palette NAME`: Convert to specified retro palette
 - `--metric {de2000,de94,de76,cmc,euclidean,hsl_euclidean}`: Color distance metric (default: de2000)
 - `--dither`: Apply Floyd-Steinberg dithering for palette quantization
-- `--list-palettes`: List all available retro palettes
+- `--list-palettes`: List all available retro palettes with color counts
 
-**Available Palettes:** cga4, cga16, ega16, ega64, vga, web, gameboy_dmg, gameboy_gbl, gameboy_mgb, commodore64 (plus any custom palettes in data/palettes/)
+**Available Palettes:** Use `color-tools color --palette list` or `color-tools image --list-palettes` to see all 20 core palettes (including apple2, cga4, cga16, commodore64, crayola, ega16, ega64, gameboy variants, macintosh, nes, pico8, sms, tandy16, vga, virtualboy, web) plus any custom user palettes
 
 ### Global Arguments
 

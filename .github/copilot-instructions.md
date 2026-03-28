@@ -67,11 +67,31 @@ This is a color science library for Python 3.10+ that provides:
 
 ## Code Style and Standards
 
+### Error Handling Policy - CRITICAL
+
+**NEVER dismiss Pylance/Pyright/type checker errors as "false positives" or "ok" without rigorous investigation:**
+
+1. **All errors must be investigated thoroughly** - Do not make assumptions
+2. **Verify through testing** - Run the actual code that's showing errors
+3. **Document your findings** - If truly a false positive, explain why with evidence
+4. **Fix the root cause** - Don't ignore errors, fix the code or configuration
+5. **Zero tolerance in production** - Code claimed as "production ready" must have ZERO errors
+
+**Investigation Process:**
+- Read the exact error message carefully
+- Check if the error is in the right context (right class, right file)
+- Run minimal test cases to reproduce or disprove the error
+- Use `get_errors` tool to verify current state
+- If error persists, FIX IT - do not dismiss it
+
+**Never claim code is production ready while errors exist.** This wastes user time and damages trust.
+
 ### Core Architectural Principles
 - **Separation of Concerns**: Each module has a single, well-defined responsibility
   - `conversions.py`: Color space transformations ONLY
   - `distance.py`: Distance metrics ONLY
-  - `palette.py`: Data loading and search ONLY
+  - `palette.py`: CSS color data loading and search ONLY
+  - `filament_palette.py`: Filament data loading and search ONLY
   - `constants.py`: Immutable constants ONLY
   - `config.py`: Runtime configuration ONLY
   - `cli.py`: User interface ONLY (orchestrates, doesn't implement logic)
@@ -105,14 +125,24 @@ This is a color science library for Python 3.10+ that provides:
 conversions.py      # Color space conversion functions
 distance.py         # Distance metrics (Delta E formulas)
 gamut.py            # sRGB gamut operations
-palette.py          # Color/filament databases and search
+palette.py          # CSS color databases and search
+filament_palette.py # 3D printing filament databases and search
+_palette_utils.py   # Shared palette utilities (private module)
 constants.py        # Immutable color science constants
 config.py           # Thread-safe runtime configuration
 matrices.py         # Transformation matrices (CVD, etc.)
 color_deficiency.py # Color vision deficiency simulation/correction
 naming.py           # Color name generation
 validation.py       # Color validation utilities
+export.py           # Export facade (delegates to exporters/)
 cli.py              # Command-line interface (imports from everywhere)
+exporters/          # Plugin-based exporter system (v6.0.0+)
+  __init__.py       # Registry system and public API
+  base.py           # PaletteExporter base class, ExporterMetadata
+  csv_exporter.py   # CSV and AutoForge exporters
+  json_exporter.py  # JSON exporter
+  gpl_exporter.py   # GIMP Palette exporter (.gpl)
+  # Future: ase_exporter.py, act_exporter.py, png_exporter.py, etc.
 image/              # Image processing (optional [image] extra)
   __init__.py       # Public API exports
   README.md         # Image module documentation
@@ -131,12 +161,14 @@ The project has **zero required external dependencies** (pure Python stdlib).
 **Optional extras** for additional functionality:
 - `[image]` - Image processing (requires Pillow >= 10.0.0)
 - `[mcp]` - MCP server for LLM integration (requires mcp >= 1.0.0)
+- `[interactive]` - Interactive filament library manager TUI (requires prompt_toolkit >= 3.0.0)
 - `[all]` - All optional features
 
 **Installation:**
 ```bash
 pip install color-match-tools              # Base only
 pip install color-match-tools[image]       # + Image processing
+pip install color-match-tools[interactive] # + Interactive TUI
 pip install color-match-tools[mcp]         # + MCP server
 pip install color-match-tools[all]         # Everything
 ```
@@ -151,6 +183,85 @@ pip install color-match-tools[all]         # Everything
   - Run with: `python -m color_tools.mcp`
   - Access via Python: `from color_tools.mcp import run_server`
   - See `mcp/README.md` for full documentation
+
+- `exporters/` - Plugin-based exporter system (v6.0.0+)
+  - Access via: `from color_tools.exporters import get_exporter`
+  - Base classes in `base.py` for creating new exporters
+  - Auto-registration with `@register_exporter` decorator
+
+### Exporter System Architecture (v6.0.0+)
+
+The project uses a **plugin-based exporter architecture** for maximum extensibility:
+
+**Design Principles:**
+1. **Plugin Pattern** - New exporters auto-register without modifying existing code
+2. **Metadata-Driven** - Each exporter declares capabilities (colors/filaments, binary/text)
+3. **Backward Compatible** - `export.py` is a facade that delegates to new system
+4. **DRY** - All export logic centralized in individual exporter classes
+
+**Core Components:**
+- `exporters/base.py` - Base classes and metadata
+  - `PaletteExporter` - Abstract base class all exporters inherit from
+  - `ExporterMetadata` - Dataclass describing exporter capabilities
+- `exporters/__init__.py` - Registry system
+  - `@register_exporter` - Decorator for auto-registration
+  - `get_exporter(name)` - Get exporter instance by format name
+  - `list_export_formats(data_type)` - List available formats
+- `export.py` - **Backward compatibility facade**
+  - All functions (export_colors_csv, etc.) delegate to new system
+  - **DELEGATION NOTE** comments document this pattern
+
+**Adding New Exporters:**
+1. Create file in `exporters/` (e.g., `ase_exporter.py`)
+2. Subclass `PaletteExporter` from `base.py`
+3. Implement `metadata` property and export methods
+4. Use `@register_exporter` decorator
+5. Import in `exporters/__init__.py`
+6. Exporter automatically available everywhere!
+
+**Example:**
+```python
+# exporters/gpl_exporter.py
+from color_tools.exporters import register_exporter
+from color_tools.exporters.base import PaletteExporter, ExporterMetadata
+
+@register_exporter
+class GPLExporter(PaletteExporter):
+    @property
+    def metadata(self):
+        return ExporterMetadata(
+            name='gpl',
+            description='GIMP Palette format',
+            file_extension='gpl',
+            supports_colors=True,
+            supports_filaments=False,
+        )
+    
+    def _export_colors_impl(self, colors, output_path):
+        # Implementation here
+        pass
+```
+
+**Current Exporters:**
+- `csv` - Generic CSV (universal: colors + filaments with full metadata)
+- `json` - JSON format (universal: colors + filaments with full metadata)
+- `gpl` - GIMP Palette (colors only)
+- `hex` - Simple hex color list (colors only, loses filament metadata)
+- `pal` - JASC-PAL format (colors only, loses filament metadata, Paint Shop Pro/Aseprite)
+- `paintnet` - PAINT.NET palette format (colors only, loses filament metadata)
+- `lospec` - Lospec.com JSON format (colors only, loses filament metadata)
+- `autoforge` - AutoForge CSV (filaments only, specialized 3D printing format)
+
+> **Note:** Only CSV and JSON preserve full filament metadata (maker, type, finish, TD values).
+> Palette formats (hex, pal, paintnet, lospec, gpl) are colors-only and lose filament metadata.
+
+**Future Exporters (Planned):**
+- Adobe Swatch Exchange (.ase) - Binary format
+- Adobe Color Table (.act) - Binary format  
+- Adobe Color Swatch (.aco) - Binary format
+- PNG swatch images (1x, 8x, 32x) - Horizontal strips of color squares
+- Aseprite (.aseprite) - Full sprite format (complex, deferred)
+- And more!
 
 ## Critical Requirements
 
@@ -355,9 +466,22 @@ Users can extend core databases with custom data:
 - `user-colors.json` - Add custom colors (same format as colors.json)
 - `user-filaments.json` - Add custom filaments (same format as filaments.json)
 - `user-synonyms.json` - Add or extend maker synonyms (same format as maker_synonyms.json)
+- `owned-filaments.json` - Track filament IDs you own for personalized recommendations
 - User files are optional, automatically loaded/merged if present
 - User files are NOT verified for integrity (user-managed)
 - Users responsible for avoiding duplicate entries with core data
+
+### Owned Filaments Tracking (v6.0.0+)
+Track which filaments you own for personalized color matching:
+- **File:** `data/user/owned-filaments.json` - List of filament IDs
+- **Format:** `{"owned_filaments": ["id1", "id2", ...]}` - nested structure for future-proofing
+- **Auto-detect:** If file exists with IDs, filament searches default to owned only
+- **Override:** Use `owned=False` parameter (API) or `--all-filaments` flag (CLI)
+- **Management:** Add/remove via `FilamentPalette.add_owned()` / `.remove_owned()` or CLI commands
+- **Zero impact:** Users without file see no behavior changes
+- **Performance:** O(1) lookup using set-based filtering
+- Functions: `load_owned_filaments()`, `save_owned_filaments()`
+- CLI commands: `--list-owned`, `--add-owned ID`, `--remove-owned ID`, `--all-filaments`
 
 ### Data Integrity
 - Core data files protected by SHA-256 hashes stored in constants.py
@@ -408,6 +532,16 @@ Data is split into three separate JSON files in the `data/` directory:
 }
 ```
 
+#### `owned-filaments.json` - Owned Filament IDs (Optional)
+```json
+{
+  "owned_filaments": [
+    "bambu-lab_pla-matte_jet-black",
+    "polymaker_polyterra-pla_charcoal-black"
+  ]
+}
+```
+
 ## Security and Best Practices
 
 ### Data Validation
@@ -452,19 +586,30 @@ rgb = xyz_to_rgb(xyz)
 ### Palette Usage
 ```python
 # Load and search palettes
-from color_tools.palette import Palette, FilamentPalette, load_colors, load_filaments, load_maker_synonyms
+from color_tools.palette import Palette, load_colors
+from color_tools.filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 
 # CSS colors
 palette = Palette.load_default()  # Loads from data/colors.json
 color, distance = palette.nearest_color((255, 128, 64))
 
-# Filaments with maker synonyms
-filament_palette = FilamentPalette.load_default()  # Loads filaments + synonyms
+# Filaments with maker synonyms and owned tracking
+filament_palette = FilamentPalette.load_default()  # Loads filaments + synonyms + owned
 filament, distance = filament_palette.nearest_filament(
     (180, 100, 200),
     maker="Bambu",  # Can use synonym instead of "Bambu Lab"
-    type_name="PLA"
+    type_name="PLA"  # Auto-filters to owned if owned-filaments.json exists
 )
+
+# Override owned filtering
+filament, distance = filament_palette.nearest_filament(
+    (180, 100, 200),
+    owned=False  # Search ALL filaments (shopping mode)
+)
+
+# Manage owned filaments
+filament_palette.add_owned("bambu-lab_pla-matte_jet-black")  # Auto-saves
+owned = filament_palette.list_owned()  # Get all owned FilamentRecord objects
 
 # Manual loading (advanced)
 colors = load_colors()  # From data/colors.json
