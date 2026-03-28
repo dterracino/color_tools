@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "id": "c64",
+    "name": "Commodore 64",
+    "description": "16-color VIC-II palette, tall pixel output.",
+    "release_year": 1982
+  },
+  "palette": {
+    "type": "indexed",
+    "colors": [],
+    "master_palette_size": 16
+  },
+  "display_profile": {
+    "logical_resolution": [320, 200],
+    "intended_aspect_ratio": [4, 3],
+    "pixel_aspect_ratio": [1.0, 1.2],
+    "preferred_integer_scales": [2, 3],
+    "default_scale_mode": "pixel-perfect",
+    "simultaneous_color_limit": 16
+  }
+}

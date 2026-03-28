@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "id": "snes",
+    "name": "Super Nintendo",
+    "description": "15-bit RGB (32,768 colors), typically 256 onscreen.",
+    "release_year": 1990
+  },
+  "palette": {
+    "type": "bit_depth",
+    "bit_depth": 15,
+    "bits_per_channel": [5, 5, 5]
+  },
+  "display_profile": {
+    "logical_resolution": [256, 224],
+    "intended_aspect_ratio": [4, 3],
+    "pixel_aspect_ratio": [1.0, 1.0],
+    "preferred_integer_scales": [2, 3, 4],
+    "default_scale_mode": "fit",
+    "simultaneous_color_limit": 256
+  }
+}

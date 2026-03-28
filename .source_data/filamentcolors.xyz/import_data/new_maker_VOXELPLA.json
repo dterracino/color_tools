@@ -1,0 +1,164 @@
+[
+  {
+    "id": "voxelpla-pla-pro-lavender-purple",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Lavender Purple",
+    "hex": "#5D6CAA",
+    "td_value": 1.6
+  },
+  {
+    "id": "voxelpla-pla-pro-phantom-blue",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Phantom Blue",
+    "hex": "#393F4C",
+    "td_value": 0.2
+  },
+  {
+    "id": "voxelpla-pla-pro-forest-green",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Forest Green",
+    "hex": "#375747",
+    "td_value": 0.2
+  },
+  {
+    "id": "voxelpla-pla-pro-cool-white",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Cool White",
+    "hex": "#E6EAEB",
+    "td_value": 2.0
+  },
+  {
+    "id": "voxelpla-pla-pro-fire-engine-red",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Fire Engine Red",
+    "hex": "#963036",
+    "td_value": 3.2
+  },
+  {
+    "id": "voxelpla-pla-pro-royal-blue",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Royal Blue",
+    "hex": "#19508D",
+    "td_value": 0.4
+  },
+  {
+    "id": "voxelpla-pla-pro-black",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Black",
+    "hex": "#3A3B3B",
+    "td_value": 0.5
+  },
+  {
+    "id": "voxelpla-pla-pro-dark-purple",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Dark Purple",
+    "hex": "#684B8C",
+    "td_value": 1.0
+  },
+  {
+    "id": "voxelpla-pla-pro-brown",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#745747",
+    "td_value": 1.0
+  },
+  {
+    "id": "voxelpla-pla-pro-silver",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Silver",
+    "hex": "#8F9599",
+    "td_value": 0.6
+  },
+  {
+    "id": "voxelpla-pla-pro-voxel-grey",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Voxel Grey",
+    "hex": "#646C76",
+    "td_value": 0.4
+  },
+  {
+    "id": "voxelpla-pla-pro-pink",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#FF82A1",
+    "td_value": 4.8
+  },
+  {
+    "id": "voxelpla-pla-pro-gold",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Gold",
+    "hex": "#D39733",
+    "td_value": 3.7
+  },
+  {
+    "id": "voxelpla-petg-black",
+    "maker": "VOXELPLA",
+    "type": "PETG+",
+    "finish": null,
+    "color": "Black",
+    "hex": "#414243",
+    "td_value": 0.5
+  },
+  {
+    "id": "voxelpla-pla-pro-fire-orange",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Fire Orange",
+    "hex": "#F8673F",
+    "td_value": 5.1
+  },
+  {
+    "id": "voxelpla-pla-pro-yellow",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#F7CB00",
+    "td_value": 5.2
+  },
+  {
+    "id": "voxelpla-pla-pro-ice-clear",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Ice Clear",
+    "hex": "#CAC8BD",
+    "td_value": 100.0
+  },
+  {
+    "id": "voxelpla-pla-pro-sky-blue",
+    "maker": "VOXELPLA",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Sky Blue",
+    "hex": "#00ABBE",
+    "td_value": 3.6
+  }
+]

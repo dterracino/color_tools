@@ -1,0 +1,110 @@
+[
+  {
+    "id": "creality-rpla-matte-green",
+    "maker": "Creality",
+    "type": "rPLA",
+    "finish": "Matte",
+    "color": "Green",
+    "hex": "#76b16d",
+    "td_value": null
+  },
+  {
+    "id": "creality-hyper-pla-red",
+    "maker": "Creality",
+    "type": "Hyper PLA",
+    "finish": null,
+    "color": "Red",
+    "hex": "#c32d30",
+    "td_value": 3.6
+  },
+  {
+    "id": "creality-hyper-pla-blue",
+    "maker": "Creality",
+    "type": "Hyper PLA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#0081bf",
+    "td_value": 1.0
+  },
+  {
+    "id": "creality-hyper-pla-grey",
+    "maker": "Creality",
+    "type": "Hyper PLA",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#7a7c7d",
+    "td_value": 0.4
+  },
+  {
+    "id": "creality-hyper-pla-cf-black",
+    "maker": "Creality",
+    "type": "Hyper PLA-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#322f2d",
+    "td_value": 0.4
+  },
+  {
+    "id": "creality-hyper-pla-black",
+    "maker": "Creality",
+    "type": "Hyper PLA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#282c2c",
+    "td_value": 1.0
+  },
+  {
+    "id": "creality-hyper-pla-purple",
+    "maker": "Creality",
+    "type": "Hyper PLA",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#b0347f",
+    "td_value": 2.9
+  },
+  {
+    "id": "creality-hyper-pla-white",
+    "maker": "Creality",
+    "type": "Hyper PLA",
+    "finish": null,
+    "color": "White",
+    "hex": "#dee4e3",
+    "td_value": null
+  },
+  {
+    "id": "creality-petg-white",
+    "maker": "Creality",
+    "type": "PETG",
+    "finish": null,
+    "color": "White",
+    "hex": "#E3E5E1",
+    "td_value": 5.7
+  },
+  {
+    "id": "creality-pla-silk-blue-green",
+    "maker": "Creality",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Blue-Green",
+    "hex": "#479B7D",
+    "td_value": 0.5
+  },
+  {
+    "id": "creality-pla-gray",
+    "maker": "Creality",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#8F9395",
+    "td_value": null
+  },
+  {
+    "id": "creality-pla-white",
+    "maker": "Creality",
+    "type": "PLA",
+    "finish": null,
+    "color": "White",
+    "hex": "#E1DFD0",
+    "td_value": null
+  }
+]

@@ -1,0 +1,101 @@
+[
+  {
+    "id": "tinmorry-pla-black",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#3D3D3D",
+    "td_value": null
+  },
+  {
+    "id": "tinmorry-pla-white",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": null,
+    "color": "White",
+    "hex": "#DFDEDD",
+    "td_value": null
+  },
+  {
+    "id": "tinmorry-petg-eco-white",
+    "maker": "Tinmorry",
+    "type": "PETG-Eco",
+    "finish": null,
+    "color": "White",
+    "hex": "#E4EAEB",
+    "td_value": 4.7
+  },
+  {
+    "id": "tinmorry-pla-silk-silver",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silver",
+    "hex": "#9CA3A8",
+    "td_value": 0.7
+  },
+  {
+    "id": "tinmorry-pla-silk-bronze",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Bronze",
+    "hex": "#A5936E",
+    "td_value": 0.8
+  },
+  {
+    "id": "tinmorry-pla-matte-yellow",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Yellow",
+    "hex": "#E9CB2C",
+    "td_value": 3.3
+  },
+  {
+    "id": "tinmorry-pla-light-green",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": null,
+    "color": "Light Green",
+    "hex": "#BFD566",
+    "td_value": 4.8
+  },
+  {
+    "id": "tinmorry-pla-sparkly-purple",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": null,
+    "color": "Sparkly Purple",
+    "hex": "#706D92",
+    "td_value": 1.2
+  },
+  {
+    "id": "tinmorry-pla-matte-army-green",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Army Green",
+    "hex": "#6E6D4C",
+    "td_value": 0.2
+  },
+  {
+    "id": "tinmorry-pla-transparent",
+    "maker": "Tinmorry",
+    "type": "PLA",
+    "finish": null,
+    "color": "Transparent",
+    "hex": "#C0C1B7",
+    "td_value": 100.0
+  },
+  {
+    "id": "tinmorry-tpu-tpe-transparent-orange",
+    "maker": "Tinmorry",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Transparent Orange",
+    "hex": "#E37021",
+    "td_value": 55.3
+  }
+]

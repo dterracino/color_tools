@@ -1,0 +1,20 @@
+[
+  {
+    "id": "reprapper-pla-white",
+    "maker": "Reprapper",
+    "type": "PLA",
+    "finish": null,
+    "color": "White",
+    "hex": "#EEEEE5",
+    "td_value": null
+  },
+  {
+    "id": "reprapper-pla-wood-filled",
+    "maker": "Reprapper",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wood-filled",
+    "hex": "#C3AA8B",
+    "td_value": null
+  }
+]

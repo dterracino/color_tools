@@ -1,4 +1,8 @@
 {
-  "Bambu Lab": ["Bambu", "BLL"],
-  "Paramount 3D": ["Paramount", "Paramount3D"]
+  "3D-Fuel": ["3D Fuel", "3DFuel"],
+  "Bambu Lab": ["BBL", "Bambu", "BambuLab"],
+  "Duramic": ["Duramic 3D", "Duramic3D"],
+  "Flashforge": ["Flashforge 3D"],
+  "Paramount 3D": ["Paramount", "Paramount3D"],
+  "Qidi Tech": ["Qidi", "QidiTech"]
 }

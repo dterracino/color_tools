@@ -1,0 +1,38 @@
+[
+  {
+    "id": "duramic-3d-pla-black",
+    "maker": "Duramic 3D",
+    "type": "PLA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#38393A",
+    "td_value": 0.2
+  },
+  {
+    "id": "duramic-3d-pla-plus-black",
+    "maker": "Duramic 3D",
+    "type": "PLA Plus",
+    "finish": null,
+    "color": "Black",
+    "hex": "#332d2e",
+    "td_value": 0.2
+  },
+  {
+    "id": "duramic-3d-pla-blue",
+    "maker": "Duramic 3D",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#003f70",
+    "td_value": 1.7
+  },
+  {
+    "id": "duramic-3d-petg-black",
+    "maker": "Duramic 3D",
+    "type": "PETG",
+    "finish": null,
+    "color": "Black",
+    "hex": "#404142",
+    "td_value": 0.4
+  }
+]

@@ -1,0 +1,182 @@
+[
+  {
+    "id": "amolen-pla-color-changing-uv-sensitive",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Color Changing / UV Sensitive",
+    "hex": "#C6B9A3",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-bronze",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Bronze",
+    "hex": "#988052",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-dark-walnut-wood",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Dark Walnut Wood",
+    "hex": "#866A4D",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-glow-in-the-dark-blue",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Glow in the Dark Blue",
+    "hex": "#C8C3B2",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-ebony-wood",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Ebony Wood",
+    "hex": "#53504D",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-dual-color-silk-redgreen",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Dual Color Silk Red/Green",
+    "hex": "#6C8A5C",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-marble",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Marble",
+    "hex": "#BFC5C8",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-silk-bluegreen",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Blue/Green",
+    "hex": "#238780",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-silk-sapphire-blue",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Sapphire Blue",
+    "hex": "#3883C5",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-galaxy-red",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Galaxy Red",
+    "hex": "#914B47",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-glow-in-the-dark-green",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Glow in the Dark Green",
+    "hex": "#B8B3A2",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-wood",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wood",
+    "hex": "#B59571",
+    "td_value": null
+  },
+  {
+    "id": "amolen-pla-real-gold",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Real Gold",
+    "hex": "#CD9A49",
+    "td_value": 3.8
+  },
+  {
+    "id": "amolen-pla-shiny-silver",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Shiny Silver",
+    "hex": "#A1A29A",
+    "td_value": 20.1
+  },
+  {
+    "id": "amolen-pla-dual-color-redgold",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Dual Color Red/Gold",
+    "hex": "#C36252",
+    "td_value": 2.6
+  },
+  {
+    "id": "amolen-pla-dual-color-bluegreen",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Dual Color Blue/Green",
+    "hex": "#13727D",
+    "td_value": 0.9
+  },
+  {
+    "id": "amolen-pla-dual-color-redblue",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Dual Color Red/Blue",
+    "hex": "#565D99",
+    "td_value": 1.3
+  },
+  {
+    "id": "amolen-pla-temp-color-change-lava-black-red-yellow",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "Temp Color Change Lava (Black-Red-Yellow)",
+    "hex": "#605D44",
+    "td_value": 7.9
+  },
+  {
+    "id": "amolen-pla-uv-change-purple",
+    "maker": "Amolen",
+    "type": "PLA",
+    "finish": null,
+    "color": "UV Change (Purple)",
+    "hex": "#CFC1A4",
+    "td_value": 23.1
+  },
+  {
+    "id": "amolen-iron-filled-pla-matte-black",
+    "maker": "Amolen",
+    "type": "Iron-Filled PLA",
+    "finish": "Matte",
+    "color": "Black",
+    "hex": "#464544",
+    "td_value": 0.4
+  }
+]

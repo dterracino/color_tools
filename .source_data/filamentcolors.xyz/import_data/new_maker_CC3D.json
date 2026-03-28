@@ -1,0 +1,47 @@
+[
+  {
+    "id": "cc3d-pla-silk-gold",
+    "maker": "CC3D",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Gold",
+    "hex": "#DFAD66",
+    "td_value": null
+  },
+  {
+    "id": "cc3d-pla-silk-green-bronze",
+    "maker": "CC3D",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Green Bronze",
+    "hex": "#95986C",
+    "td_value": null
+  },
+  {
+    "id": "cc3d-pla-mailbox-red",
+    "maker": "CC3D",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mailbox Red",
+    "hex": "#B7383E",
+    "td_value": null
+  },
+  {
+    "id": "cc3d-pla-silk-antique-gold",
+    "maker": "CC3D",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Antique Gold",
+    "hex": "#9B8A62",
+    "td_value": 0.3
+  },
+  {
+    "id": "cc3d-pla-silk-copper",
+    "maker": "CC3D",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Copper",
+    "hex": "#B17450",
+    "td_value": 0.6
+  }
+]

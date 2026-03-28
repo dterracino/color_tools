@@ -1,0 +1,29 @@
+[
+  {
+    "id": "jayo-pla-cherry-red",
+    "maker": "Jayo",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Cherry Red",
+    "hex": "#c43537",
+    "td_value": 4.7
+  },
+  {
+    "id": "jayo-pla-white",
+    "maker": "Jayo",
+    "type": "PLA+",
+    "finish": null,
+    "color": "White",
+    "hex": "#d9e0e9",
+    "td_value": 6.7
+  },
+  {
+    "id": "jayo-pla-black",
+    "maker": "Jayo",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Black",
+    "hex": "#2f2e2d",
+    "td_value": 0.4
+  }
+]

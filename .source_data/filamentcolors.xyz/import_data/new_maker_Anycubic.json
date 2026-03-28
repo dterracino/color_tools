@@ -1,0 +1,74 @@
+[
+  {
+    "id": "anycubic-pla-gray",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#95989A",
+    "td_value": null
+  },
+  {
+    "id": "anycubic-pla-3d-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "3D White",
+    "hex": "#E0E4DF",
+    "td_value": 6.9
+  },
+  {
+    "id": "anycubic-pla-transparent",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "Transparent",
+    "hex": "#CECABF",
+    "td_value": 100.0
+  },
+  {
+    "id": "anycubic-pla-basic-green",
+    "maker": "Anycubic",
+    "type": "PLA Basic",
+    "finish": null,
+    "color": "Green",
+    "hex": "#40CA9A",
+    "td_value": 3.6
+  },
+  {
+    "id": "anycubic-pla-wood",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wood",
+    "hex": "#B59578",
+    "td_value": 3.5
+  },
+  {
+    "id": "anycubic-pla-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#0D6DB8",
+    "td_value": 4.4
+  },
+  {
+    "id": "anycubic-pla-purple",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#8281C1",
+    "td_value": 5.8
+  },
+  {
+    "id": "anycubic-pla-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": null,
+    "color": "Red",
+    "hex": "#B94547",
+    "td_value": 5.2
+  }
+]

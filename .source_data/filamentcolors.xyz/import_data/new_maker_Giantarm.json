@@ -1,0 +1,56 @@
+[
+  {
+    "id": "giantarm-pla-gray",
+    "maker": "Giantarm",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#a4a8aa",
+    "td_value": null
+  },
+  {
+    "id": "giantarm-pla-black",
+    "maker": "Giantarm",
+    "type": "PLA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#3b3c3e",
+    "td_value": null
+  },
+  {
+    "id": "giantarm-pla-wood",
+    "maker": "Giantarm",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wood",
+    "hex": "#b69879",
+    "td_value": null
+  },
+  {
+    "id": "giantarm-petg-black",
+    "maker": "Giantarm",
+    "type": "PETG",
+    "finish": null,
+    "color": "Black",
+    "hex": "#414141",
+    "td_value": 0.2
+  },
+  {
+    "id": "giantarm-petg-yellow",
+    "maker": "Giantarm",
+    "type": "PETG",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#EDCB3D",
+    "td_value": 7.0
+  },
+  {
+    "id": "giantarm-petg-white",
+    "maker": "Giantarm",
+    "type": "PETG",
+    "finish": null,
+    "color": "White",
+    "hex": "#E6E8E4",
+    "td_value": 6.2
+  }
+]

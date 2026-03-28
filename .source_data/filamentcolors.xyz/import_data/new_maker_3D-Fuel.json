@@ -1,0 +1,236 @@
+[
+  {
+    "id": "3d-fuel-pla-entwined-natural-hemp-v2",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Entwined Natural Hemp V2",
+    "hex": "#846648",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-electric-blue",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Electric Blue",
+    "hex": "#4FC4D8",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-fire-engine-red",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Fire Engine Red",
+    "hex": "#CB3636",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pro-pla-industrial-gray",
+    "maker": "3D-Fuel",
+    "type": "Pro PLA",
+    "finish": null,
+    "color": "Industrial Gray",
+    "hex": "#898E91",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-industrial-gray",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Industrial Gray",
+    "hex": "#8A9092",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-island-fuchsia",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Island Fuchsia",
+    "hex": "#C45497",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-clearly-natural",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Clearly Natural",
+    "hex": "#BAB7A9",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-daffodil-yellow",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Daffodil Yellow",
+    "hex": "#FDCC41",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-grass-green",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Grass Green",
+    "hex": "#4D9E57",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-ocean-blue",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Ocean Blue",
+    "hex": "#0070A8",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pro-pla-midnight-black",
+    "maker": "3D-Fuel",
+    "type": "Pro PLA",
+    "finish": null,
+    "color": "Midnight Black",
+    "hex": "#393939",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pro-pla-iron-red",
+    "maker": "3D-Fuel",
+    "type": "Pro PLA",
+    "finish": null,
+    "color": "Iron Red",
+    "hex": "#8F3436",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-bubblegum-pink",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Bubblegum Pink",
+    "hex": "#EFACB7",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-charcoal-gray",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Charcoal Gray",
+    "hex": "#515559",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-pistachio-green",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pistachio Green",
+    "hex": "#B8D8A1",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-chocolate-brown",
+    "maker": "3D-Fuel",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Chocolate Brown",
+    "hex": "#5B4640",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-midnight-black",
+    "maker": "3D-Fuel",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Midnight Black",
+    "hex": "#3C3C3B",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-tangerine-orange",
+    "maker": "3D-Fuel",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Tangerine Orange",
+    "hex": "#EF7350",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pro-pla-bubblegum-pink",
+    "maker": "3D-Fuel",
+    "type": "Pro PLA+",
+    "finish": null,
+    "color": "Bubblegum Pink",
+    "hex": "#EEACB8",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-cobalt-blue",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Cobalt Blue",
+    "hex": "#2A4380",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-autumn-orange",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Autumn Orange",
+    "hex": "#D95A32",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-harvest-gold",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Harvest Gold",
+    "hex": "#FBB44A",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pla-forest-green",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Forest Green",
+    "hex": "#356E5A",
+    "td_value": null
+  },
+  {
+    "id": "3d-fuel-pro-pla-snow-white",
+    "maker": "3D-Fuel",
+    "type": "Pro PLA+",
+    "finish": null,
+    "color": "Snow White",
+    "hex": "#F2F3EB",
+    "td_value": 2.8
+  },
+  {
+    "id": "3d-fuel-pla-caribbean-blue",
+    "maker": "3D-Fuel",
+    "type": "PLA",
+    "finish": null,
+    "color": "Caribbean Blue",
+    "hex": "#0091A9",
+    "td_value": 1.5
+  },
+  {
+    "id": "3d-fuel-petg-midnight-black",
+    "maker": "3D-Fuel",
+    "type": "PETG",
+    "finish": null,
+    "color": "Midnight Black",
+    "hex": "#40403F",
+    "td_value": 0.4
+  }
+]

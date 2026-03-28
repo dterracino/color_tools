@@ -1,0 +1,182 @@
+[
+  {
+    "id": "geeetech-pla-white",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "White",
+    "hex": "#dee2e7",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-grey",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#82868a",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-black",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#3c3c3c",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-like-marble",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Like Marble",
+    "hex": "#c0c9ce",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-luminous-green",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Luminous Green",
+    "hex": "#fbfcfa",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-silk-bronze",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Bronze",
+    "hex": "#858168",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-orange",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#e99d48",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-water-blue",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Water Blue",
+    "hex": "#04aacb",
+    "td_value": null
+  },
+  {
+    "id": "geeetech-pla-wood",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wood",
+    "hex": "#c0a78a",
+    "td_value": 3.5
+  },
+  {
+    "id": "geeetech-pla-matte-light-grey",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Light Grey",
+    "hex": "#a8a5a3",
+    "td_value": 1.0
+  },
+  {
+    "id": "geeetech-petg-white",
+    "maker": "Geeetech",
+    "type": "PETG",
+    "finish": null,
+    "color": "White",
+    "hex": "#E6E8E3",
+    "td_value": 5.0
+  },
+  {
+    "id": "geeetech-pla-matte-orange",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Orange",
+    "hex": "#cb8863",
+    "td_value": 1.5
+  },
+  {
+    "id": "geeetech-pla-apple-green",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Apple Green",
+    "hex": "#b6d649",
+    "td_value": 3.2
+  },
+  {
+    "id": "geeetech-pla-matte-grey",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Grey",
+    "hex": "#4a4b52",
+    "td_value": 0.4
+  },
+  {
+    "id": "geeetech-pla-matte-dark-grey",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Dark Grey",
+    "hex": "#282a2e",
+    "td_value": 0.4
+  },
+  {
+    "id": "geeetech-pla-blue",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#0071ae",
+    "td_value": 2.2
+  },
+  {
+    "id": "geeetech-pla-brown",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#885e3e",
+    "td_value": 1.6
+  },
+  {
+    "id": "geeetech-pla-silk-copper",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Copper",
+    "hex": "#9a5f58",
+    "td_value": 0.6
+  },
+  {
+    "id": "geeetech-pla-matte-skin",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Skin",
+    "hex": "#ebb791",
+    "td_value": 2.9
+  },
+  {
+    "id": "geeetech-pla-new-purple",
+    "maker": "Geeetech",
+    "type": "PLA",
+    "finish": null,
+    "color": "New Purple",
+    "hex": "#813f92",
+    "td_value": 3.3
+  }
+]

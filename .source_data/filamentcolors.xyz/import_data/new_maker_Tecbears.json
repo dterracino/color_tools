@@ -1,0 +1,38 @@
+[
+  {
+    "id": "tecbears-pla-grey",
+    "maker": "Tecbears",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#696B6A",
+    "td_value": 2.4
+  },
+  {
+    "id": "tecbears-pla-yellow",
+    "maker": "Tecbears",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FEC826",
+    "td_value": 4.7
+  },
+  {
+    "id": "tecbears-pla-blue",
+    "maker": "Tecbears",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#0F65B5",
+    "td_value": 4.8
+  },
+  {
+    "id": "tecbears-pla-red",
+    "maker": "Tecbears",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Red",
+    "hex": "#A94445",
+    "td_value": 6.3
+  }
+]

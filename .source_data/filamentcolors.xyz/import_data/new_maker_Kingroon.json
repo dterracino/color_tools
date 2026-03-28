@@ -1,0 +1,74 @@
+[
+  {
+    "id": "kingroon-pla-glow-green",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": "Glow",
+    "color": "Green",
+    "hex": "#B9CAA6",
+    "td_value": null
+  },
+  {
+    "id": "kingroon-pla-gray",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#767c83",
+    "td_value": 2.5
+  },
+  {
+    "id": "kingroon-pla-yellow",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#f7e523",
+    "td_value": 5.5
+  },
+  {
+    "id": "kingroon-pla-blue",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#055fa8",
+    "td_value": 2.5
+  },
+  {
+    "id": "kingroon-pla-green",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Green",
+    "hex": "#13d683",
+    "td_value": 2.2
+  },
+  {
+    "id": "kingroon-pla-orange",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#e6af55",
+    "td_value": 4.7
+  },
+  {
+    "id": "kingroon-pla-red",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Red",
+    "hex": "#cd382e",
+    "td_value": 5.6
+  },
+  {
+    "id": "kingroon-pla-sky-blue",
+    "maker": "Kingroon",
+    "type": "PLA",
+    "finish": null,
+    "color": "Sky Blue",
+    "hex": "#007ec1",
+    "td_value": 2.5
+  }
+]

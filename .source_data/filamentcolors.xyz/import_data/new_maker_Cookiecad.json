@@ -1,0 +1,380 @@
+[
+  {
+    "id": "cookiecad-pla-pale-blue-dot",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pale Blue Dot",
+    "hex": "#9bd9e9",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-orange-sorbet",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Orange Sorbet",
+    "hex": "#e5ab8a",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-candy-apple-red",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Candy Apple Red",
+    "hex": "#b12b2d",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-pale-pink",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pale Pink",
+    "hex": "#f7dede",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-pink-chip",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pink Chip",
+    "hex": "#ccb6c1",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-mint-chip",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mint Chip",
+    "hex": "#8fccb9",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-blue-chip",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue Chip",
+    "hex": "#82c8dd",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-lavender-chip",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Lavender Chip",
+    "hex": "#bd95cb",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-mint-green",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mint Green",
+    "hex": "#8dd1c3",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-lavender",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Lavender",
+    "hex": "#d0b9da",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-pale-yellow",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pale Yellow",
+    "hex": "#dcde96",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-vanilla-chip",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Vanilla Chip",
+    "hex": "#e1e1d0",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-coral",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Coral",
+    "hex": "#e26e6e",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-hot-pink",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Hot Pink",
+    "hex": "#df4991",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-funfetti",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Funfetti",
+    "hex": "#d9dae3",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-star-dust",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Star Dust",
+    "hex": "#3f3d3c",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-dark-magic",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Dark Magic",
+    "hex": "#2c5c63",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-witchcraft",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Witchcraft",
+    "hex": "#7553db",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-pale-blue-elixir",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pale Blue Elixir",
+    "hex": "#a7deec",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-pale-pink-elixir",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pale Pink Elixir",
+    "hex": "#dcd5dd",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-solar-flare",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Solar Flare",
+    "hex": "#e3de4f",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-mint-green-elixir",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mint Green Elixir",
+    "hex": "#a8e1da",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-lavender-elixir",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Lavender Elixir",
+    "hex": "#cfb9e4",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-witches-blue",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Witches Blue",
+    "hex": "#7356b8",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-pixie-dust",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Pixie Dust",
+    "hex": "#e45ecb",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-periwinkle",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Periwinkle",
+    "hex": "#7f8ccc",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-bubblegum-pink",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Bubblegum Pink",
+    "hex": "#e2a5c8",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-petg-dark-magic",
+    "maker": "Cookiecad",
+    "type": "PETG",
+    "finish": null,
+    "color": "Dark Magic",
+    "hex": "#3f505b",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-green-apple-elixir",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Green Apple Elixir",
+    "hex": "#AED979",
+    "td_value": 10.0
+  },
+  {
+    "id": "cookiecad-pla-sunrise-mixer",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Sunrise Mixer",
+    "hex": "#D8744E",
+    "td_value": 4.3
+  },
+  {
+    "id": "cookiecad-pla-unicorn-mixer",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Unicorn Mixer",
+    "hex": "#A29BCC",
+    "td_value": null
+  },
+  {
+    "id": "cookiecad-pla-blue-star-stuff",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue Star Stuff",
+    "hex": "#8AABB0",
+    "td_value": 100.0
+  },
+  {
+    "id": "cookiecad-pla-green-apple",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Green Apple",
+    "hex": "#A9DC76",
+    "td_value": 4.6
+  },
+  {
+    "id": "cookiecad-pla-black-star-stuff",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Black Star Stuff",
+    "hex": "#494746",
+    "td_value": 5.8
+  },
+  {
+    "id": "cookiecad-pla-mint-star-stuff",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Mint Star Stuff",
+    "hex": "#88BEB4",
+    "td_value": 100.0
+  },
+  {
+    "id": "cookiecad-tpu-tpe-pixie-dust",
+    "maker": "Cookiecad",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Pixie Dust",
+    "hex": "#DE6EAA",
+    "td_value": 9.8
+  },
+  {
+    "id": "cookiecad-tpu-tpe-witches-blue",
+    "maker": "Cookiecad",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Witches Blue",
+    "hex": "#4A588B",
+    "td_value": 3.9
+  },
+  {
+    "id": "cookiecad-pla-silk-dual-sunrise",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Dual Sunrise",
+    "hex": "#E38A83",
+    "td_value": 1.9
+  },
+  {
+    "id": "cookiecad-pla-bubblegum-elixir",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Bubblegum Elixir",
+    "hex": "#E0AAC9",
+    "td_value": 11.3
+  },
+  {
+    "id": "cookiecad-pla-black",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#393939",
+    "td_value": 0.3
+  },
+  {
+    "id": "cookiecad-pla-white",
+    "maker": "Cookiecad",
+    "type": "PLA",
+    "finish": null,
+    "color": "White",
+    "hex": "#E9EAE5",
+    "td_value": 5.4
+  },
+  {
+    "id": "cookiecad-petg-witchcraft",
+    "maker": "Cookiecad",
+    "type": "PETG",
+    "finish": null,
+    "color": "Witchcraft",
+    "hex": "#7389BC",
+    "td_value": 6.6
+  }
+]

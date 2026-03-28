@@ -1,0 +1,92 @@
+[
+  {
+    "id": "sainsmart-tpu-tpe-clear",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Clear",
+    "hex": "#BEAF9B",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-translucent-red",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Translucent Red",
+    "hex": "#B83B3D",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-translucent-orange",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Translucent Orange",
+    "hex": "#E9882A",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-white",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "White",
+    "hex": "#d2d5d4",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-black",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Black",
+    "hex": "#3B3C3C",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-translucent-green",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Translucent Green",
+    "hex": "#91D605",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-translucent-blue",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Translucent Blue",
+    "hex": "#0085AF",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-pastel-pink",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Pastel Pink",
+    "hex": "#F6A1AF",
+    "td_value": null
+  },
+  {
+    "id": "sainsmart-tpu-tpe-neon-cyan",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Neon Cyan",
+    "hex": "#22CAC8",
+    "td_value": 5.5
+  },
+  {
+    "id": "sainsmart-tpu-tpe-glowing-blue",
+    "maker": "SainSmart",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Glowing Blue",
+    "hex": "#C8C5B7",
+    "td_value": 100.0
+  }
+]

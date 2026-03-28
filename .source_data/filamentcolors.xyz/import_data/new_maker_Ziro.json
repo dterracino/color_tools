@@ -1,0 +1,200 @@
+[
+  {
+    "id": "ziro-pla-translucent-green",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Translucent Green",
+    "hex": "#60B065",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-z-marble",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Z-Marble",
+    "hex": "#B8BCBB",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-twinkling-transparent-diamond",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Twinkling Transparent Diamond",
+    "hex": "#C4C1B3",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-twinkling-red",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Twinkling Red",
+    "hex": "#9D3232",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-red-diamond",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Red Diamond",
+    "hex": "#7D4340",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-blue-diamond",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue Diamond",
+    "hex": "#395C7C",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-cyan",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Cyan",
+    "hex": "#14BCD0",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-fluo-yellow",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Fluo-Yellow",
+    "hex": "#DAFF2F",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-fluo-orange",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Fluo-Orange",
+    "hex": "#FF7450",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-bronze",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Bronze",
+    "hex": "#92805A",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-pro-translucent-red",
+    "maker": "Ziro",
+    "type": "PLA Pro",
+    "finish": null,
+    "color": "Translucent Red",
+    "hex": "#C3413D",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-silver-diamond",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Silver Diamond",
+    "hex": "#A0A5A7",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-red-copper",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Red Copper",
+    "hex": "#C07650",
+    "td_value": null
+  },
+  {
+    "id": "ziro-pla-skin",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Skin",
+    "hex": "#EFD7B3",
+    "td_value": 4.9
+  },
+  {
+    "id": "ziro-pla-glow-blue",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": "Glow",
+    "color": "Blue",
+    "hex": "#CBCDC5",
+    "td_value": 20.2
+  },
+  {
+    "id": "ziro-pla-matte-chocolate",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Chocolate",
+    "hex": "#765445",
+    "td_value": 0.2
+  },
+  {
+    "id": "ziro-pla-purple-diamond",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Purple Diamond",
+    "hex": "#644669",
+    "td_value": 2.6
+  },
+  {
+    "id": "ziro-pla-straw",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Straw",
+    "hex": "#C1B8AF",
+    "td_value": 4.5
+  },
+  {
+    "id": "ziro-pla-fluo-green",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Fluo Green",
+    "hex": "#6AE03A",
+    "td_value": 6.8
+  },
+  {
+    "id": "ziro-pla-purple",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#704093",
+    "td_value": 4.6
+  },
+  {
+    "id": "ziro-pla-rose",
+    "maker": "Ziro",
+    "type": "PLA",
+    "finish": null,
+    "color": "Rose",
+    "hex": "#FD7BBC",
+    "td_value": 6.9
+  },
+  {
+    "id": "ziro-tpu-tpe-pink",
+    "maker": "Ziro",
+    "type": "TPU / TPE",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#EE79A8",
+    "td_value": 4.6
+  }
+]

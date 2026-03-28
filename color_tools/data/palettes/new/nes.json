@@ -1,0 +1,21 @@
+{
+  "metadata": {
+    "id": "nes",
+    "name": "Nintendo Entertainment System",
+    "description": "8-bit console with ~52-color master palette and ~25 colors visible at once.",
+    "release_year": 1983
+  },
+  "palette": {
+    "type": "indexed",
+    "colors": [], 
+    "master_palette_size": 52
+  },
+  "display_profile": {
+    "logical_resolution": [256, 240],
+    "intended_aspect_ratio": [4, 3],
+    "pixel_aspect_ratio": [1.0, 1.12],
+    "preferred_integer_scales": [2, 3, 4],
+    "default_scale_mode": "fit",
+    "simultaneous_color_limit": 25
+  }
+}

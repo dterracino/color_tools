@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### ⚠️ CRITICAL FIXES NEEDED
+
+- **Case-insensitive maker and finish matching** - Currently maker names and finishes are case-sensitive in FilamentPalette
+  - **Problem**: Searching for `--maker "Flashforge"` won't match database entry "FlashForge" (case mismatch)
+  - **Problem**: Similar issue with finish matching (e.g., "matte" vs "Matte")
+  - **Impact**: Poor user experience - users shouldn't need to know exact capitalization
+  - **Fix needed**:
+    - Normalize maker names to lowercase in `_by_maker` index
+    - Normalize finish names to lowercase in `_by_finish` index
+    - Update `_expand_maker_names()` to use case-insensitive synonym matching
+    - Update all lookup methods to normalize input before searching
+  - **Affects**: `find_by_maker()`, `find_by_finish()`, `nearest_filament()` with filters
+
 ## [5.6.1] - 2024-12-24
 
 ### Fixed

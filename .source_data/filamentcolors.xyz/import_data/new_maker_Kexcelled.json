@@ -1,0 +1,29 @@
+[
+  {
+    "id": "kexcelled-pla-wood-k5",
+    "maker": "Kexcelled",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wood K5",
+    "hex": "#5f4f47",
+    "td_value": null
+  },
+  {
+    "id": "kexcelled-pla-k5-basic-gray",
+    "maker": "Kexcelled",
+    "type": "PLA",
+    "finish": null,
+    "color": "K5 Basic Gray",
+    "hex": "#90918f",
+    "td_value": null
+  },
+  {
+    "id": "kexcelled-pla-k5m-tech-gray",
+    "maker": "Kexcelled",
+    "type": "PLA",
+    "finish": null,
+    "color": "K5M Tech Gray",
+    "hex": "#b0b1ae",
+    "td_value": null
+  }
+]
