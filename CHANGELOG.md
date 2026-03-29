@@ -10,6 +10,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
+## [6.1.1] - 2026-03-28
+
+### Fixed
+
+- **Stray merge conflict marker removed from CHANGELOG.md** — a leftover `>>>>>>>` git conflict marker
+  from a prior merge was present in the 6.1.0 release, causing a markdownlint MD032 warning
+- **Pyright type errors fixed in `tests/test_image_transform.py`** — narrowed `Image.getpixel()` return
+  type with `isinstance` assertions; cast `dict` value to `float` for `assertAlmostEqual` calls
+
 - **Case-insensitive maker and finish matching** - Currently maker names and finishes are case-sensitive in FilamentPalette
   - **Problem**: Searching for `--maker "Flashforge"` won't match database entry "FlashForge" (case mismatch)
   - **Problem**: Similar issue with finish matching (e.g., "matte" vs "Matte")
@@ -315,7 +324,6 @@ Available palettes:
 - Parse the first column (palette name) only
 - Or use `awk '{print $1}'` to extract just the palette name
 - Example: `color-tools color --palette list | grep -v "Available" | awk '{print $1}'`
->>>>>>> 5e54444742397c11610eebe8df97411e9e5891dc
 
 ## [5.6.1] - 2024-12-24
 

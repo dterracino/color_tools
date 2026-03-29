@@ -130,7 +130,9 @@ class TestTransformImage(unittest.TestCase):
 
         img_path = self._img(size=(4, 4), color=(100, 100, 100))
         result = transform_image(img_path, invert)
-        r, g, b = result.getpixel((0, 0))[:3]
+        pixel = result.getpixel((0, 0))
+        assert isinstance(pixel, tuple)
+        r, g, b = pixel[:3]
         self.assertEqual((r, g, b), (155, 155, 155))
 
     def test_saves_to_output_path(self):
@@ -160,6 +162,7 @@ class TestTransformImage(unittest.TestCase):
 
         result = transform_image(path, self._identity, preserve_alpha=True)
         pixel = result.getpixel((0, 0))
+        assert isinstance(pixel, tuple)
         self.assertEqual(len(pixel), 4, 'Expected RGBA output')
         self.assertEqual(pixel[3], 128, 'Alpha should be preserved')
 
@@ -466,7 +469,7 @@ class TestAnalyzeNoiseSigmaBranches(unittest.TestCase):
         with patch.object(mod.restoration, 'estimate_sigma', return_value=[5.0, 5.0, 5.0]):
             result = mod.analyze_noise_level(self._img())
         self.assertEqual(result['assessment'], 'noisy')
-        self.assertAlmostEqual(result['noise_sigma'], 5.0, places=3)
+        self.assertAlmostEqual(float(result['noise_sigma']), 5.0, places=3)
 
     def test_sigma_scalar_used_directly_and_noisy(self):
         """When estimate_sigma returns a scalar, it is converted directly; 'noisy' if > threshold."""
@@ -474,7 +477,7 @@ class TestAnalyzeNoiseSigmaBranches(unittest.TestCase):
         with patch.object(mod.restoration, 'estimate_sigma', return_value=5.0):
             result = mod.analyze_noise_level(self._img())
         self.assertEqual(result['assessment'], 'noisy')
-        self.assertAlmostEqual(result['noise_sigma'], 5.0, places=3)
+        self.assertAlmostEqual(float(result['noise_sigma']), 5.0, places=3)
 
     def test_low_sigma_gives_clean_assessment(self):
         """Sigma below threshold yields 'clean' assessment."""
