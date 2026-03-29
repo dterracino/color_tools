@@ -8,6 +8,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **`image/analysis.py` docstrings**: Clarified that `l_value_to_hueforge_layer` and
+  `redistribute_luminance` operate on **LCH L values** (perceptual lightness, 0–100), not HSL
+  lightness. The implementation was already correct; only the documentation was ambiguous.
+
 ### Planned
 
 ## [6.1.3] - 2026-03-29

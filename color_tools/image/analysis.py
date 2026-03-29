@@ -57,10 +57,11 @@ class ColorCluster:
 
 def l_value_to_hueforge_layer(l_value: float, total_layers: int = 27) -> int:
     """
-    Convert an L value (0-100) to a Hueforge layer number.
+    Convert an LCH L value (0-100) to a Hueforge layer number.
     
     Args:
-        l_value: Luminance value (0-100)
+        l_value: LCH L value (0-100), as returned by ``rgb_to_lch()``.
+            0 = black, 100 = white. This is perceptual lightness, not HSL lightness.
         total_layers: Total layers in Hueforge (default: 27)
     
     Returns:
@@ -283,11 +284,11 @@ def extract_unique_colors(image_path: str, n_colors: int = 10) -> List[Tuple[int
 
 def redistribute_luminance(colors: List[Tuple[int, int, int]]) -> List[ColorChange]:
     """
-    Redistribute luminance values evenly across a list of colors.
+    Redistribute LCH lightness values evenly across a list of colors.
     
     This function:
     1. Converts colors to LCH space
-    2. Sorts by L (luminance) value
+    2. Sorts by LCH L (lightness) value
     3. Redistributes L values evenly between 0 and 100
     4. Converts back to RGB
     5. Calculates Delta E for each change
