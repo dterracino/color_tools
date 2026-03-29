@@ -45,7 +45,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   *Export System*, *Image Processing*, *Command Line Interface*, *Optional Features*
 - **Docstring RST formatting fixed in newly-exposed modules** — several modules had docstring
   formatting that caused Sphinx parse warnings once included in the docs:
-  - `exporters/lospec_exporter.py`: converted bare indented blocks to RST literal blocks (`::`) 
+  - `exporters/lospec_exporter.py`: converted bare indented blocks to RST literal blocks (`::`)
   - `filament_palette.py` (`load_owned_filaments`): converted markdown fenced code block to RST `::` syntax
   - `image/basic.py`: removed developer TODO notes from module docstring (caused RST indentation errors)
   - `interactive_manager.py`: added `__all__` to prevent autodoc from pulling in imported
