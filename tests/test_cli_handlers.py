@@ -767,5 +767,329 @@ class TestHandleImageCommand(unittest.TestCase):
             os.unlink(tmp_path)
 
 
+# ---------------------------------------------------------------------------
+# Image handler — operation branches
+# ---------------------------------------------------------------------------
+
+def _image_handler_pil_available():
+    try:
+        from PIL import Image  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
+_PIL_FOR_HANDLER = _image_handler_pil_available()
+
+
+class TestHandleImageCommandOperations(unittest.TestCase):
+    """Tests for the image-processing operation branches of handle_image_command.
+
+    Each test creates a real tiny PNG so file-existence checks pass, then mocks
+    the expensive image-processing functions to keep tests fast.
+
+    NOTE: Successful operations return normally (no sys.exit); only error paths
+    call sys.exit(1).  The helper accordingly either expects SystemExit or not.
+    """
+
+    def setUp(self):
+        import os
+        import tempfile
+        if _PIL_FOR_HANDLER:
+            from PIL import Image as _PILImage
+            fd, path = tempfile.mkstemp(suffix='.png')
+            os.close(fd)
+            img = _PILImage.new('RGB', (4, 4), (100, 150, 200))
+            img.save(path)
+            self._img_path = path
+        else:
+            self._img_path = None
+        self._extra_files = []
+
+    def tearDown(self):
+        import gc
+        import os
+        gc.collect()  # Release any PIL file handles still open on Windows
+        if self._img_path and os.path.exists(self._img_path):
+            try:
+                os.remove(self._img_path)
+            except PermissionError:
+                pass  # Windows: PIL may still hold the handle
+        for p in self._extra_files:
+            try:
+                if os.path.exists(p):
+                    os.remove(p)
+            except PermissionError:
+                pass
+
+    def _run_expect_exit(self, args, expected_code=1):
+        """Run handler expecting a SystemExit; return (code, stdout, stderr)."""
+        from color_tools.cli_commands.handlers.image import handle_image_command
+        captured_out = io.StringIO()
+        captured_err = io.StringIO()
+        with self.assertRaises(SystemExit) as ctx:
+            with patch('sys.stdout', captured_out), patch('sys.stderr', captured_err):
+                handle_image_command(args)
+        self.assertEqual(ctx.exception.code, expected_code)
+        return captured_out.getvalue(), captured_err.getvalue()
+
+    def _run_expect_return(self, args):
+        """Run handler expecting normal return (no sys.exit); return stdout."""
+        from color_tools.cli_commands.handlers.image import handle_image_command
+        captured_out = io.StringIO()
+        with patch('sys.stdout', captured_out):
+            handle_image_command(args)
+        return captured_out.getvalue()
+
+    def _make_args(self, **kwargs):
+        defaults = dict(
+            file=None, output=None,
+            list_palettes=False,
+            redistribute_luminance=False,
+            cvd_simulate=None, cvd_correct=None,
+            quantize_palette=None, dither=False,
+            watermark=False,
+            watermark_text=None, watermark_image=None, watermark_svg=None,
+            watermark_color='255,255,255',
+            watermark_stroke_color=None,
+            watermark_stroke_width=0,
+            watermark_opacity=0.8,
+            watermark_position='bottom-right',
+            watermark_font_name=None,
+            watermark_font_file=None,
+            watermark_font_size=24,
+            watermark_scale=1.0,
+            watermark_margin=10,
+            convert=None,
+            quality=None,
+            lossy=False,
+            colors=8, metric='de2000',
+        )
+        defaults.update(kwargs)
+        return Namespace(**defaults)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_redistribute_luminance_prints_report(self):
+        """--redistribute-luminance runs, prints the report, and returns normally."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_colors = [(255, 0, 0), (0, 255, 0)]
+        with patch.object(img_mod, 'extract_unique_colors', return_value=mock_colors), \
+             patch.object(img_mod, 'redistribute_luminance', return_value=[]), \
+             patch.object(img_mod, 'format_color_change_report', return_value='THE REPORT'):
+            args = self._make_args(file=self._img_path, redistribute_luminance=True)
+            out = self._run_expect_return(args)
+        self.assertIn('THE REPORT', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_cvd_simulate_no_output_saves_default(self):
+        """--cvd-simulate without --output saves to a default filename."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_image = MagicMock()
+        with patch.object(img_mod, 'simulate_cvd_image', return_value=mock_image):
+            args = self._make_args(file=self._img_path, cvd_simulate='protanopia')
+            out = self._run_expect_return(args)
+        mock_image.save.assert_called_once()
+        self.assertIn('protanopia_sim', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_cvd_simulate_with_output_does_not_call_save(self):
+        """--cvd-simulate with explicit --output passes output_path to function."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_image = MagicMock()
+        with patch.object(img_mod, 'simulate_cvd_image', return_value=mock_image):
+            args = self._make_args(
+                file=self._img_path, cvd_simulate='deuteranopia',
+                output='/tmp/out_sim.png',
+            )
+            out = self._run_expect_return(args)
+        mock_image.save.assert_not_called()
+        self.assertIn('out_sim.png', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_cvd_correct_saves_default(self):
+        """--cvd-correct saves to default filename."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_image = MagicMock()
+        with patch.object(img_mod, 'correct_cvd_image', return_value=mock_image):
+            args = self._make_args(file=self._img_path, cvd_correct='tritanopia')
+            out = self._run_expect_return(args)
+        mock_image.save.assert_called_once()
+        self.assertIn('tritanopia_corrected', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_quantize_palette_saves_default(self):
+        """--quantize-palette saves to default output."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_palette = MagicMock()
+        mock_palette.records = [MagicMock()] * 4
+        mock_image = MagicMock()
+        with patch.object(img_mod, 'load_palette', return_value=mock_palette), \
+             patch.object(img_mod, 'quantize_image_to_palette', return_value=mock_image):
+            args = self._make_args(file=self._img_path, quantize_palette='cga4')
+            self._run_expect_return(args)
+        mock_image.save.assert_called_once()
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_quantize_palette_with_explicit_output(self):
+        """--quantize-palette with --output does not call save() manually."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_palette = MagicMock()
+        mock_palette.records = [MagicMock()] * 4
+        mock_image = MagicMock()
+        with patch.object(img_mod, 'load_palette', return_value=mock_palette), \
+             patch.object(img_mod, 'quantize_image_to_palette', return_value=mock_image):
+            args = self._make_args(
+                file=self._img_path, quantize_palette='cga4',
+                output='/tmp/out_quant.png',
+            )
+            out = self._run_expect_return(args)
+        mock_image.save.assert_not_called()
+        self.assertIn('out_quant.png', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_no_source_exits_1(self):
+        """--watermark without any source (text/image/svg) exits 1."""
+        args = self._make_args(file=self._img_path, watermark=True)
+        _, err = self._run_expect_exit(args, expected_code=1)
+        self.assertIn('Watermark requires', err)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_multiple_sources_exits_1(self):
+        """--watermark with both --watermark-text and --watermark-image exits 1."""
+        args = self._make_args(
+            file=self._img_path, watermark=True,
+            watermark_text='hello', watermark_image='/some/image.png',
+        )
+        _, err = self._run_expect_exit(args, expected_code=1)
+        self.assertIn('Only one watermark source', err)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_text_saves_default(self):
+        """--watermark-text adds watermark and returns normally."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_watermarked = MagicMock()
+        mock_watermarked.mode = 'RGB'
+        with patch.object(img_mod, 'add_text_watermark', return_value=mock_watermarked):
+            args = self._make_args(
+                file=self._img_path, watermark=True,
+                watermark_text='hello world',
+            )
+            out = self._run_expect_return(args)
+        mock_watermarked.save.assert_called_once()
+        self.assertIn('watermarked', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_image_saves_default(self):
+        """--watermark-image adds watermark and returns normally."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_watermarked = MagicMock()
+        mock_watermarked.mode = 'RGB'
+        with patch.object(img_mod, 'add_image_watermark', return_value=mock_watermarked):
+            args = self._make_args(
+                file=self._img_path, watermark=True,
+                watermark_image='/some/wm.png',
+            )
+            out = self._run_expect_return(args)
+        mock_watermarked.save.assert_called_once()
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_convert_returns_normally(self):
+        """--convert jpg calls convert_image and prints result."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'convert_image', return_value='/tmp/out.jpg'):
+            args = self._make_args(file=self._img_path, convert='jpg')
+            out = self._run_expect_return(args)
+        self.assertIn('out.jpg', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_general_exception_exits_1(self):
+        """An unexpected exception in the operation body exits 1 with message."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'simulate_cvd_image', side_effect=RuntimeError('boom')):
+            args = self._make_args(file=self._img_path, cvd_simulate='protanopia')
+            _, err = self._run_expect_exit(args, expected_code=1)
+        self.assertIn('boom', err)
+
+    # --- list_palettes branch coverage ---
+
+    def test_list_palettes_with_error_entry_shows_error_loading(self):
+        """color_count < 0 shows '(error loading)' text."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'get_available_palettes',
+                          return_value=[('badpalette', -1)]):
+            args = self._make_args(list_palettes=True)
+            out, _ = self._run_expect_exit(args, expected_code=0)
+        self.assertIn('error loading', out)
+
+    def test_list_palettes_empty_shows_no_palettes_found(self):
+        """Empty palette list prints 'No palettes found'."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'get_available_palettes', return_value=[]):
+            args = self._make_args(list_palettes=True)
+            out, _ = self._run_expect_exit(args, expected_code=0)
+        self.assertIn('No palettes found', out)
+
+    # --- watermark additional path coverage ---
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_invalid_color_exits_1(self):
+        """An invalid --watermark-color value causes sys.exit(1)."""
+        args = self._make_args(
+            file=self._img_path, watermark=True,
+            watermark_text='hello', watermark_color='not_a_color',
+        )
+        _, err = self._run_expect_exit(args, expected_code=1)
+        self.assertIn('watermark-color', err)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_svg_succeeds(self):
+        """--watermark-svg path returns normally when add_svg_watermark succeeds."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        mock_wm = MagicMock()
+        mock_wm.mode = 'RGB'
+        with patch.object(img_mod, 'add_svg_watermark', return_value=mock_wm):
+            args = self._make_args(
+                file=self._img_path, watermark=True,
+                watermark_svg='/some/test.svg',
+            )
+            out = self._run_expect_return(args)
+        mock_wm.save.assert_called_once()
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_svg_import_error_exits_1(self):
+        """ImportError from add_svg_watermark exits 1."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'add_svg_watermark',
+                          side_effect=ImportError('cairosvg not installed')):
+            args = self._make_args(
+                file=self._img_path, watermark=True,
+                watermark_svg='/some/test.svg',
+            )
+            _, err = self._run_expect_exit(args, expected_code=1)
+        self.assertIn('cairosvg', err)
+
+    # --- convert additional path coverage ---
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_convert_webp_defaults_to_lossless(self):
+        """--convert webp without --lossy uses lossless=True."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'convert_image', return_value='/tmp/out.webp') as mock_cv:
+            args = self._make_args(file=self._img_path, convert='webp', lossy=False)
+            self._run_expect_return(args)
+        call_kwargs = mock_cv.call_args.kwargs
+        self.assertTrue(call_kwargs.get('lossless'))
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_convert_import_error_exits_1(self):
+        """ImportError from convert_image exits 1 with HEIC hint."""
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'convert_image',
+                          side_effect=ImportError('pillow-heif required')):
+            args = self._make_args(file=self._img_path, convert='heic')
+            _, err = self._run_expect_exit(args, expected_code=1)
+        self.assertIn('pillow-heif', err)
+
+
 if __name__ == '__main__':
     unittest.main()

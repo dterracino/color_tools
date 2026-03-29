@@ -8,18 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### ⚠️ CRITICAL FIXES NEEDED
+### Planned
 
 - **Case-insensitive maker and finish matching** - Currently maker names and finishes are case-sensitive in FilamentPalette
   - **Problem**: Searching for `--maker "Flashforge"` won't match database entry "FlashForge" (case mismatch)
   - **Problem**: Similar issue with finish matching (e.g., "matte" vs "Matte")
-  - **Impact**: Poor user experience - users shouldn't need to know exact capitalization
-  - **Fix needed**:
-    - Normalize maker names to lowercase in `_by_maker` index
-    - Normalize finish names to lowercase in `_by_finish` index
-    - Update `_expand_maker_names()` to use case-insensitive synonym matching
-    - Update all lookup methods to normalize input before searching
-  - **Affects**: `find_by_maker()`, `find_by_finish()`, `nearest_filament()` with filters
+  - **Fix planned**: Normalize maker and finish names to lowercase during index construction and input lookups
+
+## [6.1.0] - 2026-03-28
 
 ### Added
 
@@ -216,6 +212,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Error handling tests (unsupported formats, type mismatches)
   - Total export tests: 32 (increased from 18, 78% increase)
   - All tests passing with 100% backward compatibility
+
+- **Comprehensive CLI and image test coverage** - Significantly expanded test suite for CLI commands and image processing
+  - Added `tests/test_cli_utils.py`, `tests/test_exporters_palette_formats.py`, `tests/test_cli_handlers.py`, `tests/test_cli_reporting.py`, `tests/test_cli_main.py`
+  - Added `tests/test_image_transform.py` covering `transform_image()`, `simulate_cvd_image()`, `correct_cvd_image()`, `quantize_image_to_palette()`, dependency error paths, and noise level sigma branches
+  - Expanded `TestHandleImageCommandOperations` class covering all image handler operation branches
+  - **Coverage improvements**: `handlers/image.py` 27% → 84%, `image/basic.py` 42% → 94%
+  - Total tests: 846 (increased from 502)
 
 ### Changed
 
