@@ -3,5 +3,6 @@
 #   pip install color-match-tools[fuzzy]       # Enhanced fuzzy matching
 #   pip install color-match-tools[image]       # Image processing
 #   pip install color-match-tools[interactive] # Interactive filament library manager
-#   pip install color-match-tools[dev]         # Development tools
-#   pip install color-match-tools[all]         # Everything
+#   pip install color-match-tools[all]         # All user-facing features (fuzzy + image + interactive)
+#   pip install color-match-tools[dev]         # Development tools (pyright, build, twine, coverage)
+#   pip install color-match-tools[docs]        # Documentation build tools (sphinx, etc.)

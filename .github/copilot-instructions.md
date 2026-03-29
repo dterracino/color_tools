@@ -147,12 +147,7 @@ image/              # Image processing (optional [image] extra)
   __init__.py       # Public API exports
   README.md         # Image module documentation
   analysis.py       # K-means clustering, luminance redistribution
-mcp/                # MCP server (optional [mcp] extra)
-  __init__.py       # Public API exports  
-  __main__.py       # Entry point: python -m color_tools.mcp
-  README.md         # MCP server documentation
-  server.py         # MCP server implementation (planned)
-  tools.py          # Tool definitions (planned)
+mcp/                # MCP server (planned, not yet implemented)
 ```
 
 ### Optional Dependencies
@@ -160,16 +155,14 @@ The project has **zero required external dependencies** (pure Python stdlib).
 
 **Optional extras** for additional functionality:
 - `[image]` - Image processing (requires Pillow >= 10.0.0)
-- `[mcp]` - MCP server for LLM integration (requires mcp >= 1.0.0)
 - `[interactive]` - Interactive filament library manager TUI (requires prompt_toolkit >= 3.0.0)
-- `[all]` - All optional features
+- `[all]` - All optional user-facing features (fuzzy + image + interactive)
 
 **Installation:**
 ```bash
 pip install color-match-tools              # Base only
 pip install color-match-tools[image]       # + Image processing
 pip install color-match-tools[interactive] # + Interactive TUI
-pip install color-match-tools[mcp]         # + MCP server
 pip install color-match-tools[all]         # Everything
 ```
 
@@ -179,11 +172,6 @@ pip install color-match-tools[all]         # Everything
   - Access via Python: `from color_tools.image import extract_color_clusters`
   - See `image/README.md` for full documentation
   
-- `mcp/` - Runnable server module
-  - Run with: `python -m color_tools.mcp`
-  - Access via Python: `from color_tools.mcp import run_server`
-  - See `mcp/README.md` for full documentation
-
 - `exporters/` - Plugin-based exporter system (v6.0.0+)
   - Access via: `from color_tools.exporters import get_exporter`
   - Base classes in `base.py` for creating new exporters

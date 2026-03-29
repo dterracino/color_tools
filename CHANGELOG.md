@@ -13,6 +13,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`image/analysis.py` docstrings**: Clarified that `l_value_to_hueforge_layer` and
   `redistribute_luminance` operate on **LCH L values** (perceptual lightness, 0–100), not HSL
   lightness. The implementation was already correct; only the documentation was ambiguous.
+- **`pyproject.toml`**: `[all]` extra now uses self-referencing sub-extras
+  (`color-match-tools[fuzzy,image,interactive]`) instead of a manually duplicated flat list,
+  preventing silent drift when individual extras are updated. Also excludes `[docs]` and `[dev]`
+  from `[all]` since those are not user-facing.
+- **`pyproject.toml`**: Added `coverage>=7.0.0` to `[dev]` extra to match `requirements-dev.txt`.
+- **`pyproject.toml`** / **`copilot-instructions.md`**: Removed `[mcp]` extra — MCP server is
+  planned but not yet implemented, so advertising it as an installable extra was incorrect.
+- **`requirements-*.txt`**: All requirements files now delegate to `pyproject.toml` extras via
+  `-e .[extra]` instead of duplicating package lists. `pyproject.toml` is the single source of
+  truth; the `.txt` files are just convenient shortcuts for `pip install -r`.
+- **`pyproject.toml [image]`**: Added missing `cairosvg>=2.7.0` — it was in
+  `requirements-image.txt` and actively used by `image/watermark.py` but absent from the extras
+  definition, meaning `pip install color-match-tools[image]` would silently omit it.
+- **`pyproject.toml [dev]`**: Added `coverage>=7.0.0` to match prior `requirements-dev.txt`.
 
 ### Planned
 
