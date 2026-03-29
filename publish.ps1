@@ -80,7 +80,7 @@ if (-not $SkipClean) {
 # Step 2: Run tests
 if (-not $SkipTests) {
     Write-Step "Running unit tests"
-    python -m unittest discover -s tests -p "test_*.py"
+    python -m unittest discover -b -s tests -p "test_*.py"
     if ($LASTEXITCODE -eq 0) {
         Write-Success "All tests passed"
     } else {
