@@ -43,7 +43,7 @@ def get_rgb_from_args(args: argparse.Namespace) -> tuple[int, int, int]:
     Raises:
         SystemExit: If neither --value nor --hex is provided, or if hex is invalid
     """
-    from .conversions import hex_to_rgb
+    from ..conversions import hex_to_rgb
     
     # Check mutual exclusivity first
     validate_color_input_exclusivity(args)
