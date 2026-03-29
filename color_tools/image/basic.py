@@ -695,9 +695,8 @@ def transform_image(
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
     
-    original = PIL.Image.open(image_path)
-    
-    # Handle different image modes
+    with PIL.Image.open(image_path) as _f:
+        original = _f.copy()
     has_alpha = original.mode in ('RGBA', 'LA') or 'transparency' in original.info
     
     if original.mode == 'P':  # Palette mode
@@ -899,7 +898,8 @@ def quantize_image_to_palette(
         raise FileNotFoundError(f"Image not found: {image_path}")
     
     # Load image
-    original = PIL.Image.open(image_path).convert('RGB')
+    with PIL.Image.open(image_path) as _src:
+        original = _src.convert('RGB')
     pixels_rgb: list[tuple[int, int, int]] = list(original.getdata())  # type: ignore[arg-type]
     
     # Get unique colors from source image

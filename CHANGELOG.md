@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
+## [6.1.3] - 2026-03-29
+
+### Fixed
+
+- **`ResourceWarning` unclosed PIL file handles** — three locations where `PIL.Image.open()` was
+  called without a context manager left file handles open on Windows, generating `ResourceWarning`
+  during tests:
+  - `cli_commands/handlers/image.py`: watermark handler now uses `with Image.open(...) as _f: img = _f.copy()`
+  - `image/basic.py` (`apply_pixel_transform`): replaced bare `PIL.Image.open()` with context manager + `.copy()`
+  - `image/basic.py` (`quantize_image_to_palette`): replaced chained `.open().convert()` with context manager
+
 ## [6.1.2] - 2026-03-29
 
 ### Fixed

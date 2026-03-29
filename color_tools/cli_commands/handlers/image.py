@@ -187,7 +187,8 @@ def handle_image_command(args):
             
             # Load input image
             print(f"Loading image: {image_path.name}...")
-            img = Image.open(str(image_path))
+            with Image.open(str(image_path)) as _f:
+                img = _f.copy()
             
             # Apply appropriate watermark type
             if args.watermark_text:
