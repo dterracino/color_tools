@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 import unittest
 from collections import Counter
-from color_tools.palette import FilamentRecord, load_filaments
+from color_tools.filament_palette import FilamentRecord, load_filaments
 
 
 class TestFilamentDatabaseIntegrity(unittest.TestCase):

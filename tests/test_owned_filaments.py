@@ -5,7 +5,7 @@ import tempfile
 import json
 from pathlib import Path
 
-from color_tools.palette import (
+from color_tools.filament_palette import (
     FilamentPalette,
     FilamentRecord,
     load_owned_filaments,

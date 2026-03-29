@@ -177,7 +177,8 @@ class ColorConstants:
     # Updated 2024-12-24: Added 4 new palette hashes (apple2, macintosh, gameboy-color, tandy16), compacted format
     # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
     # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
-    _EXPECTED_HASH = "81044b98568e4a9bcc948082bc451edc049df728f08437deffe625a81fd3108d"
+    # Updated 2026-03-28: Updated MAKER_SYNONYMS_JSON_HASH after merge (BBL, BambuLab synonyms added)
+    _EXPECTED_HASH = "96d902325fc913a94c4b063c189d0966193af7f1a06bfdaf5f9be6cc717fcd1a"
     # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
     
     # ========================================================================
@@ -190,7 +191,7 @@ class ColorConstants:
     
     COLORS_JSON_HASH = "dc8ce5769a2186008af540c03159d3f24a72e5effc9ce5b611c8b4374da19ffd"
     FILAMENTS_JSON_HASH = "8e3e178cf824b7e1bcf34b67bfa929e462964334c79069073806a9a959f3536e"
-    MAKER_SYNONYMS_JSON_HASH = "27488f9dfa37d661a0d5c0f73d1680aea22ab909f1c94fe1dd576b7902245c81"
+    MAKER_SYNONYMS_JSON_HASH = "07fae8beb2af3fafce3c607aaa9b7d3e3056c6ca5a542ea481199c8994b6aa23"  # Updated 2026-03-28: Merged remote changes (BBL, BambuLab synonyms added)
     
     # Palette file hashes
     APPLE2_PALETTE_HASH = "d5374e50f76312799c031a8f64fe9537cac2d903c59dbc09f0760e8f5bb581fe"

@@ -14,9 +14,14 @@ import os
 import logging
 
 from color_tools.palette import (
-    Palette, FilamentPalette, ColorRecord, FilamentRecord,
-    _parse_color_records, _parse_filament_records,
-    load_colors, load_filaments, load_maker_synonyms
+    Palette, ColorRecord,
+    _parse_color_records,
+    load_colors,
+)
+from color_tools.filament_palette import (
+    FilamentPalette, FilamentRecord,
+    _parse_filament_records,
+    load_filaments, load_maker_synonyms
 )
 
 
@@ -451,7 +456,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
                 log_stream.append(self.format(record))
         
         # Add handler to capture logs
-        logger = logging.getLogger("color_tools.palette")
+        logger = logging.getLogger("color_tools.filament_palette")
         handler = ListHandler()
         logger.addHandler(handler)
         logger.setLevel(logging.INFO)
@@ -566,7 +571,7 @@ class TestOverrideReporting(TestUserOverrideSystem):
         
         self.assertIn("Bambu Lab", synonym_overrides)
         self.assertEqual(synonym_overrides["Bambu Lab"]["type"], "replaced")
-        self.assertEqual(synonym_overrides["Bambu Lab"]["old"], ["Bambu", "BLL"])
+        self.assertEqual(synonym_overrides["Bambu Lab"]["old"], ["BBL", "Bambu", "BambuLab"])
         self.assertEqual(synonym_overrides["Bambu Lab"]["new"], ["CustomBambu"])
     
     def test_no_overrides_empty_report(self):

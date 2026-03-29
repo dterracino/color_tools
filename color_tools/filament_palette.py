@@ -118,6 +118,11 @@ class FilamentRecord:
     # Derived color spaces (computed in __post_init__)
     rgb: Tuple[int, int, int] = field(init=False)
     lab: Tuple[float, float, float] = field(init=False)
+    
+    def __str__(self) -> str:
+        """Return a human-readable string representation of the filament."""
+        finish_str = f" {self.finish}" if self.finish else ""
+        return f"{self.maker} {self.type}{finish_str} - {self.color} ({self.hex})"
 
 
 def _parse_filament_records(data: list, source_file: str = "JSON data") -> List[FilamentRecord]:

@@ -25,10 +25,12 @@ from color_tools.export import (
     EXPORT_FORMATS,
 )
 from color_tools.palette import (
-    FilamentRecord,
     ColorRecord,
-    FilamentPalette,
     Palette,
+)
+from color_tools.filament_palette import (
+    FilamentRecord,
+    FilamentPalette,
 )
 
 

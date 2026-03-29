@@ -11,11 +11,13 @@ if str(parent_dir) not in sys.path:
 
 from color_tools.palette import (
     Palette,
-    FilamentPalette,
     ColorRecord,
-    FilamentRecord,
     load_palette,
     _parse_color_records,
+)
+from color_tools.filament_palette import (
+    FilamentPalette,
+    FilamentRecord,
 )
 
 
@@ -326,11 +328,12 @@ class TestFilamentPalette(unittest.TestCase):
         palette = FilamentPalette.load_default()
         makers_list = palette.makers
         if makers_list:
-            # Find nearest PLA from first maker
+            # Find nearest PLA from first maker (search all filaments, not just owned)
             nearest, distance = palette.nearest_filament(
                 (180, 100, 200),
                 maker=makers_list[0],
-                type_name="PLA"
+                type_name="PLA",
+                owned=False  # Search all filaments
             )
             if nearest:  # Only test if match found
                 self.assertEqual(nearest.maker, makers_list[0])

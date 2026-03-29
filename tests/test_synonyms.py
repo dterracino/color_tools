@@ -9,7 +9,7 @@ parent_dir = Path(__file__).parent.parent
 sys.path.insert(0, str(parent_dir))
 
 # Now import from the package
-from color_tools.palette import FilamentPalette
+from color_tools.filament_palette import FilamentPalette
 
 # Test synonym expansion
 palette = FilamentPalette.load_default()
