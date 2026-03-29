@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 6.1.3 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+**Version:** 6.1.4 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
 ## 📚 Documentation
 

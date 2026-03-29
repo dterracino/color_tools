@@ -8,6 +8,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Planned
+
+## [6.1.4] - 2026-03-29
+
 ### Changed
 
 - **`image/analysis.py` docstrings**: Clarified that `l_value_to_hueforge_layer` and
@@ -27,8 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `requirements-image.txt` and actively used by `image/watermark.py` but absent from the extras
   definition, meaning `pip install color-match-tools[image]` would silently omit it.
 - **`pyproject.toml [dev]`**: Added `coverage>=7.0.0` to match prior `requirements-dev.txt`.
-
-### Planned
 
 ## [6.1.3] - 2026-03-29
 

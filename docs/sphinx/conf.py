@@ -21,7 +21,7 @@ except ImportError as e:
 project = 'Color Tools'
 copyright = '2024-2026, David Terracino'
 author = 'David Terracino'
-release = '6.1.1'
+release = '6.1.4'
 
 # -- General configuration ---------------------------------------------------
 extensions = [
