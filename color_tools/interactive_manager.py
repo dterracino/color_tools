@@ -32,6 +32,12 @@ try:
 except ImportError:
     PROMPT_TOOLKIT_AVAILABLE = False
 
+__all__ = [
+    'run_interactive_manager',
+    'check_prompt_toolkit',
+    'show_install_message',
+]
+
 
 def check_prompt_toolkit() -> bool:
     """

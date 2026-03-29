@@ -10,6 +10,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Planned
 
+## [6.1.2] - 2026-03-29
+
+### Fixed
+
+- **`export.py` incorrect `FilamentRecord` import** — `FilamentRecord` was incorrectly imported from
+  `color_tools.palette` under `TYPE_CHECKING`; it resides in `color_tools.filament_palette`. This caused
+  Sphinx to emit `Cannot resolve forward reference` warnings for all functions with `FilamentRecord`
+  type annotations (`export_filaments`, `export_filaments_autoforge`, `export_filaments_csv`,
+  `export_filaments_json`)
+- **`exporters/base.py` same `FilamentRecord` wrong import** — identical fix applied to the exporter
+  base class which had the same incorrect import
+- **Sphinx docs: duplicate object description warnings eliminated** — Frozen dataclass attribute fields
+  (`ColorRecord`, `ColorValidationRecord`, `ColorCluster`, `ColorChange`) were documented twice because
+  Napoleon's Attributes section and autodoc both registered the same `py:attribute` domain entries.
+  Fixed by setting `napoleon_use_ivar = True` in `docs/sphinx/conf.py` so Napoleon emits `:ivar:` field
+  lists instead of standalone attribute directives, preventing the collision
+- **Sphinx docs: stale metadata updated** — `docs/sphinx/conf.py` had `release = '5.2.0'` (now `6.1.2`)
+  and `copyright = '2024, ...'` (now `2024-2026, ...`); also removed unnecessary `'special-members':
+  '__init__'` from `autodoc_default_options` and set `always_document_param_types = False` to avoid
+  redundant `__init__` parameter documentation on auto-generated dataclass constructors
+- **Sphinx docs: 27 modules missing from API docs** — `docs/sphinx/index.rst` previously listed only
+  12 top-level modules; the following were not documented at all:
+  - `color_tools.filament_palette`
+  - `color_tools.exporters` + all 8 exporter submodules (`base`, `csv_exporter`, `json_exporter`,
+    `gpl_exporter`, `hex_exporter`, `jascpal_exporter`, `autoforge_exporter`, `lospec_exporter`,
+    `paintnet_exporter`)
+  - `color_tools.image.analysis`, `image.basic`, `image.conversion`, `image.watermark`
+  - `color_tools.cli`, `cli_commands`, `cli_commands.utils`, `cli_commands.reporting`,
+    `cli_commands.handlers` + all 7 handler modules
+  - `color_tools.interactive_manager`
+  
+  Index now organizes all modules into labeled sections: *Color Science*, *Color & Filament Data*,
+  *Export System*, *Image Processing*, *Command Line Interface*, *Optional Features*
+- **Docstring RST formatting fixed in newly-exposed modules** — several modules had docstring
+  formatting that caused Sphinx parse warnings once included in the docs:
+  - `exporters/lospec_exporter.py`: converted bare indented blocks to RST literal blocks (`::`) 
+  - `filament_palette.py` (`load_owned_filaments`): converted markdown fenced code block to RST `::` syntax
+  - `image/basic.py`: removed developer TODO notes from module docstring (caused RST indentation errors)
+  - `interactive_manager.py`: added `__all__` to prevent autodoc from pulling in imported
+    `prompt_toolkit` classes and generating unresolvable forward reference warnings
+
 ## [6.1.1] - 2026-03-28
 
 ### Fixed

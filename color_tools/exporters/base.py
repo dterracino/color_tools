@@ -39,7 +39,8 @@ from pathlib import Path
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from color_tools.palette import ColorRecord, FilamentRecord
+    from color_tools.palette import ColorRecord
+    from color_tools.filament_palette import FilamentRecord
 
 
 @dataclass(frozen=True)

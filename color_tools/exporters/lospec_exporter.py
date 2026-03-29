@@ -26,14 +26,16 @@ class LospecExporter(PaletteExporter):
     Exports colors in the JSON format used by Lospec.com palette list.
     Simple format with palette name, author, and hex color codes.
     
-    Format structure:
+    Format structure::
+
         {
           "name": "Palette Name",
           "author": "Author Name",
           "colors": ["000000", "1d2b53", "7e2553", ...]
         }
-    
-    Example output:
+
+    Example output::
+
         {
           "name": "My Palette",
           "author": "",

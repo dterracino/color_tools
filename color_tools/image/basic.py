@@ -7,16 +7,6 @@ separate from the HueForge-specific tools in analysis.py.
 Functions in this module require Pillow and numpy:
     pip install color-match-tools[image]
 
-TODO - Dominant Color Enhancements:
-1. Refactor get_dominant_color() -> get_dominant_colors(n_colors=5) 
-   - Return list of N most dominant colors in frequency order
-   - get_dominant_color() becomes wrapper for get_dominant_colors(1)[0]
-2. Add accent color detection for perceptual dominance:
-   - Problem: Images with gray background + colorful accent (accent is perceptually 
-     dominant but statistically minor)
-   - Solutions: Saturation weighting, exclude neutrals, dual analysis
-   - Proposed: get_accent_colors() function with saturation filtering
-
 Public API:
 -----------
     count_unique_colors - Count total unique RGB colors in an image

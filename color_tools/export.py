@@ -37,7 +37,8 @@ from color_tools.exporters import (
 )
 
 if TYPE_CHECKING:
-    from color_tools.palette import ColorRecord, FilamentRecord
+    from color_tools.palette import ColorRecord
+    from color_tools.filament_palette import FilamentRecord
 
 
 def list_export_formats(data_type: str = 'both') -> dict[str, str]:

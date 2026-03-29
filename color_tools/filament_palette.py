@@ -357,12 +357,11 @@ def load_owned_filaments(json_path: Path | str | None = None) -> Set[str]:
     Loads a list of filament IDs that the user owns from owned-filaments.json.
     This file is optional - if it doesn't exist, an empty set is returned.
     
-    The JSON format is:
-    ```json
-    {
-        "owned_filaments": ["id1", "id2", "id3"]
-    }
-    ```
+    The JSON format is::
+
+        {
+            "owned_filaments": ["id1", "id2", "id3"]
+        }
     
     Args:
         json_path: Path to directory containing owned-filaments.json, or path to

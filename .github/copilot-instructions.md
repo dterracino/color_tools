@@ -658,10 +658,12 @@ When adding any new feature to the project, follow this comprehensive checklist:
 - [ ] **VERIFY:** Check all relative links in README.md - PyPI needs full GitHub URLs
   - Bad: Relative links like `CHANGELOG.md` ❌
   - Good: Full URLs like `https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md` ✅
-- [ ] Update `CHANGELOG.md` in "Unreleased" section:
+- [ ] **ALWAYS update `CHANGELOG.md`** — every code change, no matter how small, must be recorded:
+  - Add entries to the `[Unreleased]` section immediately after making changes
   - Use appropriate category: Added, Changed, Deprecated, Removed, Fixed, Security
   - Include clear description of what changed and why
   - Add code examples for significant features
+  - **Do NOT wait until versioning or release to update the changelog**
 - [ ] Update docstrings in relevant modules
 - [ ] Update this copilot-instructions.md if feature affects development practices
 
@@ -698,6 +700,9 @@ When adding any new feature to the project, follow this comprehensive checklist:
 - [ ] Run all unit tests: `python -m unittest discover tests`
 - [ ] Test CLI commands manually with new feature
 - [ ] Verify package can be imported: `python -c "import color_tools"`
+- [ ] **Check the Problems panel is empty** — use `get_errors` tool or check VS Code Problems
+  panel and resolve ALL errors and warnings before proceeding. Do not version or commit with
+  any outstanding errors.
 - [ ] Check for any Pyright errors: Review pyrightconfig.json settings
 - [ ] Test as library, CLI tool, and installed command if possible
 - [ ] Review changes for backward compatibility

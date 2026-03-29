@@ -19,9 +19,9 @@ except ImportError as e:
 
 # -- Project information -----------------------------------------------------
 project = 'Color Tools'
-copyright = '2024, David Terracino'
+copyright = '2024-2026, David Terracino'
 author = 'David Terracino'
-release = '5.2.0'
+release = '6.1.1'
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -62,7 +62,7 @@ napoleon_include_special_with_doc = True
 napoleon_use_admonition_for_examples = False
 napoleon_use_admonition_for_notes = False
 napoleon_use_admonition_for_references = False
-napoleon_use_ivar = False
+napoleon_use_ivar = True
 napoleon_use_param = True
 napoleon_use_rtype = True
 napoleon_preprocess_types = False
@@ -73,7 +73,6 @@ napoleon_attr_annotations = True
 autodoc_default_options = {
     'members': True,
     'member-order': 'bysource',
-    'special-members': '__init__',
     'undoc-members': True,
     'exclude-members': '__weakref__'
 }
@@ -92,7 +91,7 @@ intersphinx_mapping = {
 
 # Type hints configuration
 typehints_fully_qualified = False
-always_document_param_types = True
+always_document_param_types = False
 
 # MyST parser configuration (for Markdown files)
 myst_enable_extensions = [

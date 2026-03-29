@@ -73,25 +73,93 @@ See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/U
 Core API Reference
 ------------------
 
-All Modules
-~~~~~~~~~~~
+Color Science
+~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api
    :template: module.rst
-   
+
    color_tools.conversions
    color_tools.distance
-   color_tools.palette
    color_tools.gamut
-   color_tools.validation
-   color_tools.naming
-   color_tools.color_deficiency
-   color_tools.export
-   color_tools.config
    color_tools.constants
    color_tools.matrices
+   color_tools.config
+
+Color & Filament Data
+~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.palette
+   color_tools.filament_palette
+   color_tools.naming
+   color_tools.validation
+   color_tools.color_deficiency
+
+Export System
+~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.export
+   color_tools.exporters
+   color_tools.exporters.base
+   color_tools.exporters.csv_exporter
+   color_tools.exporters.json_exporter
+   color_tools.exporters.gpl_exporter
+   color_tools.exporters.hex_exporter
+   color_tools.exporters.jascpal_exporter
+   color_tools.exporters.autoforge_exporter
+   color_tools.exporters.lospec_exporter
+   color_tools.exporters.paintnet_exporter
+
+Image Processing *(requires* ``[image]`` *extra)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
    color_tools.image
+   color_tools.image.analysis
+   color_tools.image.basic
+   color_tools.image.conversion
+   color_tools.image.watermark
+
+Command Line Interface
+~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.cli
+   color_tools.cli_commands
+   color_tools.cli_commands.utils
+   color_tools.cli_commands.reporting
+   color_tools.cli_commands.handlers
+   color_tools.cli_commands.handlers.color
+   color_tools.cli_commands.handlers.convert
+   color_tools.cli_commands.handlers.cvd
+   color_tools.cli_commands.handlers.filament
+   color_tools.cli_commands.handlers.image
+   color_tools.cli_commands.handlers.name
+   color_tools.cli_commands.handlers.validate
+
+Optional Features
+~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.interactive_manager
 
 Indices and tables
 ==================
