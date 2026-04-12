@@ -98,6 +98,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   functions require normalized float32 numpy arrays if called directly.
 - **`NEXTSTEPS.md`** — New root-level file. The `### Planned` section that had been living inside
   the 6.2.0 CHANGELOG entry was moved here; planned items are not part of a release record.
+- **`docs/sphinx/conf.py`** — Added `html_theme_options`: GA4 analytics (`G-Y7FDTT39XW`),
+  `collapse_navigation: False` (sidebar no longer collapses when navigating to submodule pages),
+  and explicit `navigation_depth: 4`.
 - **`matrices.py`** — All 6 matrix constants (`PROTANOPIA_SIMULATION`, `DEUTERANOPIA_SIMULATION`,
   `TRITANOPIA_SIMULATION`, `PROTANOPIA_CORRECTION`, `DEUTERANOPIA_CORRECTION`,
   `TRITANOPIA_CORRECTION`) now appear in the Sphinx docs. Previously used `#` comments which
