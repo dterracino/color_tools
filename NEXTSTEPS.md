@@ -5,6 +5,25 @@ candidates for future releases, not commitments.
 
 ---
 
+## HyAB — Phase 4: `Palette` / `FilamentPalette` integration (deferred)
+
+The `hyab` metric is already supported by:
+
+- `delta_e_hyab()` in `distance.py`
+- `--metric hyab` in all three CLI commands
+- `Palette.nearest_color()` / `nearest_colors()` in `palette.py`
+- `FilamentPalette.nearest_filament()` / `nearest_filaments()` in `filament_palette.py`
+
+**Deferred**: Direct `hyab` support in palette *constructor-level* helpers (e.g. a dedicated
+`nearest_color_hyab()` convenience wrapper, or `hyab_weight` parameter on `Palette`) was
+considered but not implemented.  CIEDE2000 is the better choice for small colour differences in the
+CSS/filament palette database use-case.  HyAB is most useful for image quantization, which is
+covered by `quantize_image_hyab()`.
+
+Re-evaluate if a real user need emerges.
+
+---
+
 ## `image/basic.py` — `get_dominant_colors(count)` + refactor `get_dominant_color`
 
 - Add `get_dominant_colors(image_path, count: int) -> list[tuple[int, int, int]]` that returns the

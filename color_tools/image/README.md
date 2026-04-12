@@ -29,35 +29,77 @@ This is a **library module only** - it does not have `__main__.py` and cannot be
 **Access via:**
 
 - **CLI:** `color-tools image --file photo.jpg --redistribute-luminance`
-- **Python API:** `from color_tools.image import extract_color_clusters`
+- **Python API:** `from color_tools.image import extract_color_clusters, quantize_image_hyab`
 
 ## Current Features (Implemented)
 
 ### 1. K-means Color Clustering in LAB Space
 
-**Function:** `extract_color_clusters(image_path, n_colors, use_lab_distance=True)`
+**Function:** `extract_color_clusters(image_path, n_colors, *, distance_metric="lab", l_weight=1.0, use_l_median=False, n_iter=10)`
 
-Extracts dominant colors from an image using k-means clustering in perceptually uniform LAB color space.
+Extracts dominant colors from an image using k-means clustering.  Supports three
+distance metrics: `"lab"` (default), `"rgb"`, and `"hyab"`.
 
 **Key Features:**
 
-- Works in LAB space (not RGB) for perceptual uniformity
+- Works in LAB space by default for perceptual uniformity
+- `distance_metric="hyab"` uses HyAB distance (hybrid L + chromatic) — best for image quantization
+- `l_weight` controls lightness emphasis in HyAB mode (use 2.0 for quantization)
+- `use_l_median` stabilises dark/light clusters by taking median L instead of mean
 - Returns `ColorCluster` objects with:
   - Centroid RGB color
   - Centroid LAB values
   - Pixel indices (which pixels belong to this cluster)
   - Pixel count (dominance weight)
-- Preserves cluster assignments for later image remapping
+- Clusters sorted by `pixel_count` descending (most dominant first)
+- `use_lab_distance` parameter kept for backward compatibility
 
 **Use Case:** Extract the most visually important colors from an image while maintaining perceptual accuracy.
 
-### 2. Simplified Color Extraction
+### 2. HyAB Image Quantization
+
+**Function:** `quantize_image_hyab(image_path, n_colors=16, *, n_iter=10, l_weight=2.0, use_l_median=True) -> PIL.Image.Image`
+
+Quantizes an image to *n_colors* using HyAB k-means clustering and returns the
+recoloured image.  Uses the parameters recommended by Abasi et al. (2020) by default.
+
+**CLI:**
+
+```bash
+# Quantize to 16 colours with HyAB (default l_weight=2.0)
+color-tools image --file photo.jpg --quantize-hyab --colors 16
+
+# Custom l_weight and output file
+color-tools image --file photo.jpg --quantize-hyab --colors 8 --l-weight 1.5 --output out.png
+```
+
+**Python API:**
+
+```python
+from color_tools.image import quantize_image_hyab
+
+img = quantize_image_hyab("photo.jpg", n_colors=8)
+img.save("quantized.png")
+
+# Fine-tune
+img = quantize_image_hyab("photo.jpg", n_colors=16, l_weight=2.0, use_l_median=True)
+```
+
+**When to use HyAB vs. standard LAB k-means:**
+
+| Scenario | Recommended |
+| --- | --- |
+| General color extraction | `distance_metric="lab"` (default) |
+| Quantization / palettization | `distance_metric="hyab"`, `l_weight=2.0` |
+| Retro palette matching | `quantize_image_to_palette()` |
+
+### 3. Simplified Color Extraction
 
 **Function:** `extract_unique_colors(image_path, n_colors)`
 
 Simplified wrapper around `extract_color_clusters()` that just returns RGB centroids (backward compatibility).
 
-### 3. Luminance Redistribution
+### 4. Luminance Redistribution
 
 **Function:** `redistribute_luminance(colors) -> List[ColorChange]`
 
@@ -81,7 +123,7 @@ Redistributes luminance (L value) evenly across a list of colors for Hueforge op
 
 **Use Case:** Spread colors evenly across Hueforge's 27 layers to prevent multiple colors bunching up on the same layer.
 
-### 4. Hueforge Layer Calculation
+### 5. Hueforge Layer Calculation
 
 **Function:** `l_value_to_hueforge_layer(l_value, total_layers=27)`
 
@@ -89,7 +131,7 @@ Converts an L value (0-100) to a Hueforge layer number (1-27).
 
 **Formula:** `layer = floor((L / 100) * 27) + 1`
 
-### 5. Color Change Reporting
+### 6. Color Change Reporting
 
 **Function:** `format_color_change_report(changes) -> str`
 
@@ -112,7 +154,7 @@ Color Luminance Redistribution Report
    Hueforge Layer: 1 (of 27)
 ```
 
-### 6. Image Format Conversion
+### 7. Image Format Conversion
 
 **Function:** `convert_image(input_path, output_path=None, output_format=None, quality=None, lossless=False)`
 
@@ -171,7 +213,7 @@ convert_image("photo.jpg", output_format="webp", quality=80, lossless=False)
 
 ---
 
-### 7. Image Blend Modes
+### 8. Image Blend Modes
 
 **Function:** `blend_images(base_path, blend_path, mode="normal", opacity=1.0, output_path=None)`
 
@@ -229,7 +271,7 @@ print(sorted(BLEND_MODES.keys()))
 
 ---
 
-### 8. Image Watermarking
+### 9. Image Watermarking
 
 **Functions:**
 

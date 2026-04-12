@@ -8,7 +8,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [6.2.0] - 2026-04-12
+## [6.3.0] - 2026-04-13
+
+### Added
+
+- **`distance.py`** — New `delta_e_hyab()` HyAB distance metric (Abasi et al. 2020).
+
+  ```text
+  HyAB(L1,L2, a1,a2, b1,b2) = l_weight × |L1−L2| + √((a1−a2)² + (b1−b2)²)
+  ```
+
+  - Separates lightness and chromatic contributions (hybrid metric)
+  - `l_weight=1.0` — pure HyAB; `l_weight=2.0` — recommended for k-means quantization
+  - Exported from `color_tools` top-level package and listed in `__all__`
+  - Accepted by `Palette.nearest_color()`, `nearest_colors()`, `FilamentPalette.nearest_filament()`,
+    `nearest_filaments()` as `metric="hyab"`
+  - Added to `--metric` choices for all three CLI commands (`color`, `filament`, `image`)
+
+- **`image/analysis.py`** — Enhanced `extract_color_clusters()` with new keyword-only parameters:
+
+  | Parameter | Default | Description |
+  | --- | --- | --- |
+  | `distance_metric` | `"lab"` | `"lab"`, `"rgb"`, or `"hyab"` |
+  | `l_weight` | `1.0` | Lightness weight for HyAB mode |
+  | `use_l_median` | `False` | Use median (not mean) of L for centroid update |
+  | `n_iter` | `10` | Number of k-means iterations |
+
+  - `use_lab_distance` retained for backward compatibility
+  - Clusters now sorted by `pixel_count` descending (most dominant first)
+
+- **`image/analysis.py`** — New `quantize_image_hyab(image_path, n_colors=16, *, n_iter=10, l_weight=2.0, use_l_median=True) -> PIL.Image.Image` convenience function.
+
+  Runs HyAB k-means clustering, remaps every pixel to its nearest centroid, and returns a
+  quantized `PIL.Image.Image`. Defaults mirror the Abasi et al. recommendations.
+
+  ```python
+  from color_tools.image import quantize_image_hyab
+  img = quantize_image_hyab("photo.jpg", n_colors=8)
+  img.save("photo_quantized.png")
+  ```
+
+  CLI:
+
+  ```bash
+  color-tools image --file photo.jpg --quantize-hyab --colors 16
+  color-tools image --file photo.jpg --quantize-hyab --colors 8 --l-weight 1.5 --output out.png
+  ```
+
+- **`image/__init__.py`** — `quantize_image_hyab` exported and added to `__all__`
+- **`tests/test_hyab.py`** — 36 new unit tests covering `delta_e_hyab`, palette dispatch,
+  `extract_color_clusters` new params, and `quantize_image_hyab`
 
 ### Added
 

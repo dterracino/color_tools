@@ -18,7 +18,7 @@ except ImportError:
     PILLOW_AVAILABLE = False
 
 from ..conversions import rgb_to_lch, lch_to_rgb, rgb_to_lab, lab_to_rgb
-from ..distance import delta_e_2000
+from ..distance import delta_e_2000, delta_e_hyab
 
 
 @dataclass
@@ -136,122 +136,176 @@ def _check_pillow():
 
 
 def extract_color_clusters(
-    image_path: str, 
+    image_path: str,
     n_colors: int = 10,
-    use_lab_distance: bool = True
+    use_lab_distance: bool = True,
+    *,
+    distance_metric: str = "lab",
+    l_weight: float = 1.0,
+    use_l_median: bool = False,
+    n_iter: int = 10,
 ) -> List[ColorCluster]:
     """
     Extract color clusters from an image using k-means clustering.
-    
+
     This uses k-means in LAB color space for perceptually uniform clustering.
     Returns full cluster data including pixel assignments for later remapping.
-    
+
     Args:
-        image_path: Path to the image file
-        n_colors: Number of clusters to extract (default: 10)
-        use_lab_distance: Use LAB space for perceptual distance (default: True)
-    
+        image_path: Path to the image file.
+        n_colors: Number of clusters to extract (default: 10).
+        use_lab_distance: **Deprecated** — use ``distance_metric`` instead.
+            When *True* (default) and ``distance_metric`` is not set, uses LAB
+            Euclidean distance.  When *False*, uses raw RGB distance.
+        distance_metric: Distance metric for cluster assignment.
+
+            * ``"lab"`` — squared Euclidean in CIE LAB space (default)
+            * ``"rgb"`` — squared Euclidean in sRGB space
+            * ``"hyab"`` — HyAB (hybrid L + chromatic) in LAB space;
+              recommended with ``l_weight=2.0`` for image quantization
+
+        l_weight: Lightness weight for HyAB distance (default: 1.0).
+            A value of 2.0 (``quantize_image_hyab`` default) emphasises
+            lightness differences, yielding better separation of shades.
+            Ignored unless ``distance_metric="hyab"``.
+        use_l_median: When *True*, use the **median** of the L channel (and
+            mean of a/b) when updating centroids.  This makes dark and light
+            perceptual groups more stable.  Ignored when
+            ``distance_metric="rgb"``.
+        n_iter: Number of k-means iterations (default: 10).
+
     Returns:
-        List of ColorCluster objects with centroids and pixel assignments
-    
+        List of :class:`ColorCluster` objects with centroids and pixel
+        assignments, sorted by ``pixel_count`` descending.
+
     Raises:
-        ImportError: If Pillow is not installed
-        FileNotFoundError: If image file doesn't exist
-    
-    Example:
+        ImportError: If Pillow is not installed.
+        FileNotFoundError: If the image file doesn't exist.
+        ValueError: If ``distance_metric`` is not one of ``"lab"``,
+            ``"rgb"``, or ``"hyab"``.
+
+    Example::
+
         >>> clusters = extract_color_clusters("photo.jpg", n_colors=8)
         >>> for cluster in clusters:
         ...     print(f"Color: {cluster.centroid_rgb}, Pixels: {cluster.pixel_count}")
         Color: (255, 0, 0), Pixels: 1523
         Color: (0, 128, 255), Pixels: 892
-        ...
+
+    HyAB k-means example::
+
+        >>> clusters = extract_color_clusters(
+        ...     "photo.jpg",
+        ...     n_colors=16,
+        ...     distance_metric="hyab",
+        ...     l_weight=2.0,
+        ...     use_l_median=True,
+        ... )
     """
     _check_pillow()
-    
+
+    # Resolve distance_metric from legacy flag
+    metric = distance_metric.lower()
+    if metric not in ("lab", "rgb", "hyab"):
+        raise ValueError(f"distance_metric must be 'lab', 'rgb', or 'hyab'; got {distance_metric!r}")
+    if not use_lab_distance and metric == "lab":
+        # Legacy override: use_lab_distance=False means raw RGB
+        metric = "rgb"
+
     # Load image and convert to RGB
     img = Image.open(image_path)
-    img = img.convert('RGB')
-    
+    img = img.convert("RGB")
+
     # Get all pixels as a list of RGB tuples
     pixels_rgb = list(img.getdata())  # type: ignore
-    
-    # Convert to LAB if using perceptual distance
-    if use_lab_distance:
-        pixels_lab = [rgb_to_lab(p) for p in pixels_rgb]
-        pixels_working = pixels_lab
+
+    # Build working representation
+    use_lab = metric in ("lab", "hyab")
+    if use_lab:
+        pixels_working: list = [rgb_to_lab(p) for p in pixels_rgb]
     else:
-        pixels_working = pixels_rgb
-    
+        pixels_working = list(pixels_rgb)  # type: ignore
+
     # Initialize centroids (evenly spaced through pixel list)
-    step = len(pixels_working) // n_colors
-    centroids = [pixels_working[i * step] for i in range(n_colors)]
-    
-    # Run k-means for a fixed number of iterations
+    step = max(1, len(pixels_working) // n_colors)
+    centroids: list = [pixels_working[i * step] for i in range(n_colors)]
+
+    # Distance function
+    if metric == "hyab":
+        def _dist(pixel: tuple, centroid: tuple) -> float:
+            return delta_e_hyab(pixel, centroid, l_weight=l_weight)  # type: ignore
+    else:
+        def _dist(pixel: tuple, centroid: tuple) -> float:  # type: ignore
+            return sum((p - c) ** 2 for p, c in zip(pixel, centroid))
+
+    # Run k-means for n_iter iterations
     cluster_assignments = [0] * len(pixels_working)
-    
-    for iteration in range(10):
+
+    for _iteration in range(n_iter):
         # Assign each pixel to nearest centroid
         for pixel_idx, pixel in enumerate(pixels_working):
-            min_dist = float('inf')
+            min_dist = float("inf")
             min_idx = 0
-            
             for centroid_idx, centroid in enumerate(centroids):
-                # Calculate distance (euclidean in current space)
-                dist = sum((p - c) ** 2 for p, c in zip(pixel, centroid))
-                if dist < min_dist:
-                    min_dist = dist
+                d = _dist(pixel, centroid)  # type: ignore
+                if d < min_dist:
+                    min_dist = d
                     min_idx = centroid_idx
-            
             cluster_assignments[pixel_idx] = min_idx
-        
-        # Update centroids to mean of assigned pixels
-        new_centroids = []
+
+        # Update centroids
+        new_centroids: list = []
         for cluster_idx in range(n_colors):
-            # Get all pixels assigned to this cluster
             cluster_pixels = [
-                pixels_working[i] for i in range(len(pixels_working))
+                pixels_working[i]
+                for i in range(len(pixels_working))
                 if cluster_assignments[i] == cluster_idx
             ]
-            
+
             if cluster_pixels:
-                # Calculate mean
-                n_components = len(cluster_pixels[0])
-                avg = tuple(
-                    sum(p[i] for p in cluster_pixels) / len(cluster_pixels)
-                    for i in range(n_components)
-                )
+                n_comp = len(cluster_pixels[0])
+                if use_lab and use_l_median:
+                    # Median for L, mean for a and b
+                    l_vals = sorted(p[0] for p in cluster_pixels)
+                    l_med = l_vals[len(l_vals) // 2]
+                    a_mean = sum(p[1] for p in cluster_pixels) / len(cluster_pixels)
+                    b_mean = sum(p[2] for p in cluster_pixels) / len(cluster_pixels)
+                    avg: tuple = (l_med, a_mean, b_mean)
+                else:
+                    avg = tuple(
+                        sum(p[i] for p in cluster_pixels) / len(cluster_pixels)
+                        for i in range(n_comp)
+                    )  # type: ignore
                 new_centroids.append(avg)
             else:
-                # Keep old centroid if cluster is empty
                 new_centroids.append(centroids[cluster_idx])
-        
+
         centroids = new_centroids
-    
+
     # Build ColorCluster objects
-    results = []
+    results: List[ColorCluster] = []
     for cluster_idx in range(n_colors):
-        # Get pixel indices for this cluster
         pixel_indices = [
             i for i in range(len(cluster_assignments))
             if cluster_assignments[i] == cluster_idx
         ]
-        
-        # Convert centroid back to RGB if needed
+
         centroid = centroids[cluster_idx]
-        if use_lab_distance:
+        if use_lab:
             centroid_rgb_tuple = lab_to_rgb(centroid)  # type: ignore
             centroid_lab = centroid  # type: ignore
         else:
             centroid_rgb_tuple = tuple(int(round(c)) for c in centroid)  # type: ignore
             centroid_lab = rgb_to_lab(centroid_rgb_tuple)  # type: ignore
-        
+
         results.append(ColorCluster(
             centroid_rgb=centroid_rgb_tuple,  # type: ignore
             centroid_lab=centroid_lab,  # type: ignore
             pixel_indices=pixel_indices,
-            pixel_count=len(pixel_indices)
+            pixel_count=len(pixel_indices),
         ))
-    
+
+    results.sort(key=lambda c: c.pixel_count, reverse=True)
     return results
 
 
@@ -280,6 +334,90 @@ def extract_unique_colors(image_path: str, n_colors: int = 10) -> List[Tuple[int
     """
     clusters = extract_color_clusters(image_path, n_colors, use_lab_distance=True)
     return [cluster.centroid_rgb for cluster in clusters]
+
+
+def quantize_image_hyab(
+    image_path: str,
+    n_colors: int = 16,
+    *,
+    n_iter: int = 10,
+    l_weight: float = 2.0,
+    use_l_median: bool = True,
+) -> "Image.Image":
+    """
+    Quantize an image to *n_colors* using HyAB k-means clustering.
+
+    HyAB uses hybrid L + chromatic distance in CIE LAB space, which often
+    produces better separation of light and dark tones than pure Euclidean LAB
+    distance.  The default ``l_weight=2.0`` is the value recommended by Abasi
+    et al. (2020) for image quantization tasks.
+
+    Steps:
+
+    1. Run k-means with HyAB distance to find cluster centroids.
+    2. Map every pixel to its nearest centroid colour.
+    3. Return the quantized image as a :class:`PIL.Image.Image`.
+
+    Args:
+        image_path: Path to the input image file.
+        n_colors: Palette size — number of distinct colours in the output
+            (default: 16).
+        n_iter: Number of k-means iterations (default: 10).
+        l_weight: Lightness weight for HyAB distance (default: 2.0).
+            Higher values emphasise lightness differences.
+        use_l_median: Use the median (not mean) of the L channel when
+            updating centroids (default: True).  Improves stability of
+            dark/light clusters.
+
+    Returns:
+        Quantized :class:`PIL.Image.Image` in RGB mode.
+
+    Raises:
+        ImportError: If Pillow is not installed.
+        FileNotFoundError: If the image file doesn't exist.
+
+    Example::
+
+        >>> img = quantize_image_hyab("photo.jpg", n_colors=8)
+        >>> img.save("quantized.png")
+
+    .. seealso::
+        :func:`extract_color_clusters` — lower-level function that
+        returns cluster data instead of a rendered image.
+    """
+    _check_pillow()
+
+    # Run HyAB k-means to get cluster assignments and centroids
+    clusters = extract_color_clusters(
+        image_path,
+        n_colors=n_colors,
+        distance_metric="hyab",
+        l_weight=l_weight,
+        use_l_median=use_l_median,
+        n_iter=n_iter,
+    )
+
+    # Load the original image to know its size
+    with Image.open(image_path) as _f:
+        img = _f.convert("RGB")
+    width, height = img.size
+    total_pixels = width * height
+
+    # Build pixel→centroid mapping from cluster assignments
+    pixel_to_centroid: list = [None] * total_pixels
+    for cluster in clusters:
+        rgb = cluster.centroid_rgb
+        for idx in cluster.pixel_indices:
+            pixel_to_centroid[idx] = rgb
+
+    # Fill any unassigned pixels (shouldn't happen, but be safe)
+    fallback = clusters[0].centroid_rgb if clusters else (0, 0, 0)
+    out_pixels = [p if p is not None else fallback for p in pixel_to_centroid]
+
+    # Reconstruct image
+    out_img = Image.new("RGB", (width, height))
+    out_img.putdata(out_pixels)  # type: ignore
+    return out_img
 
 
 def redistribute_luminance(colors: List[Tuple[int, int, int]]) -> List[ColorChange]:

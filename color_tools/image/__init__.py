@@ -76,6 +76,7 @@ try:
         ColorChange,
         extract_unique_colors,
         extract_color_clusters,
+        quantize_image_hyab,
         redistribute_luminance,
         format_color_change_report,
         l_value_to_hueforge_layer,
@@ -121,6 +122,7 @@ except ImportError:
     # HueForge functions
     extract_unique_colors = _not_available
     extract_color_clusters = _not_available
+    quantize_image_hyab = _not_available
     redistribute_luminance = _not_available
     format_color_change_report = _not_available
     l_value_to_hueforge_layer = _not_available
@@ -167,6 +169,7 @@ __all__ = [
     # HueForge functions
     'extract_unique_colors',
     'extract_color_clusters',
+    'quantize_image_hyab',
     'redistribute_luminance',
     'format_color_change_report',
     'l_value_to_hueforge_layer',

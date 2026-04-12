@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 6.2.0 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+**Version:** 6.3.0 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
 ## 📚 Documentation
 
@@ -21,7 +21,7 @@ A comprehensive Python library for color science operations, color space convers
 ## ✨ Features
 
 - **Multiple Color Spaces**: RGB, HSL, LAB, LCH with accurate conversions
-- **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC)
+- **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC, HyAB)
 - **Color Databases**:
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
   - Extensive 3D printing filament database (584 filaments) with manufacturer info
@@ -120,6 +120,7 @@ See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage
 | **CIE94** (`de94`) | Good balance of accuracy and performance |
 | **CIE76** (`de76`) | Fast, simple Euclidean in LAB space |
 | **CMC** (`cmc`) | Textile industry standard |
+| **HyAB** (`hyab`) | Best for large color differences and image quantization |
 
 See [FAQ](https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md) for detailed explanations of when to use each metric.
 

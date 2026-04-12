@@ -213,9 +213,9 @@ Examples:
     )
     color_parser.add_argument(
         "--metric",
-        choices=["euclidean", "de76", "de94", "de2000", "cmc", "cmc21", "cmc11"],
+        choices=["euclidean", "de76", "de94", "de2000", "cmc", "cmc21", "cmc11", "hyab"],
         default="de2000",
-        help="Distance metric for LAB space (default: de2000). 'cmc21'=CMC(2:1), 'cmc11'=CMC(1:1)"
+        help="Distance metric for LAB space (default: de2000). 'cmc21'=CMC(2:1), 'cmc11'=CMC(1:1), 'hyab'=best for large differences"
     )
     color_parser.add_argument(
         "--cmc-l", 
@@ -288,9 +288,9 @@ Examples:
     )
     filament_parser.add_argument(
         "--metric",
-        choices=["euclidean", "de76", "de94", "de2000", "cmc"],
+        choices=["euclidean", "de76", "de94", "de2000", "cmc", "hyab"],
         default="de2000",
-        help="Distance metric (default: de2000)"
+        help="Distance metric (default: de2000). 'hyab'=best for large/dissimilar color differences"
     )
     filament_parser.add_argument(
         "--cmc-l", 
@@ -611,14 +611,33 @@ Examples:
     image_parser.add_argument(
         "--metric",
         type=str,
-        choices=["de2000", "de94", "de76", "cmc", "euclidean", "hsl_euclidean"],
+        choices=["de2000", "de94", "de76", "cmc", "euclidean", "hsl_euclidean", "hyab"],
         default="de2000",
-        help="Color distance metric for palette quantization (default: de2000)"
+        help="Color distance metric for palette quantization (default: de2000). 'hyab'=best for large differences"
     )
     image_parser.add_argument(
         "--dither",
         action="store_true",
         help="Apply Floyd-Steinberg dithering for palette quantization (reduces banding)"
+    )
+
+    # HyAB k-means quantization
+    image_parser.add_argument(
+        "--quantize-hyab",
+        action="store_true",
+        help="Quantize image using HyAB k-means clustering (use --colors for palette size, default: 16)"
+    )
+    image_parser.add_argument(
+        "--l-weight",
+        type=float,
+        default=2.0,
+        help="Lightness weight for HyAB distance (default: 2.0). Higher values emphasise lightness separation."
+    )
+    image_parser.add_argument(
+        "--use-l-median",
+        action="store_true",
+        default=True,
+        help="Use median (not mean) of L channel when updating HyAB centroids (default: True)"
     )
     
     # Watermarking operations

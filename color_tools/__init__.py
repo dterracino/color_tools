@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.2.0"
+__version__ = "6.3.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -111,6 +111,7 @@ from .distance import (
     delta_e_94,
     delta_e_76,
     delta_e_cmc,
+    delta_e_hyab,   # Best for large color differences and k-means quantization
     
     # Simple distance functions
     euclidean,
@@ -277,6 +278,7 @@ __all__ = [
     "delta_e_94",
     "delta_e_76",
     "delta_e_cmc",
+    "delta_e_hyab",
     "euclidean",
     "hsl_euclidean",
     "hue_diff_deg",

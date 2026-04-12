@@ -44,7 +44,7 @@ from pathlib import Path
 
 from color_tools.constants import ColorConstants
 from color_tools.conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb
-from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc
+from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
 from color_tools._palette_utils import _should_prefer_source, _rounded_key, _ensure_list
 
 # Set up logger for override tracking
@@ -494,8 +494,10 @@ class Palette:
         elif metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
             # CMC has special handling for l:c ratios
             fn = None  # Will handle specially below
+        elif metric_l == "hyab":
+            fn = delta_e_hyab
         else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'.")
+            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
 
         for r in self.records:
             if metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
@@ -578,8 +580,10 @@ class Palette:
         elif metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
             # CMC has special handling for l:c ratios
             fn = None  # Will handle specially below
+        elif metric_l == "hyab":
+            fn = delta_e_hyab
         else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'.")
+            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
 
         for r in self.records:
             if metric_l in ("cmc", "decmc", "cmc21", "cmc11"):

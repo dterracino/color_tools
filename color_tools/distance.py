@@ -396,3 +396,75 @@ def delta_e_cmc(
     term_H = (math.sqrt(dH_sq) / SH) ** 2 if SH != 0 else 0.0
 
     return math.sqrt(term_L + term_C + term_H)
+
+
+# ============================================================================
+# HyAB Metric
+# ============================================================================
+
+def delta_e_hyab(
+    lab1: Tuple[float, float, float],
+    lab2: Tuple[float, float, float],
+    l_weight: float = 1.0,
+) -> float:
+    """
+    HyAB color difference — hybrid absolute/Euclidean distance in LAB space.
+
+    Introduced by Abasi, Tehran, and Fairchild (2020) specifically to handle
+    **large** color differences, where CIE76 and CIEDE2000 are known to produce
+    perceptually inaccurate rankings.
+
+    Formula::
+
+        d_HyAB = l_weight × |L₁ − L₂|  +  √((a₁ − a₂)² + (b₁ − b₂)²)
+                 ──────────────────────     ─────────────────────────────
+                 City-block (lightness)       Euclidean in chroma plane
+
+    The **name** comes from the hybrid of **Abs**olute (city-block / Manhattan)
+    distance for lightness and Euclidean distance in the **AB** chroma plane.
+    This matches the psychological separability of lightness from hue/chroma:
+    people evaluate brightness shifts and color shifts somewhat independently.
+
+    The optional ``l_weight`` scales the lightness term — use ``1.0`` for the
+    pure HyAB formula, or ``2.0`` (recommended) when using this metric as the
+    distance function in k-means color quantization.
+
+    When to use HyAB versus other metrics:
+
+    - **CIEDE2000** — best for just-noticeable differences (ΔE < ~5), JND matching,
+      industrial color acceptance, or nearest-neighbor in a small palette.
+    - **HyAB (l_weight=1.0)** — best for large-difference ranking (ΔE > ~20),
+      out-of-gamut mapping, or comparing very different colors.
+    - **HyAB (l_weight=2.0)** — recommended for k-means image quantization.
+      Better lightness separation than CIE76 without CIEDE2000's per-pixel cost.
+
+    Reference:
+        Abasi, S., Tehran, M. A., & Fairchild, M. D. (2020). Distance metrics
+        for very large color differences. *Color Research & Application*, 45(2),
+        208-223. https://doi.org/10.1002/col.22451
+
+    Args:
+        lab1: First color as ``(L*, a*, b*)`` tuple.
+        lab2: Second color as ``(L*, a*, b*)`` tuple.
+        l_weight: Lightness scaling factor. ``1.0`` = pure HyAB (default);
+            ``2.0`` = recommended for k-means quantization.
+
+    Returns:
+        HyAB distance (lower = more similar).
+
+    Example:
+        >>> from color_tools import rgb_to_lab, delta_e_hyab
+        >>>
+        >>> black = rgb_to_lab((0, 0, 0))
+        >>> white = rgb_to_lab((255, 255, 255))
+        >>> delta_e_hyab(black, white)
+        100.0
+        >>>
+        >>> red = rgb_to_lab((255, 0, 0))
+        >>> blue = rgb_to_lab((0, 0, 255))
+        >>> delta_e_hyab(red, blue)  # doctest: +ELLIPSIS
+        ...
+    """
+    L1, a1, b1 = lab1
+    L2, a2, b2 = lab2
+    return l_weight * abs(L1 - L2) + math.sqrt((a1 - a2) ** 2 + (b1 - b2) ** 2)
