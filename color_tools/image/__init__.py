@@ -103,6 +103,10 @@ try:
         convert_image,
         get_supported_formats,
     )
+    from .blend import (
+        blend_images,
+        BLEND_MODES,
+    )
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
@@ -145,7 +149,11 @@ except ImportError:
     # Conversion functions
     convert_image = _not_available
     get_supported_formats = _not_available
-    
+
+    # Blend functions
+    blend_images = _not_available
+    BLEND_MODES: dict = {}
+
     # Dummy classes for type hints - use Any to avoid type conflicts
     from typing import Any
     ColorCluster: type[Any] = type('ColorCluster', (), {})
@@ -183,4 +191,7 @@ __all__ = [
     # Conversion functions
     'convert_image',
     'get_supported_formats',
+    # Blend functions
+    'blend_images',
+    'BLEND_MODES',
 ]

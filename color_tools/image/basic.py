@@ -903,7 +903,7 @@ def quantize_image_to_palette(
     pixels_rgb: list[tuple[int, int, int]] = list(original.getdata())  # type: ignore[arg-type]
     
     # Get unique colors from source image
-    unique_colors = {}  # {rgb: count}
+    unique_colors: dict[tuple[int, int, int], int] = {}  # {rgb: count}
     for pixel in pixels_rgb:
         unique_colors[pixel] = unique_colors.get(pixel, 0) + 1
     
@@ -970,7 +970,10 @@ def quantize_image_to_palette(
         pixel_assignments = np.argmin(distances, axis=0)
         
         # Build quantized colors and pixel mapping
-        quantized_colors = [tuple(int(round(c)) for c in centroid) for centroid in centroids]
+        quantized_colors: list[tuple[int, int, int]] = [
+            (int(round(centroid[0])), int(round(centroid[1])), int(round(centroid[2])))
+            for centroid in centroids
+        ]
         pixels_to_cluster = {i: quantized_colors[pixel_assignments[i]] for i in range(len(pixels_rgb))}
         
         # Sort quantized colors by L-value for better palette matching

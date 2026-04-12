@@ -8,55 +8,74 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Planned
+## [6.2.0] - 2026-04-12
 
-#### `image/basic.py` — `get_dominant_colors(count)` + refactor `get_dominant_color`
+### Added
 
-- Add `get_dominant_colors(image_path, count: int) -> list[tuple[int, int, int]]` that returns the
-  top N most-frequent colors from an image (simple histogram approach, no clustering).
-- Refactor `get_dominant_color` to delegate: `return get_dominant_colors(image_path, 1)[0]`.
-- Export `get_dominant_colors` from `image/__init__.py`.
+- **`image/blend.py`** — New module implementing all 27 Photoshop-compatible blend modes for
+  compositing two images together. Uses numpy for efficient per-pixel math and Pillow for I/O
+  (no OpenCV dependency).
 
-#### `image/analysis.py` — Perceptual / focal-weighted color dominance
+  **Blend modes implemented:**
 
-- Implement **focal point detection** (`get_focal_point(image_path) -> tuple[int, int]`) — returns
-  the (x, y) pixel coordinate of the image's visual center of interest (sharpness-weighted centroid
-  or saliency map approach).
-- Implement **focal radius** (`get_focal_radius(image_path) -> float`) — the approximate radius (in
-  pixels) around the focal point that covers the primary region of interest.
-- Implement **focal circle** (`get_focal_circle(image_path) -> tuple[int, int, float]`) — convenience
-  wrapper returning `(cx, cy, radius)` for easy downstream use.
-- Implement **perceptually-weighted dominant colors** — when an image is primarily grayscale/neutral
-  but contains vivid accent colors, those accents should surface as dominant. Strategy:
-  - Score each color cluster by chroma (LCH C*) and focal proximity, not just pixel count.
-  - A cluster that is highly chromatic AND concentrated near the focal point is amplified even if
-    numerically small (e.g., a teal accent in a black-and-white portrait).
-  - Expose as an optional `perceptual=True` parameter on an updated `extract_color_clusters`.
-- Implement **saturation threshold filtering** for "color pop" style images — pixels below a
-  configurable HSL/HSV saturation threshold are treated as grayscale background and excluded (or
-  heavily down-weighted) before dominance scoring. This means a color-pop image where 90% of pixels
-  are desaturated will still return the vivid "pop" colors as dominant rather than the gray mass.
-  - `saturation_threshold: float = 0.0` parameter (0.0 = off, suggested default ~0.15–0.20 when
-    enabled) on both `get_dominant_colors` and the perceptual cluster path.
-  - Pairs naturally with the chroma/focal weighting above — together they handle the full spectrum
-    from subtle accents to explicit color-pop photography.
+  | Category | Modes |
+  | ------------- | ------- |
+  | Normal | `normal`, `dissolve` |
+  | Darken | `darken`, `multiply`, `color_burn`, `linear_burn`, `darker_color` |
+  | Lighten | `lighten`, `screen`, `color_dodge`, `linear_dodge`, `lighter_color` |
+  | Contrast | `overlay`, `soft_light`, `hard_light`, `vivid_light`, `linear_light`, `pin_light`, `hard_mix` |
+  | Comparative | `difference`, `exclusion`, `subtract`, `divide` |
+  | Component | `hue`, `saturation`, `color`, `luminosity` |
 
-#### `image/analysis.py` — Canny edge detection utilities (TBD)
+  **Key implementation details:**
+  - `soft_light` uses the correct W3C/Photoshop piecewise formula (not the Pegtop approximation)
+  - `darker_color` / `lighter_color` compare full-pixel BT.601 luminance (not per-channel)
+  - `hue` / `saturation` / `color` / `luminosity` use a fully vectorized `_set_sat()` replacing a
+    prior O(W×H) Python pixel loop
+  - Alpha channels are handled separately from RGB blending using src-over compositing:
+    `out_α = blend_α × opacity + base_α × (1 − blend_α × opacity)`
+  - `dissolve` uses opacity as the random selection threshold in `blend_images()` while
+    remaining a clean 50/50 selector as a standalone function
 
-- `opencv-python>=4.8.0` is now part of the `[image]` extra. Functions that require it will use
-  conditional imports (`try: import cv2`) consistent with the project's existing pattern — the
-  module stays importable without OpenCV, but Canny-based functions will raise `ImportError` with
-  a helpful message if it's missing.
-- Likely candidates (confirm scope before implementing):
-  - **Edge-density focal estimation** — high edge-density regions are usually the sharpest / most
-    in-focus area; fast focal point proxy without a full saliency model.
-  - **Edge-aware color weighting** — colors near detected edges belong to object surfaces (not
-    diffuse background fill); upweight them in dominance calculations.
-  - **Sharpness / focus score** — count edge pixels in a bounding box to produce a focus quality
-    metric useful for selecting the "best" frame from a burst.
-  - **Region segmentation via edges** — use edges as region boundaries, then analyze dominant
-    color per region. Significantly more complex (watershed/flood-fill on top of edge detection);
-    defer until the simpler Canny utilities are proven out.
+  **Public API (exported from `color_tools.image`):**
+
+  ```python
+  from color_tools.image import blend_images, BLEND_MODES
+
+  # Blend two images using multiply mode at 80% opacity
+  result = blend_images("base.png", "layer.png", mode="multiply", opacity=0.8)
+  result.save("output.png")
+
+  # List all available blend modes
+  print(sorted(BLEND_MODES.keys()))
+  ```
+
+### Fixed
+
+- **`image/basic.py`** — Two type errors in `quantize_image_to_palette()`:
+  - `quantized_colors` list comprehension now uses explicit 3-tuple construction
+    `(int(...), int(...), int(...))` instead of `tuple(... for c in centroid)`, resolving
+    `tuple[int, ...]` → `tuple[int, int, int]` inference failure.
+  - `unique_colors` dict is now annotated as `dict[tuple[int, int, int], int]`, resolving
+    `Unknown` key type that propagated to `palette.nearest_color()` call site.
+- **`image/watermark.py`** — Removed orphaned `__all__` declaration that had been incorrectly
+  placed at the bottom of the file. Public API is controlled exclusively by `image/__init__.py`,
+  consistent with every other module in the package.
+
+### Tests
+
+- **`tests/test_image_blend.py`** — New test file with 217 tests covering all 27 blend mode
+  functions, internal helpers (`_clip01`, `_lum`, `_sat`, `_set_lum`, `_set_sat`), and
+  `blend_images()` I/O including opacity, alpha compositing, resize, file save, and input
+  validation.
+- **`tests/test_watermark.py`** — Added 48 tests across three new test classes:
+  - `TestCalculatePosition` — all 9 position presets with margin arithmetic, custom tuple
+    passthrough, `margin=0`, and invalid position string raises `KeyError`
+  - `TestLoadFont` — both-args `ValueError`, missing file `FileNotFoundError`, default fallback,
+    and bundled font file lookup by bare filename
+  - `TestTextWatermarkPixelEffects` — `opacity=0.0` pixel-identity verification, output always
+    RGBA regardless of input mode, size preservation, and `watermark_path` accepts both `Path`
+    and `str`
 
 ## [6.1.4] - 2026-03-29
 

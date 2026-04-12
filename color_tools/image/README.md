@@ -14,7 +14,12 @@ This module provides image color analysis and manipulation tools, primarily desi
 color_tools/image/
 ├── __init__.py       # Public API exports
 ├── README.md         # This file
-└── analysis.py       # Core image analysis functions
+├── analysis.py       # K-means clustering, luminance redistribution (HueForge)
+├── basic.py          # General analysis, CVD simulation, palette quantization
+├── blend.py          # 27 Photoshop-compatible blend modes
+├── conversion.py     # Image format conversion
+├── watermark.py      # Text, image, and SVG watermarks
+└── fonts/            # Bundled fonts for text watermarks
 ```
 
 ### Not a Runnable Module
@@ -164,7 +169,61 @@ convert_image("input.jpg", output_path="output.webp", lossless=True)
 convert_image("photo.jpg", output_format="webp", quality=80, lossless=False)
 ```
 
-### 7. Image Watermarking
+---
+
+### 7. Image Blend Modes
+
+**Function:** `blend_images(base_path, blend_path, mode="normal", opacity=1.0, output_path=None)`
+
+Composite two images using any of the 27 Photoshop-compatible blend modes. Blend math is applied only to the RGB channels; alpha uses standard src-over compositing. The blend layer is automatically resized to match the base image if their sizes differ.
+
+**Blend Mode Categories:**
+
+| Category | Modes |
+| ------------- | ------- |
+| Normal | `normal`, `dissolve` |
+| Darken | `darken`, `multiply`, `color_burn`, `linear_burn`, `darker_color` |
+| Lighten | `lighten`, `screen`, `color_dodge`, `linear_dodge`, `lighter_color` |
+| Contrast | `overlay`, `soft_light`, `hard_light`, `vivid_light`, `linear_light`, `pin_light`, `hard_mix` |
+| Comparative | `difference`, `exclusion`, `subtract`, `divide` |
+| Component | `hue`, `saturation`, `color`, `luminosity` |
+
+**Parameters:**
+
+- `base_path` — Path to the base (background) image
+- `blend_path` — Path to the blend (top) layer image  
+- `mode` — Blend mode name (default: `"normal"`; see `BLEND_MODES` for all options)
+- `opacity` — Blend layer opacity `[0.0, 1.0]` (default: `1.0`)
+- `output_path` — If provided, the result is saved here; otherwise returns the PIL Image
+
+**Returns:** Composited `PIL.Image` in RGBA mode.
+
+**Python API:**
+
+```python
+from color_tools.image import blend_images, BLEND_MODES
+
+# Multiply blend at 80% opacity
+result = blend_images("base.png", "layer.png", mode="multiply", opacity=0.8)
+result.save("output.png")
+
+# Save directly
+blend_images("base.png", "overlay.png", mode="overlay", output_path="result.png")
+
+# List all available modes
+print(sorted(BLEND_MODES.keys()))
+```
+
+**Accuracy Notes:**
+
+- `soft_light` uses the W3C/Photoshop piecewise formula with the D(a) function (not the simplified Pegtop approximation)
+- `darker_color` / `lighter_color` compare full-pixel BT.601 luminance rather than per-channel
+- `dissolve` uses `opacity` as the random pixel selection probability
+- Component modes (`hue`, `saturation`, `color`, `luminosity`) use a fully vectorized saturation helper
+
+---
+
+### 8. Image Watermarking
 
 **Functions:**
 

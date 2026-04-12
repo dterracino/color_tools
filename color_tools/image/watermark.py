@@ -66,6 +66,7 @@ Position = Literal[
 ]
 
 
+
 def _get_fonts_directory() -> Path:
     """Get the path to the fonts directory in the package."""
     return Path(__file__).parent / "fonts"
@@ -445,8 +446,3 @@ def add_svg_watermark(
     return watermarked
 
 
-__all__ = [
-    'add_text_watermark',
-    'add_image_watermark',
-    'add_svg_watermark',
-]

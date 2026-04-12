@@ -129,6 +129,7 @@ Image Processing *(requires* ``[image]`` *extra)*
    color_tools.image
    color_tools.image.analysis
    color_tools.image.basic
+   color_tools.image.blend
    color_tools.image.conversion
    color_tools.image.watermark
 
