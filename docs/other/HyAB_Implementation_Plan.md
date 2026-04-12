@@ -14,7 +14,7 @@ HyAB is a perceptual color-difference metric introduced by Saeedeh Abasi, Mohamm
 
 Given two CIELAB colors `(L₁, a₁, b₁)` and `(L₂, a₂, b₂)`:
 
-```
+```text
 d_HyAB = |L₁ − L₂|  +  √((a₁ − a₂)² + (b₁ − b₂)²)
          ──────────     ─────────────────────────────
          City-block       Euclidean in chroma plane
@@ -32,7 +32,7 @@ This reflects the psychological *separability* of lightness from hue/chroma in h
 
 When used in k-means clustering, multiplying the lightness term by a weight factor (`l_weight`) improves palette balance:
 
-```
+```text
 d_HyAB_weighted = l_weight × |L₁ − L₂|  +  √((a₁ − a₂)² + (b₁ − b₂)²)
 ```
 
@@ -57,7 +57,7 @@ The median for L makes the algorithm resistant to a few very bright or very dark
 ### 2.1 Comparison Table
 
 | Scenario | CIE76 (Euclidean LAB) | CIEDE2000 | HyAB |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | Small differences (< ΔE 5) | Good | Excellent | Good |
 | Large differences (> ΔE 20) | Poor | Moderate | Excellent |
 | Black → White transition | Underestimates | Moderate | Accurate |
@@ -82,7 +82,7 @@ Deep saturated colors (particularly blues), and transitions spanning the full li
 ### 2.3 When to Use HyAB vs. Other Metrics
 
 | Use Case | Recommended Metric |
-|---|---|
+| --- | --- |
 | "Just noticeable difference" (JND) color matching | CIEDE2000 |
 | Industrial/textile color acceptance | CMC(2:1) |
 | Nearest-neighbor search across a small palette | CIEDE2000 or CIE94 |
@@ -295,7 +295,7 @@ All new parameters have defaults that preserve current behavior:
 Per distance calculation, HyAB is roughly:
 
 | Metric | Operations per comparison |
-|---|---|
+| --- | --- |
 | CIE76 (Euclidean LAB) | 3 subtractions, 3 squares, 2 additions, 1 sqrt |
 | HyAB | 3 subtractions, 1 abs, 2 squares, 2 additions, 1 sqrt |
 | CIEDE2000 | ~40+ floating-point ops including trig |
@@ -306,8 +306,8 @@ HyAB is essentially the same cost as CIE76 but far cheaper than CIEDE2000, makin
 
 Adding HyAB as a new distance metric and new image analysis capabilities constitutes a **minor version bump** following semantic versioning:
 
-```
-6.1.4 → 6.2.0
+```text
+6.2.0 - 6.3.0
 ```
 
 ---
@@ -338,13 +338,13 @@ color-tools image --file model_reference.jpg --extract-colors --n-colors 10 \
 
 The reference Python implementation by Pekka Väänänen demonstrates the algorithm with numpy and scikit-learn:
 
-- **Article with visual comparisons:** https://30fps.net/pages/hyab-kmeans/
-- **Reference code:** https://github.com/pekkavaa/HyAB-kmeans/blob/main/hyab_kmeans.py
+- **Article with visual comparisons:** <https://30fps.net/pages/hyab-kmeans/>
+- **Reference code:** <https://github.com/pekkavaa/HyAB-kmeans/blob/main/hyab_kmeans.py>
 
 Key differences between the reference and our planned implementation:
 
 | Aspect | Reference (`hyab_kmeans.py`) | color_tools implementation |
-|---|---|---|
+| --- | --- | --- |
 | Dependencies | numpy, sklearn, scikit-image, Pillow | Pure Python stdlib (+ optional Pillow) |
 | k-means init | `sklearn.cluster.kmeans_plusplus` | Even-spacing (current) or k-means++ future |
 | Distance calc | Vectorized numpy | Pure Python loops (vectorizable later) |

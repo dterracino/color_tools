@@ -1,6 +1,8 @@
 Color Tools API Reference
 =========================
 
+**Version:** |release|
+
 Welcome to the Color Tools API documentation! This library provides comprehensive color science tools for accurate color space conversions, perceptual color distance metrics, and color matching.
 
 🎨 **Three Ways to Use Color Tools:**
