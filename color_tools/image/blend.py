@@ -17,6 +17,22 @@ Blend Mode Categories::
     Comparative: difference, exclusion, subtract, divide
     Component:   hue, saturation, color, luminosity
 
+Primary API:
+------------
+For most users, the only two names you need are:
+
+- ``blend_images(base_path, blend_path, mode, opacity, output_path)`` —
+  loads two images, applies a blend mode, and returns a PIL ``Image``.
+- ``BLEND_MODES`` — dict mapping every mode name to its numpy function,
+  useful for listing or validating available modes.
+
+The 27 individual mode functions (``multiply``, ``screen``, etc.) are also
+exposed for advanced use. They operate directly on normalized float32 numpy
+arrays with shape ``(H, W, 3)`` in the ``[0.0, 1.0]`` range. If you call
+them directly you are responsible for array preparation, clipping, and
+reconverting back to uint8. Use ``blend_images()`` unless you are managing
+your own image pipeline.
+
 Example:
 --------
     >>> from color_tools.image import blend_images, BLEND_MODES

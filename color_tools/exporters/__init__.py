@@ -24,12 +24,6 @@ Usage:
     >>> from color_tools.palette import Palette
     >>> palette = Palette.load_default()
     >>> path = exporter.export_colors(palette.colors, 'output.json')
-
-Public API:
-    - register_exporter: Decorator to register exporter classes
-    - get_exporter: Get exporter instance by format name
-    - list_export_formats: List available formats (backward compatible)
-    - EXPORT_FORMATS: Format metadata dict (backward compatible)
 """
 
 from __future__ import annotations

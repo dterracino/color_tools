@@ -77,6 +77,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     RGBA regardless of input mode, size preservation, and `watermark_path` accepts both `Path`
     and `str`
 
+### Documentation
+
+- **`docs/sphinx/conf.py`** — `release` now reads from `color_tools.__version__` automatically
+  instead of being hardcoded; copyright year is dynamic; `intersphinx_mapping` extended with
+  `prompt_toolkit`; `autodoc_typehints = 'description'` set explicitly; `todo_include_todos`
+  declared; `"linkify"` MyST extension removed (dependency was absent from `docs/requirements.txt`).
+- **`docs/sphinx/api/color_tools.image.blend.rst`** — New API doc page for the blend module;
+  added to the Image Processing section of `docs/sphinx/index.rst`.
+- **`image/blend.py`** — Module docstring updated: blend mode categories reformatted as a
+  preformatted literal block (fixes RST indentation errors in Sphinx build); added *Primary API*
+  section explaining that `blend_images()` and `BLEND_MODES` are the standard entry points and
+  that the 27 individual mode functions are exposed for advanced numpy-pipeline use only.
+- **`image/basic.py`** — Removed stale "Public API" listing from module docstring; autodoc
+  renders the actual function inventory, making the prose list redundant and drift-prone.
+- **`exporters/__init__.py`** — Removed stale "Public API" listing from module docstring for the
+  same reason.
+- **`color_tools/image/README.md`** — Added a callout block to the blend modes section explaining
+  that `blend_images()` and `BLEND_MODES` are the primary API and that the individual mode
+  functions require normalized float32 numpy arrays if called directly.
+- **`NEXTSTEPS.md`** — New root-level file. The `### Planned` section that had been living inside
+  the 6.2.0 CHANGELOG entry was moved here; planned items are not part of a release record.
+- **`matrices.py`** — All 6 matrix constants (`PROTANOPIA_SIMULATION`, `DEUTERANOPIA_SIMULATION`,
+  `TRITANOPIA_SIMULATION`, `PROTANOPIA_CORRECTION`, `DEUTERANOPIA_CORRECTION`,
+  `TRITANOPIA_CORRECTION`) now appear in the Sphinx docs. Previously used `#` comments which
+  autodoc ignores; converted to `#:` attribute docstrings. `Matrix3x3` type alias upgraded from
+  a bare assignment to a proper `TypeAlias` annotation so Sphinx renders the clean alias name
+  instead of the fully-expanded tuple type in each constant's signature.
+
 ## [6.1.4] - 2026-03-29
 
 ### Changed

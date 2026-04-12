@@ -7,17 +7,6 @@ separate from the HueForge-specific tools in analysis.py.
 Functions in this module require Pillow and numpy:
     pip install color-match-tools[image]
 
-Public API:
------------
-    count_unique_colors - Count total unique RGB colors in an image
-    get_color_histogram - Get histogram mapping RGB colors to pixel counts
-    get_dominant_color - Get the most common color in an image
-    is_indexed_mode - Check if image uses indexed color mode (palette-based)
-    analyze_brightness - Analyze image brightness with assessment
-    analyze_contrast - Analyze image contrast using standard deviation
-    analyze_noise_level - Estimate noise level using scikit-image
-    analyze_dynamic_range - Analyze dynamic range and gamma suggestions
-
 Example:
 --------
     >>> from color_tools.image import count_unique_colors, get_color_histogram, get_dominant_color

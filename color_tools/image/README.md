@@ -177,6 +177,12 @@ convert_image("photo.jpg", output_format="webp", quality=80, lossless=False)
 
 Composite two images using any of the 27 Photoshop-compatible blend modes. Blend math is applied only to the RGB channels; alpha uses standard src-over compositing. The blend layer is automatically resized to match the base image if their sizes differ.
 
+> **Primary API:** For most use cases, `blend_images()` and `BLEND_MODES` are all you need.
+> The 27 individual mode functions (`multiply`, `screen`, etc.) are also importable for advanced
+> use in custom numpy pipelines. They expect normalized `float32` arrays of shape `(H, W, 3)` in
+> the `[0.0, 1.0]` range — if you call them directly, array preparation, clipping, and uint8
+> conversion are your responsibility.
+
 **Blend Mode Categories:**
 
 | Category | Modes |
