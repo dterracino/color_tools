@@ -58,6 +58,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **`image/__init__.py`** — `quantize_image_hyab` exported and added to `__all__`
 - **`tests/test_hyab.py`** — 36 new unit tests covering `delta_e_hyab`, palette dispatch,
   `extract_color_clusters` new params, and `quantize_image_hyab`
+- **`conversions.py`** — New `rgb_to_winhsl240()` (Windows Paint / Win32 GDI variant) and
+  `rgb_to_winhsl255()` (Microsoft Office variant) conversion functions.
+
+  | Variant | H range | S range | L range | Used by |
+  | --- | --- | --- | --- | --- |
+  | winHSL240 | 0–239 | 0–240 | 0–240 | Windows Paint, WordPad, Win32 GDI |
+  | winHSL255 | 0–254 | 0–255 | 0–255 | Microsoft Office colour picker |
+
+  `rgb_to_winhsl()` is retained as a backward-compatible alias for `rgb_to_winhsl240()`.
+
+- **`constants.py`** — Added `WIN_HSL240_HUE_MAX = 239`, `WIN_HSL240_SL_MAX = 240`,
+  `WIN_HSL255_HUE_MAX = 254`, `WIN_HSL255_SL_MAX = 255` constants (constants hash updated).
+
+### Fixed
+
+- **`conversions.py`** — `rgb_to_winhsl()` hue clamping bug: `round(h * 240)` could produce
+  `240` when the fractional hue was ≥ 239.5/240 (≈ 0.9979), which is out-of-spec because hue
+  240 wraps back to 0° (red). Fixed in `rgb_to_winhsl240()` with `min(..., 239)`; same guard
+  applied for the 255 variant (`min(..., 254)`).
 
 ### Added
 

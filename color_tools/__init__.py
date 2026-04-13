@@ -98,7 +98,9 @@ from .conversions import (
     # RGB ↔ HSL (common web dev color space)
     rgb_to_hsl,
     hsl_to_rgb,
-    rgb_to_winhsl,  # Windows HSL (0-240 range)
+    rgb_to_winhsl240,  # winHSL240: Windows OS (Paint, Win32 GDI) — H 0-239, S/L 0-240
+    rgb_to_winhsl255,  # winHSL255: Microsoft Office — H 0-254, S/L 0-255
+    rgb_to_winhsl,  # Alias for rgb_to_winhsl240 (backward compatibility)
 )
 
 # ============================================================================
@@ -271,6 +273,8 @@ __all__ = [
     "lab_to_xyz",
     "rgb_to_hsl",
     "hsl_to_rgb",
+    "rgb_to_winhsl240",
+    "rgb_to_winhsl255",
     "rgb_to_winhsl",
     
     # Distance metrics

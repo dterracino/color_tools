@@ -1,13 +1,23 @@
 """
 Color distance metrics for measuring perceptual color differences.
 
-Includes multiple Delta E formulas:
-- Delta E 1976 (CIE76): Simple Euclidean distance
-- Delta E 1994 (CIE94): Improved with weighting
-- Delta E 2000 (CIEDE2000): Current gold standard
-- Delta E CMC: Textile industry standard
+Delta E formulas (LAB space):
 
-Also includes simpler distance functions for RGB and HSL spaces.
+- **Delta E 1976** (``de76``) — Simple Euclidean distance in LAB space; fast but not
+  perceptually uniform.
+- **Delta E 1994** (``de94``) — Adds chroma/hue weighting; better for graphic arts and
+  textiles.
+- **Delta E 2000** (``de2000``) — Current gold standard; most perceptually accurate for
+  small color differences.  **Use this by default.**
+- **Delta E CMC** (``cmc``) — Textile industry standard; configurable l:c ratio.
+- **HyAB** (``hyab``) — Hybrid metric: absolute L difference + Euclidean chromatic
+  distance.  Best for large color differences and image quantization.
+
+Non-LAB metrics:
+
+- ``euclidean`` — Simple Euclidean distance in sRGB space (not perceptually uniform).
+- ``hsl_euclidean`` — Euclidean distance in HSL space with circular hue handling.
+- ``hue_diff_deg`` — Raw hue angle difference in degrees.
 
 Example:
     >>> from color_tools import rgb_to_lab, delta_e_2000

@@ -358,19 +358,48 @@ def rgb_to_hsl(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     return (h * ColorConstants.HUE_CIRCLE_DEGREES, s * ColorConstants.XYZ_SCALE_FACTOR, l * ColorConstants.XYZ_SCALE_FACTOR)
 
 
-def rgb_to_winhsl(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
+def rgb_to_winhsl240(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     """
-    Convert RGB (0-255) to Windows HSL (all components 0-240).
-    
-    Windows HSL is used in Win32 COLORREF and some GDI APIs.
-    Each component is scaled to the 0-240 range instead of the usual
-    H:0-360, S:0-100, L:0-100 representation.
+    Convert RGB (0-255) to winHSL240 — the Windows OS variant.
+
+    Used by Windows applications including Paint, WordPad, and Win32 GDI APIs.
+    Components are scaled to:
+      - H: 0–239  (240 = 0° again, so the valid range stops at 239)
+      - S: 0–240
+      - L: 0–240
+
+    This is subtly different from the range you might expect: hue stops at 239,
+    not 240, because 240 wraps back to 0° (red) and would be a duplicate.
     """
     h, s, l = _rgb_to_rawhsl(rgb)
-    win_h = int(round(h * ColorConstants.WIN_HSL_MAX))
-    win_s = int(round(s * ColorConstants.WIN_HSL_MAX))
-    win_l = int(round(l * ColorConstants.WIN_HSL_MAX))
+    win_h = min(int(round(h * ColorConstants.WIN_HSL240_SL_MAX)), ColorConstants.WIN_HSL240_HUE_MAX)
+    win_s = int(round(s * ColorConstants.WIN_HSL240_SL_MAX))
+    win_l = int(round(l * ColorConstants.WIN_HSL240_SL_MAX))
     return (win_h, win_s, win_l)
+
+
+def rgb_to_winhsl255(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
+    """
+    Convert RGB (0-255) to winHSL255 — the Microsoft Office variant.
+
+    Used by Microsoft Office applications (Word, Excel, PowerPoint colour pickers).
+    Components are scaled to:
+      - H: 0–254  (255 = 0° again, so the valid range stops at 254)
+      - S: 0–255
+      - L: 0–255
+
+    Like winHSL240, the hue ceiling is one less than the scale factor because
+    the maximum would alias back to 0° (red).
+    """
+    h, s, l = _rgb_to_rawhsl(rgb)
+    win_h = min(int(round(h * ColorConstants.WIN_HSL255_SL_MAX)), ColorConstants.WIN_HSL255_HUE_MAX)
+    win_s = int(round(s * ColorConstants.WIN_HSL255_SL_MAX))
+    win_l = int(round(l * ColorConstants.WIN_HSL255_SL_MAX))
+    return (win_h, win_s, win_l)
+
+
+# Backward-compatible alias — use rgb_to_winhsl240() in new code
+rgb_to_winhsl = rgb_to_winhsl240
 
 
 def hsl_to_rgb(hsl: Tuple[float, float, float]) -> Tuple[int, int, int]:
