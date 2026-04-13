@@ -75,3 +75,59 @@ Re-evaluate if a real user need emerges.
   - **Region segmentation via edges** — use edges as region boundaries, then analyze dominant
     color per region. Significantly more complex (watershed/flood-fill on top of edge detection);
     defer until the simpler Canny utilities are proven out.
+
+---
+
+## `conversions.py` — HSB/HSV color space
+
+HSB (Hue / Saturation / Brightness, also called HSV) is the dominant model in professional design
+tools (Photoshop, Figma, Sketch, Illustrator).  The library already handles HSL and winHSL variants
+but is missing this closely related space.
+
+Python's `colorsys` module provides `rgb_to_hsv` / `hsv_to_rgb`, so the implementation is a thin
+scaling wrapper — similar to how `rgb_to_hsl` wraps `colorsys.rgb_to_hls`.
+
+**Planned API:**
+
+| Function | Signature | Output range |
+| --- | --- | --- |
+| `rgb_to_hsb(rgb)` | `tuple[int,int,int]` → `tuple[float,float,float]` | H 0–360°, S 0–100%, B 0–100% |
+| `hsb_to_rgb(hsb)` | `tuple[float,float,float]` → `tuple[int,int,int]` | R/G/B 0–255 |
+
+- `rgb_to_hsb` / `hsb_to_rgb` are the primary names; `rgb_to_hsv` / `hsv_to_rgb` aliases are
+  desirable for users who know the space as HSV.
+- Export from `color_tools` top-level and add to `__all__`.
+- Add `--to hsb` / `--from hsb` support to the `convert` CLI command.
+- Unit tests with known reference values (red → H=0, S=100, B=100; green → H=120, S=100, B=100).
+
+---
+
+## `conversions.py` — CMYK color space
+
+CMYK (Cyan / Magenta / Yellow / Key-Black) is the standard model for print production and is
+directly relevant to the project's physical-color focus (filaments, physical media).  No stdlib
+support exists; math is straightforward.
+
+**Formula** (RGB 0–255 → CMYK 0–100%):
+
+```
+R' = R/255,  G' = G/255,  B' = B/255
+K  = 1 − max(R', G', B')
+C  = (1 − R' − K) / (1 − K)   [undefined when K=1, i.e. pure black → C=M=Y=0]
+M  = (1 − G' − K) / (1 − K)
+Y  = (1 − B' − K) / (1 − K)
+```
+
+**Planned API:**
+
+| Function | Signature | Output range |
+| --- | --- | --- |
+| `rgb_to_cmyk(rgb)` | `tuple[int,int,int]` → `tuple[float,float,float,float]` | C/M/Y/K 0–100% |
+| `cmyk_to_rgb(cmyk)` | `tuple[float,float,float,float]` → `tuple[int,int,int]` | R/G/B 0–255 |
+
+- Note: this is the only planned 4-tuple conversion in the library.
+- Export from `color_tools` top-level and add to `__all__`.
+- Add `--to cmyk` / `--from cmyk` support to the `convert` CLI command.
+- Unit tests: black → (0, 0, 0, 100); white → (0, 0, 0, 0); red → (0, 100, 100, 0).
+- Caveat: this is *device-independent* CMYK (no ICC profile).  Document clearly so users don't
+  expect print-accurate ink percentages — those require ICC profile transformation.
