@@ -110,7 +110,7 @@ support exists; math is straightforward.
 
 **Formula** (RGB 0–255 → CMYK 0–100%):
 
-```
+```text
 R' = R/255,  G' = G/255,  B' = B/255
 K  = 1 − max(R', G', B')
 C  = (1 − R' − K) / (1 − K)   [undefined when K=1, i.e. pure black → C=M=Y=0]
