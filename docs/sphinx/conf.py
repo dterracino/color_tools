@@ -4,6 +4,7 @@
 
 import os
 import sys
+from datetime import date
 
 # -- Path setup --------------------------------------------------------------
 # Add the parent directory to sys.path to import color_tools
@@ -19,9 +20,9 @@ except ImportError as e:
 
 # -- Project information -----------------------------------------------------
 project = 'Color Tools'
-copyright = '2024-2026, David Terracino'
+copyright = f'2024-{date.today().year}, David Terracino'
 author = 'David Terracino'
-release = '6.1.4'
+release = color_tools.__version__
 
 # -- General configuration ---------------------------------------------------
 extensions = [
@@ -36,6 +37,8 @@ extensions = [
     'myst_parser',                  # Markdown support
 ]
 
+todo_include_todos = False  # Set to True to render .. todo:: directives in output
+
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ['_templates']
 
@@ -45,6 +48,12 @@ exclude_patterns = ['_build', 'Thumbs.db', '.DS_Store']
 
 # -- Options for HTML output -------------------------------------------------
 html_theme = 'sphinx_rtd_theme'  # Read the Docs theme
+
+html_theme_options = {
+    'analytics_id': 'G-Y7FDTT39XW',  # Google Analytics 4
+    'collapse_navigation': False,      # Keep full sidebar expanded at all times
+    'navigation_depth': 4,
+}
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
@@ -87,11 +96,13 @@ intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),
     'numpy': ('https://numpy.org/doc/stable/', None),
     'pillow': ('https://pillow.readthedocs.io/en/stable/', None),
+    'prompt_toolkit': ('https://python-prompt-toolkit.readthedocs.io/en/stable/', None),
 }
 
 # Type hints configuration
 typehints_fully_qualified = False
 always_document_param_types = False
+autodoc_typehints = 'description'  # Show type hints in param table, not signature
 
 # MyST parser configuration (for Markdown files)
 myst_enable_extensions = [
@@ -102,7 +113,6 @@ myst_enable_extensions = [
     "colon_fence",
     "smartquotes",
     "replacements",
-    "linkify",
     "substitution",
     "tasklist",
 ]

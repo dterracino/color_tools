@@ -120,7 +120,9 @@ gameboy_image.save("gameboy_style.png")
 - `rgb_to_lab()`, `lab_to_rgb()` - RGB ↔ LAB conversion (most common)
 - `rgb_to_lch()`, `lch_to_rgb()` - RGB ↔ LCH conversion  
 - `rgb_to_hsl()`, `hsl_to_rgb()` - RGB ↔ HSL conversion (0-360, 0-100, 0-100 range)
-- `rgb_to_winhsl()` - RGB → Windows HSL (0-240, 0-240, 0-240 range)
+- `rgb_to_winhsl240()` - RGB → winHSL240: Windows OS (Paint, WordPad, Win32 GDI) — H: 0–239, S/L: 0–240
+- `rgb_to_winhsl255()` - RGB → winHSL255: Microsoft Office colour picker — H: 0–254, S/L: 0–255
+- `rgb_to_winhsl()` - Alias for `rgb_to_winhsl240()` (backward compatibility)
 - `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion
   - Supports 3-character shorthand (`#F00` or `F00` → `(255, 0, 0)`)
   - Supports 6-character standard (`#FF0000` or `FF0000` → `(255, 0, 0)`)

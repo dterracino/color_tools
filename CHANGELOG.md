@@ -47,55 +47,173 @@ color-tools convert --from rgb --to cmy --value 255 128 0
 color-tools convert --from cmy --to rgb --value 0 50 100
 ```
 
-### Planned
+## [6.3.0] - 2026-04-13
 
-#### `image/basic.py` — `get_dominant_colors(count)` + refactor `get_dominant_color`
+### Added
 
-- Add `get_dominant_colors(image_path, count: int) -> list[tuple[int, int, int]]` that returns the
-  top N most-frequent colors from an image (simple histogram approach, no clustering).
-- Refactor `get_dominant_color` to delegate: `return get_dominant_colors(image_path, 1)[0]`.
-- Export `get_dominant_colors` from `image/__init__.py`.
+- **`distance.py`** — New `delta_e_hyab()` HyAB distance metric (Abasi et al. 2020).
 
-#### `image/analysis.py` — Perceptual / focal-weighted color dominance
+  ```text
+  HyAB(L1,L2, a1,a2, b1,b2) = l_weight × |L1−L2| + √((a1−a2)² + (b1−b2)²)
+  ```
 
-- Implement **focal point detection** (`get_focal_point(image_path) -> tuple[int, int]`) — returns
-  the (x, y) pixel coordinate of the image's visual center of interest (sharpness-weighted centroid
-  or saliency map approach).
-- Implement **focal radius** (`get_focal_radius(image_path) -> float`) — the approximate radius (in
-  pixels) around the focal point that covers the primary region of interest.
-- Implement **focal circle** (`get_focal_circle(image_path) -> tuple[int, int, float]`) — convenience
-  wrapper returning `(cx, cy, radius)` for easy downstream use.
-- Implement **perceptually-weighted dominant colors** — when an image is primarily grayscale/neutral
-  but contains vivid accent colors, those accents should surface as dominant. Strategy:
-  - Score each color cluster by chroma (LCH C*) and focal proximity, not just pixel count.
-  - A cluster that is highly chromatic AND concentrated near the focal point is amplified even if
-    numerically small (e.g., a teal accent in a black-and-white portrait).
-  - Expose as an optional `perceptual=True` parameter on an updated `extract_color_clusters`.
-- Implement **saturation threshold filtering** for "color pop" style images — pixels below a
-  configurable HSL/HSV saturation threshold are treated as grayscale background and excluded (or
-  heavily down-weighted) before dominance scoring. This means a color-pop image where 90% of pixels
-  are desaturated will still return the vivid "pop" colors as dominant rather than the gray mass.
-  - `saturation_threshold: float = 0.0` parameter (0.0 = off, suggested default ~0.15–0.20 when
-    enabled) on both `get_dominant_colors` and the perceptual cluster path.
-  - Pairs naturally with the chroma/focal weighting above — together they handle the full spectrum
-    from subtle accents to explicit color-pop photography.
+  - Separates lightness and chromatic contributions (hybrid metric)
+  - `l_weight=1.0` — pure HyAB; `l_weight=2.0` — recommended for k-means quantization
+  - Exported from `color_tools` top-level package and listed in `__all__`
+  - Accepted by `Palette.nearest_color()`, `nearest_colors()`, `FilamentPalette.nearest_filament()`,
+    `nearest_filaments()` as `metric="hyab"`
+  - Added to `--metric` choices for all three CLI commands (`color`, `filament`, `image`)
 
-#### `image/analysis.py` — Canny edge detection utilities (TBD)
+- **`image/analysis.py`** — Enhanced `extract_color_clusters()` with new keyword-only parameters:
 
-- `opencv-python>=4.8.0` is now part of the `[image]` extra. Functions that require it will use
-  conditional imports (`try: import cv2`) consistent with the project's existing pattern — the
-  module stays importable without OpenCV, but Canny-based functions will raise `ImportError` with
-  a helpful message if it's missing.
-- Likely candidates (confirm scope before implementing):
-  - **Edge-density focal estimation** — high edge-density regions are usually the sharpest / most
-    in-focus area; fast focal point proxy without a full saliency model.
-  - **Edge-aware color weighting** — colors near detected edges belong to object surfaces (not
-    diffuse background fill); upweight them in dominance calculations.
-  - **Sharpness / focus score** — count edge pixels in a bounding box to produce a focus quality
-    metric useful for selecting the "best" frame from a burst.
-  - **Region segmentation via edges** — use edges as region boundaries, then analyze dominant
-    color per region. Significantly more complex (watershed/flood-fill on top of edge detection);
-    defer until the simpler Canny utilities are proven out.
+  | Parameter | Default | Description |
+  | --- | --- | --- |
+  | `distance_metric` | `"lab"` | `"lab"`, `"rgb"`, or `"hyab"` |
+  | `l_weight` | `1.0` | Lightness weight for HyAB mode |
+  | `use_l_median` | `False` | Use median (not mean) of L for centroid update |
+  | `n_iter` | `10` | Number of k-means iterations |
+
+  - `use_lab_distance` retained for backward compatibility
+  - Clusters now sorted by `pixel_count` descending (most dominant first)
+
+- **`image/analysis.py`** — New `quantize_image_hyab(image_path, n_colors=16, *, n_iter=10, l_weight=2.0, use_l_median=True) -> PIL.Image.Image` convenience function.
+
+  Runs HyAB k-means clustering, remaps every pixel to its nearest centroid, and returns a
+  quantized `PIL.Image.Image`. Defaults mirror the Abasi et al. recommendations.
+
+  ```python
+  from color_tools.image import quantize_image_hyab
+  img = quantize_image_hyab("photo.jpg", n_colors=8)
+  img.save("photo_quantized.png")
+  ```
+
+  CLI:
+
+  ```bash
+  color-tools image --file photo.jpg --quantize-hyab --colors 16
+  color-tools image --file photo.jpg --quantize-hyab --colors 8 --l-weight 1.5 --output out.png
+  ```
+
+- **`image/__init__.py`** — `quantize_image_hyab` exported and added to `__all__`
+- **`tests/test_hyab.py`** — 36 new unit tests covering `delta_e_hyab`, palette dispatch,
+  `extract_color_clusters` new params, and `quantize_image_hyab`
+- **`conversions.py`** — New `rgb_to_winhsl240()` (Windows Paint / Win32 GDI variant) and
+  `rgb_to_winhsl255()` (Microsoft Office variant) conversion functions.
+
+  | Variant | H range | S range | L range | Used by |
+  | --- | --- | --- | --- | --- |
+  | winHSL240 | 0–239 | 0–240 | 0–240 | Windows Paint, WordPad, Win32 GDI |
+  | winHSL255 | 0–254 | 0–255 | 0–255 | Microsoft Office colour picker |
+
+  `rgb_to_winhsl()` is retained as a backward-compatible alias for `rgb_to_winhsl240()`.
+
+- **`constants.py`** — Added `WIN_HSL240_HUE_MAX = 239`, `WIN_HSL240_SL_MAX = 240`,
+  `WIN_HSL255_HUE_MAX = 254`, `WIN_HSL255_SL_MAX = 255` constants (constants hash updated).
+
+### Fixed
+
+- **`conversions.py`** — `rgb_to_winhsl()` hue clamping bug: `round(h * 240)` could produce
+  `240` when the fractional hue was ≥ 239.5/240 (≈ 0.9979), which is out-of-spec because hue
+  240 wraps back to 0° (red). Fixed in `rgb_to_winhsl240()` with `min(..., 239)`; same guard
+  applied for the 255 variant (`min(..., 254)`).
+
+### Added
+
+- **`image/blend.py`** — New module implementing all 27 Photoshop-compatible blend modes for
+  compositing two images together. Uses numpy for efficient per-pixel math and Pillow for I/O
+  (no OpenCV dependency).
+
+  **Blend modes implemented:**
+
+  | Category | Modes |
+  | ------------- | ------- |
+  | Normal | `normal`, `dissolve` |
+  | Darken | `darken`, `multiply`, `color_burn`, `linear_burn`, `darker_color` |
+  | Lighten | `lighten`, `screen`, `color_dodge`, `linear_dodge`, `lighter_color` |
+  | Contrast | `overlay`, `soft_light`, `hard_light`, `vivid_light`, `linear_light`, `pin_light`, `hard_mix` |
+  | Comparative | `difference`, `exclusion`, `subtract`, `divide` |
+  | Component | `hue`, `saturation`, `color`, `luminosity` |
+
+  **Key implementation details:**
+  - `soft_light` uses the correct W3C/Photoshop piecewise formula (not the Pegtop approximation)
+  - `darker_color` / `lighter_color` compare full-pixel BT.601 luminance (not per-channel)
+  - `hue` / `saturation` / `color` / `luminosity` use a fully vectorized `_set_sat()` replacing a
+    prior O(W×H) Python pixel loop
+  - Alpha channels are handled separately from RGB blending using src-over compositing:
+    `out_α = blend_α × opacity + base_α × (1 − blend_α × opacity)`
+  - `dissolve` uses opacity as the random selection threshold in `blend_images()` while
+    remaining a clean 50/50 selector as a standalone function
+
+  **Public API (exported from `color_tools.image`):**
+
+  ```python
+  from color_tools.image import blend_images, BLEND_MODES
+
+  # Blend two images using multiply mode at 80% opacity
+  result = blend_images("base.png", "layer.png", mode="multiply", opacity=0.8)
+  result.save("output.png")
+
+  # List all available blend modes
+  print(sorted(BLEND_MODES.keys()))
+  ```
+
+### Fixed
+
+- **`image/basic.py`** — Two type errors in `quantize_image_to_palette()`:
+  - `quantized_colors` list comprehension now uses explicit 3-tuple construction
+    `(int(...), int(...), int(...))` instead of `tuple(... for c in centroid)`, resolving
+    `tuple[int, ...]` → `tuple[int, int, int]` inference failure.
+  - `unique_colors` dict is now annotated as `dict[tuple[int, int, int], int]`, resolving
+    `Unknown` key type that propagated to `palette.nearest_color()` call site.
+- **`image/watermark.py`** — Removed orphaned `__all__` declaration that had been incorrectly
+  placed at the bottom of the file. Public API is controlled exclusively by `image/__init__.py`,
+  consistent with every other module in the package.
+
+### Tests
+
+- **`tests/test_image_blend.py`** — New test file with 217 tests covering all 27 blend mode
+  functions, internal helpers (`_clip01`, `_lum`, `_sat`, `_set_lum`, `_set_sat`), and
+  `blend_images()` I/O including opacity, alpha compositing, resize, file save, and input
+  validation.
+- **`tests/test_watermark.py`** — Added 48 tests across three new test classes:
+  - `TestCalculatePosition` — all 9 position presets with margin arithmetic, custom tuple
+    passthrough, `margin=0`, and invalid position string raises `KeyError`
+  - `TestLoadFont` — both-args `ValueError`, missing file `FileNotFoundError`, default fallback,
+    and bundled font file lookup by bare filename
+  - `TestTextWatermarkPixelEffects` — `opacity=0.0` pixel-identity verification, output always
+    RGBA regardless of input mode, size preservation, and `watermark_path` accepts both `Path`
+    and `str`
+
+### Documentation
+
+- **`docs/sphinx/conf.py`** — `release` now reads from `color_tools.__version__` automatically
+  instead of being hardcoded; copyright year is dynamic; `intersphinx_mapping` extended with
+  `prompt_toolkit`; `autodoc_typehints = 'description'` set explicitly; `todo_include_todos`
+  declared; `"linkify"` MyST extension removed (dependency was absent from `docs/requirements.txt`).
+- **`docs/sphinx/api/color_tools.image.blend.rst`** — New API doc page for the blend module;
+  added to the Image Processing section of `docs/sphinx/index.rst`.
+- **`image/blend.py`** — Module docstring updated: blend mode categories reformatted as a
+  preformatted literal block (fixes RST indentation errors in Sphinx build); added *Primary API*
+  section explaining that `blend_images()` and `BLEND_MODES` are the standard entry points and
+  that the 27 individual mode functions are exposed for advanced numpy-pipeline use only.
+- **`image/basic.py`** — Removed stale "Public API" listing from module docstring; autodoc
+  renders the actual function inventory, making the prose list redundant and drift-prone.
+- **`exporters/__init__.py`** — Removed stale "Public API" listing from module docstring for the
+  same reason.
+- **`color_tools/image/README.md`** — Added a callout block to the blend modes section explaining
+  that `blend_images()` and `BLEND_MODES` are the primary API and that the individual mode
+  functions require normalized float32 numpy arrays if called directly.
+- **`NEXTSTEPS.md`** — New root-level file. The `### Planned` section that had been living inside
+  the 6.2.0 CHANGELOG entry was moved here; planned items are not part of a release record.
+- **`docs/sphinx/conf.py`** — Added `html_theme_options`: GA4 analytics (`G-Y7FDTT39XW`),
+  `collapse_navigation: False` (sidebar no longer collapses when navigating to submodule pages),
+  and explicit `navigation_depth: 4`.
+- **`matrices.py`** — All 6 matrix constants (`PROTANOPIA_SIMULATION`, `DEUTERANOPIA_SIMULATION`,
+  `TRITANOPIA_SIMULATION`, `PROTANOPIA_CORRECTION`, `DEUTERANOPIA_CORRECTION`,
+  `TRITANOPIA_CORRECTION`) now appear in the Sphinx docs. Previously used `#` comments which
+  autodoc ignores; converted to `#:` attribute docstrings. `Matrix3x3` type alias upgraded from
+  a bare assignment to a proper `TypeAlias` annotation so Sphinx renders the clean alias name
+  instead of the fully-expanded tuple type in each constant's signature.
 
 ## [6.1.4] - 2026-03-29
 

@@ -22,6 +22,7 @@ try:
         simulate_cvd_image,
         correct_cvd_image,
         quantize_image_to_palette,
+        quantize_image_hyab,
         add_text_watermark,
         add_image_watermark,
         add_svg_watermark,
@@ -79,6 +80,7 @@ def handle_image_command(args):
         args.cvd_simulate is not None,
         args.cvd_correct is not None,
         args.quantize_palette is not None,
+        getattr(args, 'quantize_hyab', False),
         args.watermark,
         args.convert is not None,
     ]
@@ -90,6 +92,7 @@ def handle_image_command(args):
         print("  --cvd-simulate TYPE         (colorblindness simulation)", file=sys.stderr)
         print("  --cvd-correct TYPE          (colorblindness correction)", file=sys.stderr)
         print("  --quantize-palette NAME     (convert to retro palette)", file=sys.stderr)
+        print("  --quantize-hyab             (HyAB k-means quantization)", file=sys.stderr)
         print("  --watermark                 (add text/image/SVG watermark with --watermark-text/--watermark-image/--watermark-svg)", file=sys.stderr)
         print("  --convert FORMAT            (convert image format: png, jpg, webp, heic, avif, etc.)", file=sys.stderr)
         print("  --list-palettes             (show available palettes)", file=sys.stderr)
@@ -168,7 +171,28 @@ def handle_image_command(args):
                 default_output = image_path.with_name(f"{image_path.stem}_{args.quantize_palette}{dither_suffix}{image_path.suffix}")
                 quantized_image.save(default_output)
                 print(f"Quantized image saved to: {default_output}")
-        
+
+        elif getattr(args, 'quantize_hyab', False):
+            # HyAB k-means quantization
+            n_colors = getattr(args, 'colors', 16) or 16
+            l_weight = getattr(args, 'l_weight', 2.0)
+            use_l_median = getattr(args, 'use_l_median', True)
+            print(f"Quantizing {image_path.name} to {n_colors} colors using HyAB k-means...")
+            print(f"  l_weight={l_weight}, use_l_median={use_l_median}")
+            quantized_image = quantize_image_hyab(
+                str(image_path),
+                n_colors=n_colors,
+                l_weight=l_weight,
+                use_l_median=use_l_median,
+            )
+            if output_path:
+                quantized_image.save(output_path)
+                print(f"HyAB-quantized image saved to: {output_path}")
+            else:
+                default_output = image_path.with_name(f"{image_path.stem}_hyab{n_colors}{image_path.suffix}")
+                quantized_image.save(default_output)
+                print(f"HyAB-quantized image saved to: {default_output}")
+
         elif args.watermark:
             # Watermarking
             from PIL import Image

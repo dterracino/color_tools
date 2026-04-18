@@ -11,12 +11,12 @@ All matrices are documented with their sources and intended use.
 """
 
 from __future__ import annotations
-from typing import Tuple
+from typing import Tuple, TypeAlias
 
 # Type alias for 3x3 transformation matrices
-Matrix3x3 = Tuple[Tuple[float, float, float], 
-                  Tuple[float, float, float], 
-                  Tuple[float, float, float]]
+Matrix3x3: TypeAlias = Tuple[Tuple[float, float, float],
+                              Tuple[float, float, float],
+                              Tuple[float, float, float]]
 
 
 # =============================================================================
@@ -35,24 +35,27 @@ Matrix3x3 = Tuple[Tuple[float, float, float],
 # - Colorspace R package by Ross Ihaka
 # =============================================================================
 
-# Protanopia - Red-blind (missing L-cones, ~1% of males)
-# Difficulty distinguishing red from green, red appears darker
+#: Protanopia simulation matrix — Red-blind (missing L-cones, ~1% of males).
+#: Difficulty distinguishing red from green; red appears darker.
+#: Source: Viénot, Brettel, and Mollon (1999)
 PROTANOPIA_SIMULATION: Matrix3x3 = (
     (0.56667, 0.43333, 0.00000),
     (0.55833, 0.44167, 0.00000),
     (0.00000, 0.24167, 0.75833)
 )
 
-# Deuteranopia - Green-blind (missing M-cones, ~1% of males)
-# Difficulty distinguishing red from green, most common form
+#: Deuteranopia simulation matrix — Green-blind (missing M-cones, ~1% of males).
+#: Most common form of color vision deficiency.
+#: Source: Viénot, Brettel, and Mollon (1999)
 DEUTERANOPIA_SIMULATION: Matrix3x3 = (
     (0.62500, 0.37500, 0.00000),
     (0.70000, 0.30000, 0.00000),
     (0.00000, 0.30000, 0.70000)
 )
 
-# Tritanopia - Blue-blind (missing S-cones, ~0.001% of population)
-# Difficulty distinguishing blue from yellow, very rare
+#: Tritanopia simulation matrix — Blue-blind (missing S-cones, ~0.001% of population).
+#: Difficulty distinguishing blue from yellow; very rare.
+#: Source: Viénot, Brettel, and Mollon (1999)
 TRITANOPIA_SIMULATION: Matrix3x3 = (
     (0.95000, 0.05000, 0.00000),
     (0.00000, 0.43333, 0.56667),
@@ -81,24 +84,27 @@ TRITANOPIA_SIMULATION: Matrix3x3 = (
 # 3. Shift colors in a direction that enhances discriminability
 # =============================================================================
 
-# Protanopia Correction
-# Shifts reds toward orange/yellow to increase visibility for red-blind individuals
+#: Protanopia correction matrix — shifts reds toward orange/yellow to increase
+#: visibility for red-blind individuals.
+#: Source: Fidaner et al. (2005) daltonization algorithm
 PROTANOPIA_CORRECTION: Matrix3x3 = (
     (0.00000, 0.00000, 0.00000),
     (0.70000, 1.00000, 0.00000),
     (0.70000, 0.00000, 1.00000)
 )
 
-# Deuteranopia Correction  
-# Adjusts greens to be more distinguishable for green-blind individuals
+#: Deuteranopia correction matrix — adjusts greens to be more distinguishable
+#: for green-blind individuals.
+#: Source: Fidaner et al. (2005) daltonization algorithm
 DEUTERANOPIA_CORRECTION: Matrix3x3 = (
     (1.00000, 0.70000, 0.00000),
     (0.00000, 0.00000, 0.00000),
     (0.00000, 0.70000, 1.00000)
 )
 
-# Tritanopia Correction
-# Modifies blues and yellows to increase contrast for blue-blind individuals
+#: Tritanopia correction matrix — modifies blues and yellows to increase contrast
+#: for blue-blind individuals.
+#: Source: Fidaner et al. (2005) daltonization algorithm
 TRITANOPIA_CORRECTION: Matrix3x3 = (
     (1.00000, 0.00000, 0.70000),
     (0.00000, 1.00000, 0.70000),

@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.2.0"
+__version__ = "6.3.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -98,15 +98,9 @@ from .conversions import (
     # RGB ↔ HSL (common web dev color space)
     rgb_to_hsl,
     hsl_to_rgb,
-    rgb_to_winhsl,  # Windows HSL (0-240 range)
-
-    # RGB ↔ CMY (simple subtractive model — no black channel)
-    rgb_to_cmy,
-    cmy_to_rgb,
-
-    # RGB ↔ CMYK (print subtractive model — with black channel)
-    rgb_to_cmyk,
-    cmyk_to_rgb,
+    rgb_to_winhsl240,  # winHSL240: Windows OS (Paint, Win32 GDI) — H 0-239, S/L 0-240
+    rgb_to_winhsl255,  # winHSL255: Microsoft Office — H 0-254, S/L 0-255
+    rgb_to_winhsl,  # Alias for rgb_to_winhsl240 (backward compatibility)
 )
 
 # ============================================================================
@@ -119,6 +113,7 @@ from .distance import (
     delta_e_94,
     delta_e_76,
     delta_e_cmc,
+    delta_e_hyab,   # Best for large color differences and k-means quantization
     
     # Simple distance functions
     euclidean,
@@ -278,6 +273,8 @@ __all__ = [
     "lab_to_xyz",
     "rgb_to_hsl",
     "hsl_to_rgb",
+    "rgb_to_winhsl240",
+    "rgb_to_winhsl255",
     "rgb_to_winhsl",
     
     # Distance metrics
@@ -285,6 +282,7 @@ __all__ = [
     "delta_e_94",
     "delta_e_76",
     "delta_e_cmc",
+    "delta_e_hyab",
     "euclidean",
     "hsl_euclidean",
     "hue_diff_deg",

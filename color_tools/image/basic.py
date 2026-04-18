@@ -7,17 +7,6 @@ separate from the HueForge-specific tools in analysis.py.
 Functions in this module require Pillow and numpy:
     pip install color-match-tools[image]
 
-Public API:
------------
-    count_unique_colors - Count total unique RGB colors in an image
-    get_color_histogram - Get histogram mapping RGB colors to pixel counts
-    get_dominant_color - Get the most common color in an image
-    is_indexed_mode - Check if image uses indexed color mode (palette-based)
-    analyze_brightness - Analyze image brightness with assessment
-    analyze_contrast - Analyze image contrast using standard deviation
-    analyze_noise_level - Estimate noise level using scikit-image
-    analyze_dynamic_range - Analyze dynamic range and gamma suggestions
-
 Example:
 --------
     >>> from color_tools.image import count_unique_colors, get_color_histogram, get_dominant_color
@@ -903,7 +892,7 @@ def quantize_image_to_palette(
     pixels_rgb: list[tuple[int, int, int]] = list(original.getdata())  # type: ignore[arg-type]
     
     # Get unique colors from source image
-    unique_colors = {}  # {rgb: count}
+    unique_colors: dict[tuple[int, int, int], int] = {}  # {rgb: count}
     for pixel in pixels_rgb:
         unique_colors[pixel] = unique_colors.get(pixel, 0) + 1
     
@@ -970,7 +959,10 @@ def quantize_image_to_palette(
         pixel_assignments = np.argmin(distances, axis=0)
         
         # Build quantized colors and pixel mapping
-        quantized_colors = [tuple(int(round(c)) for c in centroid) for centroid in centroids]
+        quantized_colors: list[tuple[int, int, int]] = [
+            (int(round(centroid[0])), int(round(centroid[1])), int(round(centroid[2])))
+            for centroid in centroids
+        ]
         pixels_to_cluster = {i: quantized_colors[pixel_assignments[i]] for i in range(len(pixels_rgb))}
         
         # Sort quantized colors by L-value for better palette matching

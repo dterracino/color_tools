@@ -401,10 +401,167 @@ class TestWatermarkIntegration(unittest.TestCase):
         self.assertEqual(result2.size, self.rgb_image.size)
 
 
+@unittest.skipUnless(WATERMARK_AVAILABLE, "Watermarking requires Pillow")
+class TestCalculatePosition(unittest.TestCase):
+    """Tests for the _calculate_position internal helper."""
+
+    @classmethod
+    def setUpClass(cls):
+        from color_tools.image.watermark import _calculate_position
+        cls._calculate_position = staticmethod(_calculate_position)
+
+    def test_custom_tuple_returned_directly(self):
+        """Custom (x, y) tuple is passed through unchanged."""
+        result = self._calculate_position((400, 300), (100, 50), (25, 75))
+        self.assertEqual(result, (25, 75))
+
+    def test_top_left_uses_margin(self):
+        result = self._calculate_position((400, 300), (100, 50), "top-left", margin=10)
+        self.assertEqual(result, (10, 10))
+
+    def test_top_right_uses_margin(self):
+        result = self._calculate_position((400, 300), (100, 50), "top-right", margin=10)
+        self.assertEqual(result, (290, 10))   # 400 - 100 - 10
+
+    def test_bottom_left_uses_margin(self):
+        result = self._calculate_position((400, 300), (100, 50), "bottom-left", margin=10)
+        self.assertEqual(result, (10, 240))   # 300 - 50 - 10
+
+    def test_bottom_right_uses_margin(self):
+        result = self._calculate_position((400, 300), (100, 50), "bottom-right", margin=10)
+        self.assertEqual(result, (290, 240))
+
+    def test_center(self):
+        result = self._calculate_position((400, 300), (100, 50), "center")
+        self.assertEqual(result, (150, 125))  # (400-100)//2, (300-50)//2
+
+    def test_top_center(self):
+        result = self._calculate_position((400, 300), (100, 50), "top-center", margin=5)
+        self.assertEqual(result, (150, 5))
+
+    def test_bottom_center(self):
+        result = self._calculate_position((400, 300), (100, 50), "bottom-center", margin=5)
+        self.assertEqual(result, (150, 245))  # 300 - 50 - 5
+
+    def test_center_left(self):
+        result = self._calculate_position((400, 300), (100, 50), "center-left", margin=8)
+        self.assertEqual(result, (8, 125))
+
+    def test_center_right(self):
+        result = self._calculate_position((400, 300), (100, 50), "center-right", margin=8)
+        self.assertEqual(result, (292, 125))  # 400 - 100 - 8
+
+    def test_margin_zero(self):
+        result = self._calculate_position((400, 300), (100, 50), "top-left", margin=0)
+        self.assertEqual(result, (0, 0))
+
+    def test_invalid_position_raises(self):
+        """An unknown string position should raise KeyError."""
+        with self.assertRaises(KeyError):
+            self._calculate_position((400, 300), (100, 50), "invalid-position")  # type: ignore[arg-type]
+
+
+@unittest.skipUnless(WATERMARK_AVAILABLE, "Watermarking requires Pillow")
+class TestLoadFont(unittest.TestCase):
+    """Tests for the _load_font internal helper."""
+
+    @classmethod
+    def setUpClass(cls):
+        from color_tools.image.watermark import _load_font
+        cls._load_font = staticmethod(_load_font)
+
+    def test_both_font_name_and_file_raises(self):
+        with self.assertRaises(ValueError):
+            self._load_font(font_name="Arial", font_file="somefont.ttf")
+
+    def test_missing_font_file_raises(self):
+        with self.assertRaises(FileNotFoundError):
+            self._load_font(font_file="/nonexistent/path/font.ttf")
+
+    def test_default_fallback_returns_font(self):
+        """No arguments → falls back to PIL default font without error."""
+        from PIL import ImageFont
+        font = self._load_font()
+        self.assertIsInstance(font, (ImageFont.FreeTypeFont, ImageFont.ImageFont))
+
+    def test_font_file_in_fonts_directory(self):
+        """A bare filename is looked up in the bundled fonts/ directory."""
+        from color_tools.image.watermark import _get_fonts_directory
+        from PIL import ImageFont
+        fonts_dir = _get_fonts_directory()
+        ttf_files = list(fonts_dir.glob("*.ttf")) + list(fonts_dir.glob("*.otf"))
+        if not ttf_files:
+            self.skipTest("No bundled fonts available")
+        font = self._load_font(font_file=ttf_files[0].name, size=12)
+        self.assertIsInstance(font, ImageFont.FreeTypeFont)
+
+
+@unittest.skipUnless(WATERMARK_AVAILABLE, "Watermarking requires Pillow")
+class TestTextWatermarkPixelEffects(unittest.TestCase):
+    """Verify actual pixel-level effects of text watermarking."""
+
+    def setUp(self):
+        self.base = Image.new('RGBA', (200, 100), (200, 200, 200, 255))
+
+    def test_opacity_zero_leaves_pixels_unchanged(self):
+        """opacity=0.0 draws fully transparent text — composite is identical to base."""
+        result = add_text_watermark(
+            self.base,
+            text="INVISIBLE",
+            position="center",
+            opacity=0.0,
+        )
+        import numpy as np
+        base_arr   = np.asarray(self.base.convert('RGBA'))
+        result_arr = np.asarray(result)
+        self.assertTrue(
+            np.array_equal(base_arr, result_arr),
+            "opacity=0.0 should produce a result identical to the base image",
+        )
+
+    def test_output_preserves_base_size(self):
+        result = add_text_watermark(self.base, text="SIZE")
+        self.assertEqual(result.size, self.base.size)
+
+    def test_output_is_always_rgba(self):
+        for mode in ('RGB', 'RGBA', 'L'):
+            img = Image.new(mode, (100, 80), 128)
+            result = add_text_watermark(img, text="M")
+            self.assertEqual(result.mode, 'RGBA', f"Expected RGBA output for {mode} input")
+
+    def test_watermark_path_accepts_path_object(self):
+        """add_image_watermark accepts a pathlib.Path, not just a string."""
+        import tempfile, os
+        wm = Image.new('RGBA', (20, 20), (255, 0, 0, 128))
+        fd, path_str = tempfile.mkstemp(suffix='.png')
+        os.close(fd)
+        try:
+            wm.save(path_str)
+            result = add_image_watermark(self.base, watermark_path=Path(path_str))
+            self.assertIsInstance(result, Image.Image)
+        finally:
+            if os.path.exists(path_str):
+                os.remove(path_str)
+
+    def test_watermark_path_accepts_string(self):
+        """add_image_watermark accepts a plain string path."""
+        import tempfile, os
+        wm = Image.new('RGBA', (20, 20), (0, 255, 0, 200))
+        fd, path_str = tempfile.mkstemp(suffix='.png')
+        os.close(fd)
+        try:
+            wm.save(path_str)
+            result = add_image_watermark(self.base, watermark_path=path_str)
+            self.assertIsInstance(result, Image.Image)
+        finally:
+            if os.path.exists(path_str):
+                os.remove(path_str)
+
+
 @unittest.skipIf(WATERMARK_AVAILABLE, "Test error handling when Pillow not available")
 class TestWatermarkUnavailable(unittest.TestCase):
     """Test behavior when watermarking is not available."""
-    
+
     def test_import_error_message(self):
         """Test that helpful error is raised when imports fail."""
         # This test only runs when IMAGE_AVAILABLE is False

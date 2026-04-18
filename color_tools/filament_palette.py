@@ -23,7 +23,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, hex_to_rgb
-from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, euclidean
+from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
 from color_tools.config import get_dual_color_mode
 from color_tools._palette_utils import _should_prefer_source, _ensure_list
 
@@ -750,8 +750,10 @@ class FilamentPalette:
             distance_fn = lambda lab1, lab2: euclidean(lab1, lab2)
         elif metric_l in ("cmc", "decmc"):
             distance_fn = lambda lab1, lab2: delta_e_cmc(lab1, lab2, l=cmc_l, c=cmc_c)
+        elif metric_l == "hyab":
+            distance_fn = delta_e_hyab
         else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'.")
+            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
 
         for rec in candidates:
             try:
@@ -831,8 +833,10 @@ class FilamentPalette:
             distance_fn = lambda lab1, lab2: euclidean(lab1, lab2)
         elif metric_l in ("cmc", "decmc"):
             distance_fn = lambda lab1, lab2: delta_e_cmc(lab1, lab2, l=cmc_l, c=cmc_c)
+        elif metric_l == "hyab":
+            distance_fn = delta_e_hyab
         else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'.")
+            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
 
         results: List[Tuple[FilamentRecord, float]] = []
         for rec in candidates:

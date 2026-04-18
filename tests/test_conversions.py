@@ -17,6 +17,8 @@ from color_tools.conversions import (
     rgb_to_xyz, xyz_to_rgb,
     xyz_to_lab, lab_to_xyz,
     rgb_to_hsl, hsl_to_rgb,
+    rgb_to_winhsl240,
+    rgb_to_winhsl255,
     rgb_to_winhsl,
     rgb_to_cmy, cmy_to_rgb,
     rgb_to_cmyk, cmyk_to_rgb,
@@ -337,28 +339,140 @@ class TestRGBHSLConversions(unittest.TestCase):
                 self.assertAlmostEqual(rgb_in[i], rgb_out[i], delta=1)
 
 
-class TestRGBWinHSLConversion(unittest.TestCase):
-    """Test RGB to Windows HSL conversion."""
+class TestRGBWinHSL240Conversion(unittest.TestCase):
+    """Test RGB to winHSL240 conversion (Windows Paint / Win32 GDI variant)."""
     
-    def test_rgb_to_winhsl_primary_colors(self):
-        """Test RGB to Windows HSL conversion for primary colors."""
-        # Red
-        winhsl = rgb_to_winhsl((255, 0, 0))
-        self.assertAlmostEqual(winhsl[0], 0.0, places=1)
-        self.assertAlmostEqual(winhsl[1], 240.0, places=1)
-        self.assertAlmostEqual(winhsl[2], 120.0, places=1)
+    def test_winhsl240_primary_colors(self):
+        """Test winHSL240 for primary colors."""
+        # Red  — H=0, S=240, L=120
+        result = rgb_to_winhsl240((255, 0, 0))
+        self.assertEqual(result[0], 0)
+        self.assertEqual(result[1], 240)
+        self.assertEqual(result[2], 120)
         
-        # Green
-        winhsl = rgb_to_winhsl((0, 255, 0))
-        self.assertAlmostEqual(winhsl[0], 80.0, places=1)
-        self.assertAlmostEqual(winhsl[1], 240.0, places=1)
-        self.assertAlmostEqual(winhsl[2], 120.0, places=1)
+        # Green — H=80, S=240, L=120
+        result = rgb_to_winhsl240((0, 255, 0))
+        self.assertEqual(result[0], 80)
+        self.assertEqual(result[1], 240)
+        self.assertEqual(result[2], 120)
         
-        # Blue
-        winhsl = rgb_to_winhsl((0, 0, 255))
-        self.assertAlmostEqual(winhsl[0], 160.0, places=1)
-        self.assertAlmostEqual(winhsl[1], 240.0, places=1)
-        self.assertAlmostEqual(winhsl[2], 120.0, places=1)
+        # Blue — H=160, S=240, L=120
+        result = rgb_to_winhsl240((0, 0, 255))
+        self.assertEqual(result[0], 160)
+        self.assertEqual(result[1], 240)
+        self.assertEqual(result[2], 120)
+    
+    def test_winhsl240_white_and_black(self):
+        """Test winHSL240 for white and black."""
+        # White — S=0, L=240
+        result = rgb_to_winhsl240((255, 255, 255))
+        self.assertEqual(result[1], 0)
+        self.assertEqual(result[2], 240)
+        
+        # Black — S=0, L=0
+        result = rgb_to_winhsl240((0, 0, 0))
+        self.assertEqual(result[1], 0)
+        self.assertEqual(result[2], 0)
+    
+    def test_winhsl240_hue_never_exceeds_239(self):
+        """H must always be ≤ 239 regardless of input — hue 240 = 0° (red), which is out-of-spec."""
+        # Test all 256^3 is impractical, so test a broad sweep of hues
+        import colorsys
+        for hue_frac in [0.0, 0.25, 0.5, 0.75, 0.9979, 0.9999, 1.0 - 1e-9]:
+            r, g, b = colorsys.hls_to_rgb(hue_frac, 0.5, 1.0)
+            rgb = (int(round(r * 255)), int(round(g * 255)), int(round(b * 255)))
+            result = rgb_to_winhsl240(rgb)
+            self.assertLessEqual(result[0], 239, msg=f"H={result[0]} for hue_frac={hue_frac}")
+    
+    def test_winhsl240_sl_components_in_range(self):
+        """S and L must be in 0–240."""
+        for rgb in [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255), (0, 0, 0), (128, 64, 192)]:
+            h, s, l = rgb_to_winhsl240(rgb)
+            self.assertGreaterEqual(s, 0)
+            self.assertLessEqual(s, 240)
+            self.assertGreaterEqual(l, 0)
+            self.assertLessEqual(l, 240)
+
+
+class TestRGBWinHSL255Conversion(unittest.TestCase):
+    """Test RGB to winHSL255 conversion (Microsoft Office variant)."""
+    
+    def test_winhsl255_primary_colors(self):
+        """Test winHSL255 for primary colors."""
+        # Red — H=0, S=255, L=128ish
+        result = rgb_to_winhsl255((255, 0, 0))
+        self.assertEqual(result[0], 0)
+        self.assertEqual(result[1], 255)
+        self.assertAlmostEqual(result[2], 128, delta=1)
+        
+        # Green — H≈85, S=255, L=128ish
+        result = rgb_to_winhsl255((0, 255, 0))
+        self.assertAlmostEqual(result[0], 85, delta=1)
+        self.assertEqual(result[1], 255)
+        self.assertAlmostEqual(result[2], 128, delta=1)
+        
+        # Blue — H≈170, S=255, L=128ish
+        result = rgb_to_winhsl255((0, 0, 255))
+        self.assertAlmostEqual(result[0], 170, delta=1)
+        self.assertEqual(result[1], 255)
+        self.assertAlmostEqual(result[2], 128, delta=1)
+    
+    def test_winhsl255_white_and_black(self):
+        """Test winHSL255 for white and black."""
+        # White — S=0, L=255
+        result = rgb_to_winhsl255((255, 255, 255))
+        self.assertEqual(result[1], 0)
+        self.assertEqual(result[2], 255)
+        
+        # Black — S=0, L=0
+        result = rgb_to_winhsl255((0, 0, 0))
+        self.assertEqual(result[1], 0)
+        self.assertEqual(result[2], 0)
+    
+    def test_winhsl255_hue_never_exceeds_254(self):
+        """H must always be ≤ 254 — hue 255 = 0° (red) which is out-of-spec."""
+        import colorsys
+        for hue_frac in [0.0, 0.25, 0.5, 0.75, 0.998, 0.9999, 1.0 - 1e-9]:
+            r, g, b = colorsys.hls_to_rgb(hue_frac, 0.5, 1.0)
+            rgb = (int(round(r * 255)), int(round(g * 255)), int(round(b * 255)))
+            result = rgb_to_winhsl255(rgb)
+            self.assertLessEqual(result[0], 254, msg=f"H={result[0]} for hue_frac={hue_frac}")
+    
+    def test_winhsl255_sl_components_in_range(self):
+        """S and L must be in 0–255."""
+        for rgb in [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255), (0, 0, 0), (128, 64, 192)]:
+            h, s, l = rgb_to_winhsl255(rgb)
+            self.assertGreaterEqual(s, 0)
+            self.assertLessEqual(s, 255)
+            self.assertGreaterEqual(l, 0)
+            self.assertLessEqual(l, 255)
+    
+    def test_winhsl255_differs_from_winhsl240(self):
+        """winHSL255 and winHSL240 should produce different S and L for coloured pixels."""
+        rgb = (128, 64, 192)
+        r240 = rgb_to_winhsl240(rgb)
+        r255 = rgb_to_winhsl255(rgb)
+        # S and L should differ between the two variants
+        self.assertNotEqual(r240[1], r255[1])
+        self.assertNotEqual(r240[2], r255[2])
+
+
+class TestWinHSLBackwardCompatAlias(unittest.TestCase):
+    """Test that rgb_to_winhsl is a backward-compat alias for rgb_to_winhsl240."""
+    
+    def test_alias_returns_same_result(self):
+        """rgb_to_winhsl must return identical results to rgb_to_winhsl240."""
+        test_colors = [
+            (255, 0, 0), (0, 255, 0), (0, 0, 255),
+            (255, 255, 255), (0, 0, 0), (128, 64, 192), (200, 100, 50),
+        ]
+        for rgb in test_colors:
+            self.assertEqual(rgb_to_winhsl(rgb), rgb_to_winhsl240(rgb),
+                             msg=f"Alias mismatch for {rgb}")
+    
+    def test_alias_is_same_function(self):
+        """The alias should point to the same underlying function object."""
+        self.assertIs(rgb_to_winhsl, rgb_to_winhsl240)
 
 
 class TestRGBCMYConversions(unittest.TestCase):

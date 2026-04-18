@@ -14,7 +14,12 @@ This module provides image color analysis and manipulation tools, primarily desi
 color_tools/image/
 ├── __init__.py       # Public API exports
 ├── README.md         # This file
-└── analysis.py       # Core image analysis functions
+├── analysis.py       # K-means clustering, luminance redistribution (HueForge)
+├── basic.py          # General analysis, CVD simulation, palette quantization
+├── blend.py          # 27 Photoshop-compatible blend modes
+├── conversion.py     # Image format conversion
+├── watermark.py      # Text, image, and SVG watermarks
+└── fonts/            # Bundled fonts for text watermarks
 ```
 
 ### Not a Runnable Module
@@ -24,35 +29,77 @@ This is a **library module only** - it does not have `__main__.py` and cannot be
 **Access via:**
 
 - **CLI:** `color-tools image --file photo.jpg --redistribute-luminance`
-- **Python API:** `from color_tools.image import extract_color_clusters`
+- **Python API:** `from color_tools.image import extract_color_clusters, quantize_image_hyab`
 
 ## Current Features (Implemented)
 
 ### 1. K-means Color Clustering in LAB Space
 
-**Function:** `extract_color_clusters(image_path, n_colors, use_lab_distance=True)`
+**Function:** `extract_color_clusters(image_path, n_colors, *, distance_metric="lab", l_weight=1.0, use_l_median=False, n_iter=10)`
 
-Extracts dominant colors from an image using k-means clustering in perceptually uniform LAB color space.
+Extracts dominant colors from an image using k-means clustering.  Supports three
+distance metrics: `"lab"` (default), `"rgb"`, and `"hyab"`.
 
 **Key Features:**
 
-- Works in LAB space (not RGB) for perceptual uniformity
+- Works in LAB space by default for perceptual uniformity
+- `distance_metric="hyab"` uses HyAB distance (hybrid L + chromatic) — best for image quantization
+- `l_weight` controls lightness emphasis in HyAB mode (use 2.0 for quantization)
+- `use_l_median` stabilises dark/light clusters by taking median L instead of mean
 - Returns `ColorCluster` objects with:
   - Centroid RGB color
   - Centroid LAB values
   - Pixel indices (which pixels belong to this cluster)
   - Pixel count (dominance weight)
-- Preserves cluster assignments for later image remapping
+- Clusters sorted by `pixel_count` descending (most dominant first)
+- `use_lab_distance` parameter kept for backward compatibility
 
 **Use Case:** Extract the most visually important colors from an image while maintaining perceptual accuracy.
 
-### 2. Simplified Color Extraction
+### 2. HyAB Image Quantization
+
+**Function:** `quantize_image_hyab(image_path, n_colors=16, *, n_iter=10, l_weight=2.0, use_l_median=True) -> PIL.Image.Image`
+
+Quantizes an image to *n_colors* using HyAB k-means clustering and returns the
+recoloured image.  Uses the parameters recommended by Abasi et al. (2020) by default.
+
+**CLI:**
+
+```bash
+# Quantize to 16 colours with HyAB (default l_weight=2.0)
+color-tools image --file photo.jpg --quantize-hyab --colors 16
+
+# Custom l_weight and output file
+color-tools image --file photo.jpg --quantize-hyab --colors 8 --l-weight 1.5 --output out.png
+```
+
+**Python API:**
+
+```python
+from color_tools.image import quantize_image_hyab
+
+img = quantize_image_hyab("photo.jpg", n_colors=8)
+img.save("quantized.png")
+
+# Fine-tune
+img = quantize_image_hyab("photo.jpg", n_colors=16, l_weight=2.0, use_l_median=True)
+```
+
+**When to use HyAB vs. standard LAB k-means:**
+
+| Scenario | Recommended |
+| --- | --- |
+| General color extraction | `distance_metric="lab"` (default) |
+| Quantization / palettization | `distance_metric="hyab"`, `l_weight=2.0` |
+| Retro palette matching | `quantize_image_to_palette()` |
+
+### 3. Simplified Color Extraction
 
 **Function:** `extract_unique_colors(image_path, n_colors)`
 
 Simplified wrapper around `extract_color_clusters()` that just returns RGB centroids (backward compatibility).
 
-### 3. Luminance Redistribution
+### 4. Luminance Redistribution
 
 **Function:** `redistribute_luminance(colors) -> List[ColorChange]`
 
@@ -76,7 +123,7 @@ Redistributes luminance (L value) evenly across a list of colors for Hueforge op
 
 **Use Case:** Spread colors evenly across Hueforge's 27 layers to prevent multiple colors bunching up on the same layer.
 
-### 4. Hueforge Layer Calculation
+### 5. Hueforge Layer Calculation
 
 **Function:** `l_value_to_hueforge_layer(l_value, total_layers=27)`
 
@@ -84,7 +131,7 @@ Converts an L value (0-100) to a Hueforge layer number (1-27).
 
 **Formula:** `layer = floor((L / 100) * 27) + 1`
 
-### 5. Color Change Reporting
+### 6. Color Change Reporting
 
 **Function:** `format_color_change_report(changes) -> str`
 
@@ -107,7 +154,7 @@ Color Luminance Redistribution Report
    Hueforge Layer: 1 (of 27)
 ```
 
-### 6. Image Format Conversion
+### 7. Image Format Conversion
 
 **Function:** `convert_image(input_path, output_path=None, output_format=None, quality=None, lossless=False)`
 
@@ -164,7 +211,67 @@ convert_image("input.jpg", output_path="output.webp", lossless=True)
 convert_image("photo.jpg", output_format="webp", quality=80, lossless=False)
 ```
 
-### 7. Image Watermarking
+---
+
+### 8. Image Blend Modes
+
+**Function:** `blend_images(base_path, blend_path, mode="normal", opacity=1.0, output_path=None)`
+
+Composite two images using any of the 27 Photoshop-compatible blend modes. Blend math is applied only to the RGB channels; alpha uses standard src-over compositing. The blend layer is automatically resized to match the base image if their sizes differ.
+
+> **Primary API:** For most use cases, `blend_images()` and `BLEND_MODES` are all you need.
+> The 27 individual mode functions (`multiply`, `screen`, etc.) are also importable for advanced
+> use in custom numpy pipelines. They expect normalized `float32` arrays of shape `(H, W, 3)` in
+> the `[0.0, 1.0]` range — if you call them directly, array preparation, clipping, and uint8
+> conversion are your responsibility.
+
+**Blend Mode Categories:**
+
+| Category | Modes |
+| ------------- | ------- |
+| Normal | `normal`, `dissolve` |
+| Darken | `darken`, `multiply`, `color_burn`, `linear_burn`, `darker_color` |
+| Lighten | `lighten`, `screen`, `color_dodge`, `linear_dodge`, `lighter_color` |
+| Contrast | `overlay`, `soft_light`, `hard_light`, `vivid_light`, `linear_light`, `pin_light`, `hard_mix` |
+| Comparative | `difference`, `exclusion`, `subtract`, `divide` |
+| Component | `hue`, `saturation`, `color`, `luminosity` |
+
+**Parameters:**
+
+- `base_path` — Path to the base (background) image
+- `blend_path` — Path to the blend (top) layer image  
+- `mode` — Blend mode name (default: `"normal"`; see `BLEND_MODES` for all options)
+- `opacity` — Blend layer opacity `[0.0, 1.0]` (default: `1.0`)
+- `output_path` — If provided, the result is saved here; otherwise returns the PIL Image
+
+**Returns:** Composited `PIL.Image` in RGBA mode.
+
+**Python API:**
+
+```python
+from color_tools.image import blend_images, BLEND_MODES
+
+# Multiply blend at 80% opacity
+result = blend_images("base.png", "layer.png", mode="multiply", opacity=0.8)
+result.save("output.png")
+
+# Save directly
+blend_images("base.png", "overlay.png", mode="overlay", output_path="result.png")
+
+# List all available modes
+print(sorted(BLEND_MODES.keys()))
+```
+
+**Accuracy Notes:**
+
+- `soft_light` uses the W3C/Photoshop piecewise formula with the D(a) function (not the simplified Pegtop approximation)
+- `darker_color` / `lighter_color` compare full-pixel BT.601 luminance rather than per-channel
+- `dissolve` uses `opacity` as the random pixel selection probability
+- Component modes (`hue`, `saturation`, `color`, `luminosity`) use a fully vectorized saturation helper
+
+---
+
+### 9. Image Watermarking
 
 **Functions:**
 

@@ -76,6 +76,7 @@ try:
         ColorChange,
         extract_unique_colors,
         extract_color_clusters,
+        quantize_image_hyab,
         redistribute_luminance,
         format_color_change_report,
         l_value_to_hueforge_layer,
@@ -103,6 +104,10 @@ try:
         convert_image,
         get_supported_formats,
     )
+    from .blend import (
+        blend_images,
+        BLEND_MODES,
+    )
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
@@ -117,6 +122,7 @@ except ImportError:
     # HueForge functions
     extract_unique_colors = _not_available
     extract_color_clusters = _not_available
+    quantize_image_hyab = _not_available
     redistribute_luminance = _not_available
     format_color_change_report = _not_available
     l_value_to_hueforge_layer = _not_available
@@ -145,7 +151,11 @@ except ImportError:
     # Conversion functions
     convert_image = _not_available
     get_supported_formats = _not_available
-    
+
+    # Blend functions
+    blend_images = _not_available
+    BLEND_MODES: dict = {}
+
     # Dummy classes for type hints - use Any to avoid type conflicts
     from typing import Any
     ColorCluster: type[Any] = type('ColorCluster', (), {})
@@ -159,6 +169,7 @@ __all__ = [
     # HueForge functions
     'extract_unique_colors',
     'extract_color_clusters',
+    'quantize_image_hyab',
     'redistribute_luminance',
     'format_color_change_report',
     'l_value_to_hueforge_layer',
@@ -183,4 +194,7 @@ __all__ = [
     # Conversion functions
     'convert_image',
     'get_supported_formats',
+    # Blend functions
+    'blend_images',
+    'BLEND_MODES',
 ]

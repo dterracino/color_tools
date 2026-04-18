@@ -118,7 +118,11 @@ class ColorConstants:
     NORMALIZED_MIN = 0.0                # Minimum normalized value
     NORMALIZED_MAX = 1.0                # Maximum normalized value
     XYZ_SCALE_FACTOR = 100.0            # XYZ typically scaled 0-100
-    WIN_HSL_MAX = 240.0                 # Windows uses 0-240 for HSL
+    WIN_HSL_MAX = 240.0                 # Windows uses 0-240 for HSL (legacy — use WIN_HSL240_* below)
+    WIN_HSL240_HUE_MAX = 239            # winHSL240: hue max (240 wraps to 0°, so valid range is 0–239)
+    WIN_HSL240_SL_MAX = 240             # winHSL240: saturation / lightness max (Windows Paint, Win32 GDI)
+    WIN_HSL255_HUE_MAX = 254            # winHSL255: hue max (same reason; used by Microsoft Office)
+    WIN_HSL255_SL_MAX = 255             # winHSL255: saturation / lightness max (Microsoft Office)
     
     # LAB color space value ranges (8-bit precision)
     AB_MIN = -128.0                     # Minimum a*/b* value
@@ -178,8 +182,8 @@ class ColorConstants:
     # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
     # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
     # Updated 2026-03-28: Updated MAKER_SYNONYMS_JSON_HASH after merge (BBL, BambuLab synonyms added)
-    _EXPECTED_HASH = "96d902325fc913a94c4b063c189d0966193af7f1a06bfdaf5f9be6cc717fcd1a"
-    # Updated for 4.0.0: Added USER_*_JSON_FILENAME constants for organized user data structure
+    _EXPECTED_HASH = "2878701bb464db87188e4e5f6913a9f3e610fea28a515ef73f8303e9483b4b1e"
+    # Updated for 6.3.0: Added WIN_HSL240_HUE_MAX, WIN_HSL240_SL_MAX, WIN_HSL255_HUE_MAX, WIN_HSL255_SL_MAX
     
     # ========================================================================
     # Data File Integrity Hashes
