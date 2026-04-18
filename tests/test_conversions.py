@@ -18,6 +18,8 @@ from color_tools.conversions import (
     xyz_to_lab, lab_to_xyz,
     rgb_to_hsl, hsl_to_rgb,
     rgb_to_winhsl,
+    rgb_to_cmy, cmy_to_rgb,
+    rgb_to_cmyk, cmyk_to_rgb,
 )
 
 
@@ -359,5 +361,164 @@ class TestRGBWinHSLConversion(unittest.TestCase):
         self.assertAlmostEqual(winhsl[2], 120.0, places=1)
 
 
+class TestRGBCMYConversions(unittest.TestCase):
+    """Test RGB to CMY and CMY to RGB conversions."""
+
+    def test_rgb_to_cmy_primary_colors(self):
+        """Test RGB to CMY conversion for primary colors."""
+        # Red: only Cyan (absorbs red) is 0; Magenta and Yellow are full
+        self.assertEqual(rgb_to_cmy((255, 0, 0)), (0.0, 100.0, 100.0))
+        # Green: only Magenta is 0
+        self.assertEqual(rgb_to_cmy((0, 255, 0)), (100.0, 0.0, 100.0))
+        # Blue: only Yellow is 0
+        self.assertEqual(rgb_to_cmy((0, 0, 255)), (100.0, 100.0, 0.0))
+
+    def test_rgb_to_cmy_white_black(self):
+        """Test RGB to CMY for white and black."""
+        # White — no ink
+        self.assertEqual(rgb_to_cmy((255, 255, 255)), (0.0, 0.0, 0.0))
+        # Black — full ink on all three channels
+        self.assertEqual(rgb_to_cmy((0, 0, 0)), (100.0, 100.0, 100.0))
+
+    def test_rgb_to_cmy_secondary_colors(self):
+        """Test RGB to CMY for secondary (additive) colors."""
+        # Cyan = G + B → C=0, M=100, Y=0  wait: Cyan is (0,255,255)
+        # Cyan absorbs red → C=0, M=0, Y=0 (no ink needed for cyan screen color)
+        self.assertEqual(rgb_to_cmy((0, 255, 255)), (100.0, 0.0, 0.0))
+        # Magenta = (255, 0, 255) → no green → M=0... let's use the formula
+        self.assertEqual(rgb_to_cmy((255, 0, 255)), (0.0, 100.0, 0.0))
+        # Yellow = (255, 255, 0) → no blue → Y=100
+        self.assertEqual(rgb_to_cmy((255, 255, 0)), (0.0, 0.0, 100.0))
+
+    def test_cmy_to_rgb_primary_colors(self):
+        """Test CMY to RGB conversion for CMY primaries."""
+        self.assertEqual(cmy_to_rgb((0.0, 100.0, 100.0)), (255, 0, 0))    # red
+        self.assertEqual(cmy_to_rgb((100.0, 0.0, 100.0)), (0, 255, 0))    # green
+        self.assertEqual(cmy_to_rgb((100.0, 100.0, 0.0)), (0, 0, 255))    # blue
+        self.assertEqual(cmy_to_rgb((0.0, 0.0, 0.0)), (255, 255, 255))    # white
+        self.assertEqual(cmy_to_rgb((100.0, 100.0, 100.0)), (0, 0, 0))    # black
+
+    def test_rgb_cmy_roundtrip(self):
+        """Test that rgb_to_cmy → cmy_to_rgb is lossless."""
+        test_colors = [
+            (255, 0, 0),
+            (0, 255, 0),
+            (0, 0, 255),
+            (255, 255, 255),
+            (0, 0, 0),
+            (128, 64, 192),
+            (200, 150, 75),
+        ]
+        for rgb_in in test_colors:
+            cmy = rgb_to_cmy(rgb_in)
+            rgb_out = cmy_to_rgb(cmy)
+            for i in range(3):
+                self.assertAlmostEqual(rgb_in[i], rgb_out[i], delta=1,
+                                       msg=f"Round-trip failed for {rgb_in}: got {rgb_out}")
+
+    def test_cmy_channel_range(self):
+        """All CMY channels must be in [0, 100]."""
+        test_colors = [(r, g, b) for r in (0, 128, 255) for g in (0, 128, 255) for b in (0, 128, 255)]
+        for rgb in test_colors:
+            c, m, y = rgb_to_cmy(rgb)
+            self.assertGreaterEqual(c, 0.0)
+            self.assertLessEqual(c, 100.0)
+            self.assertGreaterEqual(m, 0.0)
+            self.assertLessEqual(m, 100.0)
+            self.assertGreaterEqual(y, 0.0)
+            self.assertLessEqual(y, 100.0)
+
+
+class TestRGBCMYKConversions(unittest.TestCase):
+    """Test RGB to CMYK and CMYK to RGB conversions."""
+
+    def test_rgb_to_cmyk_primary_colors(self):
+        """Test RGB to CMYK for primary colors — K should be 0 for fully saturated primaries."""
+        # Red: C=0, M=100, Y=100, K=0
+        self.assertEqual(rgb_to_cmyk((255, 0, 0)), (0.0, 100.0, 100.0, 0.0))
+        # Green: C=100, M=0, Y=100, K=0
+        self.assertEqual(rgb_to_cmyk((0, 255, 0)), (100.0, 0.0, 100.0, 0.0))
+        # Blue: C=100, M=100, Y=0, K=0
+        self.assertEqual(rgb_to_cmyk((0, 0, 255)), (100.0, 100.0, 0.0, 0.0))
+
+    def test_rgb_to_cmyk_white_black(self):
+        """Test that white maps to all zeros and black maps to K=100."""
+        # White — no ink at all
+        self.assertEqual(rgb_to_cmyk((255, 255, 255)), (0.0, 0.0, 0.0, 0.0))
+        # Black — pure K, not C=M=Y=100 (key advantage of CMYK over CMY)
+        self.assertEqual(rgb_to_cmyk((0, 0, 0)), (0.0, 0.0, 0.0, 100.0))
+
+    def test_rgb_to_cmyk_black_channel_extraction(self):
+        """K should absorb the common darkness so C+M+Y totals are minimised."""
+        # Dark gray (64, 64, 64): K should dominate, C=M=Y=0
+        c, m, y, k = rgb_to_cmyk((64, 64, 64))
+        self.assertAlmostEqual(c, 0.0, places=1)
+        self.assertAlmostEqual(m, 0.0, places=1)
+        self.assertAlmostEqual(y, 0.0, places=1)
+        self.assertAlmostEqual(k, 74.9, delta=1.0)
+
+        # Mid gray (128, 128, 128): same — no color ink, just K
+        c, m, y, k = rgb_to_cmyk((128, 128, 128))
+        self.assertAlmostEqual(c, 0.0, places=1)
+        self.assertAlmostEqual(m, 0.0, places=1)
+        self.assertAlmostEqual(y, 0.0, places=1)
+        self.assertAlmostEqual(k, 49.8, delta=1.0)
+
+    def test_rgb_to_cmyk_mixed_color(self):
+        """Test a specific mixed color against hand-calculated expected values."""
+        # (128, 64, 192): max = 192, K = (1 - 192/255)*100 ≈ 24.71
+        c, m, y, k = rgb_to_cmyk((128, 64, 192))
+        self.assertAlmostEqual(k, 24.71, delta=0.1)
+        self.assertAlmostEqual(c, 33.33, delta=0.1)
+        self.assertAlmostEqual(m, 66.67, delta=0.1)
+        self.assertAlmostEqual(y, 0.0, places=1)
+
+    def test_cmyk_to_rgb_primary_colors(self):
+        """Test CMYK to RGB for known primaries."""
+        self.assertEqual(cmyk_to_rgb((0.0, 100.0, 100.0, 0.0)), (255, 0, 0))
+        self.assertEqual(cmyk_to_rgb((100.0, 0.0, 100.0, 0.0)), (0, 255, 0))
+        self.assertEqual(cmyk_to_rgb((100.0, 100.0, 0.0, 0.0)), (0, 0, 255))
+        self.assertEqual(cmyk_to_rgb((0.0, 0.0, 0.0, 0.0)), (255, 255, 255))
+        self.assertEqual(cmyk_to_rgb((0.0, 0.0, 0.0, 100.0)), (0, 0, 0))
+
+    def test_rgb_cmyk_roundtrip(self):
+        """Test that rgb_to_cmyk → cmyk_to_rgb is lossless."""
+        test_colors = [
+            (255, 0, 0),
+            (0, 255, 0),
+            (0, 0, 255),
+            (255, 255, 255),
+            (0, 0, 0),
+            (128, 64, 192),
+            (200, 150, 75),
+            (64, 64, 64),
+        ]
+        for rgb_in in test_colors:
+            cmyk = rgb_to_cmyk(rgb_in)
+            rgb_out = cmyk_to_rgb(cmyk)
+            for i in range(3):
+                self.assertAlmostEqual(rgb_in[i], rgb_out[i], delta=1,
+                                       msg=f"Round-trip failed for {rgb_in}: got {rgb_out}")
+
+    def test_cmyk_channel_range(self):
+        """All CMYK channels must be in [0, 100]."""
+        test_colors = [(r, g, b) for r in (0, 128, 255) for g in (0, 128, 255) for b in (0, 128, 255)]
+        for rgb in test_colors:
+            c, m, y, k = rgb_to_cmyk(rgb)
+            for val, name in ((c, 'C'), (m, 'M'), (y, 'Y'), (k, 'K')):
+                self.assertGreaterEqual(val, 0.0, msg=f"{name} < 0 for {rgb}")
+                self.assertLessEqual(val, 100.0, msg=f"{name} > 100 for {rgb}")
+
+    def test_cmyk_vs_cmy_black(self):
+        """CMYK black encodes as K=100; CMY black encodes as C=M=Y=100 — different representations."""
+        cmy_black = rgb_to_cmy((0, 0, 0))
+        cmyk_black = rgb_to_cmyk((0, 0, 0))
+        # CMY uses all three channels for black
+        self.assertEqual(cmy_black, (100.0, 100.0, 100.0))
+        # CMYK uses only K
+        self.assertEqual(cmyk_black, (0.0, 0.0, 0.0, 100.0))
+
+
 if __name__ == '__main__':
     unittest.main()
+

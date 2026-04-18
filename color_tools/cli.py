@@ -113,7 +113,10 @@ Examples:
   
   # Convert between color spaces
   {prog_name} convert --from rgb --to lab --value 255 128 0
-  
+  {prog_name} convert --from rgb --to cmyk --value 255 128 0
+  {prog_name} convert --from cmyk --to rgb --value 0 50 100 0
+  {prog_name} convert --from rgb --to cmy --value 255 128 0
+
   # Check if LAB color is in sRGB gamut
   {prog_name} convert --check-gamut --value 50 100 50
   
@@ -412,27 +415,27 @@ Examples:
     convert_parser = subparsers.add_parser(
         "convert",
         help="Convert between color spaces",
-        description="Convert colors between RGB, HSL, LAB, and LCH spaces"
+        description="Convert colors between RGB, HSL, LAB, LCH, CMY, and CMYK spaces"
     )
     
     convert_parser.add_argument(
         "--from",
         dest="from_space",
-        choices=["rgb", "hsl", "lab", "lch"],
+        choices=["rgb", "hsl", "lab", "lch", "cmy", "cmyk"],
         help="Source color space"
     )
     convert_parser.add_argument(
         "--to",
         dest="to_space",
-        choices=["rgb", "hsl", "lab", "lch"],
+        choices=["rgb", "hsl", "lab", "lch", "cmy", "cmyk"],
         help="Target color space"
     )
     convert_parser.add_argument(
-        "--value", 
-        nargs=3, 
-        type=float, 
-        metavar=("V1", "V2", "V3"),
-        help="Color value tuple (mutually exclusive with --hex)"
+        "--value",
+        nargs="+",
+        type=float,
+        metavar="V",
+        help="Color value (3 components for RGB/HSL/LAB/LCH/CMY, 4 for CMYK; mutually exclusive with --hex)"
     )
     convert_parser.add_argument(
         "--hex",

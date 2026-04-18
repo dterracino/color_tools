@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.1.4"
+__version__ = "6.2.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -99,6 +99,14 @@ from .conversions import (
     rgb_to_hsl,
     hsl_to_rgb,
     rgb_to_winhsl,  # Windows HSL (0-240 range)
+
+    # RGB ↔ CMY (simple subtractive model — no black channel)
+    rgb_to_cmy,
+    cmy_to_rgb,
+
+    # RGB ↔ CMYK (print subtractive model — with black channel)
+    rgb_to_cmyk,
+    cmyk_to_rgb,
 )
 
 # ============================================================================

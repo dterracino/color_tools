@@ -422,3 +422,178 @@ def hsl_to_rgb(hsl: Tuple[float, float, float]) -> Tuple[int, int, int]:
         max(0, min(255, int(round(g * 255)))),
         max(0, min(255, int(round(b * 255))))
     )
+
+
+# ============================================================================
+# CMY Conversions
+# ============================================================================
+
+def rgb_to_cmy(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
+    """
+    Convert RGB (0-255) to CMY (C: 0-100, M: 0-100, Y: 0-100).
+
+    CMY is the simple subtractive complement of RGB. Each channel is the
+    percentage of ink needed to absorb the corresponding RGB primary:
+
+    - C = 100 × (1 - R/255)   (cyan absorbs red)
+    - M = 100 × (1 - G/255)   (magenta absorbs green)
+    - Y = 100 × (1 - B/255)   (yellow absorbs blue)
+
+    Unlike CMYK, CMY has no black channel; pure black requires C=M=Y=100.
+    CMY is useful for simple subtractive-model analysis and as the
+    intermediate step when computing CMYK.
+
+    Args:
+        rgb: RGB tuple (0-255 for each component)
+
+    Returns:
+        CMY tuple (Cyan 0-100%, Magenta 0-100%, Yellow 0-100%)
+
+    Example:
+        >>> rgb_to_cmy((255, 0, 0))       # pure red
+        (0.0, 100.0, 100.0)
+        >>> rgb_to_cmy((0, 0, 0))         # black
+        (100.0, 100.0, 100.0)
+        >>> rgb_to_cmy((255, 255, 255))   # white
+        (0.0, 0.0, 0.0)
+    """
+    r, g, b = rgb
+    c = (1.0 - r / ColorConstants.RGB_MAX) * ColorConstants.XYZ_SCALE_FACTOR
+    m = (1.0 - g / ColorConstants.RGB_MAX) * ColorConstants.XYZ_SCALE_FACTOR
+    y = (1.0 - b / ColorConstants.RGB_MAX) * ColorConstants.XYZ_SCALE_FACTOR
+    return (round(c, 4), round(m, 4), round(y, 4))
+
+
+def cmy_to_rgb(cmy: Tuple[float, float, float]) -> Tuple[int, int, int]:
+    """
+    Convert CMY (C: 0-100, M: 0-100, Y: 0-100) to RGB (0-255).
+
+    Inverts the CMY model: each RGB channel is the fraction of light
+    not absorbed by the corresponding ink:
+
+    - R = 255 × (1 - C/100)
+    - G = 255 × (1 - M/100)
+    - B = 255 × (1 - Y/100)
+
+    Args:
+        cmy: CMY tuple (Cyan 0-100%, Magenta 0-100%, Yellow 0-100%)
+
+    Returns:
+        RGB tuple (0-255 for each component)
+
+    Example:
+        >>> cmy_to_rgb((0.0, 100.0, 100.0))   # cyan=0, full magenta+yellow → red
+        (255, 0, 0)
+        >>> cmy_to_rgb((100.0, 100.0, 100.0)) # full ink → black
+        (0, 0, 0)
+        >>> cmy_to_rgb((0.0, 0.0, 0.0))       # no ink → white
+        (255, 255, 255)
+    """
+    c, m, y = cmy
+    r = (1.0 - c / ColorConstants.XYZ_SCALE_FACTOR) * ColorConstants.RGB_MAX
+    g = (1.0 - m / ColorConstants.XYZ_SCALE_FACTOR) * ColorConstants.RGB_MAX
+    b = (1.0 - y / ColorConstants.XYZ_SCALE_FACTOR) * ColorConstants.RGB_MAX
+    return (
+        max(0, min(255, int(round(r)))),
+        max(0, min(255, int(round(g)))),
+        max(0, min(255, int(round(b)))),
+    )
+
+
+# ============================================================================
+# CMYK Conversions
+# ============================================================================
+
+def rgb_to_cmyk(rgb: Tuple[int, int, int]) -> Tuple[float, float, float, float]:
+    """
+    Convert RGB (0-255) to CMYK (C: 0-100, M: 0-100, Y: 0-100, K: 0-100).
+
+    CMYK is the standard four-channel subtractive color model used in print.
+    The black (K) channel is extracted from the CMY values so that dark colors
+    use less ink overall and produce a richer, more accurate black:
+
+    - K = 100 × (1 - max(R, G, B) / 255)
+    - C = 100 × (1 - R/255 - K/100) / (1 - K/100)   [0 if K = 100]
+    - M = 100 × (1 - G/255 - K/100) / (1 - K/100)
+    - Y = 100 × (1 - B/255 - K/100) / (1 - K/100)
+
+    Pure black (0, 0, 0) maps to C=0, M=0, Y=0, K=100 rather than
+    C=100, M=100, Y=100, K=0, which is the key advantage over plain CMY.
+
+    Args:
+        rgb: RGB tuple (0-255 for each component)
+
+    Returns:
+        CMYK tuple (Cyan 0-100%, Magenta 0-100%, Yellow 0-100%, Key/Black 0-100%)
+
+    Example:
+        >>> rgb_to_cmyk((255, 0, 0))       # pure red
+        (0.0, 100.0, 100.0, 0.0)
+        >>> rgb_to_cmyk((0, 0, 0))         # black → K=100, C=M=Y=0
+        (0.0, 0.0, 0.0, 100.0)
+        >>> rgb_to_cmyk((255, 255, 255))   # white → all zero
+        (0.0, 0.0, 0.0, 0.0)
+        >>> rgb_to_cmyk((128, 64, 192))
+        (33.3333, 66.6667, 0.0, 24.7059)
+    """
+    r, g, b = rgb
+    r_norm = r / ColorConstants.RGB_MAX
+    g_norm = g / ColorConstants.RGB_MAX
+    b_norm = b / ColorConstants.RGB_MAX
+
+    k_norm = 1.0 - max(r_norm, g_norm, b_norm)
+
+    if k_norm == 1.0:
+        # Pure black — avoid division by zero
+        return (0.0, 0.0, 0.0, 100.0)
+
+    denom = 1.0 - k_norm
+    c = (1.0 - r_norm - k_norm) / denom
+    m = (1.0 - g_norm - k_norm) / denom
+    y = (1.0 - b_norm - k_norm) / denom
+    k = k_norm
+
+    return (
+        round(c * ColorConstants.XYZ_SCALE_FACTOR, 4),
+        round(m * ColorConstants.XYZ_SCALE_FACTOR, 4),
+        round(y * ColorConstants.XYZ_SCALE_FACTOR, 4),
+        round(k * ColorConstants.XYZ_SCALE_FACTOR, 4),
+    )
+
+
+def cmyk_to_rgb(cmyk: Tuple[float, float, float, float]) -> Tuple[int, int, int]:
+    """
+    Convert CMYK (C: 0-100, M: 0-100, Y: 0-100, K: 0-100) to RGB (0-255).
+
+    Inverts the CMYK model. The K channel reduces the effective lightness
+    before the CMY channels are applied:
+
+    - R = 255 × (1 - C/100) × (1 - K/100)
+    - G = 255 × (1 - M/100) × (1 - K/100)
+    - B = 255 × (1 - Y/100) × (1 - K/100)
+
+    Args:
+        cmyk: CMYK tuple (Cyan 0-100%, Magenta 0-100%, Yellow 0-100%, Key/Black 0-100%)
+
+    Returns:
+        RGB tuple (0-255 for each component)
+
+    Example:
+        >>> cmyk_to_rgb((0.0, 100.0, 100.0, 0.0))   # red
+        (255, 0, 0)
+        >>> cmyk_to_rgb((0.0, 0.0, 0.0, 100.0))     # black via K
+        (0, 0, 0)
+        >>> cmyk_to_rgb((0.0, 0.0, 0.0, 0.0))       # white
+        (255, 255, 255)
+    """
+    c, m, y, k = cmyk
+    scale = ColorConstants.XYZ_SCALE_FACTOR  # 100.0
+    k_factor = 1.0 - k / scale
+    r = ColorConstants.RGB_MAX * (1.0 - c / scale) * k_factor
+    g = ColorConstants.RGB_MAX * (1.0 - m / scale) * k_factor
+    b = ColorConstants.RGB_MAX * (1.0 - y / scale) * k_factor
+    return (
+        max(0, min(255, int(round(r)))),
+        max(0, min(255, int(round(g)))),
+        max(0, min(255, int(round(b)))),
+    )

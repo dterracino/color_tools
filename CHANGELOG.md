@@ -8,6 +8,45 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+#### CMY and CMYK color space support
+
+- `conversions.py`: `rgb_to_cmy(rgb)` — converts RGB (0-255) to CMY percentages (0-100 each).
+  CMY is the simple 3-channel subtractive complement of RGB with no black channel.
+- `conversions.py`: `cmy_to_rgb(cmy)` — converts CMY percentages back to RGB (0-255).
+- `conversions.py`: `rgb_to_cmyk(rgb)` — converts RGB (0-255) to CMYK percentages (0-100 each).
+  Extracts the K (black) channel from the CMY values so that pure black maps to `(0, 0, 0, 100)`
+  instead of `(100, 100, 100, 0)`, matching standard print workflow conventions.
+- `conversions.py`: `cmyk_to_rgb(cmyk)` — converts CMYK percentages back to RGB (0-255).
+- All four functions exported from `color_tools.__init__`.
+- CLI `convert` command: `--from` / `--to` now accept `cmy` and `cmyk` as choices.
+- CLI `convert --value` now accepts a variable number of components (`nargs='+'`) so that
+  CMYK's 4-value tuples are handled alongside the existing 3-value spaces.
+  The handler validates the component count against the chosen space and exits with a clear
+  error if the count is wrong.
+
+```python
+from color_tools import rgb_to_cmyk, cmyk_to_rgb, rgb_to_cmy, cmy_to_rgb
+
+# RGB → CMYK (print workflow)
+rgb_to_cmyk((255, 128, 0))    # → (0.0, 49.8039, 100.0, 0.0)
+
+# RGB → CMY (simple subtractive)
+rgb_to_cmy((255, 128, 0))     # → (0.0, 49.8039, 100.0)
+
+# Round-trip
+cmyk_to_rgb((0.0, 50.0, 100.0, 0.0))  # → (255, 128, 0)
+cmy_to_rgb((0.0, 50.0, 100.0))         # → (255, 128, 0)
+```
+
+```bash
+color-tools convert --from rgb --to cmyk --value 255 128 0
+color-tools convert --from cmyk --to rgb --value 0 50 100 0
+color-tools convert --from rgb --to cmy --value 255 128 0
+color-tools convert --from cmy --to rgb --value 0 50 100
+```
+
 ### Planned
 
 #### `image/basic.py` — `get_dominant_colors(count)` + refactor `get_dominant_color`

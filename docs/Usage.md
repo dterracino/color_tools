@@ -128,6 +128,8 @@ gameboy_image.save("gameboy_style.png")
 - `lab_to_lch()`, `lch_to_lab()` - LAB ↔ LCH conversion
 - `rgb_to_xyz()`, `xyz_to_rgb()` - RGB ↔ XYZ conversion (CIE standard)
 - `xyz_to_lab()`, `lab_to_xyz()` - XYZ ↔ LAB conversion (for advanced use)
+- `rgb_to_cmy()`, `cmy_to_rgb()` - RGB ↔ CMY conversion (0-100% per channel; no black)
+- `rgb_to_cmyk()`, `cmyk_to_rgb()` - RGB ↔ CMYK conversion (0-100% per channel; K extracts black)
 
 #### Distance Metrics
 
@@ -648,6 +650,15 @@ python -m color_tools convert --from lab --to lch --value 50 25 -30
 
 # Convert LCH back to RGB
 python -m color_tools convert --from lch --to rgb --value 50 33.54 -50.19
+
+# Convert RGB to CMYK (print workflow)
+python -m color_tools convert --from rgb --to cmyk --value 255 128 0
+
+# Convert CMYK back to RGB (4 values required)
+python -m color_tools convert --from cmyk --to rgb --value 0 49.8 100 0
+
+# Convert RGB to CMY (simple subtractive — no black channel)
+python -m color_tools convert --from rgb --to cmy --value 255 128 0
 ```
 
 #### Gamut Checking
@@ -662,9 +673,9 @@ python -m color_tools convert --check-gamut --from lch --value 70 80 120
 
 **Convert Command Arguments:**
 
-- `--from {rgb,hsl,lab,lch}`: Source color space
-- `--to {rgb,hsl,lab,lch}`: Target color space
-- `--value V1 V2 V3`: Color value tuple
+- `--from {rgb,hsl,lab,lch,cmy,cmyk}`: Source color space
+- `--to {rgb,hsl,lab,lch,cmy,cmyk}`: Target color space
+- `--value V ...`: Color value (3 components for most spaces; 4 for CMYK)
 - `--check-gamut`: Check if LAB/LCH color is in sRGB gamut
 
 ### Image Command *(requires [image] extra)*

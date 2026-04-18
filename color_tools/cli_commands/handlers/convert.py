@@ -4,8 +4,19 @@ import sys
 from argparse import Namespace
 
 from ..utils import parse_hex_or_exit
-from ...conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_rgb, lch_to_lab
+from ...conversions import (
+    rgb_to_lab, lab_to_rgb,
+    rgb_to_hsl, hsl_to_rgb,
+    rgb_to_lch, lch_to_rgb, lch_to_lab,
+    rgb_to_cmy, cmy_to_rgb,
+    rgb_to_cmyk, cmyk_to_rgb,
+)
 from ...gamut import is_in_srgb_gamut, find_nearest_in_gamut
+
+# Color spaces that require exactly 4 input components
+_FOUR_COMPONENT_SPACES = {"cmyk"}
+# Color spaces that require exactly 3 input components
+_THREE_COMPONENT_SPACES = {"rgb", "hsl", "lab", "lch", "cmy"}
 
 
 def handle_convert_command(args: Namespace) -> None:
@@ -39,6 +50,9 @@ def handle_convert_command(args: Namespace) -> None:
                 sys.exit(2)
         else:
             # Handle --value input
+            if len(args.value) != 3:
+                print("Error: --check-gamut requires exactly 3 values", file=sys.stderr)
+                sys.exit(2)
             val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
             
             # Assume LAB unless otherwise specified
@@ -70,15 +84,13 @@ def handle_convert_command(args: Namespace) -> None:
             print("Error: Color conversion requires either --value or --hex", file=sys.stderr)
             sys.exit(2)
         
-        # Determine the color value and space
-        val: tuple[float, float, float]
-        from_space: str
-        
+        to_space = args.to_space
+
         # Handle hex input
         if args.hex is not None:
             try:
                 rgb_val = parse_hex_or_exit(args.hex)
-                val = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
+                val: tuple = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                 from_space = "rgb"  # --hex always implies RGB space
             except ValueError as e:
                 print(f"Error: {e}", file=sys.stderr)
@@ -88,12 +100,21 @@ def handle_convert_command(args: Namespace) -> None:
             if args.from_space is None:
                 print("Error: --from is required when using --value", file=sys.stderr)
                 sys.exit(2)
-            val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
             from_space = args.from_space
-        
-        to_space = args.to_space
-        
-        # Convert to RGB as intermediate (everything goes through RGB)
+
+            # Validate component count for the source space
+            expected = 4 if from_space in _FOUR_COMPONENT_SPACES else 3
+            if len(args.value) != expected:
+                print(
+                    f"Error: --from {from_space} requires exactly {expected} values, "
+                    f"got {len(args.value)}",
+                    file=sys.stderr,
+                )
+                sys.exit(2)
+
+            val = tuple(float(v) for v in args.value)
+
+        # ------ Convert source space → RGB (intermediate) ------
         if from_space == "rgb":
             rgb = (int(val[0]), int(val[1]), int(val[2]))
         elif from_space == "hsl":
@@ -102,8 +123,15 @@ def handle_convert_command(args: Namespace) -> None:
             rgb = lab_to_rgb(val)
         elif from_space == "lch":
             rgb = lch_to_rgb(val)
-        
-        # Convert from RGB to target
+        elif from_space == "cmy":
+            rgb = cmy_to_rgb(val)
+        elif from_space == "cmyk":
+            rgb = cmyk_to_rgb(val)
+        else:
+            print(f"Error: Unsupported source space '{from_space}'", file=sys.stderr)
+            sys.exit(2)
+
+        # ------ Convert RGB → target space ------
         if to_space == "rgb":
             result = rgb
         elif to_space == "hsl":
@@ -112,7 +140,14 @@ def handle_convert_command(args: Namespace) -> None:
             result = rgb_to_lab(rgb)
         elif to_space == "lch":
             result = rgb_to_lch(rgb)
-        
+        elif to_space == "cmy":
+            result = rgb_to_cmy(rgb)
+        elif to_space == "cmyk":
+            result = rgb_to_cmyk(rgb)
+        else:
+            print(f"Error: Unsupported target space '{to_space}'", file=sys.stderr)
+            sys.exit(2)
+
         print(f"Converted {from_space.upper()}{val} -> {to_space.upper()}{result}")
         sys.exit(0)
     

@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 6.1.4 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+**Version:** 6.2.0 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
 ## 📚 Documentation
 
@@ -20,7 +20,7 @@ A comprehensive Python library for color science operations, color space convers
 
 ## ✨ Features
 
-- **Multiple Color Spaces**: RGB, HSL, LAB, LCH with accurate conversions
+- **Multiple Color Spaces**: RGB, HSL, LAB, LCH, CMY, CMYK with accurate conversions
 - **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC)
 - **Color Databases**:
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
@@ -71,6 +71,8 @@ color-tools filament --nearest --value 255 128 64
 
 # Convert between color spaces
 color-tools convert --from rgb --to lab --value 255 128 64
+color-tools convert --from rgb --to cmyk --value 255 128 64
+color-tools convert --from cmyk --to rgb --value 0 50 75 0
 
 # Simulate colorblindness on an image
 color-tools image --file photo.jpg --cvd-simulate deuteranopia
@@ -109,8 +111,11 @@ See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage
 | **HSL** | Hue, Saturation, Lightness | H: 0-360°, S: 0-100%, L: 0-100% |
 | **LAB** | Perceptually uniform | L: 0-100, a/b: ±100 |
 | **LCH** | Cylindrical LAB | L: 0-100, C: 0+, H: 0-360° |
+| **CMY** | Subtractive (no black channel) | C/M/Y: 0-100% each |
+| **CMYK** | Subtractive print model (with black) | C/M/Y/K: 0-100% each |
 
 **Use LAB or LCH for color matching** - they're designed to match human perception.
+**Use CMYK for print workflows** - the K channel produces richer blacks than CMY alone.
 
 ## 📏 Distance Metrics
 
