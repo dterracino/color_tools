@@ -10,7 +10,7 @@ full-flow wizard tests here.
 We DO test the parts that have real logic and no TTY dependency:
 
 1. check_prompt_toolkit()   — availability flag
-2. _show_install_message()  — output content
+2. show_install_message()   — output content
 3. _get_subparser()         — parser introspection
 4. _get_choices()           — choices extraction from argparse
 5. _run_command()           — sys.argv assembly and command-line printing
@@ -46,16 +46,17 @@ class TestCheckPromptToolkit(unittest.TestCase):
 
     def test_consistent_with_module_flag(self):
         wiz = _import_wizard()
-        self.assertEqual(wiz.check_prompt_toolkit(), wiz.PROMPT_TOOLKIT_AVAILABLE)
+        from color_tools._interactive_utils import PROMPT_TOOLKIT_AVAILABLE
+        self.assertEqual(wiz.check_prompt_toolkit(), PROMPT_TOOLKIT_AVAILABLE)
 
 
 class TestShowInstallMessage(unittest.TestCase):
-    """_show_install_message() prints useful install instructions."""
+    """show_install_message() prints useful install instructions."""
 
     def test_mentions_prompt_toolkit(self):
         wiz = _import_wizard()
         with patch('sys.stdout', io.StringIO()) as fake_out:
-            wiz._show_install_message()
+            wiz.show_install_message()
             output = fake_out.getvalue()
         self.assertIn('prompt_toolkit', output)
         self.assertIn('pip install', output)
@@ -63,7 +64,7 @@ class TestShowInstallMessage(unittest.TestCase):
     def test_mentions_interactive_extra(self):
         wiz = _import_wizard()
         with patch('sys.stdout', io.StringIO()) as fake_out:
-            wiz._show_install_message()
+            wiz.show_install_message()
             output = fake_out.getvalue()
         self.assertIn('[interactive]', output)
 

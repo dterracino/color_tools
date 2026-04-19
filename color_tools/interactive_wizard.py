@@ -37,6 +37,7 @@ except ImportError:
 __all__ = [
     "run_interactive_wizard",
     "check_prompt_toolkit",
+    "show_install_message",
 ]
 
 # ---------------------------------------------------------------------------
