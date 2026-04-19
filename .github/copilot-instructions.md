@@ -69,6 +69,10 @@ This is a color science library for Python 3.10+ that provides:
 
 ### Error Handling Policy - CRITICAL
 
+**When you make code changes, the task is not complete until all Pylance/Pyright/type checker errors are resolved.**
+**This means you must examine the Problems panel in VS Code and ensure there are ZERO errors before considering the task done.**
+**When fixing these errors, you should only use type:ignore as a last resort, and only after thoroughly investigating the error.**
+
 **NEVER dismiss Pylance/Pyright/type checker errors as "false positives" or "ok" without rigorous investigation:**
 
 1. **All errors must be investigated thoroughly** - Do not make assumptions
@@ -85,6 +89,17 @@ This is a color science library for Python 3.10+ that provides:
 - If error persists, FIX IT - do not dismiss it
 
 **Never claim code is production ready while errors exist.** This wastes user time and damages trust.
+
+### Standard Process for Code Changes
+
+1. Implement the feature or fix
+2. Run `get_errors` to check for any new errors
+3. Investigate and resolve all errors
+4. Run all tests to ensure nothing broke (make sure venv is active!)
+5. Update documentation and changelog
+6. Add unit tests for new features or bug fixes
+7. Verify data integrity if core data modified (hashes)
+8. Update version numbers if applicable
 
 ### Core Architectural Principles
 - **Separation of Concerns**: Each module has a single, well-defined responsibility

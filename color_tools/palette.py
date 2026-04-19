@@ -241,6 +241,7 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         
         records.extend(user_records)
     
+    logger.debug("Loaded %d CSS colors from %s", len(records), json_path)
     return records
 
 
@@ -458,12 +459,15 @@ class Palette:
         best_rec: Optional[ColorRecord] = None
         best_d = float("inf")
 
+        logger.debug("nearest_color: target=%s space=%s metric=%s", value, space, metric)
+
         # RGB space - use simple Euclidean distance
         if space.lower() == "rgb":
             for r in self.records:
                 d = euclidean(tuple(map(float, value)), tuple(map(float, r.rgb)))
                 if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
+            logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
             return best_rec, best_d  # type: ignore
 
         # HSL space - use circular hue distance
@@ -472,6 +476,7 @@ class Palette:
                 d = hsl_euclidean(value, r.hsl)
                 if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
+            logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
             return best_rec, best_d  # type: ignore
 
         # LCH space - use Euclidean distance with hue wraparound
@@ -481,6 +486,7 @@ class Palette:
                 d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
                 if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
+            logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
             return best_rec, best_d  # type: ignore
 
         # LAB space - choose the appropriate Delta E metric
@@ -512,6 +518,11 @@ class Palette:
                 d = fn(value, r.lab)  # type: ignore
             if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
                 best_rec, best_d = r, d
+
+        logger.debug(
+            "nearest_color: target=%s space=%s metric=%s → %s (%.4f)",
+            value, space, metric, getattr(best_rec, "name", None), best_d,
+        )
         return best_rec, best_d  # type: ignore
 
     def nearest_colors(

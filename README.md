@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 6.5.0 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+**Version:** 6.6.0 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
 ## 📚 Documentation
 
@@ -50,6 +50,9 @@ pip install color-match-tools[image]
 
 # With interactive filament library manager
 pip install color-match-tools[interactive]
+
+# With colorized console logging (Rich)
+pip install color-match-tools[logging]
 
 # With all optional features
 pip install color-match-tools[all]
@@ -229,6 +232,48 @@ class MyExporter(PaletteExporter):
 ```
 
 See [exporters/gpl_exporter.py](https://github.com/dterracino/color_tools/blob/main/color_tools/exporters/gpl_exporter.py) for a complete example.
+
+## 📋 Logging
+
+The library ships with a structured logging system that fans out to console and an
+optional rotating file — one call, both destinations:
+
+```python
+from pathlib import Path
+import logging
+from color_tools import setup_logging, get_logger, log_info
+
+# Console-only (INFO+ by default)
+setup_logging()
+
+# Console + rotating file (DEBUG+ to file, INFO+ to console)
+setup_logging(log_file=Path("color_tools.log"), console_level=logging.DEBUG)
+
+# Module-level logger (use __name__ to get "color_tools.mymodule")
+logger = get_logger(__name__)
+logger.info("Loaded %d colors", count)
+
+# Convenience shortcuts on the library root logger
+log_info("Processing %d filaments", n)
+```
+
+For colorized console output install the `[logging]` extra:
+
+```bash
+pip install color-match-tools[logging]   # adds Rich
+```
+
+The library registers a `NullHandler` at import time (Python library best practice), so
+no output is produced until `setup_logging()` is explicitly called.
+
+**CLI file logging** — write logs while using the command line:
+
+```bash
+color-tools --log-file color_tools.log color --nearest --hex "#FF8040"
+color-tools --log-file debug.log --log-level DEBUG filament --nearest --hex "#FF0000"
+```
+
+See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#logging) for the full API reference.
 
 ## �🔒 Data Integrity
 

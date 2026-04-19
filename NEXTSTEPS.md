@@ -102,6 +102,54 @@ scaling wrapper — similar to how `rgb_to_hsl` wraps `colorsys.rgb_to_hls`.
 
 ---
 
+## Logging — Deeper Module Integration
+
+The centralized logging infrastructure (`logging_config.py`) is in place as of v6.6.0, but only
+four hot-path calls exist today.  The following areas would benefit from richer instrumentation:
+
+### `conversions.py`
+
+- `logger.debug` on entry to `rgb_to_lab`, `lab_to_rgb`, `rgb_to_xyz`, `xyz_to_rgb` — capture
+  input/output pairs so a debug log tells the full conversion story.
+- `logger.warning` when clamping occurs in `xyz_to_rgb` (out-of-gamut values silently clamp to
+  0–255 today; a warning would surface unexpected gamut overflows).
+
+### `distance.py`
+
+- `logger.debug` on `delta_e_2000` / `delta_e_hyab` entry with both LAB inputs — makes it easy
+  to reproduce a distance calculation from a log file alone.
+
+### `cli_commands/` handlers
+
+Each handler module (`color.py`, `filament.py`, `convert.py`, `name.py`, `cvd.py`) currently
+has no logging.  Candidates:
+
+- `logger.info` at the start of each handler with the resolved CLI args — instant audit trail.
+- `logger.debug` after palette/filament loads confirming record count and data source.
+- `logger.warning` on fallback conditions (e.g., no filaments matched filters, fell back to
+  full search).
+- `logger.error` when a handler catches and re-raises a user-facing error.
+
+### `image/` module
+
+- `logger.info` in `extract_color_clusters` with cluster count, image size, and elapsed time.
+- `logger.debug` in `quantize_image_hyab` with iteration count and convergence delta.
+- `logger.warning` when Pillow is not installed and the image module raises `ImportError` to
+  a caller that hasn't explicitly opted in to `[image]`.
+
+### `interactive_manager.py` / `interactive_wizard.py`
+
+- `logger.debug` on wizard step transitions — useful for tracing unexpected exits.
+- `logger.info` when the user selects a command and when the wizard hands off to the handler.
+
+### `--console-log-level` CLI flag (deferred)
+
+A companion `--console-log-level` global flag would let users independently control what
+appears on the console vs. in the log file (e.g., `WARNING` on console, `DEBUG` in file).
+Currently `console_level` defaults to `INFO` and can only be changed via the Python API.
+
+---
+
 ## `conversions.py` — CMYK color space
 
 CMYK (Cyan / Magenta / Yellow / Key-Black) is the standard model for print production and is

@@ -24,6 +24,7 @@ Color Tools can be used in three ways:
   - [Convert Command](#convert-command)
   - [Image Command](#image-command-requires-image-extra)
   - [Global Arguments](#global-arguments)
+- [Logging](#logging)
 - [Examples](#examples)
 
 ---
@@ -797,7 +798,98 @@ These arguments work with all commands:
 - `--verify-matrices`: Verify integrity of transformation matrices before proceeding
 - `--verify-all`: Verify integrity of constants, data files, and matrices before proceeding
 - `--check-overrides`: Show report of user overrides (user-colors.json, user-filaments.json) and exit
+- `--log-file PATH`: Write log output to this file (enables rotating file logging)
+- `--log-level LEVEL`: Minimum level written to the log file — `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` (default: `DEBUG`)
 - `--version`: Show version number and exit
+
+---
+
+## Logging
+
+The `color_tools` library includes a structured logging system backed by Python's standard
+`logging` module. It fans out to both a console handler and an optional rotating file handler
+with a single `setup_logging()` call.
+
+### Quick Start
+
+```python
+from pathlib import Path
+import logging
+from color_tools import setup_logging, get_logger, log_info, log_debug
+
+# Console only — INFO+ messages
+setup_logging()
+
+# Console (INFO+) + rotating file (DEBUG+)
+setup_logging(log_file=Path("color_tools.log"))
+
+# Verbose console — DEBUG+ messages
+setup_logging(console_level=logging.DEBUG)
+
+# Force plain output even if Rich is installed
+setup_logging(rich=False)
+```
+
+### Module-Level Loggers
+
+```python
+from color_tools import get_logger
+
+# Returns a logger scoped under "color_tools.*"
+logger = get_logger(__name__)           # e.g. "color_tools.conversions"
+logger.info("Loaded %d colors", count)  # lazy % formatting — no cost when disabled
+logger.error("Failed to open %s", path, exc_info=True)
+```
+
+### Shortcut Functions
+
+Convenience wrappers on the library root logger:
+
+```python
+from color_tools import log_debug, log_info, log_warning, log_error, log_critical
+
+log_info("Processing started")
+log_warning("Color %s outside sRGB gamut", name)
+log_error("Failed to load data: %s", path)
+```
+
+### Level Constants
+
+```python
+from color_tools import LOG_LEVEL, CONSOLE_LEVEL
+# LOG_LEVEL     = logging.DEBUG  (10) — default file level
+# CONSOLE_LEVEL = logging.INFO   (20) — default console level
+```
+
+### Colorized Output
+
+Install the optional `[logging]` extra for colorized console output via
+[Rich](https://github.com/Textualize/rich):
+
+```bash
+pip install color-match-tools[logging]
+```
+
+Rich is detected automatically at import time. If it is not installed, a plain
+`StreamHandler` is used with no errors or warnings.
+
+### CLI Logging
+
+The `--log-file` and `--log-level` global flags activate file logging for any command:
+
+```bash
+# Log INFO+ to file while running a filament search
+color-tools --log-file run.log filament --nearest --hex "#FF0000"
+
+# Log everything (DEBUG+) for troubleshooting
+color-tools --log-file debug.log --log-level DEBUG color --nearest --hex "#FF8040"
+```
+
+### Security: Log-Injection Prevention
+
+All messages and their arguments are automatically sanitized to strip `CR`, `LF`, and `NUL`
+characters before reaching any handler. This prevents a crafted color name (e.g. read from a
+user-supplied JSON file) from forging extra log lines.
 
 ---
 

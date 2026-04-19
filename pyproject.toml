@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "color-match-tools"
-version = "6.5.0"
+version = "6.6.0"
 description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -51,6 +51,11 @@ interactive = [
     "prompt_toolkit>=3.0.0",
 ]
 
+# Colorized console logging (via Rich)
+logging = [
+    "rich>=13.0.0",
+]
+
 # Documentation generation
 docs = [
     "sphinx>=7.0.0",
@@ -72,6 +77,7 @@ all = [
     "color-match-tools[fuzzy]",
     "color-match-tools[image]",
     "color-match-tools[interactive]",
+    "color-match-tools[logging]",
 ]
 
 [project.urls]

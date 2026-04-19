@@ -8,6 +8,64 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.6.0] - 2026-04-19
+
+### Added
+
+- **Centralized logging system** — new `color_tools/logging_config.py` module providing
+  structured logging for the library with dual console + file output.
+
+  Features:
+  - `setup_logging(log_file, log_level, console_level, rich)` — single call to configure
+    all output destinations; idempotent (safe to call multiple times)
+  - Colorized console output via **Rich** when installed
+    (`pip install color-match-tools[logging]`), falls back to plain `StreamHandler`
+    automatically with zero import errors
+  - Rotating file handler (10 MB per file, 5 backups) — only activated when
+    `log_file=` is provided
+  - `get_logger(name)` — returns a scoped `color_tools.*` logger for use in any module
+  - Shortcut functions: `log_debug`, `log_info`, `log_warning`, `log_error`, `log_critical`
+  - `LOG_LEVEL` (default `DEBUG`) and `CONSOLE_LEVEL` (default `INFO`) module constants
+  - **OWASP log-injection prevention** — `_SanitizingFilter` strips CR/LF/NUL from all
+    message text and arguments before they reach any handler; runs once per record
+    regardless of handler count (DRY)
+  - Library-safe: `NullHandler` registered at import time so the library produces no
+    output until `setup_logging()` is explicitly called
+  - All new symbols exported from `color_tools.__init__`
+
+  ```python
+  from color_tools import setup_logging, get_logger, log_info
+  import logging
+
+  # Console only
+  setup_logging()
+
+  # Console (DEBUG+) + rotating file
+  from pathlib import Path
+  setup_logging(log_file=Path("myapp.log"), console_level=logging.DEBUG)
+
+  # Module-level logger for any sub-module
+  logger = get_logger(__name__)   # → "color_tools.conversions"
+  logger.info("Loaded %d colors", count)
+  ```
+
+- **`[logging]` optional extra** — `pip install color-match-tools[logging]` installs
+  `rich>=13.0.0` for colorized console output. Also included in `[all]`.
+
+- **`--log-file` / `--log-level` global CLI flags** — activate rotating file logging for
+  any CLI command without writing any Python code:
+
+  ```bash
+  color-tools --log-file run.log filament --nearest --hex "#FF0000"
+  color-tools --log-file debug.log --log-level DEBUG color --nearest --hex "#FF8040"
+  ```
+
+### Fixed
+
+- **Logging filter idempotency** — `setup_logging()` now clears both `handlers` and
+  `filters` on repeated calls, preventing `_SanitizingFilter` from accumulating with each
+  invocation.
+
 ## [6.5.0] - 2026-04-18
 
 ### Added

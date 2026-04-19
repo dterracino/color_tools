@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.5.0"
+__version__ = "6.6.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -240,6 +240,25 @@ from .config import (
 )
 
 # ============================================================================
+# Logging (Optional Rich console output — pip install color-match-tools[logging])
+# ============================================================================
+
+from .logging_config import (
+    # Setup & access
+    setup_logging,
+    get_logger,
+    # Default level constants
+    LOG_LEVEL,
+    CONSOLE_LEVEL,
+    # Shortcut functions
+    log_debug,
+    log_info,
+    log_warning,
+    log_error,
+    log_critical,
+)
+
+# ============================================================================
 # Submodules Available for Import
 # ============================================================================
 # Power users can access these for advanced features:
@@ -341,4 +360,15 @@ __all__ = [
     # Config functions
     "set_dual_color_mode",
     "get_dual_color_mode",
+
+    # Logging
+    "setup_logging",
+    "get_logger",
+    "LOG_LEVEL",
+    "CONSOLE_LEVEL",
+    "log_debug",
+    "log_info",
+    "log_warning",
+    "log_error",
+    "log_critical",
 ]

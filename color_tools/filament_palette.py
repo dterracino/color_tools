@@ -266,6 +266,7 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
         
         records.extend(user_records)
     
+    logger.debug("Loaded %d filaments from %s", len(records), json_path)
     return records
 
 
@@ -766,7 +767,11 @@ class FilamentPalette:
         
         if best_rec is None:
             raise ValueError("No valid filaments found")
-            
+
+        logger.debug(
+            "nearest_filament: target=%s metric=%s → %s %s %s (%.4f)",
+            target_rgb, metric, best_rec.maker, best_rec.type, best_rec.color, best_d,
+        )
         return best_rec, best_d
 
     def nearest_filaments(

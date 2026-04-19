@@ -1,0 +1,4 @@
+# Logging extra — defined in pyproject.toml [project.optional-dependencies.logging]
+# Install with: pip install -r requirements-logging.txt
+-e .[logging]
+

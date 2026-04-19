@@ -22,6 +22,7 @@ from pathlib import Path
 from . import __version__
 from .constants import ColorConstants
 from .config import set_dual_color_mode
+from .logging_config import setup_logging
 from .conversions import rgb_to_lab, lab_to_rgb, rgb_to_hsl, hsl_to_rgb, rgb_to_lch, lch_to_lab, lch_to_rgb
 from .gamut import is_in_srgb_gamut, find_nearest_in_gamut
 from .palette import Palette, load_colors, load_palette
@@ -172,6 +173,21 @@ Examples:
         "--interactive", "-i",
         action="store_true",
         help="Launch the interactive wizard (guided prompts for color, filament, and convert commands)"
+    )
+    parser.add_argument(
+        "--log-file",
+        type=str,
+        metavar="PATH",
+        default=None,
+        help="Write log output to this file (enables file logging; default: no file logging)"
+    )
+    parser.add_argument(
+        "--log-level",
+        type=str,
+        metavar="LEVEL",
+        default="DEBUG",
+        choices=["DEBUG", "INFO", "WARNING", "ERROR", "CRITICAL"],
+        help="Minimum log level written to the log file (default: DEBUG)"
     )
 
     # Create subparsers for the three main commands
@@ -768,7 +784,13 @@ def main():
 
     # Parse arguments
     args = parser.parse_args()
-    
+
+    # Configure logging if --log-file was requested
+    if args.log_file:
+        import logging as _logging
+        _level = getattr(_logging, args.log_level, _logging.DEBUG)
+        setup_logging(log_file=Path(args.log_file), log_level=_level)
+
     # Handle all verification flags (may exit early)
     if handle_verification_flags(args):
         sys.exit(0)

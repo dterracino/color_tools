@@ -40,13 +40,21 @@ pip install color-match-tools[interactive]
 
 Adds prompt_toolkit for a beautiful TUI interface to manage your owned filament library with autocomplete, filtering, and multi-select.
 
+**With colorized console logging:**
+
+```bash
+pip install color-match-tools[logging]
+```
+
+Adds Rich for colorized, formatted console log output. Without this extra the logging system falls back to plain `StreamHandler` output automatically — no errors.
+
 **With all optional features:**
 
 ```bash
 pip install color-match-tools[all]
 ```
 
-Installs everything: fuzzy matching + image processing + interactive manager.
+Installs everything: fuzzy matching + image processing + interactive manager + logging.
 
 All variants install the `color-tools` command globally in your terminal.
 
@@ -83,7 +91,8 @@ The core module uses **only Python standard library** - **zero external dependen
 - `[fuzzy]`: fuzzywuzzy >= 0.18.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
 - `[image]`: Pillow >= 10.0.0 for image processing features
 - `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
-- `[all]`: All of the above (fuzzy + image + interactive)
+- `[logging]`: Rich >= 13.0.0 for colorized console log output (plain StreamHandler used as fallback)
+- `[all]`: All of the above (fuzzy + image + interactive + logging)
 
 **Requirements files (for development/manual installation):**
 
