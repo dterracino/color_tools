@@ -27,7 +27,6 @@ For adding new exporters, see color_tools/exporters/base.py
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING
 
 # Import the new exporter system
 from color_tools.exporters import (
@@ -35,10 +34,8 @@ from color_tools.exporters import (
     list_export_formats as _list_export_formats,
     EXPORT_FORMATS,
 )
-
-if TYPE_CHECKING:
-    from color_tools.palette import ColorRecord
-    from color_tools.filament_palette import FilamentRecord
+from color_tools.palette import ColorRecord
+from color_tools.filament_palette import FilamentRecord
 
 
 def list_export_formats(data_type: str = 'both') -> dict[str, str]:

@@ -56,7 +56,7 @@ The CLI provides six main commands:
   
   * *Requires:* Install ``[image]`` extra: ``pip install color-match-tools[image]``
 
-See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`_ for detailed CLI examples.
+See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`__ for detailed CLI examples.
 
 Data Classes
 ~~~~~~~~~~~~
@@ -70,7 +70,7 @@ The library uses immutable dataclasses (frozen) to represent colors, filaments, 
 * **ColorChange** - Luminance redistribution results for HueForge *(requires [image] extra)*
 
 All data classes have comprehensive docstrings with attribute descriptions and examples.
-See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#data-classes-quick-reference>`_ for a quick reference table.
+See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#data-classes-quick-reference>`__ for a quick reference table.
 
 Core API Reference
 ------------------
@@ -155,6 +155,15 @@ Command Line Interface
    color_tools.cli_commands.handlers.name
    color_tools.cli_commands.handlers.validate
 
+Logging *(optional* ``[logging]`` *extra for colorized output)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.logging_config
+
 Optional Features
 ~~~~~~~~~~~~~~~~~
 
@@ -163,6 +172,7 @@ Optional Features
    :template: module.rst
 
    color_tools.interactive_manager
+   color_tools.interactive_wizard
 
 Indices and tables
 ==================

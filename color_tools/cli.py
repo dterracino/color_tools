@@ -809,8 +809,8 @@ def main():
                 parser.print_help()
                 sys.exit(0)
             else:
-                from .interactive_wizard import _show_install_message
-                _show_install_message()
+                from ._interactive_utils import show_install_message
+                show_install_message()
                 sys.exit(1)
         _wizard_json = Path(args.json) if args.json else None
         run_interactive_wizard(_wizard_json)

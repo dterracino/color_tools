@@ -364,9 +364,10 @@ def rgb_to_winhsl240(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
 
     Used by Windows applications including Paint, WordPad, and Win32 GDI APIs.
     Components are scaled to:
-      - H: 0–239  (240 = 0° again, so the valid range stops at 239)
-      - S: 0–240
-      - L: 0–240
+
+    - H: 0–239  (240 = 0° again, so the valid range stops at 239)
+    - S: 0–240
+    - L: 0–240
 
     This is subtly different from the range you might expect: hue stops at 239,
     not 240, because 240 wraps back to 0° (red) and would be a duplicate.
@@ -384,9 +385,10 @@ def rgb_to_winhsl255(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
 
     Used by Microsoft Office applications (Word, Excel, PowerPoint colour pickers).
     Components are scaled to:
-      - H: 0–254  (255 = 0° again, so the valid range stops at 254)
-      - S: 0–255
-      - L: 0–255
+
+    - H: 0–254  (255 = 0° again, so the valid range stops at 254)
+    - S: 0–255
+    - L: 0–255
 
     Like winHSL240, the hue ceiling is one less than the scale factor because
     the maximum would alias back to 0° (red).

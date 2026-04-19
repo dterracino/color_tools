@@ -4,11 +4,13 @@ Interactive wizard for color-tools.
 Provides a guided question-and-answer interface for the color, filament,
 and convert commands. No need to remember flags — just answer the prompts.
 
-Requires the [interactive] extra:
+Requires the [interactive] extra::
+
     pip install color-match-tools[interactive]
 
 Launches automatically when color-tools is invoked with no arguments, or
-explicitly with:
+explicitly with::
+
     color-tools --interactive
     color-tools -i
 """
@@ -22,17 +24,15 @@ if TYPE_CHECKING:
     from pathlib import Path
     import argparse
 
-# ---------------------------------------------------------------------------
-# Optional dependency guard
-# ---------------------------------------------------------------------------
+from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
 
+# Import prompt_toolkit symbols needed by this module
 try:
     from prompt_toolkit import prompt as _pt_prompt
     from prompt_toolkit.completion import WordCompleter
     from prompt_toolkit.styles import Style
-    PROMPT_TOOLKIT_AVAILABLE = True
 except ImportError:
-    PROMPT_TOOLKIT_AVAILABLE = False
+    pass  # PROMPT_TOOLKIT_AVAILABLE from _interactive_utils handles the guard
 
 __all__ = [
     "run_interactive_wizard",
@@ -53,25 +53,6 @@ def _get_style() -> "Style | None":
             "": "ansicyan",
         })
     return _WIZARD_STYLE
-
-
-# ---------------------------------------------------------------------------
-# Availability helpers
-# ---------------------------------------------------------------------------
-
-def check_prompt_toolkit() -> bool:
-    """Return True if prompt_toolkit is installed."""
-    return PROMPT_TOOLKIT_AVAILABLE
-
-
-def _show_install_message() -> None:
-    """Print a helpful install message when prompt_toolkit is not available."""
-    print("\nThe interactive wizard requires prompt_toolkit.")
-    print("\nInstall it with:")
-    print("  pip install color-match-tools[interactive]")
-    print("\nOr install prompt_toolkit directly:")
-    print("  pip install prompt_toolkit>=3.0.0")
-    print()
 
 
 # ---------------------------------------------------------------------------
@@ -582,7 +563,7 @@ def run_interactive_wizard(json_path: "Path | None" = None) -> None:
         json_path: Optional custom data directory (passed to handlers).
     """
     if not PROMPT_TOOLKIT_AVAILABLE:
-        _show_install_message()
+        show_install_message()
         sys.exit(1)
 
     print()

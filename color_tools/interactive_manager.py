@@ -20,7 +20,9 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pathlib import Path
 
-# Check if prompt_toolkit is available
+from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
+
+# Import prompt_toolkit symbols needed by this module
 try:
     from prompt_toolkit import Application
     from prompt_toolkit.key_binding import KeyBindings
@@ -28,35 +30,14 @@ try:
     from prompt_toolkit.layout.controls import FormattedTextControl
     from prompt_toolkit.widgets import TextArea, Frame, Label
     from prompt_toolkit.styles import Style
-    PROMPT_TOOLKIT_AVAILABLE = True
 except ImportError:
-    PROMPT_TOOLKIT_AVAILABLE = False
+    pass  # PROMPT_TOOLKIT_AVAILABLE from _interactive_utils handles the guard
 
 __all__ = [
     'run_interactive_manager',
     'check_prompt_toolkit',
     'show_install_message',
 ]
-
-
-def check_prompt_toolkit() -> bool:
-    """
-    Check if prompt_toolkit is installed.
-    
-    Returns:
-        True if prompt_toolkit is available, False otherwise
-    """
-    return PROMPT_TOOLKIT_AVAILABLE
-
-
-def show_install_message() -> None:
-    """Show helpful message if prompt_toolkit is not installed."""
-    print("\n❌ Interactive mode requires prompt_toolkit")
-    print("\nInstall with:")
-    print("  pip install color-match-tools[interactive]")
-    print("\nOr install prompt_toolkit directly:")
-    print("  pip install prompt_toolkit>=3.0.0")
-    print()
 
 
 def run_interactive_manager(json_dir: Path | str | None = None) -> None:

@@ -14,7 +14,8 @@ from color_tools.exporters.base import PaletteExporter, ExporterMetadata
 from color_tools.exporters import register_exporter
 
 if TYPE_CHECKING:
-    from color_tools.palette import ColorRecord, FilamentRecord
+    from color_tools.palette import ColorRecord
+    from color_tools.filament_palette import FilamentRecord
 
 
 @register_exporter

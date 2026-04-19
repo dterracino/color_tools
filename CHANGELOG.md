@@ -8,6 +8,38 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`color_tools/_interactive_utils.py`** — new private shared module providing `PROMPT_TOOLKIT_AVAILABLE`,
+  `check_prompt_toolkit()`, and `show_install_message()` as a single source of truth for both
+  `interactive_manager` and `interactive_wizard`.
+
+### Fixed
+
+- **Sphinx doc build errors** — fixed three categories of build errors:
+  - `conversions.py`: RST "Unexpected indentation" errors in `rgb_to_winhsl240` and
+    `rgb_to_winhsl255` docstrings — added required blank line before bullet lists.
+  - `interactive_wizard.py`: RST "Unexpected indentation" error in module docstring —
+    changed bare indented blocks to proper `::` literal blocks.
+  - `docs/sphinx/index.rst`: duplicate explicit target name warning — changed repeated
+    inline `Usage Guide` links to anonymous references (`__`).
+- **`sphinx_autodoc_typehints` warnings** — `FilamentRecord` was imported from
+  `color_tools.palette` in all 8 exporter files; corrected to `color_tools.filament_palette`
+  where it actually lives.
+- **`export.py`** — `ColorRecord` / `FilamentRecord` imports moved out of `TYPE_CHECKING`
+  block so sphinx_autodoc_typehints can resolve them at doc-build time.
+- **DRY violation in interactive modules** — `check_prompt_toolkit()` and
+  `show_install_message()` were duplicated across `interactive_manager` and
+  `interactive_wizard` with differing messages; both now delegate to `_interactive_utils`.
+  `cli.py` also updated to import `show_install_message` from `_interactive_utils` instead
+  of accessing the private `_show_install_message` across module boundaries.
+
+### Changed
+
+- **`docs/sphinx/index.rst`** — added `color_tools.logging_config` and
+  `color_tools.interactive_wizard` to the API reference (both were missing from the
+  generated docs).
+
 ## [6.6.0] - 2026-04-19
 
 ### Added
