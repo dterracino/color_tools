@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.5.0] - 2026-04-18
+
 ### Added
 
 - **Interactive wizard** — guided prompts for `color`, `filament`, and `convert`
@@ -45,6 +47,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
   Also useful for external scripts that invoke `color-tools` as a subprocess or call
   `main()` in-process via `sys.argv` manipulation.
+
+### Tests
+
+- **`tests/test_interactive_wizard.py`** — 40 new unit tests for the interactive wizard.
+  Covers the testable, TTY-free components without requiring `prompt_toolkit` to be
+  installed:
+  - `check_prompt_toolkit()` availability flag
+  - `_show_install_message()` output content
+  - `_get_subparser()` / `_get_choices()` parser introspection (all three commands,
+    known and unknown dests, `de2000` and `cmyk` presence)
+  - `_run_command()` — `sys.argv` assembly, `▶` command line printed before execution,
+    `--json` placement, `sys.argv` restored after call
+  - `_ask_multi()` — empty=done, single/multi pick, quit/exit/`KeyboardInterrupt` → `None`,
+    duplicate removal from Tab-completion list
+  - `_ask_color_input()` — hex path, `#` normalisation, invalid-then-valid retry, RGB path,
+    cancel at any step
+  - `_ask_float()` — valid value, boundary values, out-of-range retry, non-numeric retry,
+    quit and interrupt cancellation
 
 ## [6.4.0] - 2026-04-18
 
