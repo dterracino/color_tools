@@ -11,6 +11,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 ## GitHub Pages (✅ Implemented)
 
 ### Pros
+
 ✅ **Native GitHub Integration** - No external accounts or services needed  
 ✅ **Zero Configuration** - Works out of the box with GitHub Actions  
 ✅ **Free for Public Repos** - No cost concerns  
@@ -21,18 +22,21 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 ✅ **Version Control** - gh-pages branch shows deployment history  
 
 ### Cons
+
 ⚠️ **Static Only** - No server-side rendering (not needed for Sphinx)  
 ⚠️ **Build Time Limits** - 10 minutes max (our build takes ~1 minute)  
 ⚠️ **Storage Limits** - 1GB max repo size (easily sufficient)  
 
 ### How It Works
+
 1. Workflow triggers on push to main or version tag
 2. Builds Sphinx documentation
 3. Deploys to `gh-pages` branch
 4. GitHub Pages serves from `gh-pages` branch
-5. Available at: https://dterracino.github.io/color_tools/
+5. Available at: <https://dterracino.github.io/color_tools/>
 
 ### Setup Required
+
 - Enable GitHub Pages in repository settings (one-time)
 - See `docs/GITHUB_PAGES_SETUP.md` for instructions
 
@@ -41,6 +45,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 ## Vercel (Alternative - Not Implemented)
 
 ### Pros
+
 ✨ **Edge Network** - Global CDN with excellent performance  
 ✨ **Preview Deployments** - Automatic preview for every PR  
 ✨ **Advanced Analytics** - Detailed traffic and performance metrics  
@@ -49,6 +54,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 ✨ **SSR Support** - Server-side rendering (not needed for Sphinx)  
 
 ### Cons
+
 ❌ **Additional Account** - Requires Vercel account and authentication  
 ❌ **More Complex** - Additional configuration and token management  
 ❌ **Vendor Lock-in** - Tied to Vercel's platform  
@@ -57,6 +63,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 ❌ **Less Standard** - Not typical for Python library docs  
 
 ### How It Would Work
+
 1. Create Vercel account and connect to GitHub
 2. Configure vercel.json for Sphinx build
 3. Set up GitHub Actions workflow with Vercel CLI
@@ -64,6 +71,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 5. Available at: color-tools.vercel.app (or custom domain)
 
 ### Why We Didn't Choose Vercel
+
 - **Unnecessary complexity** for static documentation
 - **Not standard** in Python ecosystem (most use GitHub Pages or Read the Docs)
 - **Extra maintenance** burden with external service
@@ -74,7 +82,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 ## Comparison Table
 
 | Feature | GitHub Pages ✅ | Vercel |
-|---------|----------------|---------|
+| --------- | ---------------- | --------- |
 | Cost | Free | Free (with limits) |
 | Setup Complexity | Simple ⭐ | Moderate ⭐⭐ |
 | Maintenance | Low ⭐ | Medium ⭐⭐ |
@@ -97,6 +105,7 @@ This PR implements automated documentation deployment to GitHub Pages. This sect
 Another popular option for Python documentation is [Read the Docs](https://readthedocs.org/):
 
 ### Pros
+
 - **Python-specific** platform
 - **Automatic versioning** (docs for each release)
 - **Search integration**
@@ -104,11 +113,13 @@ Another popular option for Python documentation is [Read the Docs](https://readt
 - **Free for open source**
 
 ### Cons
+
 - **Additional configuration** (.readthedocs.yml)
 - **External service** (though well-integrated)
 - **Learning curve** for advanced features
 
 ### When to Consider
+
 - When you need **multiple documentation versions** side-by-side
 - When you want **downloadable documentation** (PDF/ePub)
 - When you need **advanced search** features
@@ -122,12 +133,14 @@ For now, GitHub Pages is simpler and sufficient. Read the Docs can be added late
 If you ever want to switch from GitHub Pages to another platform:
 
 ### To Vercel
+
 1. Create Vercel account
 2. Import GitHub repository
 3. Configure build settings (build command, output directory)
 4. Optionally disable GitHub Pages workflow
 
 ### To Read the Docs
+
 1. Create Read the Docs account
 2. Import GitHub repository
 3. Add `.readthedocs.yml` configuration
@@ -148,6 +161,7 @@ Both migrations are straightforward and non-destructive.
 5. ✅ Free and reliable
 
 The implementation in this PR provides:
+
 - ✅ Automatic deployment on push to main
 - ✅ Automatic deployment on version tags
 - ✅ Manual deployment trigger option
@@ -155,6 +169,7 @@ The implementation in this PR provides:
 - ✅ Simple one-time setup
 
 Future enhancements (if needed):
+
 - Add Read the Docs for versioned docs
 - Add custom domain (optional)
 - Add doc version switcher (if multiple versions needed)
@@ -164,6 +179,7 @@ Future enhancements (if needed):
 ## Questions?
 
 If you have questions about the deployment choice or setup, please:
+
 1. Check `docs/GITHUB_PAGES_SETUP.md` for setup instructions
 2. Check `docs/DEPLOYMENT_WORKFLOW.md` for technical details
 3. Open an issue if you need help

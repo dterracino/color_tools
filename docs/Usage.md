@@ -17,6 +17,7 @@ Color Tools can be used in three ways:
   - [Common Library Functions](#common-library-functions)
   - [Data Structures](#data-structures)
 - [CLI Usage](#cli-usage)
+  - [Interactive Wizard](#interactive-wizard-requires-interactive-extra)
   - [Color Command](#color-command)
   - [Filament Command](#filament-command)
     - [Owned Filaments Tracking](#owned-filaments-tracking-v600)
@@ -636,6 +637,52 @@ Total owned: 42 → 44
 - Press `c` to quickly clear all filters and see the full list again
 - The yellow asterisk (*) next to owned count reminds you of unsaved changes
 - Exit summary compares original state to final saved state (captures all saves during session)
+
+### Interactive Wizard *(requires [interactive] extra)*
+
+The interactive wizard guides you through `color`, `filament`, and `convert` searches
+with step-by-step prompts — no need to remember flags or argument syntax.
+
+**Requirements:**
+
+```bash
+pip install color-match-tools[interactive]
+```
+
+**Launch:**
+
+```bash
+# Automatically when no arguments are given
+color-tools
+python -m color_tools
+
+# Or explicitly
+color-tools --interactive
+color-tools -i
+```
+
+**What it does:**
+
+1. Asks which command you want: `color`, `filament`, or `convert`
+2. Walks through the relevant options with numbered menus and Tab-completion
+3. For every color input, offers a choice of **hex** (e.g. `#FF8040`) or **RGB** values
+4. Filament filters (maker, type, finish) support **multiple values** — pick one at a time,
+   press Enter on an empty line when done
+5. After collecting all options, prints the **equivalent CLI command** before running it:
+
+```text
+  ▶  color-tools filament --nearest --hex #FFAACC --maker 'Bambu Lab' --finish Matte Basic --all-filaments
+  ─────────────────────────────────────────────────────────────────────────────────
+  Maker:   Bambu Lab     Type: PLA     Finish: Matte
+  Color:   Sakura Pink   Hex:  #FFAABB
+  ΔE2000:  1.34
+```
+
+The printed command is ready to copy-paste directly into a script or shell alias.
+
+Falls back to `--help` output if `prompt_toolkit` is not installed.
+
+---
 
 ### Convert Command
 

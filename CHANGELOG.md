@@ -8,6 +8,44 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Interactive wizard** — guided prompts for `color`, `filament`, and `convert`
+  commands. Launches automatically when `color-tools` is run with no arguments,
+  or explicitly with `color-tools --interactive` / `color-tools -i`.
+  Requires the `[interactive]` extra (`pip install color-match-tools[interactive]`).
+
+  Features:
+  - Numbered menu selects the command (`color`, `filament`, `convert`)
+  - Hex **or** RGB input at every color prompt — no need to pre-convert
+  - Tab-completion for maker, type, and finish filters in the `filament` wizard
+  - Multi-value filters — pick multiple makers, types, or finishes one at a time
+    (e.g. `--finish Matte Basic`)
+  - All six color spaces supported in the `convert` wizard (RGB, HSL, LAB, LCH, CMY, CMYK)
+  - Each run prints the equivalent CLI command so users learn the flags naturally:
+    `▶  color-tools filament --nearest --hex #FFAACC --maker 'Bambu Lab' --finish Matte Basic --all-filaments`
+  - Falls back gracefully to `--help` output if `prompt_toolkit` is not installed
+
+  ```bash
+  # Launch wizard automatically (no args)
+  color-tools
+
+  # Or explicitly
+  color-tools --interactive
+  color-tools -i
+  ```
+
+- **`main.py`** — convenience entry point at the repo root for running `color-tools`
+  directly from the repository without installing the package:
+
+  ```bash
+  python main.py color --name coral
+  python main.py filament --nearest --value 255 128 64
+  ```
+
+  Also useful for external scripts that invoke `color-tools` as a subprocess or call
+  `main()` in-process via `sys.argv` manipulation.
+
 ## [6.4.0] - 2026-04-18
 
 ### Added

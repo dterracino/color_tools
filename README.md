@@ -60,6 +60,11 @@ See [Installation Guide](https://github.com/dterracino/color_tools/blob/main/doc
 ### CLI Usage
 
 ```bash
+# Interactive wizard — guided prompts for color, filament, and convert
+# (requires: pip install color-match-tools[interactive])
+color-tools
+color-tools --interactive
+
 # Find a CSS color by name
 color-tools color --name coral
 

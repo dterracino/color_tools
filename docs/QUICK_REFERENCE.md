@@ -2,13 +2,14 @@
 
 ## 🔗 URLs
 
-- **Live Documentation:** https://dterracino.github.io/color_tools/
-- **Repository:** https://github.com/dterracino/color_tools
-- **PyPI Package:** https://pypi.org/project/color-match-tools/
+- **Live Documentation:** <https://dterracino.github.io/color_tools/>
+- **Repository:** <https://github.com/dterracino/color_tools>
+- **PyPI Package:** <https://pypi.org/project/color-match-tools/>
 
 ## ⚙️ Quick Commands
 
 ### Build Documentation Locally
+
 ```bash
 # Install dependencies
 pip install -e ".[docs]"
@@ -22,6 +23,7 @@ open _build/html/index.html  # macOS
 ```
 
 ### Clean Build
+
 ```bash
 # Remove old build
 rm -rf docs/sphinx/_build
@@ -32,6 +34,7 @@ python -m sphinx -b html . _build/html
 ```
 
 ### Manual Deployment Trigger
+
 1. Go to GitHub Actions tab
 2. Select "Build and Deploy Documentation" workflow
 3. Click "Run workflow"
@@ -44,13 +47,13 @@ python -m sphinx -b html . _build/html
 - [ ] Set Source: `gh-pages` branch, `/` folder
 - [ ] Click Save
 - [ ] Wait 1-2 minutes
-- [ ] Visit https://dterracino.github.io/color_tools/
+- [ ] Visit <https://dterracino.github.io/color_tools/>
 - [ ] ✅ Done!
 
 ## 🔄 Automatic Deployment Triggers
 
 | Event | When | Docs Update |
-|-------|------|-------------|
+| ------- | ------ | ------------- |
 | Push to main | After commit to main branch | Within 2-3 minutes |
 | Version tag | After `git tag v*.*.*` and push | Within 2-3 minutes |
 | Manual | Via GitHub Actions UI | Within 2-3 minutes |
@@ -58,7 +61,7 @@ python -m sphinx -b html . _build/html
 ## 📖 Documentation Files
 
 | File | Purpose |
-|------|---------|
+| ------ | --------- |
 | `docs/GITHUB_PAGES_SETUP.md` | One-time setup instructions |
 | `docs/DEPLOYMENT_WORKFLOW.md` | Technical workflow diagram |
 | `docs/DEPLOYMENT_OPTIONS.md` | Platform comparison (GH Pages vs Vercel) |
@@ -68,7 +71,7 @@ python -m sphinx -b html . _build/html
 ## 🐛 Troubleshooting
 
 | Problem | Solution |
-|---------|----------|
+| --------- | ---------- |
 | Docs not updating | Check Actions tab for failures |
 | 404 error | Verify gh-pages branch exists and has content |
 | Build fails | Check workflow logs, verify dependencies |

@@ -49,22 +49,16 @@ from .cli_commands.utils import (
 from .cli_commands.reporting import handle_verification_flags
 
 
-def main():
+def build_parser() -> argparse.ArgumentParser:
     """
-    Main entry point for the CLI.
-    
-    Note: No `if __name__ == "__main__":` here! That's __main__.py's job.
-    This function is just the CLI logic - pure and testable.
+    Build and return the argument parser for color-tools.
+
+    Separated from main() so the wizard and tests can introspect available
+    choices (--space, --metric, --from, --to, etc.) without running the CLI.
     """
-    # Configure stdout/stderr for UTF-8 on Windows (for Unicode checkmarks, etc.)
-    if sys.platform == 'win32':
-        import io
-        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
-        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
-    
     # Determine the proper program name based on how we were invoked
     prog_name = get_program_name()
-    
+
     parser = argparse.ArgumentParser(
         prog=prog_name,
         description="Color search and conversion tools",
@@ -174,7 +168,12 @@ Examples:
         action="store_true",
         help="Show report of user overrides (user/user-colors.json, user/user-filaments.json) and exit"
     )
-    
+    parser.add_argument(
+        "--interactive", "-i",
+        action="store_true",
+        help="Launch the interactive wizard (guided prompts for color, filament, and convert commands)"
+    )
+
     # Create subparsers for the three main commands
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
     
@@ -748,7 +747,25 @@ Examples:
         action="store_true",
         help="Use lossy compression for WebP/AVIF instead of lossless (only with --convert)"
     )
+
+    return parser
+
+
+def main():
+    """
+    Main entry point for the CLI.
     
+    Note: No `if __name__ == "__main__":` here! That's __main__.py's job.
+    This function is just the CLI logic - pure and testable.
+    """
+    # Configure stdout/stderr for UTF-8 on Windows (for Unicode checkmarks, etc.)
+    if sys.platform == 'win32':
+        import io
+        sys.stdout = io.TextIOWrapper(sys.stdout.buffer, encoding='utf-8', errors='replace')
+        sys.stderr = io.TextIOWrapper(sys.stderr.buffer, encoding='utf-8', errors='replace')
+
+    parser = build_parser()
+
     # Parse arguments
     args = parser.parse_args()
     
@@ -756,10 +773,26 @@ Examples:
     if handle_verification_flags(args):
         sys.exit(0)
     
-    # Handle no subcommand
-    if not args.command:
-        parser.print_help()
-        sys.exit(0)
+    # Handle --interactive flag or no subcommand → launch wizard
+    if getattr(args, 'interactive', False) or not args.command:
+        # Only launch the wizard when stdin is a real interactive terminal.
+        # In pipes, subprocesses, or CI environments fall back to --help.
+        is_interactive_tty = sys.stdin.isatty() and sys.stdout.isatty()
+        if not is_interactive_tty and not args.command:
+            parser.print_help()
+            sys.exit(0)
+        from .interactive_wizard import run_interactive_wizard, check_prompt_toolkit
+        if not check_prompt_toolkit():
+            if not args.command:
+                parser.print_help()
+                sys.exit(0)
+            else:
+                from .interactive_wizard import _show_install_message
+                _show_install_message()
+                sys.exit(1)
+        _wizard_json = Path(args.json) if args.json else None
+        run_interactive_wizard(_wizard_json)
+        sys.exit(0)  # wizard handles its own exit; this is a safety net
     
     # Validate and convert json_path to Path if provided
     json_path = None

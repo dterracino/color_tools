@@ -2,7 +2,7 @@
 
 ## Workflow Diagram
 
-```
+```text
 ┌─────────────────────────────────────────────────────────────────┐
 │                     Trigger Events                              │
 │                                                                 │
@@ -72,7 +72,7 @@
 
 ## Deployment Timeline
 
-```
+```text
 Event (push/tag) → Workflow starts (0-5 sec)
                  ↓
               Build docs (30-60 sec)
@@ -88,7 +88,7 @@ Total time: ~2-3 minutes from push to live docs
 
 ## Branch Strategy
 
-```
+```text
 main branch
   ├─ source code
   ├─ docs/sphinx/*.rst (source)
@@ -102,7 +102,7 @@ gh-pages branch (auto-managed)
 
 ## File Flow
 
-```
+```text
 Source Files (in main)           Built Files (in gh-pages)
 ─────────────────────            ────────────────────────
 docs/sphinx/
@@ -123,6 +123,7 @@ color_tools/
 ## Security & Permissions
 
 The workflow uses `GITHUB_TOKEN` (automatically provided) with:
+
 - `contents: write` - Required to push to gh-pages branch
 - No additional secrets needed
 - Safe for public repositories

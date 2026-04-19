@@ -30,7 +30,7 @@ After merging the PR, the docs workflow will run and create a `gh-pages` branch.
 ### 3. Verify Documentation is Live
 
 Once deployed, visit:
-**https://dterracino.github.io/color_tools/**
+**<https://dterracino.github.io/color_tools/>**
 
 You should see the Color Tools API documentation homepage.
 
@@ -88,6 +88,7 @@ The documentation is automatically rebuilt and deployed on:
 ### Update API Documentation
 
 Edit docstrings in source code (`color_tools/*.py`), then:
+
 - Push to main → docs update automatically
 - Or create a tag → docs update with release
 
@@ -117,7 +118,7 @@ start _build/html/index.html  # Windows
 
 After enabling GitHub Pages:
 
-1. ✅ Verify docs are live at https://dterracino.github.io/color_tools/
+1. ✅ Verify docs are live at <https://dterracino.github.io/color_tools/>
 2. ✅ Test navigation and API reference pages
 3. ✅ Share the documentation link with users
 4. 📝 Consider adding more content to `docs/sphinx/index.rst`
