@@ -2,7 +2,15 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-**Version:** 6.6.1 | [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
+[![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
+[![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
+[![CodeQL](https://github.com/dterracino/color_tools/actions/workflows/codeql.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/codeql.yml)
+[![codecov](https://codecov.io/gh/dterracino/color_tools/branch/main/graph/badge.svg)](https://codecov.io/gh/dterracino/color_tools)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/dterracino/color_tools/blob/main/LICENSE)
+[![PyPI downloads](https://img.shields.io/pypi/dm/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
+
+[Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
 ## 📚 Documentation
 
@@ -24,7 +32,7 @@ A comprehensive Python library for color science operations, color space convers
 - **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC, HyAB)
 - **Color Databases**:
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
-  - Extensive 3D printing filament database (584 filaments) with manufacturer info
+  - Extensive 3D printing filament database (913 filaments) with manufacturer info
   - Unique semantic IDs for all filaments (e.g., "bambu-lab-pla-silk-red")
   - Alternative name support for regional variations and rebranding
   - Maker synonym support for flexible filament searches
