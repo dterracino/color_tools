@@ -1,0 +1,30 @@
+# GitHub Sponsors funding configuration
+# Uncomment and fill in any platforms you use.
+# See: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/displaying-a-sponsor-button-in-your-repository
+
+# GitHub Sponsors (https://github.com/sponsors)
+github: dterracino
+
+# Ko-fi (https://ko-fi.com)
+ko_fi: rsr3dx
+
+# Buy Me a Coffee (https://buymeacoffee.com)
+# buy_me_a_coffee: YOUR_USERNAME
+
+# Patreon (https://patreon.com)
+# patreon: YOUR_USERNAME
+
+# Polar (https://polar.sh)
+# polar: dterracino
+
+# Open Collective (https://opencollective.com)
+# open_collective: YOUR_PROJECT
+
+# Liberapay (https://liberapay.com)
+# liberapay: YOUR_USERNAME
+
+# IssueHunt (https://issuehunt.io)
+# issuehunt: YOUR_USERNAME
+
+# Custom URL (PayPal, etc.)
+custom: "https://paypal.me/dterracino"

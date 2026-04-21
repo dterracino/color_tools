@@ -1,0 +1,31 @@
+version: 2
+
+updates:
+  # Keep GitHub Actions up to date
+  - package-ecosystem: "github-actions"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+
+  # Keep Python optional dependencies up to date
+  - package-ecosystem: "pip"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+      day: "monday"
+    labels:
+      - "dependencies"
+    # Only track optional extras, not dev/docs noise
+    allow:
+      - dependency-name: "Pillow"
+      - dependency-name: "numpy"
+      - dependency-name: "scikit-image"
+      - dependency-name: "pillow-heif"
+      - dependency-name: "cairosvg"
+      - dependency-name: "prompt_toolkit"
+      - dependency-name: "rich"
+      - dependency-name: "fuzzywuzzy"
+      - dependency-name: "python-Levenshtein"

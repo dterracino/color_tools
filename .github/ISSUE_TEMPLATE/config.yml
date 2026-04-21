@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Documentation
+    url: https://dterracino.github.io/color_tools/
+    about: Check the full API documentation first
+  - name: Support & Questions
+    url: https://github.com/dterracino/color_tools/blob/main/SUPPORT.md
+    about: Read the support guide before opening an issue
