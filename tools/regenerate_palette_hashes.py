@@ -33,7 +33,7 @@ print()
 for filepath, const_name in files.items():
     full_path = palettes_dir / filepath
     if full_path.exists():
-        hash_val = hashlib.sha256(full_path.read_bytes()).hexdigest()
+        hash_val = hashlib.sha256(full_path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
         print(f'    {const_name} = "{hash_val}"')
     else:
         print(f'    {const_name} = "FILE_NOT_FOUND"')

@@ -6,6 +6,6 @@ new_palettes = ['apple2.json', 'macintosh.json', 'gameboy-color.json', 'tandy16.
 
 for palette_file in new_palettes:
     file_path = palette_dir / palette_file
-    hash_val = hashlib.sha256(file_path.read_bytes()).hexdigest()
+    hash_val = hashlib.sha256(file_path.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
     const_name = palette_file.replace('.json', '').replace('-', '_').upper() + '_PALETTE_HASH'
     print(f'{const_name} = "{hash_val}"')

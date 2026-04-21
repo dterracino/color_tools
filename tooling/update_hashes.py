@@ -71,25 +71,32 @@ def compute_file_hash(filepath: Path) -> str | None:
     """
     if not filepath.exists():
         return None
-    return hashlib.sha256(filepath.read_bytes()).hexdigest()
+    content = filepath.read_bytes().replace(b'\r\n', b'\n')
+    return hashlib.sha256(content).hexdigest()
 
 
 # Palette files mapping (single source of truth)
 PALETTE_FILES = {
+    'apple2.json': 'APPLE2_PALETTE_HASH',
     'cga4.json': 'CGA4_PALETTE_HASH',
-    'cga16.json': 'CGA16_PALETTE_HASH', 
+    'cga16.json': 'CGA16_PALETTE_HASH',
+    'commodore64.json': 'COMMODORE64_PALETTE_HASH',
+    'crayola.json': 'CRAYOLA_PALETTE_HASH',
     'ega16.json': 'EGA16_PALETTE_HASH',
     'ega64.json': 'EGA64_PALETTE_HASH',
-    'vga.json': 'VGA_PALETTE_HASH',
-    'web.json': 'WEB_PALETTE_HASH',
     'gameboy.json': 'GAMEBOY_PALETTE_HASH',
+    'gameboy-color.json': 'GAMEBOY_COLOR_PALETTE_HASH',
     'gameboy_dmg.json': 'GAMEBOY_DMG_PALETTE_HASH',
-    'gameboy_pocket.json': 'GAMEBOY_POCKET_PALETTE_HASH',
+    'gameboy_gbl.json': 'GAMEBOY_GBL_PALETTE_HASH',
+    'gameboy_mgb.json': 'GAMEBOY_MGB_PALETTE_HASH',
+    'macintosh.json': 'MACINTOSH_PALETTE_HASH',
     'nes.json': 'NES_PALETTE_HASH',
-    'c64.json': 'C64_PALETTE_HASH',
-    'amstrad.json': 'AMSTRAD_PALETTE_HASH',
+    'pico8.json': 'PICO8_PALETTE_HASH',
+    'sms.json': 'SMS_PALETTE_HASH',
+    'tandy16.json': 'TANDY16_PALETTE_HASH',
+    'vga.json': 'VGA_PALETTE_HASH',
     'virtualboy.json': 'VIRTUALBOY_PALETTE_HASH',
-    'zxspectrum.json': 'ZXSPECTRUM_PALETTE_HASH',
+    'web.json': 'WEB_PALETTE_HASH',
 }
 
 

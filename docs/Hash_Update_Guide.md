@@ -71,7 +71,7 @@ python -c "
 import hashlib
 from pathlib import Path
 palette_file = Path('color_tools/data/palettes/cga4.json')
-hash_val = hashlib.sha256(palette_file.read_bytes()).hexdigest()
+hash_val = hashlib.sha256(palette_file.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
 print(f'CGA4_PALETTE_HASH = \"{hash_val}\"')
 "
 ```
@@ -105,7 +105,7 @@ palettes_dir = Path('color_tools/data/palettes')
 for filename, const_name in palette_files.items():
     filepath = palettes_dir / filename
     if filepath.exists():
-        hash_val = hashlib.sha256(filepath.read_bytes()).hexdigest()
+        hash_val = hashlib.sha256(filepath.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
         print(f'{const_name} = \"{hash_val}\"')
     else:
         print(f'# {const_name} = \"\" # File not found: {filename}')
@@ -129,7 +129,7 @@ data_files = {
 data_dir = Path('color_tools/data')
 for filename, const_name in data_files.items():
     filepath = data_dir / filename
-    hash_val = hashlib.sha256(filepath.read_bytes()).hexdigest()
+    hash_val = hashlib.sha256(filepath.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
     print(f'{const_name} = \"{hash_val}\"')
 "
 ```

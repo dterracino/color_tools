@@ -355,11 +355,13 @@ Protects core data files: colors.json, filaments.json, maker_synonyms.json, and 
 
 **How to regenerate:**
 ```bash
-# For a single file
-python -c "import hashlib; print(hashlib.sha256(open('color_tools/data/colors.json', 'rb').read()).hexdigest())"
+# RECOMMENDED: Use the update script (handles all files and normalization automatically)
+python tooling/update_hashes.py --autoupdate
 
-# For all data files at once (recommended)
-cd color_tools/data
+# For a single file (with CRLF normalization for cross-platform consistency)
+python -c "import hashlib; d=open('color_tools/data/colors.json','rb').read(); print(hashlib.sha256(d.replace(b'\\r\\n',b'\\n')).hexdigest())"
+
+# For all data files at once (recommended manual approach)
 python -c "
 import hashlib
 from pathlib import Path
@@ -368,21 +370,18 @@ files = {
     'colors.json': 'COLORS_JSON_HASH',
     'filaments.json': 'FILAMENTS_JSON_HASH', 
     'maker_synonyms.json': 'MAKER_SYNONYMS_JSON_HASH',
-    'palettes/cga4.json': 'CGA4_PALETTE_HASH',
-    'palettes/cga16.json': 'CGA16_PALETTE_HASH',
-    'palettes/ega16.json': 'EGA16_PALETTE_HASH',
-    'palettes/ega64.json': 'EGA64_PALETTE_HASH',
-    'palettes/vga.json': 'VGA_PALETTE_HASH',
-    'palettes/web.json': 'WEB_PALETTE_HASH',
 }
 
 for filepath, const_name in files.items():
-    hash_val = hashlib.sha256(Path(filepath).read_bytes()).hexdigest()
+    content = Path('color_tools/data', filepath).read_bytes().replace(b'\\r\\n', b'\\n')
+    hash_val = hashlib.sha256(content).hexdigest()
     print(f'{const_name} = \"{hash_val}\"')
 "
 
 # Update the hash constants in constants.py with the output
 ```
+
+> **Note:** Hashes use CRLF normalization (`\r\n` → `\n`) so they are identical on Windows and Linux/macOS.
 
 **Verification:**
 ```bash

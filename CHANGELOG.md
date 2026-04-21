@@ -8,14 +8,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.6.1] - 2026-04-21
+
 ### Added
 
+- **GitHub community health files** — added standard repository files for GitHub community
+  profile compliance:
+  - `SECURITY.md` — vulnerability reporting policy, supported versions, scope
+  - `CONTRIBUTING.md` — dev setup, code style, PR checklist, hash integrity guide
+  - `CODE_OF_CONDUCT.md` — Contributor Covenant v2.1
+  - `SUPPORT.md` — where to get help, links to all documentation
+  - `.github/FUNDING.yml` — PayPal sponsor link
+- **GitHub issue templates** — YAML-based structured templates:
+  - `.github/ISSUE_TEMPLATE/bug_report.yml` — bug report form with version/OS/reproduction fields
+  - `.github/ISSUE_TEMPLATE/feature_request.yml` — feature request form with area dropdown
+  - `.github/ISSUE_TEMPLATE/config.yml` — disables blank issues, links to docs
+- **Pull request template** — `.github/PULL_REQUEST_TEMPLATE.md` with checklist covering
+  tests, type errors, changelog, docstrings, and hash verification
+- **CI/CD workflows**:
+  - `.github/workflows/ci.yml` — runs tests across Python 3.10/3.11/3.12 on push/PR,
+    uploads coverage report to Codecov (Python 3.12)
+  - `.github/workflows/codeql.yml` — CodeQL security analysis on push/PR/weekly schedule,
+    using `security-extended` query set
+  - `.github/dependabot.yml` — weekly Dependabot updates for GitHub Actions and optional
+    pip dependencies
 - **`color_tools/_interactive_utils.py`** — new private shared module providing `PROMPT_TOOLKIT_AVAILABLE`,
   `check_prompt_toolkit()`, and `show_install_message()` as a single source of truth for both
   `interactive_manager` and `interactive_wizard`.
 
 ### Fixed
 
+- **Cross-platform hash verification** — data file integrity checks were failing on Linux
+  because hashes were computed on Windows with CRLF line endings. All hash computation
+  now normalizes `\r\n` → `\n` before hashing, making hashes identical on Windows and
+  Linux/macOS. Affected: `verify_data_file()`, `compute_user_data_hash()` in
+  `constants.py`, `tooling/update_hashes.py`, `tools/regenerate_palette_hashes.py`,
+  `tooling/temp_hash_gen.py`. All hash constants and `.sha256` sidecar files regenerated.
+  `docs/Hash_Update_Guide.md` and `.github/copilot-instructions.md` examples updated.
+- **`tooling/update_hashes.py` palette coverage** — `PALETTE_FILES` dict was missing 10
+  palette files (`apple2`, `commodore64`, `crayola`, `gameboy-color`, `gameboy_gbl`,
+  `gameboy_mgb`, `macintosh`, `pico8`, `sms`, `tandy16`), causing them to be excluded
+  from autoupdate and flagged as "unexpected". All 20 palettes now tracked.
 - **Sphinx doc build errors** — fixed three categories of build errors:
   - `conversions.py`: RST "Unexpected indentation" errors in `rgb_to_winhsl240` and
     `rgb_to_winhsl255` docstrings — added required blank line before bullet lists.

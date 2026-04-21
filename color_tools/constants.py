@@ -182,42 +182,42 @@ class ColorConstants:
     # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
     # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
     # Updated 2026-03-28: Updated MAKER_SYNONYMS_JSON_HASH after merge (BBL, BambuLab synonyms added)
-    _EXPECTED_HASH = "2878701bb464db87188e4e5f6913a9f3e610fea28a515ef73f8303e9483b4b1e"
+    _EXPECTED_HASH = "774277fef6c4d928db8e6c6a4c6ad13ffaf79ddfa79f1a7de27e9c29d29d4618"
     # Updated for 6.3.0: Added WIN_HSL240_HUE_MAX, WIN_HSL240_SL_MAX, WIN_HSL255_HUE_MAX, WIN_HSL255_SL_MAX
     
     # ========================================================================
     # Data File Integrity Hashes
     # ========================================================================
     # SHA-256 hashes of core data files for integrity verification
-    # These hashes are computed from the exact file contents (including whitespace)
+    # These hashes are computed with CRLF normalization (\r\n → \n) for cross-platform consistency
     # Updated 2025-12-03: Changed cyan to #00B7EB and magenta to #FF0090 to resolve RGB duplication with aqua/fuchsia
     # Updated 2025-12-23: Imported 328 new filaments from HueForge data (20 new manufacturers, filtered null hex codes, deduplicated IDs)
     
-    COLORS_JSON_HASH = "dc8ce5769a2186008af540c03159d3f24a72e5effc9ce5b611c8b4374da19ffd"
-    FILAMENTS_JSON_HASH = "8e3e178cf824b7e1bcf34b67bfa929e462964334c79069073806a9a959f3536e"
-    MAKER_SYNONYMS_JSON_HASH = "07fae8beb2af3fafce3c607aaa9b7d3e3056c6ca5a542ea481199c8994b6aa23"  # Updated 2026-03-28: Merged remote changes (BBL, BambuLab synonyms added)
+    COLORS_JSON_HASH = "ca33f6055298d37c1ad469656d3ba0f2f15d506bbc6149cd42e696fc5c3a3d00"
+    FILAMENTS_JSON_HASH = "e898f049f03329fb79eb4a883a29ae2b189dbadbbbaeff12d2c0cc0e46b4e4bd"
+    MAKER_SYNONYMS_JSON_HASH = "73df3893a98fb8439e8cc127eb9cd5ee763027c346ad9f528f8290514f999fe1"  # Updated 2026-03-28: Merged remote changes (BBL, BambuLab synonyms added)
     
     # Palette file hashes
-    APPLE2_PALETTE_HASH = "d5374e50f76312799c031a8f64fe9537cac2d903c59dbc09f0760e8f5bb581fe"
-    CGA4_PALETTE_HASH = "62624dbeef28b664feca10afe3901b52b2335395134aba88ea21f955f0d17b7d"
-    CGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
-    COMMODORE64_PALETTE_HASH = "c4502abaed781535de55f3042cca4d7b3653c5eeb4cec3ecb30f591bfbfdfcca"
-    CRAYOLA_PALETTE_HASH = "65bf4add677a7a8667114b8f813b8afdd6b8e92e8cef1458e53b4a8cd716a4a3"
-    EGA16_PALETTE_HASH = "d189b3004d20a343105d01b03c71d437077e34bb8d25fc074487c35c8490a329"
-    EGA64_PALETTE_HASH = "2159e51f89cca4a4fb43a2d80bea030f3d7cd0cc5e1eacd25eb95f0ce2027e7f"
-    GAMEBOY_PALETTE_HASH = "e2911baed15b4d56a27313b6be506c3a1f57bee3b01ecd2ca5995b512822da9b"
-    GAMEBOY_COLOR_PALETTE_HASH = "5c98dd69be991f445aabafe21a0bdddabc8f6e98aa728724e3d0e72a445aadde"
-    GAMEBOY_DMG_PALETTE_HASH = "042d7cfd7b94f8719aa01603ddf5b0d9c73ae59b04e27295132ddac13142e968"
-    GAMEBOY_GBL_PALETTE_HASH = "f2b6a573b09c1efa3529e79f281dcb0ed4e5c788cb10e51526c60e6e5d928231"
-    GAMEBOY_MGB_PALETTE_HASH = "7c556e05e13adcfce0e7aec06ded6c7871acee63771e520319afa67e07080027"
-    MACINTOSH_PALETTE_HASH = "e9b5bce3ce2eda12dec5793b4eb3c588a92d53e8d6ecaf4fa310998fe2dd1ddd"
-    NES_PALETTE_HASH = "3021573a00b158fb6cf694e6546b236c2ec6862d52e08cc860f32d983e1f0a59"
-    PICO8_PALETTE_HASH = "31ef74f5185363120637c71d5ce8ca07144a458c0a2969a1ce171f7602b6766d"
-    SMS_PALETTE_HASH = "95010c348c2f77a209544170da29ee7f5bfccacbcd32ed33c36cb7ef269f72e8"
-    TANDY16_PALETTE_HASH = "820f2f1dcdd3acd7130a88247b09e6bf969779a08c97091800db19c1748f1a03"
-    VGA_PALETTE_HASH = "9eb6055508d5523ceafbb4abe3d2921f09bc61b20485da1052e4d4fd653a5d00"
-    VIRTUALBOY_PALETTE_HASH = "218854f6dc6506649e6ff14f92f56ff996b7c01a36c916b0374880c8524c40a9"
-    WEB_PALETTE_HASH = "ba4ad53ece01d2f1338ae13221aa04e5c342519d7750d948458074001a465e7d"
+    APPLE2_PALETTE_HASH = "ebc753e69fda9d369c766554b840991fa080b6c9e5b1c6206706136fb78fd6fb"
+    CGA4_PALETTE_HASH = "87667dd713c656e12a67ea04fbecef0d2c0509d9b8188e2e67063c3410ae69f0"
+    CGA16_PALETTE_HASH = "b4515d2110bda9f6ad3e973bc5703b4d9bc771aa1e76b885d35b6f279daa04a1"
+    COMMODORE64_PALETTE_HASH = "bd37a4104014f5188aa25833a5e3c3bcd6690e63db338e2447acd4f9fb9f26cb"
+    CRAYOLA_PALETTE_HASH = "c08c16ceb1cc2119916c581ddf63538924e7fb1bca60cc1c1e833c1f050c65d3"
+    EGA16_PALETTE_HASH = "b4515d2110bda9f6ad3e973bc5703b4d9bc771aa1e76b885d35b6f279daa04a1"
+    EGA64_PALETTE_HASH = "a39d71654a288743cc3d90a17a214f2360fabd38725e49f8b8111143a482d06c"
+    GAMEBOY_PALETTE_HASH = "09274f3d1b0a653ed0456168de6a14d4762c42cc060af71ee77d5753c41b2f65"
+    GAMEBOY_COLOR_PALETTE_HASH = "ce89b327971f175d8788e5aa4ff586a62884fa0c9e3d727101a5a1403fa182c2"
+    GAMEBOY_DMG_PALETTE_HASH = "e1f36b4ad75d0e5c9e7dc3b85e9d8cae8db481a7dc092bd71de7bf90a7bf475a"
+    GAMEBOY_GBL_PALETTE_HASH = "875e1080a794ce416de08b62c8a5ba037d2d749021eddf574adbf8e9bf722222"
+    GAMEBOY_MGB_PALETTE_HASH = "0b3449bfe3123b6c93dfbd36d541cb71dfb213e6f9051511bd156a7053455994"
+    MACINTOSH_PALETTE_HASH = "28804cc88a94a196dd760ade89df387c03ff10740078c52ecce414c0465c9452"
+    NES_PALETTE_HASH = "7526fd4e35bae0cba4ea20b00583312cc9f9ef85b496a067bab6f90287f67205"
+    PICO8_PALETTE_HASH = "7c2319a44b706f6a4148e832140ac8c629aae411418fe3d6d7f842c4b525b76f"
+    SMS_PALETTE_HASH = "0b7e3c461cce23c2ae5dc2ec576209ab2c17ae7fe6b5f5c3e92823f15350443f"
+    TANDY16_PALETTE_HASH = "c72ace4358704445ca982400f11556d99989cf19ecc3f7d6f271b0e2076ed6f4"
+    VGA_PALETTE_HASH = "cf597b1b7ab37eda0f977ea5fe353f3a95b07fa3aa5b8db913624128de1bfc85"
+    VIRTUALBOY_PALETTE_HASH = "a35450f1f912b9e8c88fafd5d0349ebaf203e9d093817aa22bbce2c19d549c50"
+    WEB_PALETTE_HASH = "aaaf11e7b129b6325476f70534d8bc39a2a87adf3dce5bbcae18c89311737983"
     
     # User data files (optional, not verified) - now in user/ subdirectory
     USER_COLORS_JSON_FILENAME = "user/user-colors.json"
@@ -250,10 +250,11 @@ class ColorConstants:
         
         if not Path(filepath).exists():
             return False
-            
+
         with open(filepath, 'rb') as f:
-            actual_hash = hashlib.sha256(f.read()).hexdigest()
-        
+            content = f.read().replace(b'\r\n', b'\n')
+        actual_hash = hashlib.sha256(content).hexdigest()
+
         return actual_hash == expected_hash
     
     @classmethod
@@ -404,7 +405,8 @@ class ColorConstants:
         if not path.exists():
             raise FileNotFoundError(f"User data file not found: {path}")
         
-        return hashlib.sha256(path.read_bytes()).hexdigest()
+        content = path.read_bytes().replace(b'\r\n', b'\n')
+        return hashlib.sha256(content).hexdigest()
     
     @classmethod
     def save_user_data_hash(cls, file_path: "Path | str", hash_value: str | None = None) -> "Path":
