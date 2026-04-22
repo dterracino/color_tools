@@ -300,9 +300,9 @@ def main() -> int:
         """Return content_frames (Original, Sim, Corr) for one canonical deficiency."""
         dlabel = label_map[d]
         print(f"Simulating: {d} ...")
-        sim  = simulate_cvd_image(input_path, d).convert("RGB")
+        sim  = simulate_cvd_image(input_path, d)
         print(f"Correcting: {d} ...")
-        corr = correct_cvd_image(input_path, d).convert("RGB")
+        corr = correct_cvd_image(input_path, d)
         return [
             (labelled(original_rgb, "Original"),                   hold_ms),
             (labelled(sim,  f"Simulated ({dlabel})"),              hold_ms),
@@ -329,9 +329,9 @@ def main() -> int:
         for d in _DEFICIENCY_ORDER:
             dlabel = label_map[d]
             print(f"Simulating: {d} ...")
-            sim  = simulate_cvd_image(input_path, d).convert("RGB")
+            sim  = simulate_cvd_image(input_path, d)
             print(f"Correcting: {d} ...")
-            corr = correct_cvd_image(input_path, d).convert("RGB")
+            corr = correct_cvd_image(input_path, d)
             content_frames.append((labelled(sim,  f"Simulated ({dlabel})"), hold_ms))
             content_frames.append((labelled(corr, f"Corrected ({dlabel})"), hold_ms))
         sequence = _expand_transitions(content_frames, args.transition, args.transition_duration)

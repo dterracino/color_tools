@@ -408,6 +408,51 @@ class TestEdgeCases(unittest.TestCase):
                     self.assertLessEqual(val, 255, f"Value > 255 in {func.__name__}({color})")
 
 
+class TestCorrectionAlgorithm(unittest.TestCase):
+    """Regression tests for the Fidaner daltonization algorithm.
+
+    The correction pipeline is:
+        1. sim   = simulate(original)
+        2. error = original − sim
+        3. shift = correction_matrix × error
+        4. out   = clamp(original + shift)
+
+    Consequence: any color whose simulation is identical to itself (e.g.
+    white or black under a linear matrix that sums rows to 1) must be
+    returned unchanged by correct_cvd.
+    """
+
+    def test_correct_white_protanopia(self):
+        """White must stay white — no tinting allowed."""
+        self.assertEqual(correct_cvd((255, 255, 255), 'protanopia'), (255, 255, 255))
+
+    def test_correct_white_deuteranopia(self):
+        """White must stay white — no tinting allowed."""
+        self.assertEqual(correct_cvd((255, 255, 255), 'deuteranopia'), (255, 255, 255))
+
+    def test_correct_white_tritanopia(self):
+        """White must stay white — no tinting allowed."""
+        self.assertEqual(correct_cvd((255, 255, 255), 'tritanopia'), (255, 255, 255))
+
+    def test_correct_black_all_types(self):
+        """Black must stay black for every deficiency type."""
+        for deficiency in ('protanopia', 'deuteranopia', 'tritanopia'):
+            with self.subTest(deficiency=deficiency):
+                self.assertEqual(correct_cvd((0, 0, 0), deficiency), (0, 0, 0))
+
+    def test_correct_specific_red_protanopia(self):
+        """Regression: known-good output for red under protanopia correction."""
+        self.assertEqual(correct_cvd((255, 0, 0), 'protanopia'), (255, 0, 77))
+
+    def test_correct_specific_green_deuteranopia(self):
+        """Regression: known-good output for green under deuteranopia correction."""
+        self.assertEqual(correct_cvd((0, 255, 0), 'deuteranopia'), (29, 255, 48))
+
+    def test_correct_specific_blue_tritanopia(self):
+        """Regression: known-good output for blue under tritanopia correction."""
+        self.assertEqual(correct_cvd((0, 0, 255), 'tritanopia'), (85, 0, 255))
+
+
 class TestConsistency(unittest.TestCase):
     """Test consistency and determinism of transformations."""
     

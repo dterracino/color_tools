@@ -48,23 +48,35 @@ def _apply_cvd_transform(
     """
     # Normalize RGB to 0-1 range
     r, g, b = [v / ColorConstants.RGB_MAX for v in rgb]
-    
-    # Get appropriate transformation matrix
+
+    # Simulation is always needed (both for 'simulate' and as the first step of 'correct')
+    sim_matrix = get_simulation_matrix(deficiency_type)
+    r_sim, g_sim, b_sim = multiply_matrix_vector(sim_matrix, (r, g, b))
+
     if operation == 'simulate':
-        matrix = get_simulation_matrix(deficiency_type)
+        r_out, g_out, b_out = r_sim, g_sim, b_sim
     elif operation == 'correct':
-        matrix = get_correction_matrix(deficiency_type)
+        # Fidaner daltonization: apply correction matrix to the *error signal*
+        # (the difference between original and simulated), then add it back.
+        # This ensures neutral colors (white, grey) are never tinted.
+        #   1. sim    = simulate(original)
+        #   2. error  = original − sim
+        #   3. shift  = correction_matrix × error
+        #   4. out    = clamp(original + shift)
+        error = (r - r_sim, g - g_sim, b - b_sim)
+        corr_matrix = get_correction_matrix(deficiency_type)
+        dr, dg, db = multiply_matrix_vector(corr_matrix, error)
+        r_out = r + dr
+        g_out = g + dg
+        b_out = b + db
     else:
         raise ValueError(f"Invalid operation: {operation}. Must be 'simulate' or 'correct'")
-    
-    # Apply matrix transformation
-    r_new, g_new, b_new = multiply_matrix_vector(matrix, (r, g, b))
-    
+
     # Clamp to valid range and convert back to 0-255
-    r_out = max(0, min(ColorConstants.RGB_MAX, round(r_new * ColorConstants.RGB_MAX)))
-    g_out = max(0, min(ColorConstants.RGB_MAX, round(g_new * ColorConstants.RGB_MAX)))
-    b_out = max(0, min(ColorConstants.RGB_MAX, round(b_new * ColorConstants.RGB_MAX)))
-    
+    r_out = max(0, min(ColorConstants.RGB_MAX, round(r_out * ColorConstants.RGB_MAX)))
+    g_out = max(0, min(ColorConstants.RGB_MAX, round(g_out * ColorConstants.RGB_MAX)))
+    b_out = max(0, min(ColorConstants.RGB_MAX, round(b_out * ColorConstants.RGB_MAX)))
+
     return (r_out, g_out, b_out)
 
 
@@ -195,11 +207,11 @@ def correct_cvd(rgb: Tuple[int, int, int], deficiency_type: str) -> Tuple[int, i
     Example:
         >>> # Correct red for protanopia viewers
         >>> correct_cvd((255, 0, 0), 'protanopia')
-        (178, 178, 191)  # Shifted to be more visible
+        (255, 0, 77)  # Error shifted toward blue for contrast
         
         >>> # Improve green discriminability for deuteranopia
         >>> correct_cvd((0, 255, 0), 'deuteranopia')
-        (178, 0, 178)  # Shifted toward magenta
+        (29, 255, 48)  # Error shifted to add blue contrast
     """
     return _apply_cvd_transform(rgb, deficiency_type, 'correct')
 
@@ -219,7 +231,7 @@ def correct_protanopia(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     
     Example:
         >>> correct_protanopia((255, 0, 0))  # Pure red
-        (178, 178, 191)  # Shifted to be distinguishable
+        (255, 0, 77)  # Error shifted toward blue for contrast
     """
     return correct_cvd(rgb, 'protanopia')
 
@@ -239,7 +251,7 @@ def correct_deuteranopia(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     
     Example:
         >>> correct_deuteranopia((0, 255, 0))  # Pure green
-        (178, 0, 178)  # Shifted toward magenta
+        (29, 255, 48)  # Error shifted to add blue contrast
     """
     return correct_cvd(rgb, 'deuteranopia')
 
@@ -259,6 +271,6 @@ def correct_tritanopia(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     
     Example:
         >>> correct_tritanopia((0, 0, 255))  # Pure blue
-        (178, 178, 0)  # Shifted toward yellow for contrast
+        (85, 0, 255)  # Error shifted toward red for contrast
     """
     return correct_cvd(rgb, 'tritanopia')
