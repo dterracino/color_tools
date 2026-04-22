@@ -10,6 +10,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Combined all-types CVD simulation and correction** — new `'all'` deficiency type that
+  applies a single merged matrix covering protanopia, deuteranopia, and tritanopia simultaneously:
+  - `ALL_SIMULATION` matrix in `matrices.py` — element-wise average of the three simulation
+    matrices; each row sums to 1.0 (valid colour projection).  Useful as a universal
+    accessibility diagnostic: colours that appear similar after this transform are confusable
+    to at least one of the three major CVD types.
+  - `ALL_CORRECTION` matrix in `matrices.py` — element-wise average of the three correction
+    matrices; perfectly symmetric, redistributing the error signal equally across all channels.
+    Neutral colours (white, grey, black) are always preserved.
+  - `simulate_all_cvd(rgb)` convenience function in `color_deficiency.py`
+  - `correct_all_cvd(rgb)` convenience function in `color_deficiency.py`
+  - Both functions exported from `color_tools.__init__`
+  - CLI `cvd --type all` now accepted (simulate or correct)
+  - CLI `image --cvd-simulate all` and `--cvd-correct all` now accepted
+  - `MATRICES_EXPECTED_HASH` regenerated to cover the two new matrices
+
 - **`color_tools/image/basic.py`** — new private `_apply_cvd_matrix_vectorized()` helper
   replaces the per-pixel Python loop in `simulate_cvd_image` and `correct_cvd_image` with a
   single numpy BLAS-backed matrix multiply, making CVD image transforms 100–1000× faster on

@@ -555,9 +555,9 @@ Examples:
     )
     cvd_parser.add_argument(
         "--type",
-        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
+        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan", "all"],
         required=True,
-        help="Type of color vision deficiency (protanopia=red-blind, deuteranopia=green-blind, tritanopia=blue-blind)"
+        help="Type of color vision deficiency (protanopia=red-blind, deuteranopia=green-blind, tritanopia=blue-blind, all=combined universal)"
     )
     cvd_parser.add_argument(
         "--mode",
@@ -610,14 +610,14 @@ Examples:
     image_parser.add_argument(
         "--cvd-simulate",
         type=str,
-        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
-        help="Simulate color vision deficiency (protanopia, deuteranopia, or tritanopia)"
+        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan", "all"],
+        help="Simulate color vision deficiency (protanopia, deuteranopia, tritanopia, or all)"
     )
     image_parser.add_argument(
         "--cvd-correct",
         type=str,
-        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
-        help="Apply CVD correction to improve discriminability for specified deficiency"
+        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan", "all"],
+        help="Apply CVD correction to improve discriminability for specified deficiency (use 'all' for universal correction)"
     )
     
     # Palette quantization

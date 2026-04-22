@@ -222,12 +222,14 @@ from .color_deficiency import (
     simulate_protanopia,
     simulate_deuteranopia,
     simulate_tritanopia,
+    simulate_all_cvd,
     
     # Correction functions - improve discriminability for CVD individuals
     correct_cvd,
     correct_protanopia,
     correct_deuteranopia,
     correct_tritanopia,
+    correct_all_cvd,
 )
 
 # ============================================================================
@@ -352,10 +354,12 @@ __all__ = [
     "simulate_protanopia",
     "simulate_deuteranopia",
     "simulate_tritanopia",
+    "simulate_all_cvd",
     "correct_cvd",
     "correct_protanopia",
     "correct_deuteranopia",
     "correct_tritanopia",
+    "correct_all_cvd",
     
     # Config functions
     "set_dual_color_mode",
