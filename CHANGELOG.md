@@ -26,6 +26,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - CLI `image --cvd-simulate all` and `--cvd-correct all` now accepted
   - `MATRICES_EXPECTED_HASH` regenerated to cover the two new matrices
 
+- **`tooling/make_palette_demo.py`** — new script to generate animated APNG palette
+  quantization demos; mirrors `make_cvd_demo.py` in structure and options:
+  - `--palette <name> [name ...]` — one or more palette names to cycle through (e.g. `cga4 nes gameboy`)
+  - `--dither` — add a Floyd-Steinberg dithered frame alongside each non-dithered frame
+  - `--metric` — distance metric for quantization (default: `de2000`)
+  - `--transition flip|crossfade`, `--transition-duration`, `--duration`, `--optimize`,
+    `--output`, `--no-labels` — same semantics as `make_cvd_demo.py`
+  - Human-readable palette labels built in (e.g. `cga4` → `"CGA 4"`, `pico8` → `"PICO-8"`)
+  - Output auto-named from palette list (e.g. `pencils-cga4-nes-flip.png`)
+
+- **`README.md`** — added `## 🎨 Demos` section (between Features and Quick Start) with the
+  CVD simulation/correction animated APNG (`tooling/samples/pencils-all-crossfade.png`),
+  showing Original → Simulated → Corrected for all three deficiency types. Placeholder for
+  future palette quantization demos (NES, CGA, etc.).
+- **`docs/cvd_simulation_issue.md`** — updated status from "Deferred" to "Fixed — April 2026".
 - **`color_tools/image/basic.py`** — new private `_apply_cvd_matrix_vectorized()` helper
   replaces the per-pixel Python loop in `simulate_cvd_image` and `correct_cvd_image` with a
   single numpy BLAS-backed matrix multiply, making CVD image transforms 100–1000× faster on

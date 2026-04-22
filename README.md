@@ -51,6 +51,14 @@ A comprehensive Python library for color science operations, color space convers
 - **Thread-Safe**: Configurable runtime settings per thread
 - **Color Science Integrity**: Built-in verification of color constants
 
+## 🎨 Demos
+
+### Color Vision Deficiency (CVD) Simulation & Correction
+
+![CVD Demo – Protanopia, Deuteranopia, Tritanopia](tooling/samples/pencils-all-crossfade.png)
+
+*Animated: Original → Simulated (colorblind view) → Corrected, for all three deficiency types (protanopia, deuteranopia, tritanopia).*
+
 ## 🚀 Quick Start
 
 ### Installation
