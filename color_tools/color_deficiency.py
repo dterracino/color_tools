@@ -98,6 +98,7 @@ def simulate_cvd(rgb: Tuple[int, int, int], deficiency_type: str) -> Tuple[int, 
             - 'protanopia' or 'protan': Red-blind
             - 'deuteranopia' or 'deutan': Green-blind
             - 'tritanopia' or 'tritan': Blue-blind
+            - 'all': Combined average of all three types (universal accessibility diagnostic)
     
     Returns:
         RGB color as it would appear to someone with the deficiency (0-255)
@@ -111,6 +112,9 @@ def simulate_cvd(rgb: Tuple[int, int, int], deficiency_type: str) -> Tuple[int, 
         >>> red_sim = simulate_cvd((255, 0, 0), 'deuteranopia')
         >>> green_sim = simulate_cvd((0, 255, 0), 'deuteranopia')
         >>> # If these are too similar, the colors may be confusing
+        
+        >>> # Universal accessibility check — covers all three CVD types at once
+        >>> simulate_cvd((255, 0, 0), 'all')
     """
     return _apply_cvd_transform(rgb, deficiency_type, 'simulate')
 
@@ -178,6 +182,31 @@ def simulate_tritanopia(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     return simulate_cvd(rgb, 'tritanopia')
 
 
+def simulate_all_cvd(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
+    """
+    Simulate all color vision deficiency types simultaneously.
+
+    Applies the combined (all-types) simulation matrix, which is the
+    element-wise average of the protanopia, deuteranopia, and tritanopia
+    simulation matrices.  Each row sums to 1.0, so it is a valid colour
+    projection.
+
+    Useful as a universal accessibility diagnostic: if two colours appear
+    similar after this transform, they are confusable to at least one of
+    the three major CVD types.
+
+    Args:
+        rgb: RGB color tuple (0-255)
+
+    Returns:
+        RGB color as viewed through the combined CVD simulation (0-255)
+
+    Example:
+        >>> simulate_all_cvd((255, 0, 0))  # Pure red — universal worst-case view
+    """
+    return simulate_cvd(rgb, 'all')
+
+
 # =============================================================================
 # Correction Functions
 # =============================================================================
@@ -200,6 +229,7 @@ def correct_cvd(rgb: Tuple[int, int, int], deficiency_type: str) -> Tuple[int, i
             - 'protanopia' or 'protan': Red-blind
             - 'deuteranopia' or 'deutan': Green-blind
             - 'tritanopia' or 'tritan': Blue-blind
+            - 'all': Combined average correction for all three types simultaneously
     
     Returns:
         RGB color corrected for the deficiency (0-255)
@@ -212,6 +242,9 @@ def correct_cvd(rgb: Tuple[int, int, int], deficiency_type: str) -> Tuple[int, i
         >>> # Improve green discriminability for deuteranopia
         >>> correct_cvd((0, 255, 0), 'deuteranopia')
         (29, 255, 48)  # Error shifted to add blue contrast
+        
+        >>> # Universal correction — improves discriminability for all CVD types
+        >>> correct_cvd((255, 0, 0), 'all')
     """
     return _apply_cvd_transform(rgb, deficiency_type, 'correct')
 
@@ -274,3 +307,29 @@ def correct_tritanopia(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
         (85, 0, 255)  # Error shifted toward red for contrast
     """
     return correct_cvd(rgb, 'tritanopia')
+
+
+def correct_all_cvd(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
+    """
+    Apply universal color correction for all CVD types simultaneously.
+
+    Applies the combined (all-types) correction matrix, which is the
+    element-wise average of the protanopia, deuteranopia, and tritanopia
+    correction matrices.  The resulting matrix is perfectly symmetric:
+    it redistributes the error signal equally across all three channels,
+    improving discriminability for all CVD types at once.
+
+    Neutral colours (white, grey, black) are always preserved because the
+    correction is applied to the *error signal* (original − simulated),
+    not to the original pixel.
+
+    Args:
+        rgb: RGB color tuple (0-255)
+
+    Returns:
+        RGB color corrected for all CVD types (0-255)
+
+    Example:
+        >>> correct_all_cvd((255, 0, 0))  # Pure red — universal correction
+    """
+    return correct_cvd(rgb, 'all')

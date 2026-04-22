@@ -182,7 +182,8 @@ class ColorConstants:
     # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
     # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
     # Updated 2026-03-28: Updated MAKER_SYNONYMS_JSON_HASH after merge (BBL, BambuLab synonyms added)
-    _EXPECTED_HASH = "774277fef6c4d928db8e6c6a4c6ad13ffaf79ddfa79f1a7de27e9c29d29d4618"
+    # Updated 2026-04-22: Updated MATRICES_EXPECTED_HASH after adding ALL_SIMULATION and ALL_CORRECTION matrices
+    _EXPECTED_HASH = "4e2b35b6232fd90649c95727e42bd8be3f468b10528d99ff0a6fd2b7821bfc9f"
     # Updated for 6.3.0: Added WIN_HSL240_HUE_MAX, WIN_HSL240_SL_MAX, WIN_HSL255_HUE_MAX, WIN_HSL255_SL_MAX
     
     # ========================================================================
@@ -231,7 +232,8 @@ class ColorConstants:
     # SHA-256 hash of transformation matrices from matrices.py module
     # This verifies the 6 CVD matrices haven't been modified
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_matrices_hash())"
-    MATRICES_EXPECTED_HASH = "d177316ade5146a084bb5b92d693c3f9c62ec593fde9b6face567dbd8a633df5"
+    # Updated 2026-04-22: Added ALL_SIMULATION and ALL_CORRECTION combined matrices
+    MATRICES_EXPECTED_HASH = "8a86dd258153ce6a25507292c2e3d4dd0999734cf0784397a3814963ad7c2630"
     
     @staticmethod
     def verify_data_file(filepath: Path, expected_hash: str) -> bool:
@@ -351,6 +353,8 @@ class ColorConstants:
             PROTANOPIA_CORRECTION,
             DEUTERANOPIA_CORRECTION,
             TRITANOPIA_CORRECTION,
+            ALL_SIMULATION,
+            ALL_CORRECTION,
         )
         
         # Collect all matrices in a stable order
@@ -361,6 +365,8 @@ class ColorConstants:
             "PROTANOPIA_CORRECTION": PROTANOPIA_CORRECTION,
             "DEUTERANOPIA_CORRECTION": DEUTERANOPIA_CORRECTION,
             "TRITANOPIA_CORRECTION": TRITANOPIA_CORRECTION,
+            "ALL_SIMULATION": ALL_SIMULATION,
+            "ALL_CORRECTION": ALL_CORRECTION,
         }
         
         # Convert tuples to lists for JSON serialization

@@ -59,7 +59,8 @@ def handle_cvd_command(args: Namespace) -> None:
         "deuteranopia": "deuteranopia (green-blind)",
         "deutan": "deuteranopia (green-blind)",
         "tritanopia": "tritanopia (blue-blind)",
-        "tritan": "tritanopia (blue-blind)"
+        "tritan": "tritanopia (blue-blind)",
+        "all": "all types (protanopia + deuteranopia + tritanopia)"
     }
     deficiency = deficiency_names[args.type.lower()]
     

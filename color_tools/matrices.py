@@ -62,6 +62,18 @@ TRITANOPIA_SIMULATION: Matrix3x3 = (
     (0.00000, 0.47500, 0.52500)
 )
 
+#: Combined (all-types) simulation matrix — element-wise average of the three
+#: deficiency simulation matrices.  Each row still sums to 1.0, so it remains
+#: a valid colour projection.  Useful as a "worst-case" accessibility diagnostic:
+#: colours that appear similar after this transform are confusable to at least
+#: one of the three major CVD types simultaneously.
+#: Computed as: (PROTANOPIA_SIMULATION + DEUTERANOPIA_SIMULATION + TRITANOPIA_SIMULATION) / 3
+ALL_SIMULATION: Matrix3x3 = (
+    (0.71389, 0.28611, 0.00000),
+    (0.41944, 0.39167, 0.18889),
+    (0.00000, 0.33889, 0.66111)
+)
+
 
 # =============================================================================
 # Color Deficiency Correction Matrices
@@ -111,6 +123,18 @@ TRITANOPIA_CORRECTION: Matrix3x3 = (
     (0.00000, 0.00000, 0.00000)
 )
 
+#: Combined (all-types) correction matrix — element-wise average of the three
+#: deficiency correction matrices.  Redistributes the error signal equally across
+#: all three channels, improving discriminability for all CVD types simultaneously.
+#: Neutral colours (white, grey, black) are always preserved because the correction
+#: is applied to the error signal (original − simulated), not to the original.
+#: Computed as: (PROTANOPIA_CORRECTION + DEUTERANOPIA_CORRECTION + TRITANOPIA_CORRECTION) / 3
+ALL_CORRECTION: Matrix3x3 = (
+    (0.66667, 0.23333, 0.23333),
+    (0.23333, 0.66667, 0.23333),
+    (0.23333, 0.23333, 0.66667)
+)
+
 
 # =============================================================================
 # Matrix Utility Functions
@@ -152,6 +176,7 @@ def get_simulation_matrix(deficiency_type: str) -> Matrix3x3:
             - 'protanopia' or 'protan': Red-blind
             - 'deuteranopia' or 'deutan': Green-blind  
             - 'tritanopia' or 'tritan': Blue-blind
+            - 'all': Combined average of all three deficiency types
     
     Returns:
         3x3 transformation matrix for simulating the deficiency
@@ -171,10 +196,12 @@ def get_simulation_matrix(deficiency_type: str) -> Matrix3x3:
         return DEUTERANOPIA_SIMULATION
     elif deficiency in ('tritanopia', 'tritan'):
         return TRITANOPIA_SIMULATION
+    elif deficiency == 'all':
+        return ALL_SIMULATION
     else:
         raise ValueError(
             f"Unknown deficiency type: {deficiency_type}. "
-            f"Must be one of: protanopia, deuteranopia, tritanopia"
+            f"Must be one of: protanopia, deuteranopia, tritanopia, all"
         )
 
 
@@ -187,6 +214,7 @@ def get_correction_matrix(deficiency_type: str) -> Matrix3x3:
             - 'protanopia' or 'protan': Red-blind
             - 'deuteranopia' or 'deutan': Green-blind
             - 'tritanopia' or 'tritan': Blue-blind
+            - 'all': Combined average of all three deficiency types
     
     Returns:
         3x3 transformation matrix for correcting colors for the deficiency
@@ -206,8 +234,10 @@ def get_correction_matrix(deficiency_type: str) -> Matrix3x3:
         return DEUTERANOPIA_CORRECTION
     elif deficiency in ('tritanopia', 'tritan'):
         return TRITANOPIA_CORRECTION
+    elif deficiency == 'all':
+        return ALL_CORRECTION
     else:
         raise ValueError(
             f"Unknown deficiency type: {deficiency_type}. "
-            f"Must be one of: protanopia, deuteranopia, tritanopia"
+            f"Must be one of: protanopia, deuteranopia, tritanopia, all"
         )
