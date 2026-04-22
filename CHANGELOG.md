@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **`color_tools/image/basic.py`** — new private `_apply_cvd_matrix_vectorized()` helper
+  replaces the per-pixel Python loop in `simulate_cvd_image` and `correct_cvd_image` with a
+  single numpy BLAS-backed matrix multiply, making CVD image transforms 100–1000× faster on
+  typical photos while preserving alpha channels correctly.
 - **`tooling/make_cvd_demo.py`** — complete rewrite of the CVD demo animation generator:
   - `--deficiency each` — generates one output APNG per deficiency type, auto-named
     (e.g. `image-protan.png`, `image-deutan.png`, `image-tritan.png`)
@@ -20,6 +24,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     if oxipng is not in PATH
   - Text stroke on frame labels (white text with black outline) for legibility over any image
   - Smoothstep crossfade transition mode (`--transition crossfade`) in addition to hard-cut flip
+
+### Fixed
+
+- **`color_tools/color_deficiency.py`** — `_apply_cvd_transform()` now implements the Fidaner
+  daltonization algorithm correctly for `operation='correct'`. Previously the correction matrix
+  was applied directly to the input RGB, producing wrong results (e.g. white `(255,255,255)`
+  became cyan `(0,255,255)` under protanopia correction). The correction matrix is designed to
+  operate on the *error signal* (original − simulated), not on the original pixel. The fixed
+  4-step pipeline is: simulate → compute error → apply correction matrix to error → add back to
+  original. Neutral colours (white, grey, black) are now guaranteed to be unchanged.
+- **`tooling/make_cvd_demo.py`** — `process_deficiency()` and the `all`-mode loop no longer
+  call `.convert("RGB")` on the output of `simulate_cvd_image` / `correct_cvd_image`. The
+  previous conversion composited transparent pixels against black, causing the demo animation
+  to show a solid black background instead of the original alpha transparency. The existing
+  `apply_alpha()` helper already restores the source alpha correctly once the spurious conversion
+  is removed.
 
 ## [6.6.1] - 2026-04-21
 

@@ -738,6 +738,101 @@ def transform_image(
     return transformed
 
 
+def _apply_cvd_matrix_vectorized(
+    image_path: 'Path | str',
+    sim_matrix: tuple,
+    corr_matrix: 'tuple | None',
+    output_path: 'Path | str | None'
+) -> 'PIL.Image.Image':
+    """
+    Apply a CVD transformation to an image using a vectorized numpy matrix multiply.
+
+    This is the fast path used by simulate_cvd_image and correct_cvd_image.  It
+    replaces a Python per-pixel loop with a single BLAS-backed matrix operation,
+    making processing of large images orders of magnitude faster.
+
+    For *simulation*, pass ``corr_matrix=None``:
+        result = pixels @ sim_matrix.T
+
+    For *correction* (Fidaner daltonization), pass both matrices:
+        sim    = pixels @ sim_matrix.T
+        error  = pixels - sim
+        shift  = error  @ corr_matrix.T
+        result = clamp(pixels + shift)
+
+    Alpha channels are preserved unchanged.
+
+    Args:
+        image_path:  Path to the source image.
+        sim_matrix:  3×3 simulation matrix (nested tuple, values in [0, 1]).
+        corr_matrix: 3×3 correction matrix, or None for simulation-only.
+        output_path: Optional path to save the result.
+
+    Returns:
+        Transformed PIL Image (same mode as the prepared working image).
+    """
+    try:
+        import PIL.Image
+        import numpy as np
+    except ImportError:
+        raise ImportError(
+            "CVD image transforms require Pillow and numpy. "
+            "Install with: pip install color-match-tools[image]"
+        )
+
+    image_path = Path(image_path)
+    if not image_path.exists():
+        raise FileNotFoundError(f"Image not found: {image_path}")
+
+    with PIL.Image.open(image_path) as _f:
+        original = _f.copy()
+
+    has_alpha = original.mode in ('RGBA', 'LA') or 'transparency' in original.info
+
+    if original.mode == 'P':
+        working_image = original.convert('RGBA' if has_alpha else 'RGB')
+    elif original.mode in ('L', 'LA'):
+        working_image = original.convert('RGBA' if has_alpha else 'RGB')
+    elif original.mode in ('RGBA', 'RGB'):
+        working_image = original
+    else:
+        working_image = original.convert('RGB')
+
+    np_image = np.array(working_image, dtype=np.uint8)
+
+    # Build float32 numpy matrices once
+    sim_mat = np.array(sim_matrix, dtype=np.float32)
+    corr_mat = np.array(corr_matrix, dtype=np.float32) if corr_matrix is not None else None
+
+    # Extract RGB channels as float32 in [0, 1]
+    rgb_f = np_image[..., :3].astype(np.float32) / 255.0  # shape (H, W, 3)
+
+    if corr_mat is None:
+        # Simulation: single matrix multiply
+        result_f = rgb_f @ sim_mat.T
+    else:
+        # Fidaner daltonization: apply correction to the error signal
+        sim_f = rgb_f @ sim_mat.T
+        error_f = rgb_f - sim_f
+        shift_f = error_f @ corr_mat.T
+        result_f = rgb_f + shift_f
+
+    # Quantise back to uint8
+    result_u8 = np.clip(result_f * 255.0, 0, 255).astype(np.uint8)
+
+    out_array = np_image.copy()
+    out_array[..., :3] = result_u8
+
+    transformed = PIL.Image.fromarray(out_array, mode=working_image.mode)
+
+    if output_path is not None:
+        output_path = Path(output_path) if not isinstance(output_path, Path) else output_path
+        output_path.parent.mkdir(parents=True, exist_ok=True)
+        transformed.save(output_path)
+
+    return transformed
+
+
 def simulate_cvd_image(
     image_path: Path | str,
     deficiency_type: str,
@@ -768,12 +863,10 @@ def simulate_cvd_image(
         >>> # Test accessibility of an infographic
         >>> simulate_cvd_image("chart.png", "protanopia", "chart_protan.png")
     """
-    from color_tools.color_deficiency import simulate_cvd
-    
-    def cvd_transform(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
-        return simulate_cvd(rgb, deficiency_type)
-    
-    return transform_image(image_path, cvd_transform, output_path=output_path)
+    from color_tools.matrices import get_simulation_matrix
+
+    sim_matrix = get_simulation_matrix(deficiency_type)
+    return _apply_cvd_matrix_vectorized(image_path, sim_matrix, None, output_path)
 
 
 def correct_cvd_image(
@@ -804,12 +897,11 @@ def correct_cvd_image(
         >>> corrected = correct_cvd_image("chart.jpg", "deuteranopia")
         >>> corrected.save("chart_deutan_enhanced.jpg")
     """
-    from color_tools.color_deficiency import correct_cvd
-    
-    def cvd_correction(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
-        return correct_cvd(rgb, deficiency_type)
-    
-    return transform_image(image_path, cvd_correction, output_path=output_path)
+    from color_tools.matrices import get_simulation_matrix, get_correction_matrix
+
+    sim_matrix = get_simulation_matrix(deficiency_type)
+    corr_matrix = get_correction_matrix(deficiency_type)
+    return _apply_cvd_matrix_vectorized(image_path, sim_matrix, corr_matrix, output_path)
 
 
 def quantize_image_to_palette(
