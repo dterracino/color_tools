@@ -2,8 +2,8 @@
   "version": 2,
   "functions": {
     "api/*.py": {
-      "runtime": "python3.12",
-      "maxDuration": 15
+      "maxDuration": 15,
+      "excludeFiles": "{color_tools/**,tests/**,tooling/**,tools/**,docs/**,samples/**,scripts/**,.github/**,.venv/**,dist/**,build/**,.vscode/**,.ruff_cache/**,__pycache__/**}"
     }
   },
   "headers": [
