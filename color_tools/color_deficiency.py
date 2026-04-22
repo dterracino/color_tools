@@ -59,13 +59,13 @@ def _apply_cvd_transform(
         # Fidaner daltonization: apply correction matrix to the *error signal*
         # (the difference between original and simulated), then add it back.
         # This ensures neutral colors (white, grey) are never tinted.
-        #   1. sim   = simulate(original)
-        #   2. error = original − sim
-        #   3. shift = correction_matrix × error
-        #   4. out   = clamp(original + shift)
-        err = (r - r_sim, g - g_sim, b - b_sim)
+        #   1. sim    = simulate(original)
+        #   2. error  = original − sim
+        #   3. shift  = correction_matrix × error
+        #   4. out    = clamp(original + shift)
+        error = (r - r_sim, g - g_sim, b - b_sim)
         corr_matrix = get_correction_matrix(deficiency_type)
-        dr, dg, db = multiply_matrix_vector(corr_matrix, err)
+        dr, dg, db = multiply_matrix_vector(corr_matrix, error)
         r_out = r + dr
         g_out = g + dg
         b_out = b + db

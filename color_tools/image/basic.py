@@ -817,7 +817,7 @@ def _apply_cvd_matrix_vectorized(
         shift_f = error_f @ corr_mat.T
         result_f = rgb_f + shift_f
 
-    # Quantise back to uint8
+    # Quantize back to uint8
     result_u8 = np.clip(result_f * 255.0, 0, 255).astype(np.uint8)
 
     out_array = np_image.copy()
