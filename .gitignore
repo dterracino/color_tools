@@ -146,3 +146,6 @@ cython_debug/
 .vercel/
 .vercel
 .env*.local
+
+# Other local files
+tooling/samples/*

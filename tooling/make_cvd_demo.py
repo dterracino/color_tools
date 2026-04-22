@@ -1,38 +1,81 @@
 """
 Generate an animated APNG CVD demo for the README.
 
-Produces a 3-frame animation:
-  Frame 1 — Original image          (labelled "Original")
-  Frame 2 — CVD simulation          (labelled "Simulated: <deficiency>")
-  Frame 3 — CVD correction applied  (labelled "Corrected: <deficiency>")
+Produces an animation cycling: Original -> Simulated -> Corrected.
 
-Each frame is held for --duration seconds (default 2.5 s).
-Transition options: flip (hard cut) or crossfade (smooth blend).
+  --deficiency <type>   Single deficiency type (default: deuteranopia)
+  --deficiency each     One output file per deficiency type
+  --deficiency all      One output file with all three deficiency types
+
+  --label-type long     Full labels: "Simulated (Protanopia)"  [default]
+  --label-type short    Short labels: "Simulated (Protan)"
+
+Transition options: flip (hard cut) or crossfade (smoothstep-eased blend).
 
 Usage examples:
-    python scripts/make_cvd_demo.py --file samples/image/my-photo.jpg
-    python scripts/make_cvd_demo.py --file samples/image/my-photo.jpg --deficiency protanopia
-    python scripts/make_cvd_demo.py --file samples/image/my-photo.jpg \\
-        --transition crossfade --crossfade-steps 12 --duration 3.0
-    python scripts/make_cvd_demo.py --file samples/image/my-photo.jpg \\
-        --output samples/cvd-demo.png --max-width 800
+    python tooling/make_cvd_demo.py samples/image/my-photo.jpg
+    python tooling/make_cvd_demo.py samples/image/my-photo.jpg --deficiency each
+    python tooling/make_cvd_demo.py samples/image/my-photo.jpg --deficiency all
+    python tooling/make_cvd_demo.py samples/image/my-photo.jpg \\
+        --deficiency protan --transition crossfade --transition-duration 0.6
+    python tooling/make_cvd_demo.py samples/image/my-photo.jpg \\
+        --output samples/cvd-demo.png --optimize
 
-Output: samples/cvd-demo.png  (animated APNG, full colour, lossless)
+Output: animated APNG beside the source image (or --output path).
 """
 
 from __future__ import annotations
 
 import argparse
+import math
+import subprocess
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PIL import Image as PILImage
+
+# Internal framerate used to convert transition-duration to frame count.
+_FPS = 25
+
+# Canonical processing order for "each" and "all" modes.
+_DEFICIENCY_ORDER = ["protanopia", "deuteranopia", "tritanopia"]
+
+# Normalize aliases (protan -> protanopia, etc.)
+_NORMALIZE: dict[str, str] = {
+    "protan":       "protanopia",
+    "deutan":       "deuteranopia",
+    "tritan":       "tritanopia",
+    "protanopia":   "protanopia",
+    "deuteranopia": "deuteranopia",
+    "tritanopia":   "tritanopia",
+}
+
+_LABEL_LONG: dict[str, str] = {
+    "protanopia":   "Protanopia",
+    "deuteranopia": "Deuteranopia",
+    "tritanopia":   "Tritanopia",
+}
+_LABEL_SHORT: dict[str, str] = {
+    "protanopia":   "Protan",
+    "deuteranopia": "Deutan",
+    "tritanopia":   "Tritan",
+}
 
 
 # ---------------------------------------------------------------------------
-# Label overlay helper
+# Helpers
 # ---------------------------------------------------------------------------
 
-def _add_label(img: "PIL.Image.Image", text: str) -> "PIL.Image.Image":
-    """Draw a semi-transparent label bar at the bottom of *img*."""
+def _smoothstep(t: float) -> float:
+    """Smoothstep easing: 3t^2 - 2t^3  (S-curve, 0 to 1)."""
+    t = max(0.0, min(1.0, t))
+    return t * t * (3.0 - 2.0 * t)
+
+
+def _add_label(img: PILImage.Image, text: str) -> PILImage.Image:
+    """Draw a semi-transparent label bar with stroked text at the bottom of img."""
     from PIL import Image, ImageDraw, ImageFont
 
     img = img.copy().convert("RGBA")
@@ -42,11 +85,8 @@ def _add_label(img: "PIL.Image.Image", text: str) -> "PIL.Image.Image":
 
     overlay = Image.new("RGBA", (w, h), (0, 0, 0, 0))
     draw = ImageDraw.Draw(overlay)
-
-    # Semi-transparent dark bar
     draw.rectangle([(0, h - bar_h), (w, h)], fill=(0, 0, 0, 160))
 
-    # Try to load a decent font; fall back to PIL's built-in
     font = None
     for font_name in ["DejaVuSans-Bold.ttf", "Arial Bold.ttf", "arialbd.ttf"]:
         try:
@@ -60,38 +100,105 @@ def _add_label(img: "PIL.Image.Image", text: str) -> "PIL.Image.Image":
         except TypeError:
             font = ImageFont.load_default()
 
-    # Centre text in bar
     bbox = draw.textbbox((0, 0), text, font=font)
     text_w = bbox[2] - bbox[0]
     text_h = bbox[3] - bbox[1]
     x = (w - text_w) // 2
     y = h - bar_h + (bar_h - text_h) // 2 - bbox[1]
-    draw.text((x, y), text, font=font, fill=(255, 255, 255, 230))
+    draw.text(
+        (x, y), text, font=font,
+        fill=(255, 255, 255, 230),
+        stroke_width=2,
+        stroke_fill=(0, 0, 0, 255),
+    )
 
     result = Image.alpha_composite(img, overlay)
     return result.convert("RGB")
 
 
-# ---------------------------------------------------------------------------
-# Crossfade helper
-# ---------------------------------------------------------------------------
-
 def _crossfade_frames(
-    src: "PIL.Image.Image",
-    dst: "PIL.Image.Image",
-    steps: int,
-) -> "list[PIL.Image.Image]":
-    """Return *steps* intermediate frames blending from *src* to *dst*."""
+    src: PILImage.Image,
+    dst: PILImage.Image,
+    transition_duration: float,
+) -> list[tuple[PILImage.Image, int]]:
+    """Return smoothstep-blended (frame, duration_ms) pairs from src to dst."""
     from PIL import Image
 
-    frames = []
-    src_arr = src.convert("RGB")
-    dst_arr = dst.convert("RGB")
+    steps = max(1, round(_FPS * transition_duration))
+    frame_ms = max(1, math.floor(transition_duration * 1000 / steps))
+
+    result: list[tuple[Image.Image, int]] = []
+    src_rgb = src.convert("RGB")
+    dst_rgb = dst.convert("RGB")
     for i in range(1, steps + 1):
-        alpha = i / (steps + 1)
-        blended = Image.blend(src_arr, dst_arr, alpha)
-        frames.append(blended)
-    return frames
+        t = _smoothstep(i / (steps + 1))
+        blended = Image.blend(src_rgb, dst_rgb, t)
+        result.append((blended, frame_ms))
+    return result
+
+
+def _expand_transitions(
+    content_frames: list[tuple[PILImage.Image, int]],
+    transition: str,
+    transition_duration: float,
+) -> list[tuple[PILImage.Image, int]]:
+    """Expand content frames with inter-frame transitions."""
+    sequence: list[tuple[PILImage.Image, int]] = []
+    for i, (frame, dur) in enumerate(content_frames):
+        sequence.append((frame, dur))
+        if transition == "crossfade":
+            next_frame = content_frames[(i + 1) % len(content_frames)][0]
+            for bf, bms in _crossfade_frames(frame, next_frame, transition_duration):
+                sequence.append((bf, bms))
+    return sequence
+
+
+def _save_apng(
+    output_path: Path,
+    sequence: list[tuple[PILImage.Image, int]],
+    optimize: bool,
+) -> None:
+    """Save sequence to APNG, optionally optimize with oxipng."""
+    frames    = [f for f, _ in sequence]
+    durations = [d for _, d in sequence]
+
+    frames[0].save(
+        output_path,
+        format="PNG",
+        save_all=True,
+        append_images=frames[1:],
+        duration=durations,
+        loop=0,
+        optimize=False,
+    )
+    original_bytes = output_path.stat().st_size
+    original_kb = original_bytes // 1024
+    print(f"Saved:      {output_path}  ({original_kb} KB, {len(frames)} frames)")
+
+    if optimize:
+        _run_apngopt(output_path, original_bytes)
+
+    print(f"Embed with: ![CVD Demo]({output_path.as_posix()})")
+
+
+def _run_apngopt(path: Path, original_bytes: int) -> None:
+    """Optimize an APNG in-place using oxipng."""
+    try:
+        result = subprocess.run(
+            ["oxipng", "-o", "4", "--strip", "safe", str(path)],
+            capture_output=True,
+            text=True,
+        )
+        if result.returncode != 0:
+            msg = result.stderr.strip() or result.stdout.strip() or "unknown error"
+            print(f"  oxipng failed: {msg}")
+            return
+        compressed_bytes = path.stat().st_size
+        compressed_kb = compressed_bytes // 1024
+        saving_pct = (1.0 - compressed_bytes / original_bytes) * 100.0
+        print(f"  Optimized:  {original_bytes // 1024} KB -> {compressed_kb} KB  ({saving_pct:.1f}% smaller)")
+    except FileNotFoundError:
+        print("  oxipng not found in PATH -- skipping optimization")
 
 
 # ---------------------------------------------------------------------------
@@ -100,26 +207,27 @@ def _crossfade_frames(
 
 def main() -> int:
     parser = argparse.ArgumentParser(
-        description="Generate an animated APNG CVD demo (Original → Simulated → Corrected).",
+        description="Generate an animated APNG CVD demo (Original -> Simulated -> Corrected).",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog=__doc__,
     )
     parser.add_argument(
-        "--file", required=True,
+        "file",
         help="Path to input image (JPEG, PNG, WebP, etc.)",
     )
     parser.add_argument(
         "--deficiency", default="deuteranopia",
-        choices=["protanopia", "protan", "deuteranopia", "deutan", "tritanopia", "tritan"],
-        help="CVD deficiency type to simulate/correct (default: deuteranopia)",
+        choices=[
+            "protanopia", "protan",
+            "deuteranopia", "deutan",
+            "tritanopia", "tritan",
+            "each", "all",
+        ],
+        help="CVD type, 'each' (one file per type), or 'all' (combined file) (default: deuteranopia)",
     )
     parser.add_argument(
         "--output", default=None,
-        help="Output APNG path (default: samples/cvd-demo.png)",
-    )
-    parser.add_argument(
-        "--max-width", type=int, default=800,
-        help="Resize image to at most this width, preserving aspect ratio (default: 800)",
+        help="Output APNG path (auto-named beside source if omitted; ignored for --deficiency each)",
     )
     parser.add_argument(
         "--duration", type=float, default=2.5,
@@ -130,16 +238,24 @@ def main() -> int:
         help="Transition style between frames (default: flip)",
     )
     parser.add_argument(
-        "--crossfade-steps", type=int, default=8,
-        help="Number of intermediate frames for crossfade transition (default: 8)",
+        "--transition-duration", type=float, default=0.4, dest="transition_duration",
+        help="Duration of crossfade transition in seconds (default: 0.4)",
     )
     parser.add_argument(
-        "--labels", action=argparse.BooleanOptionalAction, default=True,
-        help="Overlay text labels on each frame (default: on)",
+        "--label-type", choices=["long", "short"], default="long", dest="label_type",
+        help="Label style: long 'Protanopia' or short 'Protan' (default: long)",
     )
+    parser.add_argument(
+        "--no-labels", action="store_false", dest="labels",
+        help="Omit text labels on each frame (labels are on by default)",
+    )
+    parser.add_argument(
+        "--optimize", action="store_true",
+        help="Optimize output APNG with oxipng (must be in PATH)",
+    )
+    parser.set_defaults(labels=True)
     args = parser.parse_args()
 
-    # Lazy import — requires [image] extra
     try:
         from PIL import Image
     except ImportError:
@@ -158,92 +274,85 @@ def main() -> int:
         print(f"ERROR: Input file not found: {input_path}")
         return 1
 
-    output_path = Path(args.output) if args.output else Path("samples/cvd-demo.png")
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    deficiency = args.deficiency
-    label_map = {
-        "protanopia": "Protanopia (red-blind)",
-        "protan":     "Protanopia (red-blind)",
-        "deuteranopia": "Deuteranopia (green-blind)",
-        "deutan":     "Deuteranopia (green-blind)",
-        "tritanopia": "Tritanopia (blue-blind)",
-        "tritan":     "Tritanopia (blue-blind)",
-    }
-    deficiency_label = label_map[deficiency]
-
+    # --- Load source, strip alpha ---
     print(f"Loading:    {input_path}")
-    original = Image.open(input_path).convert("RGB")
+    _src = Image.open(input_path)
+    has_alpha = _src.mode in ("RGBA", "LA", "PA") or "transparency" in _src.info
+    alpha_channel = _src.convert("RGBA").getchannel("A") if has_alpha else None
+    original_rgb = _src.convert("RGB")
 
-    # Resize if needed
-    if args.max_width and original.width > args.max_width:
-        ratio = args.max_width / original.width
-        new_size = (args.max_width, int(original.height * ratio))
-        original = original.resize(new_size, Image.LANCZOS)
-        print(f"Resized to: {new_size[0]}×{new_size[1]}")
-
-    print(f"Simulating: {deficiency} …")
-    simulated = simulate_cvd_image(input_path, deficiency)
-    if simulated.size != original.size:
-        simulated = simulated.resize(original.size, Image.LANCZOS)
-
-    print(f"Correcting: {deficiency} …")
-    corrected = correct_cvd_image(input_path, deficiency)
-    if corrected.size != original.size:
-        corrected = corrected.resize(original.size, Image.LANCZOS)
-
-    # Apply labels
-    if args.labels:
-        frame_original  = _add_label(original,  "Original")
-        frame_simulated = _add_label(simulated, f"Simulated · {deficiency_label}")
-        frame_corrected = _add_label(corrected, f"Corrected · {deficiency_label}")
-    else:
-        frame_original  = original.convert("RGB")
-        frame_simulated = simulated.convert("RGB")
-        frame_corrected = corrected.convert("RGB")
-
-    # Convert duration to milliseconds for Pillow's 'duration' parameter
+    # --- Helpers scoped to this run ---
     hold_ms = int(args.duration * 1000)
-    # Crossfade transitions use shorter per-frame duration so total ≈ 0.4 s
-    transition_ms = max(30, 400 // max(args.crossfade_steps, 1))
+    label_map = _LABEL_SHORT if args.label_type == "short" else _LABEL_LONG
 
-    # Build frame list with durations
-    # Each element: (PIL.Image, duration_ms)
-    content_frames: list[tuple[Image.Image, int]] = [
-        (frame_original,  hold_ms),
-        (frame_simulated, hold_ms),
-        (frame_corrected, hold_ms),
-    ]
+    def apply_alpha(img: Image.Image) -> Image.Image:
+        if alpha_channel is None:
+            return img
+        out = img.convert("RGBA")
+        out.putalpha(alpha_channel)
+        return out
 
-    sequence: list[tuple[Image.Image, int]] = []
-    for i, (frame, dur) in enumerate(content_frames):
-        sequence.append((frame, dur))
-        # Add crossfade to next frame (wraps: last → first)
-        if args.transition == "crossfade":
-            next_frame = content_frames[(i + 1) % len(content_frames)][0]
-            for blend in _crossfade_frames(frame, next_frame, args.crossfade_steps):
-                sequence.append((blend, transition_ms))
+    def labelled(img: Image.Image, text: str) -> Image.Image:
+        f = _add_label(img, text) if args.labels else img.copy()
+        return apply_alpha(f)
 
-    frames   = [f for f, _ in sequence]
-    durations = [d for _, d in sequence]
+    def process_deficiency(d: str) -> list[tuple[Image.Image, int]]:
+        """Return content_frames (Original, Sim, Corr) for one canonical deficiency."""
+        dlabel = label_map[d]
+        print(f"Simulating: {d} ...")
+        sim  = simulate_cvd_image(input_path, d).convert("RGB")
+        print(f"Correcting: {d} ...")
+        corr = correct_cvd_image(input_path, d).convert("RGB")
+        return [
+            (labelled(original_rgb, "Original"),                   hold_ms),
+            (labelled(sim,  f"Simulated ({dlabel})"),              hold_ms),
+            (labelled(corr, f"Corrected ({dlabel})"),              hold_ms),
+        ]
 
-    print(f"Saving:     {output_path}  ({len(frames)} frames)")
-    frames[0].save(
-        output_path,
-        format="PNG",
-        save_all=True,
-        append_images=frames[1:],
-        duration=durations,
-        loop=0,          # loop forever
-        optimize=False,  # keep lossless
-    )
+    # --- Dispatch ---
+    mode = args.deficiency
 
-    size_kb = output_path.stat().st_size // 1024
-    print(f"Done!       {size_kb} KB")
-    print()
-    print("Embed in README.md with:")
-    rel = output_path.as_posix()
-    print(f'  ![CVD Demo]({rel})')
+    if mode == "each":
+        if args.output:
+            print("NOTE: --output is ignored with --deficiency each (files are auto-named)")
+        for d in _DEFICIENCY_ORDER:
+            print(f"\n[{d}]")
+            content_frames = process_deficiency(d)
+            sequence = _expand_transitions(content_frames, args.transition, args.transition_duration)
+            out = input_path.parent / f"{input_path.stem}-{d}-{args.transition}.png"
+            out.parent.mkdir(parents=True, exist_ok=True)
+            _save_apng(out, sequence, args.optimize)
+
+    elif mode == "all":
+        # One file: Original -> Sim+Corr(protan) -> Sim+Corr(deutan) -> Sim+Corr(tritan)
+        content_frames = [(labelled(original_rgb, "Original"), hold_ms)]
+        for d in _DEFICIENCY_ORDER:
+            dlabel = label_map[d]
+            print(f"Simulating: {d} ...")
+            sim  = simulate_cvd_image(input_path, d).convert("RGB")
+            print(f"Correcting: {d} ...")
+            corr = correct_cvd_image(input_path, d).convert("RGB")
+            content_frames.append((labelled(sim,  f"Simulated ({dlabel})"), hold_ms))
+            content_frames.append((labelled(corr, f"Corrected ({dlabel})"), hold_ms))
+        sequence = _expand_transitions(content_frames, args.transition, args.transition_duration)
+        if args.output:
+            out = Path(args.output)
+        else:
+            out = input_path.parent / f"{input_path.stem}-all-{args.transition}.png"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        _save_apng(out, sequence, args.optimize)
+
+    else:
+        # Single deficiency
+        d = _NORMALIZE[mode]
+        content_frames = process_deficiency(d)
+        sequence = _expand_transitions(content_frames, args.transition, args.transition_duration)
+        if args.output:
+            out = Path(args.output)
+        else:
+            out = input_path.parent / f"{input_path.stem}-{d}-{args.transition}.png"
+        out.parent.mkdir(parents=True, exist_ok=True)
+        _save_apng(out, sequence, args.optimize)
 
     return 0
 

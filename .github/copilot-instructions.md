@@ -1,37 +1,7 @@
 # GitHub Copilot Instructions for color_tools
 
-## CRITICAL: Always Use the Virtual Environment
-
-**Before running ANY Python commands, scripts, or modules:**
-
-1. **CHECK** if you're in the virtual environment (look for `.venv` or .\`(.venv)` in terminal prompt)
-2. **ACTIVATE** if not already active:
-   - Windows PowerShell: `.\.venv\Scripts\Activate.ps1`
-   - Windows CMD: `.\.venv\Scripts\activate.bat`
-   - Linux/Mac: `source .venv/bin/activate`
-3. **THEN** run your Python commands
-
-**This applies to:**
-- Running the module: `python -m color_tools`
-- Running scripts: `python tooling/update_hashes.py`
-- Running tests: `python -m unittest discover tests`
-- **Installing packages: `pip install ...`** ⚠️ CRITICAL - NEVER install to system Python!
-- ANY Python execution whatsoever
-
-**NEVER:**
-- Run Python commands without checking the venv status first
-- Assume the venv is active just because it was active before
-- Use system Python when the project has a venv
-- **Install packages with pip when NOT in venv** - this pollutes the user's system Python environment!
-- Run `pip install` commands in terminal without confirming venv is active first
-
-**If you need to install a package:**
-1. **FIRST** verify venv is active (look for `(.venv)` in prompt)
-2. **IF NOT ACTIVE** - activate it first, then install
-3. **NEVER** install to system Python - this will pollute the user's environment with project dependencies
-
-The virtual environment ensures correct dependencies and Python version. Always activate it first.
-**Installing packages outside the venv contaminates the system Python installation!**
+> **Global rules** (git commits, virtual environments, problem reports, error handling, and general AI behavior)
+> are in `~/.copilot/instructions/global.instructions.md`. This file contains color_tools-specific rules only.
 
 ## CRITICAL: Always Read the Source Before Using It
 
@@ -53,34 +23,11 @@ python -c "from color_tools.palette import Palette; p = Palette.load_default(); 
 - Assume an attribute name like `.colors`, `.filaments`, `.entries`, `.items`, etc.
 - Write code referencing library internals without first reading the source or running a quick introspection
 - Guess method signatures — read the docstring or signature in the file
+- Write code against **any external library** (Pillow, requests, etc.) without first looking up
+  its current API via the Context7 MCP server — library APIs change between versions
+  (e.g. `Image.LANCZOS` became `Image.Resampling.LANCZOS` in Pillow 10.0.0)
 
 **Real failure this caught:** `palette.colors` and `fp.filaments` were assumed — neither exists. Both are `.records`. Two 500 errors and a wasted deployment cycle resulted.
-
----
-
-## CRITICAL: When You Don't Know Something
-
-**If you are uncertain about how something works, or don't have complete knowledge:**
-
-1. **STOP** - Do not proceed with implementation
-2. **SAY SO EXPLICITLY** - "I don't know how [X] works. Let me research this first."
-3. **RESEARCH** - Use available tools (fetch_webpage, get_vscode_api, github_repo) to learn
-4. **PRESENT FINDINGS** - Share what you learned and the implications
-5. **LET THE USER DECIDE** - Present options, don't make assumptions about what they want
-
-**NEVER:**
-- Implement solutions based on assumptions or guesses
-- Pretend to know something you don't
-- Waste the user's time with code that won't work because you guessed wrong
-- Proceed confidently when you should be asking questions
-
-**Example good response:**
-"I'm not certain how MCP servers integrate with VS Code. Let me research the documentation first before we implement anything."
-
-**Example bad response:**
-*Confidently implementing 500 lines of code based on an incorrect assumption*
-
-The user's time is valuable. Uncertainty is acceptable. Wasting time on wrong solutions is not.
 
 ## Project Overview
 
@@ -92,39 +39,12 @@ This is a color science library for Python 3.10+ that provides:
 
 ## Code Style and Standards
 
-### Error Handling Policy - CRITICAL
-
-**When you make code changes, the task is not complete until all Pylance/Pyright/type checker errors are resolved.**
-**This means you must examine the Problems panel in VS Code and ensure there are ZERO errors before considering the task done.**
-**When fixing these errors, you should only use type:ignore as a last resort, and only after thoroughly investigating the error.**
-
-**NEVER dismiss Pylance/Pyright/type checker errors as "false positives" or "ok" without rigorous investigation:**
-
-1. **All errors must be investigated thoroughly** - Do not make assumptions
-2. **Verify through testing** - Run the actual code that's showing errors
-3. **Document your findings** - If truly a false positive, explain why with evidence
-4. **Fix the root cause** - Don't ignore errors, fix the code or configuration
-5. **Zero tolerance in production** - Code claimed as "production ready" must have ZERO errors
-
-**Investigation Process:**
-- Read the exact error message carefully
-- Check if the error is in the right context (right class, right file)
-- Run minimal test cases to reproduce or disprove the error
-- Use `get_errors` tool to verify current state
-- If error persists, FIX IT - do not dismiss it
-
-**Never claim code is production ready while errors exist.** This wastes user time and damages trust.
-
 ### Standard Process for Code Changes
 
-1. Implement the feature or fix
-2. Run `get_errors` to check for any new errors
-3. Investigate and resolve all errors
-4. Run all tests to ensure nothing broke (make sure venv is active!)
-5. Update documentation and changelog
-6. Add unit tests for new features or bug fixes
-7. Verify data integrity if core data modified (hashes)
-8. Update version numbers if applicable
+Follow the global process in `~/.copilot/instructions/global.instructions.md`. In addition, for this project:
+
+7. **Verify data integrity** — if any core data was modified (constants, matrices, JSON files), regenerate and update the relevant SHA-256 hashes (see [Hash Integrity System](#hash-integrity-system) below)
+8. **Update version numbers** — update `pyproject.toml`, `color_tools/__init__.py`, and the `README.md` version badge (see [Versioning](#7-versioning-%EF%B8%8F-critical---update-all-three-locations) in the feature checklist)
 
 ### Core Architectural Principles
 - **Separation of Concerns**: Each module has a single, well-defined responsibility
