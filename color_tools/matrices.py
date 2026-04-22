@@ -64,8 +64,8 @@ TRITANOPIA_SIMULATION: Matrix3x3 = (
 
 #: Combined (all-types) simulation matrix — element-wise average of the three
 #: deficiency simulation matrices.  Each row still sums to 1.0, so it remains
-#: a valid colour projection.  Useful as a "worst-case" accessibility diagnostic:
-#: colours that appear similar after this transform are confusable to at least
+#: a valid color projection.  Useful as a "worst-case" accessibility diagnostic:
+#: colors that appear similar after this transform are confusable to at least
 #: one of the three major CVD types simultaneously.
 #: Computed as: (PROTANOPIA_SIMULATION + DEUTERANOPIA_SIMULATION + TRITANOPIA_SIMULATION) / 3
 ALL_SIMULATION: Matrix3x3 = (
@@ -126,7 +126,7 @@ TRITANOPIA_CORRECTION: Matrix3x3 = (
 #: Combined (all-types) correction matrix — element-wise average of the three
 #: deficiency correction matrices.  Redistributes the error signal equally across
 #: all three channels, improving discriminability for all CVD types simultaneously.
-#: Neutral colours (white, grey, black) are always preserved because the correction
+#: Neutral colors (white, grey, black) are always preserved because the correction
 #: is applied to the error signal (original − simulated), not to the original.
 #: Computed as: (PROTANOPIA_CORRECTION + DEUTERANOPIA_CORRECTION + TRITANOPIA_CORRECTION) / 3
 ALL_CORRECTION: Matrix3x3 = (

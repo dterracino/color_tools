@@ -188,10 +188,10 @@ def simulate_all_cvd(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
 
     Applies the combined (all-types) simulation matrix, which is the
     element-wise average of the protanopia, deuteranopia, and tritanopia
-    simulation matrices.  Each row sums to 1.0, so it is a valid colour
+    simulation matrices.  Each row sums to 1.0, so it is a valid color
     projection.
 
-    Useful as a universal accessibility diagnostic: if two colours appear
+    Useful as a universal accessibility diagnostic: if two colors appear
     similar after this transform, they are confusable to at least one of
     the three major CVD types.
 
@@ -319,7 +319,7 @@ def correct_all_cvd(rgb: Tuple[int, int, int]) -> Tuple[int, int, int]:
     it redistributes the error signal equally across all three channels,
     improving discriminability for all CVD types at once.
 
-    Neutral colours (white, grey, black) are always preserved because the
+    Neutral colors (white, grey, black) are always preserved because the
     correction is applied to the *error signal* (original − simulated),
     not to the original pixel.
 
