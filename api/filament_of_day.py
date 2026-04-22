@@ -69,7 +69,7 @@ class handler(BaseHTTPRequestHandler):
         from color_tools.filament_palette import FilamentPalette
 
         fp = FilamentPalette.load_default()
-        filaments = sorted(fp.filaments, key=lambda f: (f.maker, f.type, f.color))
+        filaments = sorted(fp.records, key=lambda f: (f.maker, f.type, f.color))
         filament = filaments[_today_index(len(filaments))]
         svg = _build_svg(filament)
 

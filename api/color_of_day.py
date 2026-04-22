@@ -65,7 +65,7 @@ class handler(BaseHTTPRequestHandler):
         from color_tools.palette import Palette
 
         palette = Palette.load_default()
-        colors = sorted(palette.colors, key=lambda c: c.name)
+        colors = sorted(palette.records, key=lambda c: c.name)
         color = colors[_today_index(len(colors))]
         svg = _build_svg(color)
 
