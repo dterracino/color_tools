@@ -82,13 +82,13 @@ the GitHub secrets `VERCEL_ORG_ID` and `VERCEL_PROJECT_ID` accordingly.
 Run the test script to verify both endpoints are up and returning valid SVGs:
 
 ```bash
-python scripts/test_api.py
+python tooling/test_api.py
 ```
 
 Pass `--base-url` to test a preview deployment:
 
 ```bash
-python scripts/test_api.py --base-url https://color-tools-git-my-branch-dterracino.vercel.app
+python tooling/test_api.py --base-url https://color-tools-git-my-branch-dterracino.vercel.app
 ```
 
 ## Configuration
@@ -106,4 +106,4 @@ If the Vercel project is recreated and gets a new URL, update two places:
 1. `README.md` — the two `[![...](https://...)](https://...)` badge lines
 2. This file — the endpoint table above
 
-Then run `python scripts/test_api.py --base-url <new-url>` to verify before committing.
+Then run `python tooling/test_api.py --base-url <new-url>` to verify before committing.

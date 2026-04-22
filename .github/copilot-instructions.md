@@ -33,6 +33,31 @@
 The virtual environment ensures correct dependencies and Python version. Always activate it first.
 **Installing packages outside the venv contaminates the system Python installation!**
 
+## CRITICAL: Always Read the Source Before Using It
+
+**When writing code that calls into `color_tools` — including the API functions, CLI, tests, or any external consumer — you MUST read the actual source before referencing any attribute, method, or class.**
+
+This applies even for "obvious" things like `palette.colors` or `fp.filaments`. **The source is right here in the workspace. There is no excuse for guessing.**
+
+**Before writing any call to a `color_tools` class or function:**
+1. **READ** the relevant source file (`palette.py`, `filament_palette.py`, etc.)
+2. **VERIFY** the exact attribute/method name exists
+3. **THEN** write the code
+
+**The one-line check:**
+```bash
+python -c "from color_tools.palette import Palette; p = Palette.load_default(); print([a for a in dir(p) if not a.startswith('_')])"
+```
+
+**NEVER:**
+- Assume an attribute name like `.colors`, `.filaments`, `.entries`, `.items`, etc.
+- Write code referencing library internals without first reading the source or running a quick introspection
+- Guess method signatures — read the docstring or signature in the file
+
+**Real failure this caught:** `palette.colors` and `fp.filaments` were assumed — neither exists. Both are `.records`. Two 500 errors and a wasted deployment cycle resulted.
+
+---
+
 ## CRITICAL: When You Don't Know Something
 
 **If you are uncertain about how something works, or don't have complete knowledge:**
