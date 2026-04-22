@@ -2,7 +2,7 @@
 
 ## Status
 
-Deferred — identified April 2026, not yet fixed.
+**Fixed** — April 2026. See changelog `[Unreleased]` section for details.
 
 ## Summary
 
