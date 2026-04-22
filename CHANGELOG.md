@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **`tooling/make_cvd_demo.py`** — complete rewrite of the CVD demo animation generator:
+  - `--deficiency each` — generates one output APNG per deficiency type, auto-named
+    (e.g. `image-protan.png`, `image-deutan.png`, `image-tritan.png`)
+  - `--deficiency all` — generates a single APNG cycling through all three deficiency types
+  - `--label-type long|short` — long labels (`"Simulated (Protanopia)"`) or short
+    (`"Simulated (Protan)"`); defaults to long
+  - `--optimize` — runs `oxipng -o 4 --strip safe` in-place after saving; gracefully skips
+    if oxipng is not in PATH
+  - Text stroke on frame labels (white text with black outline) for legibility over any image
+  - Smoothstep crossfade transition mode (`--transition crossfade`) in addition to hard-cut flip
+
 ## [6.6.1] - 2026-04-21
 
 ### Added

@@ -181,7 +181,7 @@ result = np.clip(result * 255.0, 0, 255).astype(np.uint8)
 np_image[..., :3] = result
 ```
 
-This replaces millions of Python calls with a single BLAS-backed matrix multiply — 
+This replaces millions of Python calls with a single BLAS-backed matrix multiply —
 typically 100–1000× faster.
 
 ### Caveat
