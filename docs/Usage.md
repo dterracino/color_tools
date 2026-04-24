@@ -179,10 +179,32 @@ gameboy_image.save("gameboy_style.png")
 #### Export
 
 - `export_filaments()` - Export filament data to file (AutoForge CSV, generic CSV, or JSON)
-- `export_colors()` - Export color data to file (generic CSV or JSON)
+- `export_colors()` - Export color data to file (generic CSV, JSON, GPL, hex, PAL, PAINT.NET, Lospec, or palette LUT PNG)
 - `list_export_formats()` - List available export formats
 - Individual format exporters: `export_filaments_autoforge()`, `export_filaments_csv()`, `export_filaments_json()`, `export_colors_csv()`, `export_colors_json()`
 - `generate_filename()` - Generate timestamped filename for exports
+
+Available export formats: `csv`, `json`, `gpl`, `hex`, `pal`, `paintnet`, `lospec`, `autoforge`, `palette_lut`
+
+#### PNG Writing (stdlib, no Pillow)
+
+- `from color_tools.image import SimplePNGWriter` — write RGB color strips as PNG without Pillow
+
+```python
+from color_tools.image import SimplePNGWriter
+from color_tools import load_palette
+
+# Write a 1×N LUT strip (for GLSL shaders)
+palette = load_palette('nes')
+colors = [r.rgb for r in palette.records]
+SimplePNGWriter(colors, swatch_width=1, swatch_height=1).save("nes_lut.png")
+
+# Write a preview strip (32×32 px swatches)
+SimplePNGWriter(colors, swatch_width=32, swatch_height=32).save("nes_preview.png")
+
+# Get raw bytes without writing a file
+png_bytes = SimplePNGWriter(colors).to_bytes()
+```
 
 **Export Examples:**
 

@@ -161,8 +161,13 @@ except ImportError:
     ColorCluster: type[Any] = type('ColorCluster', (), {})
     ColorChange: type[Any] = type('ColorChange', (), {})
 
+# SimplePNGWriter is always available — no Pillow required
+from .png_writer import SimplePNGWriter
+
 __all__ = [
     'IMAGE_AVAILABLE',
+    # Stdlib-only PNG writer (no Pillow required)
+    'SimplePNGWriter',
     # Data classes
     'ColorCluster',
     'ColorChange',

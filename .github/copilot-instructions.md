@@ -199,9 +199,11 @@ class GPLExporter(PaletteExporter):
 - `paintnet` - PAINT.NET palette format (colors only, loses filament metadata)
 - `lospec` - Lospec.com JSON format (colors only, loses filament metadata)
 - `autoforge` - AutoForge CSV (filaments only, specialized 3D printing format)
+- `palette_lut` - Palette LUT PNG strip (colors only, 1×N image for GLSL texture sampling)
 
 > **Note:** Only CSV and JSON preserve full filament metadata (maker, type, finish, TD values).
 > Palette formats (hex, pal, paintnet, lospec, gpl) are colors-only and lose filament metadata.
+> `palette_lut` outputs a binary PNG file; no Pillow required (uses `SimplePNGWriter`).
 
 **Future Exporters (Planned):**
 - Adobe Swatch Exchange (.ase) - Binary format

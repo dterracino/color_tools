@@ -207,6 +207,7 @@ from color_tools.exporters.hex_exporter import HexExporter
 from color_tools.exporters.jascpal_exporter import JascPalExporter
 from color_tools.exporters.paintnet_exporter import PaintNetExporter
 from color_tools.exporters.lospec_exporter import LospecExporter
+from color_tools.exporters.palette_lut_exporter import PaletteLutExporter
 
 
 # Create EXPORT_FORMATS for backward compatibility with old export.py

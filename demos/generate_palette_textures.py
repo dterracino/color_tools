@@ -77,7 +77,6 @@ Where should shaders live in the library?
 from __future__ import annotations
 
 import argparse
-import json
 import sys
 from pathlib import Path
 
@@ -86,6 +85,12 @@ try:
     import numpy as np
 except ImportError:
     print("Pillow and numpy are required.  Run:  pip install -r requirements.txt")
+    sys.exit(1)
+
+try:
+    from color_tools import load_palette
+except ImportError:
+    print("color_tools is required.  Run:  pip install -r requirements.txt")
     sys.exit(1)
 
 # ---------------------------------------------------------------------------
@@ -112,28 +117,10 @@ DEFAULT_PALETTES = [
 # Core logic
 # ---------------------------------------------------------------------------
 
-def load_palette_json(name: str) -> list[dict]:
-    """Load palette JSON data for the given palette name."""
-    path = PALETTE_DIR / f"{name}.json"
-    if not path.exists():
-        raise FileNotFoundError(
-            f"Palette '{name}' not found at {path}\n"
-            f"Available: {', '.join(p.stem for p in PALETTE_DIR.glob('*.json'))}"
-        )
-    with open(path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    if not isinstance(data, list):
-        raise ValueError(f"Expected array of colours in {path}")
-    return data
-
-
-def palette_to_rgb_array(data: list[dict]) -> np.ndarray:
-    """Convert a palette JSON list to a numpy uint8 array of shape (N, 3)."""
-    colours = []
-    for entry in data:
-        r, g, b = entry["rgb"]
-        colours.append((int(r), int(g), int(b)))
-    return np.array(colours, dtype=np.uint8)
+def _palette_to_rgb_array(name: str) -> np.ndarray:
+    """Load a palette via color_tools and return a numpy uint8 array of shape (N, 3)."""
+    palette = load_palette(name)
+    return np.array([record.rgb for record in palette.records], dtype=np.uint8)
 
 
 def save_palette_texture(
@@ -155,8 +142,7 @@ def save_palette_texture(
     Returns:
         Path of the written PNG file
     """
-    data    = load_palette_json(name)
-    colours = palette_to_rgb_array(data)
+    colours = _palette_to_rgb_array(name)
     n       = len(colours)
 
     # Create a (height × N) image by repeating the strip vertically
@@ -173,17 +159,16 @@ def save_palette_texture(
 
 def print_glsl_snippet(name: str) -> None:
     """Print the GLSL hard-coded palette array for the given palette."""
-    data = load_palette_json(name)
-    n    = len(data)
+    palette = load_palette(name)
+    records = palette.records
+    n       = len(records)
     print(f"\n// {name.upper()} palette ({n} colours) — GLSL vec3 array")
     print(f"const int   {name.upper()}_SIZE = {n};")
     print(f"const vec3  {name.upper()}_PALETTE[{n}] = vec3[{n}](")
-    for i, entry in enumerate(data):
-        r, g, b = [v / 255.0 for v in entry["rgb"]]
+    for i, record in enumerate(records):
+        r, g, b = [v / 255.0 for v in record.rgb]
         comma   = "," if i < n - 1 else " "
-        hex_str = entry.get("hex", "")
-        col_name = entry.get("name", "")
-        print(f"    vec3({r:.4f}, {g:.4f}, {b:.4f}){comma}  // {col_name} {hex_str}")
+        print(f"    vec3({r:.4f}, {g:.4f}, {b:.4f}){comma}  // {record.name} {record.hex}")
     print(");")
 
 
@@ -234,8 +219,8 @@ def main() -> None:
         palettes = sorted(p.stem for p in PALETTE_DIR.glob("*.json"))
         print("Available palettes:")
         for p in palettes:
-            data = load_palette_json(p)
-            print(f"  {p:25s} ({len(data)} colours)")
+            palette = load_palette(p)
+            print(f"  {p:25s} ({len(palette.records)} colours)")
         return
 
     # Deduplicate while preserving order

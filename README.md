@@ -55,7 +55,7 @@ A comprehensive Python library for color science operations, color space convers
 
 ### Color Vision Deficiency (CVD) Simulation & Correction
 
-![CVD Demo – Protanopia, Deuteranopia, Tritanopia](tooling/samples/pencils-all-crossfade.png)
+![CVD Demo – Protanopia, Deuteranopia, Tritanopia](cvd_demo.png)
 
 *Animated: Original → Simulated (colorblind view) → Corrected, for all three deficiency types (protanopia, deuteranopia, tritanopia).*
 

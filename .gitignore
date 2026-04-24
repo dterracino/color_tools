@@ -149,3 +149,5 @@ cython_debug/
 
 # Other local files
 tooling/samples/*
+demos/samples/*
+demos/palette_textures/*

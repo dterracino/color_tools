@@ -289,11 +289,11 @@ def run(
 
     def set_uniforms() -> None:
         if "u_pixelate" in program:
-            program["u_pixelate"].value = pixelate_val
+            program["u_pixelate"].value = pixelate_val  # type: ignore[union-attr]
         if "u_dither" in program:
-            program["u_dither"].value = dither_val
+            program["u_dither"].value = dither_val  # type: ignore[union-attr]
         if "u_texture" in program:
-            program["u_texture"].value = 0
+            program["u_texture"].value = 0  # type: ignore[union-attr]
 
     set_uniforms()
 
@@ -399,7 +399,7 @@ def run(
                     # Read back the framebuffer
                     raw = ctx.screen.read(components=3)
                     img = Image.frombytes("RGB", (win_w, win_h), raw)
-                    img = img.transpose(Image.FLIP_TOP_BOTTOM)
+                    img = img.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
                     img.save(fname)
                     print(f"Screenshot saved: {fname}")
 

@@ -10,21 +10,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- **Combined all-types CVD simulation and correction** — new `'all'` deficiency type that
+- **`palette_lut` exporter** (`color_tools/exporters/palette_lut_exporter.py`) — new exporter
+  that writes a palette as a 1×N PNG strip for use as a GLSL LUT texture:
+  - Format: RGB 8-bit, 1 pixel per colour, 1 row tall — ready to bind as a `sampler2D` on the GPU
+  - No Pillow required — uses `SimplePNGWriter` (pure stdlib) internally
+  - `supports_colors=True`, `supports_filaments=False`, `is_binary=True`, `is_image=True`
+  - Usage: `get_exporter('palette_lut').export_colors(palette.records, 'out.png')`
+  - GPU sampling: `texture(u_palette, vec2((i+0.5)/N, 0.5)).rgb`
+
+- **`SimplePNGWriter`** (`color_tools/image/png_writer.py`) — pure-stdlib PNG writer, now a
+  public API in `color_tools.image`:
+  - Writes horizontal colour-strip PNGs from `list[tuple[int,int,int]]` with no dependencies
+  - Parameters: `colors`, `swatch_width=1`, `swatch_height=1`
+  - Methods: `save(path)` — write to file; `to_bytes()` — return raw PNG bytes
+  - Useful as a Pillow-free fallback for any code that only needs to write simple colour strips
+  - Exported from `color_tools.image` — `from color_tools.image import SimplePNGWriter`
+
+### Tests
+
+- **`tests/test_png_writer.py`** — 41 unit tests for `SimplePNGWriter`:
+  - Constructor validation (empty colors, zero/negative swatch dimensions)
+  - Computed `width` / `height` properties with single colors, multi-color palettes,
+    and non-unit swatch sizes
+  - PNG structure: signature, chunk order (IHDR → IDAT → IEND), CRC validity,
+    IHDR fields (bit depth=8, color type=2/RGB, no interlace), empty IEND
+  - Pixel data correctness: single colors, color order preservation, swatch
+    width repetition per row, swatch height row repetition, 54-color palette
+  - `to_bytes()`: returns `bytes`, matches `save()` output, is idempotent
+  - `save()`: creates file, accepts `str` or `Path`, creates parent directories,
+    overwrites existing file correctly
+  - Public API: importable from `color_tools.image`, present in `__all__`
   applies a single merged matrix covering protanopia, deuteranopia, and tritanopia simultaneously:
-  - `ALL_SIMULATION` matrix in `matrices.py` — element-wise average of the three simulation
+
+- `ALL_SIMULATION` matrix in `matrices.py` — element-wise average of the three simulation
     matrices; each row sums to 1.0 (valid colour projection).  Useful as a universal
     accessibility diagnostic: colours that appear similar after this transform are confusable
     to at least one of the three major CVD types.
-  - `ALL_CORRECTION` matrix in `matrices.py` — element-wise average of the three correction
+- `ALL_CORRECTION` matrix in `matrices.py` — element-wise average of the three correction
     matrices; perfectly symmetric, redistributing the error signal equally across all channels.
     Neutral colours (white, grey, black) are always preserved.
-  - `simulate_all_cvd(rgb)` convenience function in `color_deficiency.py`
-  - `correct_all_cvd(rgb)` convenience function in `color_deficiency.py`
-  - Both functions exported from `color_tools.__init__`
-  - CLI `cvd --type all` now accepted (simulate or correct)
-  - CLI `image --cvd-simulate all` and `--cvd-correct all` now accepted
-  - `MATRICES_EXPECTED_HASH` regenerated to cover the two new matrices
+- `simulate_all_cvd(rgb)` convenience function in `color_deficiency.py`
+- `correct_all_cvd(rgb)` convenience function in `color_deficiency.py`
+- Both functions exported from `color_tools.__init__`
+- CLI `cvd --type all` now accepted (simulate or correct)
+- CLI `image --cvd-simulate all` and `--cvd-correct all` now accepted
+- `MATRICES_EXPECTED_HASH` regenerated to cover the two new matrices
 
 - **`tooling/make_palette_demo.py`** — new script to generate animated APNG palette
   quantization demos; mirrors `make_cvd_demo.py` in structure and options:

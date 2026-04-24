@@ -1,0 +1,47 @@
+{
+  "metadata": {
+    "id": "sierra_agi",
+    "name": "Sierra AGI",
+    "description": "Low-resolution 16-color PC adventure game style with horizontally doubled pixels."
+  },
+
+  "palette": {
+    "type": "indexed",
+    "colors": "ega_16",
+    "color_count": 16
+  },
+
+  "image_style": {
+    "working_resolution": [160, 200],
+    "display_resolution": [320, 200],
+    "display_aspect_ratio": [4, 3],
+    "pixel_expansion": [2, 1],
+    "scale_filter": "nearest"
+  },
+
+  "color_style": {
+    "simultaneous_color_limit": 16,
+    "dither": {
+      "enabled": true,
+      "method": "ordered_bayer",
+      "strength": 0.35
+    },
+    "contrast": 1.05,
+    "saturation": 1.0,
+    "gamma": "srgb"
+  },
+
+  "postprocess": {
+    "enabled": true,
+    "effects": [
+      {
+        "type": "scanlines",
+        "strength": 0.18
+      },
+      {
+        "type": "crt_softness",
+        "strength": 0.12
+      }
+    ]
+  }
+}
