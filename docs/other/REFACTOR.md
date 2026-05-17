@@ -9,7 +9,7 @@
 ## Summary Table
 
 | # | Category | Item | Effort | Benefit | API Impact |
-|---|----------|------|--------|---------|------------|
+| --- | ---------- | ------ | -------- | --------- | ------------ |
 | B1 | **Bug** | `"last"` dual-color mode silently broken | Low | High | Patch fix — no break |
 | B2 | **Bug** | `palette.colors` used in ~8 docstrings but doesn't exist | Low | High | Additive (new property) |
 | O1 | **Orphan** | `EXPORT_FORMATS` imported but unused in `export.py` | Trivial | Low | None |
@@ -40,6 +40,7 @@
 ## Bugs (Found During Review)
 
 ### B1 — `"last"` dual-color mode is silently broken
+
 **Files:** `config.py`, `filament_palette.py`  
 **Effort:** Low | **Benefit:** High | **API Impact:** Patch fix, no breaking change
 
@@ -56,6 +57,7 @@ consistency (preferred, since `"second"` is undocumented in the public API).
 ---
 
 ### B2 — `palette.colors` used in ~8 docstring examples but the attribute doesn't exist
+
 **Files:** `palette.py`, `export.py`, `exporters/*.py`  
 **Effort:** Low | **Benefit:** High | **API Impact:** Additive (new `colors` property)
 
@@ -68,6 +70,7 @@ Similarly, `FilamentPalette` exposes `self.records`; its `export.py` example cal
 `palette.filaments`, which also doesn't exist.
 
 **Fix:** Add `@property` aliases to both classes:
+
 ```python
 # In Palette
 @property
@@ -81,6 +84,7 @@ def filaments(self) -> List[FilamentRecord]:
     """Alias for records — more intuitive name for filament data."""
     return self.records
 ```
+
 This is a pure addition, does not break anything, and makes the documented API actually
 work.
 
@@ -89,6 +93,7 @@ work.
 ## 1. Orphan Code
 
 ### O1 — `EXPORT_FORMATS` imported but unused in `export.py`
+
 **File:** `export.py` (line 36)  
 **Effort:** Trivial | **Benefit:** Low | **API Impact:** None
 
@@ -99,6 +104,7 @@ from color_tools.exporters import (
     EXPORT_FORMATS,   # ← imported but never referenced in this file
 )
 ```
+
 `EXPORT_FORMATS` is imported but no code in `export.py` actually references it. It is
 likely a leftover from when `export.py` contained its own format dictionary.
 
@@ -107,6 +113,7 @@ likely a leftover from when `export.py` contained its own format dictionary.
 ---
 
 ### O2 — `get_override_info()` on both palette classes appears unused
+
 **Files:** `palette.py` (line 615), `filament_palette.py` (line 876)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** Internal — safe to remove or mark private
 
@@ -120,12 +127,14 @@ Neither method appears to be called from any CLI handler, any exporter, or any t
 bare `except: pass` (see **C1**), making it a maintenance liability.
 
 **Fix options:**
+
 1. Remove both methods entirely.
 2. Rename to `_get_override_info()` (private) to signal they are diagnostic/testing aids.
 
 ---
 
 ### O3 — Duplicated 5-line block in `determine_base_hue`
+
 **File:** `naming.py` (lines 139–150)  
 **Effort:** Trivial | **Benefit:** Low | **API Impact:** None
 
@@ -151,6 +160,7 @@ if ish_variant:
 ## 2. DRY Violations
 
 ### D1 — Metric-resolution logic duplicated across 4 methods ⭐ Major
+
 **Files:** `palette.py` (nearest_color, nearest_colors), `filament_palette.py`
 (nearest_filament, nearest_filaments)  
 **Effort:** Medium | **Benefit:** High | **API Impact:** None
@@ -184,6 +194,7 @@ then reduce to a single call. See **A1** for details.
 ---
 
 ### D2 — `nearest_color` / `nearest_colors` are near-duplicates in `Palette`
+
 **File:** `palette.py`  
 **Effort:** Medium | **Benefit:** High | **API Impact:** None
 
@@ -202,6 +213,7 @@ refactoring applies to the filament variants.
 ---
 
 ### D3 — Data-path resolution pattern repeated in all four `load_*` functions
+
 **Files:** `palette.py` (`load_colors`), `filament_palette.py` (`load_filaments`,
 `load_maker_synonyms`, `load_owned_filaments`)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None
@@ -228,6 +240,7 @@ lines. See **A2** for the proposed signature.
 ---
 
 ### D4 — `hsl_to_rgb` manually re-implements `colorsys.hls_to_rgb`
+
 **File:** `conversions.py` (lines 407–455)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None
 
@@ -239,6 +252,7 @@ Python's `colorsys.hls_to_rgb(h, l, s)` (note argument order) does the same thin
 correctly, with the stdlib already tested and maintained.
 
 **Fix:**
+
 ```python
 def hsl_to_rgb(hsl: Tuple[float, float, float]) -> Tuple[int, int, int]:
     h, s, l = hsl
@@ -249,21 +263,25 @@ def hsl_to_rgb(hsl: Tuple[float, float, float]) -> Tuple[int, int, int]:
         max(0, min(255, int(round(b * 255)))),
     )
 ```
+
 This eliminates ~40 lines and removes a custom inner function. Risk is low since
 `colorsys` is already imported.
 
 ---
 
 ### D5 — Wildcard-filter handling duplicated in `nearest_filament` / `nearest_filaments`
+
 **File:** `filament_palette.py` (lines 728–731 and 818–821)  
 **Effort:** Trivial | **Benefit:** Low | **API Impact:** None
 
 Both methods contain identical wildcard handling:
+
 ```python
 maker_filter = None if maker == "*" else maker
 type_filter  = None if type_name == "*" else type_name
 finish_filter = None if finish == "*" else finish
 ```
+
 Fixing **D2** above (delegating `nearest_filament` to `nearest_filaments`) would
 eliminate this automatically.
 
@@ -272,6 +290,7 @@ eliminate this automatically.
 ## 3. Separation of Concerns (SoC) Violations
 
 ### S1 — Module-level palette load in `validation.py` ⭐ Major
+
 **File:** `validation.py` (lines 27–28)  
 **Effort:** Low | **Benefit:** High | **API Impact:** None
 
@@ -282,12 +301,14 @@ _color_names = [r.name for r in _palette.records]
 ```
 
 This means:
+
 - Importing `validation` anywhere immediately reads and parses `colors.json`.
 - Any import-time failure (missing file, bad data) shows as a confusing `ImportError`.
 - Tests that mock the palette have to intercept the import before the module loads.
 - Every module that imports `from color_tools import validate_color` pays this I/O cost.
 
 **Fix:** Lazy initialization with `functools.lru_cache` or a module-level `None` sentinel:
+
 ```python
 _palette: Optional[Palette] = None
 _color_names: Optional[list[str]] = None
@@ -298,11 +319,13 @@ def _ensure_palette_loaded() -> None:
         _palette = Palette.load_default()
         _color_names = [r.name for r in _palette.records]
 ```
+
 Call `_ensure_palette_loaded()` at the top of `validate_color()`. Zero API change.
 
 ---
 
 ### S2 — `naming.py` loads `Palette.load_default()` on every call
+
 **File:** `naming.py` (line 357 in `generate_color_name`, line 295 in
 `is_unique_near_claim`)  
 **Effort:** Low | **Benefit:** High | **API Impact:** Additive (optional `palette=` param)
@@ -315,6 +338,7 @@ This also tightly couples the naming module to the file system and the default p
 making it impossible to generate names against a custom palette without subclassing.
 
 **Fix:** Accept an optional `palette` argument with a lazy default:
+
 ```python
 def generate_color_name(
     rgb: tuple[int, int, int],
@@ -326,11 +350,13 @@ def generate_color_name(
         palette = Palette.load_default()
     ...
 ```
+
 Callers who want performance can pass a pre-loaded palette. Existing callers are unaffected.
 
 ---
 
 ### S3 — `FilamentRecord.__post_init__` reaches into global config
+
 **File:** `filament_palette.py` (line 82)  
 **Effort:** Medium | **Benefit:** Medium | **API Impact:** Potentially breaking if changed
 
@@ -341,6 +367,7 @@ def __post_init__(self) -> None:
 
 A frozen data-record dataclass should not have side effects that depend on mutable global
 state. This means:
+
 - Two `FilamentRecord` instances constructed with the same arguments at different points
   in time (before/after `set_dual_color_mode`) can have different `rgb` and `lab` values.
 - Thread-local config changes after record construction have no effect (the value is baked
@@ -351,6 +378,7 @@ The fundamental tension is that `FilamentRecord` computes derived properties (`r
 at construction time from a global setting. This is a genuine design conflict.
 
 **Options (least to most breaking):**
+
 1. **Quick win:** Document this clearly and add a note in `set_dual_color_mode` that it
    must be called before any `FilamentRecord` is constructed. (Low effort, zero API change.)
 2. **Better:** Add a `@classmethod FilamentRecord.from_dict(data, mode="first")` factory
@@ -363,6 +391,7 @@ at construction time from a global setting. This is a genuine design conflict.
 ---
 
 ### S4 — `FilamentPalette.get_override_info()` loads a JSON file inside a class method
+
 **File:** `filament_palette.py` (lines 925–947)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** Affects only `get_override_info` return value
 
@@ -383,6 +412,7 @@ logged at `load_maker_synonyms()` time).
 ---
 
 ### S5 — `reporting.py` uses a `ListHandler` as an ad-hoc message bus
+
 **File:** `cli_commands/reporting.py` (lines 29–36)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None (internal CLI code)
 
@@ -403,6 +433,7 @@ directly without the `ListHandler` hack. The log calls can remain for normal lib
 ## 4. Code Smells
 
 ### C1 — Bare `except:` in 4 locations ⭐ High Priority
+
 **Files:** `gamut.py` (line 71), `filament_palette.py` (lines 764, 853, 945)  
 **Effort:** Low | **Benefit:** High | **API Impact:** None
 
@@ -438,6 +469,7 @@ occur (typically `(ValueError, ArithmeticError, OverflowError)`).
 ---
 
 ### C2 — `object.__setattr__` abused to bypass frozen dataclass immutability
+
 **File:** `filament_palette.py` (lines 100, 101, 115, 116)  
 **Effort:** Medium | **Benefit:** Medium | **API Impact:** None
 
@@ -466,6 +498,7 @@ applied at access time rather than construction time.
 ---
 
 ### C3 — `XYZ_SCALE_FACTOR = 100.0` overloaded across unrelated color spaces
+
 **File:** `constants.py`, `conversions.py`  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None (internal constant)
 
@@ -475,6 +508,7 @@ CMY/CMYK conversions (`c = (1.0 - r/RGB_MAX) * XYZ_SCALE_FACTOR`) and HSL conver
 (`s * XYZ_SCALE_FACTOR`). These are semantically different uses of the same number.
 
 This means:
+
 - Code that reads `v * XYZ_SCALE_FACTOR` in a CMY function requires the reader to know
   that XYZ_SCALE_FACTOR happens to be 100.0, not that this is an XYZ operation.
 - If XYZ ever used a different scale, all percent conversions would break.
@@ -486,6 +520,7 @@ self-documenting. Note: this requires regenerating the constants hash.
 ---
 
 ### C4 — `from pathlib import Path` inside function body
+
 **File:** `palette.py` (line 127 in `_parse_color_records`)  
 **Effort:** Trivial | **Benefit:** Low | **API Impact:** None
 
@@ -506,6 +541,7 @@ inline imports in `constants.py` (`verify_data_file`, `verify_all_data_files`).
 ---
 
 ### C5 — `from pathlib import Path` duplicated in `logging_config.py`
+
 **File:** `logging_config.py` (line 45 and inside `setup_logging`)  
 **Effort:** Trivial | **Benefit:** Low | **API Impact:** None
 
@@ -517,6 +553,7 @@ Remove the inline import.
 ## 5. Architecture Suggestions
 
 ### A1 — Extract `_resolve_lab_metric()` helper (solves D1)
+
 **File:** `_palette_utils.py`  
 **Effort:** Medium | **Benefit:** High | **API Impact:** None
 
@@ -560,6 +597,7 @@ def _resolve_lab_metric(
 ```
 
 All four nearest-neighbor methods then reduce to:
+
 ```python
 distance_fn = _resolve_lab_metric(metric, cmc_l, cmc_c)
 for rec in candidates:
@@ -574,6 +612,7 @@ inconsistency is normalized.
 ---
 
 ### A2 — Extract `_resolve_data_path()` helper (solves D3)
+
 **File:** `_palette_utils.py`  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None
 
@@ -602,6 +641,7 @@ def _resolve_data_path(
 
 All four loaders (`load_colors`, `load_filaments`, `load_maker_synonyms`,
 `load_owned_filaments`) then start with:
+
 ```python
 data_dir, json_path = _resolve_data_path(json_path, ColorConstants.COLORS_JSON_FILENAME)
 ```
@@ -609,6 +649,7 @@ data_dir, json_path = _resolve_data_path(json_path, ColorConstants.COLORS_JSON_F
 ---
 
 ### A3 — Make `_palette` in `validation.py` lazy (solves S1)
+
 **File:** `validation.py`  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None
 
@@ -616,6 +657,7 @@ The simplest safe fix uses a module-level sentinel and lazy initialization, avoi
 import-time I/O penalty entirely. See **S1** for the fix pattern.
 
 Alternatively, use `functools.lru_cache` on a helper function:
+
 ```python
 @functools.lru_cache(maxsize=1)
 def _get_default_palette() -> tuple[Palette, list[str]]:
@@ -626,6 +668,7 @@ def _get_default_palette() -> tuple[Palette, list[str]]:
 ---
 
 ### A4 — Accept optional `palette=` argument in `naming.py` (solves S2)
+
 **File:** `naming.py`  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** Additive
 
@@ -639,6 +682,7 @@ pattern is already used by other functions in the codebase.
 ## Priority Recommendation
 
 **Do first (low effort, clear value):**
+
 - **B1** Fix `"last"` dual-color mode bug
 - **B2** Add `colors` / `filaments` property aliases to palette classes
 - **O3** Delete the duplicate block in `determine_base_hue`
@@ -648,6 +692,7 @@ pattern is already used by other functions in the codebase.
 - **S1** Make `_palette` in `validation.py` lazy
 
 **Do next (medium effort, architectural payoff):**
+
 - **D1 + A1** Extract `_resolve_lab_metric()` and simplify all nearest-neighbor methods
 - **D2** Refactor `nearest_color` to delegate to `nearest_colors`
 - **D3 + A2** Extract `_resolve_data_path()` and DRY the loaders
@@ -655,6 +700,7 @@ pattern is already used by other functions in the codebase.
 - **S2 + A4** Add optional `palette=` to `naming.py` functions; lazy-load
 
 **Larger, optional (architectural, evaluate ROI):**
+
 - **S3** Decouple `FilamentRecord` from global config
 - **S4 / S5** Improve override diagnostics architecture
 - **O2** Remove or privatize `get_override_info` methods
