@@ -176,7 +176,7 @@ modify any of the following, you must regenerate the corresponding hash in `cons
 - Constants in `constants.py`
 - Matrices in `matrices.py`
 
-Refer to the [Hash Update Guide](https://github.com/dterracino/color_tools/blob/main/docs/Hash_Update_Guide.md)
+Refer to the [Hash Update Guide](https://github.com/dterracino/color_tools/blob/main/docs/other/Hash_Update_Guide.md)
 for step-by-step instructions.
 
 Verify integrity at any time:
