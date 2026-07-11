@@ -378,6 +378,9 @@ python -m color_tools filament --nearest --value 100 150 200 --metric de94
 
 # Adjust CMC parameters for different perceptual weighting
 python -m color_tools filament --nearest --value 100 150 200 --metric cmc --cmc-l 1.0 --cmc-c 1.0
+
+# Restrict results to the same hue family (prevents blue→purple substitution, etc.)
+python -m color_tools filament --nearest --hex "#5c94fc" --count 5 --max-hue-delta 30
 ```
 
 #### Handle Dual-Color Filaments
@@ -436,6 +439,7 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--count N`: Return top N nearest filaments instead of just one (default: 1, max: 50)
+- `--max-hue-delta DEGREES`: Restrict results to filaments within DEGREES of the target hue (LCH hue angle, 0-180). Useful when the best perceptual match changes hue (e.g., blue→purple). Achromatic colors are unaffected.
 - `--dual-color-mode {first,last,mix}`: Handle dual-color filaments (default: first)
 
 **Filtering and Listing:**

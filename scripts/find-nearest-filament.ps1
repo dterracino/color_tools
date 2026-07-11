@@ -35,6 +35,10 @@
 .EXAMPLE
     .\find-nearest-filament.ps1 -Hex "FF0000" -Type "PLA" -Count 3
     Find the 3 nearest PLA filaments to pure red
+
+.EXAMPLE
+    .\find-nearest-filament.ps1 -Hex "#5c94fc" -MaxHueDelta 30 -Count 5
+    Find the 5 nearest filaments to NES blue, restricting results to the same hue family
 #>
 
 param(
@@ -52,7 +56,11 @@ param(
     
     [Parameter(Mandatory=$false)]
     [ValidateSet("euclidean", "de76", "de94", "de2000", "cmc")]
-    [string]$Metric = "de2000"
+    [string]$Metric = "de2000",
+    
+    [Parameter(Mandatory=$false)]
+    [ValidateRange(0, 180)]
+    [Nullable[double]]$MaxHueDelta
 )
 
 # Build the command
@@ -64,6 +72,10 @@ if ($Maker) {
 
 if ($Type) {
     $cmd += " --type `"$Type`""
+}
+
+if ($null -ne $MaxHueDelta) {
+    $cmd += " --max-hue-delta $MaxHueDelta"
 }
 
 # Execute the command

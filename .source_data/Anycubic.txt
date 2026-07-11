@@ -1,0 +1,136 @@
+Anycubic Filaments
+
+Material	Color	Hex Code    TD Value
+PLA Basic	Clear	#CECABF
+PLA Basic	White	#EFF0F1
+PLA Basic	Mia White	#F1E9E0
+PLA Basic	Mia Pink	#FAD6C6
+PLA Basic	Peach Pink	#FFC196
+PLA Basic	Yellow	#F3E500
+PLA Basic	Gold	#FFB81C
+PLA Basic	Orange	#FF7F32
+PLA Basic	Pink	#FF8DA1
+PLA Basic	Magenta	#CF4F80
+PLA Basic	Texture Red	#EF3340
+PLA Basic	Red	#CE3845
+PLA Basic	Purple	#6A6DCD
+PLA Basic	Interstellar Violet	#5B618F
+PLA Basic	Cyan	#23A3C7
+PLA Basic	Tropical Turquoise	#009CBD
+PLA Basic	Blue	#003594
+PLA Basic	Spring Leaf	#89A84F
+PLA Basic	Olive Green	#658946
+PLA Basic	Green	#009639
+PLA Basic	Beige	#D4B996
+PLA Basic	Brown	#927968
+PLA Basic	Bronze	#7C4D3A
+PLA Basic	Light Grey	#DAD9DB
+PLA Basic	Grey	#B1B3B3
+PLA Basic	Texture Silver	#8A8D8F
+PLA Basic	Texture Grey	#75787B
+PLA Basic	Blue Grey	#768692
+PLA Basic	Black	#212721
+PLA+	Black	#212721
+PLA+	White	#EFF0F1
+PLA+	Bright Red	#E10600
+PLA+	Brown	#927968
+PLA+	Grey	#B1B3B3
+PLA+	Texture Silver	#8A8D8F
+PLA+	Blue	#003594
+PLA+	Texture Grey	#75787B
+PLA+	Beige	#D4B996
+PLA+	Yellow	#F3E500
+PLA+	Tropical Turquoise	#009CBD
+PLA+	Orange	#FF7F32
+PLA+	Green	#009639
+PLA+	Green Flash	#75CB5D
+PLA+	Pink	#FF8DA1
+PLA+	Purple	#6A6DCD
+PLA+	Red	#C8102E
+PLA+	Spring Leaf	#89A84F
+PLA+	Interstellar Violet	#5B618F
+PLA+	Peach Pink	#FFC196
+PLA High Speed	Pearl Black	#212721
+PLA High Speed	Texture Grey	#75787B
+PLA High Speed	Bright White	#F1F0ED
+PLA High Speed	Bright Red	#E10600
+PLA High Speed	Classic Green	#3DB24E
+PLA High Speed	Dazzling Blue	#3E55AB
+PLA High Speed	Purple Opulence	#695FA2
+PLA High Speed	Vibrant Orange	#FF7338
+PLA High Speed	Vibrant Yellow	#FDDB27
+PLA High Speed	Strawberry Pink	#F88192
+PLA Matte	Black	#484A49
+PLA Matte	Dark Blue	#375172
+PLA Matte	Latte Brown	#E2C6A5
+PLA Matte	White	#F1F0ED
+PLA Matte	Desert Tan	#DCCAA9
+PLA Matte	Dark Green	#68724D
+PLA Matte	Nardo Grey	#898B8E
+PLA Matte	Bone White	#EFEDE3
+PLA Matte	Dark Brown	#A38E80
+PLA Matte	Red	#DF484F
+PLA Matte	Chocolate Brown	#746759
+PLA Matte	Orange	#FF9351
+PLA Matte	Green	#71C973
+PLA Matte	Caramel	#C4A981
+PLA Matte	Yellow	#FFE17F
+PLA Matte	Sky Blue	#7ECCEE
+PLA Matte	Apple Green	#B9E972
+PLA Matte	Blue	#1366A0
+PLA Matte	Purple	#AE96D4
+PLA Matte	Sakura Pink	#F4C1E1
+PLA Matte	Grey	#8E939B
+PLA Matte	Ice Blue	#8AD8ED
+PLA Silk	Shiny Gold	#F2A900
+PLA Silk	Blue	#0067B9
+PLA Silk	Christmas Green	#008755
+PLA Silk	Rainbow	#FF41B8, #F1C400, #00B74F, #B669FF
+PLA Silk	Silver	#8D9093
+PLA Silk	Pink	#FCAFC0
+PLA Silk	Christmas Red	#D22630
+PLA Silk	Purple	#8B84D7
+PLA Silk	Gold	#D19000
+PLA Silk	Copper	#AF5C37
+PLA Silk	White	#E9E9E7
+PLA Silk	Green	#52D2BC
+PLA Galaxy	Galaxy Blue	#1F2A44
+PLA Galaxy	Galaxy Purple	#491D70
+PLA Galaxy	Galaxy Green	#4E5B31
+PLA Galaxy	Galaxy Brown	#5E4241
+PLA Metal	Metal Blue	#3177A3
+PLA Metal	Metal Black	#43403D
+PLA Metal	Metal Copper	#956C58
+PLA Metal	Metal Champagne	#B59C7D
+PLA Marble	Brick Red	#9D4815
+PLA Marble	Marble White	#EFF0F1
+PETG Translucent	Clear	#EFF0F1
+PETG Translucent	Translucent Blue	#69B3E7
+PETG Translucent	Translucent Grey	#6A6C6E
+PETG Translucent	Translucent Purple	#D7A9E3
+PETG Translucent	Translucent Brown	#CDA077
+PETG Translucent	Translucent Pink	#F8C1B8
+PETG Translucent	Translucent Green	#7CE0D3
+PETG Translucent	Translucent Olive	#78874D
+PETG Translucent	Translucent Orange	#FF8F1C
+PETG	Black	#212721
+PETG	White	#EFF0F1
+PETG	Red	#C8102E
+PETG	Blue	#003594
+PETG	Forest Green	#43523B
+PETG	Texture Grey	#75787B
+PETG	Clear	#CECABF
+PETG	Orange	#FF7F32
+PETG	Yellow	#F3E500
+PETG	Grey	#97999B
+PETG	Dark Grey	#7E868A
+PETG	Lake Blue	#0084D4
+PETG	Purple	#6A6DCD
+PETG	Green	#009639
+PETG	Beige	#D4B996
+PETG	Brown	#927968
+PETG	Peanut Brown	#A9754F
+PETG	Texture Silver	#8A8D8F
+PETG	Pink	#FB637E
+PETG	Cream	#F9DFB9
+PETG	Lime Green	#78D64B

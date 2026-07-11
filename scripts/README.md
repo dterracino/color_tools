@@ -28,6 +28,9 @@ Find the nearest filaments to a given color.
 
 # Use different distance metric
 .\find-nearest-filament.ps1 "#7f0b00" -Metric de94
+
+# Restrict to the same hue family (prevents blue→purple substitution)
+.\find-nearest-filament.ps1 "#5c94fc" -Count 5 -MaxHueDelta 30
 ```
 
 **Parameters:**
@@ -37,6 +40,7 @@ Find the nearest filaments to a given color.
 - `-Maker`: Filter by filament maker (supports synonyms)
 - `-Type`: Filter by filament type (PLA, PETG, TPU, etc.)
 - `-Metric`: Distance metric (euclidean, de76, de94, de2000, cmc)
+- `-MaxHueDelta`: Maximum hue angle difference in degrees (0-180). Restricts results to filaments in the same hue family. Achromatic colors are unaffected.
 
 ## Naming Convention
 

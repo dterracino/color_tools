@@ -149,6 +149,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     owned=owned_filter,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
+                    max_hue_delta=getattr(args, 'max_hue_delta', None),
                 )
                 print(f"Top {len(results)} nearest filaments:")
                 for i, (rec, d) in enumerate(results, 1):
@@ -165,6 +166,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     owned=owned_filter,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
+                    max_hue_delta=getattr(args, 'max_hue_delta', None),
                 )
                 print(f"Nearest filament: (distance={d:.2f}) [from {rec.source}]")
                 print(f"  {rec}")

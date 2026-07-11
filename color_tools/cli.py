@@ -323,6 +323,18 @@ Examples:
         help="CMC chroma parameter (default: 1.0)"
     )
     filament_parser.add_argument(
+        "--max-hue-delta",
+        type=float,
+        default=None,
+        metavar="DEGREES",
+        help=(
+            "Restrict results to filaments within DEGREES of the target hue (LCH hue angle, 0-180). "
+            "Useful when the best perceptual match changes hue (e.g., blue→purple). "
+            "Achromatic targets and achromatic candidates are unaffected. "
+            "Example: --max-hue-delta 30"
+        )
+    )
+    filament_parser.add_argument(
         "--count",
         type=int,
         default=1,

@@ -22,7 +22,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Set, Tuple, Union
 
 from color_tools.constants import ColorConstants
-from color_tools.conversions import rgb_to_lab, hex_to_rgb
+from color_tools.conversions import rgb_to_lab, hex_to_rgb, lab_to_lch
 from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
 from color_tools.config import get_dual_color_mode
 from color_tools._palette_utils import _should_prefer_source, _ensure_list
@@ -433,6 +433,57 @@ def save_owned_filaments(owned_ids: Set[str], json_path: Path | str | None = Non
         json.dump(data, f, indent=2)
 
 
+# Minimum LCH chroma value below which hue is considered undefined (achromatic).
+# Colors with chroma below this threshold skip hue-delta filtering.
+_ACHROMATIC_CHROMA_THRESHOLD = 5.0
+
+
+def _hue_angular_delta(h1: float, h2: float) -> float:
+    """Compute the shortest angular distance between two hue angles (0-360°)."""
+    delta = abs(h1 - h2) % 360.0
+    return min(delta, 360.0 - delta)
+
+
+def _filter_by_hue(
+    candidates: List[FilamentRecord],
+    target_lab: Tuple[float, float, float],
+    max_hue_delta: float,
+) -> List[FilamentRecord]:
+    """
+    Filter filament candidates by LCH hue angle proximity.
+
+    Achromatic targets (LCH chroma < threshold) and achromatic candidates are
+    excluded from hue filtering and are always retained.
+
+    Args:
+        candidates: List of FilamentRecord to filter.
+        target_lab: Target color in LAB space.
+        max_hue_delta: Maximum allowed hue angle difference in degrees.
+
+    Returns:
+        Filtered list of FilamentRecord objects.
+    """
+    target_lch = lab_to_lch(target_lab)
+    target_chroma, target_hue = target_lch[1], target_lch[2]
+
+    # If the target itself is achromatic, hue filtering is meaningless — skip it
+    if target_chroma < _ACHROMATIC_CHROMA_THRESHOLD:
+        return candidates
+
+    result: List[FilamentRecord] = []
+    for rec in candidates:
+        rec_lch = lab_to_lch(rec.lab)
+        rec_chroma, rec_hue = rec_lch[1], rec_lch[2]
+        # Always keep achromatic candidates (their hue is undefined)
+        if rec_chroma < _ACHROMATIC_CHROMA_THRESHOLD:
+            result.append(rec)
+            continue
+        if _hue_angular_delta(target_hue, rec_hue) <= max_hue_delta:
+            result.append(rec)
+
+    return result
+
+
 class FilamentPalette:
     """
     Filament palette with multiple indexing strategies for fast lookup.
@@ -700,6 +751,7 @@ class FilamentPalette:
         owned: Optional[bool] = None,
         cmc_l: float = ColorConstants.CMC_L_DEFAULT,
         cmc_c: float = ColorConstants.CMC_C_DEFAULT,
+        max_hue_delta: Optional[float] = None,
     ) -> Tuple[FilamentRecord, float]:
         """
         Find nearest filament by color similarity, with optional filters.
@@ -719,6 +771,10 @@ class FilamentPalette:
             owned: Filter to owned filaments only. None (default) = auto-detect,
                    True = owned only, False = all filaments.
             cmc_l, cmc_c: Parameters for CMC metric.
+            max_hue_delta: Maximum allowed hue angle difference in degrees (LCH hue, 0-180).
+                           Filters out candidates whose hue differs by more than this amount.
+                           Achromatic targets (chroma < 5) skip hue filtering automatically.
+                           Example: 30.0 keeps results within the same hue family.
         
         Returns:
             (nearest_filament_record, distance) tuple.
@@ -735,6 +791,15 @@ class FilamentPalette:
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
+
+        # Apply hue-angle filter if requested and target is chromatic
+        if max_hue_delta is not None:
+            candidates = _filter_by_hue(candidates, target_lab, max_hue_delta)
+            if not candidates:
+                raise ValueError(
+                    f"No filaments found within {max_hue_delta}° hue of the target color. "
+                    "Try a larger --max-hue-delta value."
+                )
         
         best_rec: Optional[FilamentRecord] = None
         best_d = float("inf")
@@ -786,6 +851,7 @@ class FilamentPalette:
         owned: Optional[bool] = None,
         cmc_l: float = ColorConstants.CMC_L_DEFAULT,
         cmc_c: float = ColorConstants.CMC_C_DEFAULT,
+        max_hue_delta: Optional[float] = None,
     ) -> List[Tuple[FilamentRecord, float]]:
         """
         Find nearest N filaments by color similarity, with optional filters.
@@ -805,6 +871,10 @@ class FilamentPalette:
             owned: Filter to owned filaments only. None (default) = auto-detect,
                    True = owned only, False = all filaments.
             cmc_l, cmc_c: Parameters for CMC metric.
+            max_hue_delta: Maximum allowed hue angle difference in degrees (LCH hue, 0-180).
+                           Filters out candidates whose hue differs by more than this amount.
+                           Achromatic targets (chroma < 5) skip hue filtering automatically.
+                           Example: 30.0 keeps results within the same hue family.
         
         Returns:
             List of (filament_record, distance) tuples sorted by distance (closest first).
@@ -825,6 +895,15 @@ class FilamentPalette:
         
         if not candidates:
             raise ValueError("No filaments match the specified filters")
+
+        # Apply hue-angle filter if requested and target is chromatic
+        if max_hue_delta is not None:
+            candidates = _filter_by_hue(candidates, target_lab, max_hue_delta)
+            if not candidates:
+                raise ValueError(
+                    f"No filaments found within {max_hue_delta}° hue of the target color. "
+                    "Try a larger --max-hue-delta value."
+                )
 
         # Choose distance function
         metric_l = metric.lower()
