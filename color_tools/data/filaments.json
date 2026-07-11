@@ -8218,5 +8218,1061 @@
     "color": "Silk Silver",
     "hex": "#b5c1c6",
     "td_value": 2.6
+  },
+  {
+    "id": "anycubic-pla-basic-clear",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Clear",
+    "hex": "#CECABF"
+  },
+  {
+    "id": "anycubic-pla-basic-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#EFF0F1"
+  },
+  {
+    "id": "anycubic-pla-basic-mia-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Mia White",
+    "hex": "#F1E9E0"
+  },
+  {
+    "id": "anycubic-pla-basic-mia-pink",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Mia Pink",
+    "hex": "#FAD6C6"
+  },
+  {
+    "id": "anycubic-pla-basic-peach-pink",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Peach Pink",
+    "hex": "#FFC196"
+  },
+  {
+    "id": "anycubic-pla-basic-yellow",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Yellow",
+    "hex": "#F3E500"
+  },
+  {
+    "id": "anycubic-pla-basic-gold",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Gold",
+    "hex": "#FFB81C"
+  },
+  {
+    "id": "anycubic-pla-basic-orange",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Orange",
+    "hex": "#FF7F32"
+  },
+  {
+    "id": "anycubic-pla-basic-pink",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Pink",
+    "hex": "#FF8DA1"
+  },
+  {
+    "id": "anycubic-pla-basic-magenta",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Magenta",
+    "hex": "#CF4F80"
+  },
+  {
+    "id": "anycubic-pla-basic-texture-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Texture Red",
+    "hex": "#EF3340"
+  },
+  {
+    "id": "anycubic-pla-basic-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Red",
+    "hex": "#CE3845"
+  },
+  {
+    "id": "anycubic-pla-basic-purple",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Purple",
+    "hex": "#6A6DCD"
+  },
+  {
+    "id": "anycubic-pla-basic-interstellar-violet",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Interstellar Violet",
+    "hex": "#5B618F"
+  },
+  {
+    "id": "anycubic-pla-basic-cyan",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Cyan",
+    "hex": "#23A3C7"
+  },
+  {
+    "id": "anycubic-pla-basic-tropical-turquoise",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Tropical Turquoise",
+    "hex": "#009CBD"
+  },
+  {
+    "id": "anycubic-pla-basic-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Blue",
+    "hex": "#003594"
+  },
+  {
+    "id": "anycubic-pla-basic-spring-leaf",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Spring Leaf",
+    "hex": "#89A84F"
+  },
+  {
+    "id": "anycubic-pla-basic-olive-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Olive Green",
+    "hex": "#658946"
+  },
+  {
+    "id": "anycubic-pla-basic-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Green",
+    "hex": "#009639"
+  },
+  {
+    "id": "anycubic-pla-basic-beige",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Beige",
+    "hex": "#D4B996"
+  },
+  {
+    "id": "anycubic-pla-basic-brown",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Brown",
+    "hex": "#927968"
+  },
+  {
+    "id": "anycubic-pla-basic-bronze",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Bronze",
+    "hex": "#7C4D3A"
+  },
+  {
+    "id": "anycubic-pla-basic-light-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Light Grey",
+    "hex": "#DAD9DB"
+  },
+  {
+    "id": "anycubic-pla-basic-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Grey",
+    "hex": "#B1B3B3"
+  },
+  {
+    "id": "anycubic-pla-basic-texture-silver",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Texture Silver",
+    "hex": "#8A8D8F"
+  },
+  {
+    "id": "anycubic-pla-basic-texture-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Texture Grey",
+    "hex": "#75787B"
+  },
+  {
+    "id": "anycubic-pla-basic-blue-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Blue Grey",
+    "hex": "#768692"
+  },
+  {
+    "id": "anycubic-pla-basic-black",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#212721"
+  },
+  {
+    "id": "anycubic-pla-plus-black",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Black",
+    "hex": "#212721"
+  },
+  {
+    "id": "anycubic-pla-plus-white",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "White",
+    "hex": "#EFF0F1"
+  },
+  {
+    "id": "anycubic-pla-plus-bright-red",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Bright Red",
+    "hex": "#E10600"
+  },
+  {
+    "id": "anycubic-pla-plus-brown",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#927968"
+  },
+  {
+    "id": "anycubic-pla-plus-grey",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#B1B3B3"
+  },
+  {
+    "id": "anycubic-pla-plus-texture-silver",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Texture Silver",
+    "hex": "#8A8D8F"
+  },
+  {
+    "id": "anycubic-pla-plus-blue",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#003594"
+  },
+  {
+    "id": "anycubic-pla-plus-texture-grey",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Texture Grey",
+    "hex": "#75787B"
+  },
+  {
+    "id": "anycubic-pla-plus-beige",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Beige",
+    "hex": "#D4B996"
+  },
+  {
+    "id": "anycubic-pla-plus-yellow",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#F3E500"
+  },
+  {
+    "id": "anycubic-pla-plus-tropical-turquoise",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Tropical Turquoise",
+    "hex": "#009CBD"
+  },
+  {
+    "id": "anycubic-pla-plus-orange",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF7F32"
+  },
+  {
+    "id": "anycubic-pla-plus-green",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Green",
+    "hex": "#009639"
+  },
+  {
+    "id": "anycubic-pla-plus-green-flash",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Green Flash",
+    "hex": "#75CB5D"
+  },
+  {
+    "id": "anycubic-pla-plus-pink",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#FF8DA1"
+  },
+  {
+    "id": "anycubic-pla-plus-purple",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#6A6DCD"
+  },
+  {
+    "id": "anycubic-pla-plus-red",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Red",
+    "hex": "#C8102E"
+  },
+  {
+    "id": "anycubic-pla-plus-spring-leaf",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Spring Leaf",
+    "hex": "#89A84F"
+  },
+  {
+    "id": "anycubic-pla-plus-interstellar-violet",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Interstellar Violet",
+    "hex": "#5B618F"
+  },
+  {
+    "id": "anycubic-pla-plus-peach-pink",
+    "maker": "Anycubic",
+    "type": "PLA+",
+    "finish": null,
+    "color": "Peach Pink",
+    "hex": "#FFC196"
+  },
+  {
+    "id": "anycubic-pla-high-speed-pearl-black",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Pearl Black",
+    "hex": "#212721"
+  },
+  {
+    "id": "anycubic-pla-high-speed-texture-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Texture Grey",
+    "hex": "#75787B"
+  },
+  {
+    "id": "anycubic-pla-high-speed-bright-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Bright White",
+    "hex": "#F1F0ED"
+  },
+  {
+    "id": "anycubic-pla-high-speed-bright-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Bright Red",
+    "hex": "#E10600"
+  },
+  {
+    "id": "anycubic-pla-high-speed-classic-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Classic Green",
+    "hex": "#3DB24E"
+  },
+  {
+    "id": "anycubic-pla-high-speed-dazzling-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Dazzling Blue",
+    "hex": "#3E55AB"
+  },
+  {
+    "id": "anycubic-pla-high-speed-purple-opulence",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Purple Opulence",
+    "hex": "#695FA2"
+  },
+  {
+    "id": "anycubic-pla-high-speed-vibrant-orange",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Vibrant Orange",
+    "hex": "#FF7338"
+  },
+  {
+    "id": "anycubic-pla-high-speed-vibrant-yellow",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Vibrant Yellow",
+    "hex": "#FDDB27"
+  },
+  {
+    "id": "anycubic-pla-high-speed-strawberry-pink",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Strawberry Pink",
+    "hex": "#F88192"
+  },
+  {
+    "id": "anycubic-pla-matte-black",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Black",
+    "hex": "#484A49"
+  },
+  {
+    "id": "anycubic-pla-matte-dark-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Dark Blue",
+    "hex": "#375172"
+  },
+  {
+    "id": "anycubic-pla-matte-latte-brown",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Latte Brown",
+    "hex": "#E2C6A5"
+  },
+  {
+    "id": "anycubic-pla-matte-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "White",
+    "hex": "#F1F0ED"
+  },
+  {
+    "id": "anycubic-pla-matte-desert-tan",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Desert Tan",
+    "hex": "#DCCAA9"
+  },
+  {
+    "id": "anycubic-pla-matte-dark-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Dark Green",
+    "hex": "#68724D"
+  },
+  {
+    "id": "anycubic-pla-matte-nardo-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Nardo Grey",
+    "hex": "#898B8E"
+  },
+  {
+    "id": "anycubic-pla-matte-bone-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Bone White",
+    "hex": "#EFEDE3"
+  },
+  {
+    "id": "anycubic-pla-matte-dark-brown",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Dark Brown",
+    "hex": "#A38E80"
+  },
+  {
+    "id": "anycubic-pla-matte-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Red",
+    "hex": "#DF484F"
+  },
+  {
+    "id": "anycubic-pla-matte-chocolate-brown",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Chocolate Brown",
+    "hex": "#746759"
+  },
+  {
+    "id": "anycubic-pla-matte-orange",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Orange",
+    "hex": "#FF9351"
+  },
+  {
+    "id": "anycubic-pla-matte-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Green",
+    "hex": "#71C973"
+  },
+  {
+    "id": "anycubic-pla-matte-caramel",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Caramel",
+    "hex": "#C4A981"
+  },
+  {
+    "id": "anycubic-pla-matte-yellow",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Yellow",
+    "hex": "#FFE17F"
+  },
+  {
+    "id": "anycubic-pla-matte-sky-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Sky Blue",
+    "hex": "#7ECCEE"
+  },
+  {
+    "id": "anycubic-pla-matte-apple-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Apple Green",
+    "hex": "#B9E972"
+  },
+  {
+    "id": "anycubic-pla-matte-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Blue",
+    "hex": "#1366A0"
+  },
+  {
+    "id": "anycubic-pla-matte-purple",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Purple",
+    "hex": "#AE96D4"
+  },
+  {
+    "id": "anycubic-pla-matte-sakura-pink",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Sakura Pink",
+    "hex": "#F4C1E1"
+  },
+  {
+    "id": "anycubic-pla-matte-grey",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Grey",
+    "hex": "#8E939B"
+  },
+  {
+    "id": "anycubic-pla-matte-ice-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Ice Blue",
+    "hex": "#8AD8ED"
+  },
+  {
+    "id": "anycubic-pla-silk-shiny-gold",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Shiny Gold",
+    "hex": "#F2A900"
+  },
+  {
+    "id": "anycubic-pla-silk-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Blue",
+    "hex": "#0067B9"
+  },
+  {
+    "id": "anycubic-pla-silk-christmas-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Christmas Green",
+    "hex": "#008755"
+  },
+  {
+    "id": "anycubic-pla-silk-silver",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silver",
+    "hex": "#8D9093"
+  },
+  {
+    "id": "anycubic-pla-silk-pink",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Pink",
+    "hex": "#FCAFC0"
+  },
+  {
+    "id": "anycubic-pla-silk-christmas-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Christmas Red",
+    "hex": "#D22630"
+  },
+  {
+    "id": "anycubic-pla-silk-purple",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Purple",
+    "hex": "#8B84D7"
+  },
+  {
+    "id": "anycubic-pla-silk-gold",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Gold",
+    "hex": "#D19000"
+  },
+  {
+    "id": "anycubic-pla-silk-copper",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Copper",
+    "hex": "#AF5C37"
+  },
+  {
+    "id": "anycubic-pla-silk-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "White",
+    "hex": "#E9E9E7"
+  },
+  {
+    "id": "anycubic-pla-silk-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Green",
+    "hex": "#52D2BC"
+  },
+  {
+    "id": "anycubic-pla-galaxy-galaxy-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Blue",
+    "hex": "#1F2A44"
+  },
+  {
+    "id": "anycubic-pla-galaxy-galaxy-purple",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Purple",
+    "hex": "#491D70"
+  },
+  {
+    "id": "anycubic-pla-galaxy-galaxy-green",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Green",
+    "hex": "#4E5B31"
+  },
+  {
+    "id": "anycubic-pla-galaxy-galaxy-brown",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Galaxy",
+    "color": "Galaxy Brown",
+    "hex": "#5E4241"
+  },
+  {
+    "id": "anycubic-pla-metal-metal-blue",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Metal",
+    "color": "Metal Blue",
+    "hex": "#3177A3"
+  },
+  {
+    "id": "anycubic-pla-metal-metal-black",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Metal",
+    "color": "Metal Black",
+    "hex": "#43403D"
+  },
+  {
+    "id": "anycubic-pla-metal-metal-copper",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Metal",
+    "color": "Metal Copper",
+    "hex": "#956C58"
+  },
+  {
+    "id": "anycubic-pla-metal-metal-champagne",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Metal",
+    "color": "Metal Champagne",
+    "hex": "#B59C7D"
+  },
+  {
+    "id": "anycubic-pla-marble-brick-red",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Brick Red",
+    "hex": "#9D4815"
+  },
+  {
+    "id": "anycubic-pla-marble-marble-white",
+    "maker": "Anycubic",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Marble White",
+    "hex": "#EFF0F1"
+  },
+  {
+    "id": "anycubic-petg-translucent-clear",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Clear",
+    "hex": "#EFF0F1"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-blue",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Blue",
+    "hex": "#69B3E7"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-grey",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Grey",
+    "hex": "#6A6C6E"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-purple",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Purple",
+    "hex": "#D7A9E3"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-brown",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Brown",
+    "hex": "#CDA077"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-pink",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Pink",
+    "hex": "#F8C1B8"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-green",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Green",
+    "hex": "#7CE0D3"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-olive",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Olive",
+    "hex": "#78874D"
+  },
+  {
+    "id": "anycubic-petg-translucent-translucent-orange",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Translucent Orange",
+    "hex": "#FF8F1C"
+  },
+  {
+    "id": "anycubic-petg-black",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Black",
+    "hex": "#212721"
+  },
+  {
+    "id": "anycubic-petg-white",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "White",
+    "hex": "#EFF0F1"
+  },
+  {
+    "id": "anycubic-petg-red",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Red",
+    "hex": "#C8102E"
+  },
+  {
+    "id": "anycubic-petg-blue",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#003594"
+  },
+  {
+    "id": "anycubic-petg-forest-green",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Forest Green",
+    "hex": "#43523B"
+  },
+  {
+    "id": "anycubic-petg-texture-grey",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Texture Grey",
+    "hex": "#75787B"
+  },
+  {
+    "id": "anycubic-petg-clear",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Clear",
+    "hex": "#CECABF"
+  },
+  {
+    "id": "anycubic-petg-orange",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF7F32"
+  },
+  {
+    "id": "anycubic-petg-yellow",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#F3E500"
+  },
+  {
+    "id": "anycubic-petg-grey",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#97999B"
+  },
+  {
+    "id": "anycubic-petg-dark-grey",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Dark Grey",
+    "hex": "#7E868A"
+  },
+  {
+    "id": "anycubic-petg-lake-blue",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Lake Blue",
+    "hex": "#0084D4"
+  },
+  {
+    "id": "anycubic-petg-purple",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#6A6DCD"
+  },
+  {
+    "id": "anycubic-petg-green",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Green",
+    "hex": "#009639"
+  },
+  {
+    "id": "anycubic-petg-beige",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Beige",
+    "hex": "#D4B996"
+  },
+  {
+    "id": "anycubic-petg-brown",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#927968"
+  },
+  {
+    "id": "anycubic-petg-peanut-brown",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Peanut Brown",
+    "hex": "#A9754F"
+  },
+  {
+    "id": "anycubic-petg-texture-silver",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Texture Silver",
+    "hex": "#8A8D8F"
+  },
+  {
+    "id": "anycubic-petg-pink",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#FB637E"
+  },
+  {
+    "id": "anycubic-petg-cream",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Cream",
+    "hex": "#F9DFB9"
+  },
+  {
+    "id": "anycubic-petg-lime-green",
+    "maker": "Anycubic",
+    "type": "PETG",
+    "finish": null,
+    "color": "Lime Green",
+    "hex": "#78D64B"
   }
 ]

@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.7.0] - 2026-07-11
+
 ### Added
 
 - **`--max-hue-delta` hue-restriction filter** for nearest-filament search:
@@ -23,6 +25,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
     suggestion to widen the threshold.
   - Example: `python -m color_tools filament --nearest --hex "#5c94fc" --count 5 --max-hue-delta 30`
   - Example: `.\scripts\find-nearest-filament.ps1 "#5c94fc" -Count 5 -MaxHueDelta 30`
+
+- **Anycubic filament database** — 132 filaments across 10 product lines:
+  - PLA Basic (29), PLA+ (20), PLA High Speed (10), PLA Matte (22), PLA Silk (11),
+    PLA Galaxy (4), PLA Metal (4), PLA Marble (2), PETG Translucent (8), PETG (22)
+  - Multi-color Rainbow variant skipped (4-color entry, no single-hex representation)
+  - Total filament count: 913 → **1,045**
 
 - **`palette_lut` exporter** (`color_tools/exporters/palette_lut_exporter.py`) — new exporter
   that writes a palette as a 1×N PNG strip for use as a GLSL LUT texture:
