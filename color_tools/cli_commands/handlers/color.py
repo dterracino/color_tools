@@ -10,7 +10,6 @@ from ...palette import Palette, load_colors, load_palette
 from ...export import export_colors, list_export_formats
 from ..reporting import get_available_palettes
 
-
 def handle_color_command(args: Namespace, json_path: "Path | str | None" = None) -> None:
     """
     Handle the 'color' command - search and query CSS colors.
@@ -28,7 +27,7 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
     if args.value is not None and args.hex is not None:
         print("Error: Cannot specify both --value and --hex", file=sys.stderr)
         sys.exit(2)
-    
+
     # Load color palette (either custom retro palette or default CSS colors)
     if args.palette:
         # Special case: list available palettes

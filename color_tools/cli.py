@@ -3,6 +3,7 @@ Command-line interface for color_tools.
 
 Provides main commands:
 - color: Search and query CSS colors
+- harmony: Generate styled LCH color harmonies
 - filament: Search and query 3D printing filaments
 - convert: Convert between color spaces and check gamut
 - name: Generate descriptive color names
@@ -35,6 +36,7 @@ from .cli_commands.handlers import (
     handle_validate_command,
     handle_cvd_command,
     handle_color_command,
+    handle_harmony_command,
     handle_filament_command,
     handle_convert_command,
     handle_image_command,
@@ -72,6 +74,9 @@ Examples:
   
   # Find color by name
   {prog_name} color --name "coral"
+
+    # Generate a styled color harmony
+    {prog_name} harmony --type triadic --hex "#E0006B" --mood calm --tone dark
   
   # Generate descriptive name for an RGB color
   {prog_name} name --value 255 128 64
@@ -259,7 +264,6 @@ Examples:
         metavar="N",
         help="Number of nearest colors to return (default: 1, max: 50)"
     )
-    
     # Export operations
     color_parser.add_argument(
         "--export",
@@ -277,6 +281,70 @@ Examples:
         "--list-export-formats",
         action="store_true",
         help="List available export formats and exit"
+    )
+
+    # ==================== HARMONY SUBCOMMAND ====================
+    harmony_parser = subparsers.add_parser(
+        "harmony",
+        help="Generate color harmonies",
+        description="Generate styled color harmonies in CIE LCH space",
+    )
+    harmony_parser.add_argument(
+        "--type",
+        dest="scheme",
+        required=True,
+        choices=[
+            "analogous",
+            "complementary",
+            "full-spectrum",
+            "monochromatic",
+            "rainbow",
+            "split-complementary",
+            "triadic",
+            "square",
+            "tetradic",
+        ],
+        help="Harmony relationship to generate",
+    )
+    harmony_parser.add_argument(
+        "--value",
+        nargs=3,
+        type=float,
+        metavar=("V1", "V2", "V3"),
+        help="Base color value (RGB: r g b | LCH: L C h)",
+    )
+    harmony_parser.add_argument(
+        "--hex",
+        type=str,
+        metavar="COLOR",
+        help="Base color as a hex value (e.g., '#E0006B')",
+    )
+    harmony_parser.add_argument(
+        "--space",
+        choices=["rgb", "lch"],
+        default="rgb",
+        help="Color space of --value (default: rgb)",
+    )
+    harmony_parser.add_argument(
+        "--mood",
+        choices=["warm", "cool", "happy", "calm", "intense", "sad", "energetic"],
+        help="Apply an opinionated mood profile",
+    )
+    harmony_parser.add_argument(
+        "--tone",
+        choices=["normal", "dark", "light"],
+        default="normal",
+        help="Apply an independent tone variation (default: normal)",
+    )
+    harmony_parser.add_argument(
+        "--grade-base",
+        action="store_true",
+        help="Apply mood and tone to the base color",
+    )
+    harmony_parser.add_argument(
+        "--no-gamut-map",
+        action="store_true",
+        help="Leave out-of-gamut colors without RGB or hex values",
     )
     
     # ==================== FILAMENT SUBCOMMAND ====================
@@ -843,6 +911,10 @@ def main():
     # ==================== COLOR COMMAND HANDLER ====================
     if args.command == "color":
         handle_color_command(args, json_path)
+
+    # ==================== HARMONY COMMAND HANDLER ====================
+    elif args.command == "harmony":
+        handle_harmony_command(args)
     
     # ==================== FILAMENT COMMAND HANDLER ====================
     elif args.command == "filament":

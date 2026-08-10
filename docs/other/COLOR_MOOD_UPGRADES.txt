@@ -1,0 +1,57 @@
+Mood	General color treatment
+Pastel	High lightness, reduced saturation, soft contrast
+Muted	Reduced chroma, moderate lightness, restrained contrast
+Vibrant	High chroma, strong differentiation
+Bold	High saturation with stronger light/dark contrast
+Soft	Moderate-low chroma, compressed contrast
+Dusty	Muted with a slight warm/gray bias
+Earthy	Lower chroma, warm naturalistic hues
+Warm	Bias toward reds, oranges, yellows, warm violets
+Cool	Bias toward blues, cyans, cool greens and violets
+Dark	Lower lightness while preserving hue identity
+Moody	Darker values, restrained chroma, selective rich accents
+Deep	Low-to-mid lightness but relatively strong chroma
+Jewel Tone	Deep values with high chroma: ruby, emerald, sapphire territory
+Neon	Extremely high chroma with relatively high perceived brightness
+Electric	Very high chroma with aggressive hue separation
+Washed Out	High lightness and very low chroma
+Faded	Reduced chroma and contrast, often slightly lifted blacks
+Vintage	Muted chroma with warm/yellowed bias
+Retro	Moderately saturated, deliberately shifted period-like hues
+Natural	Controlled chroma and realistic earth/plant/mineral relationships
+Autumnal	Warm, somewhat dark, orange/red/brown/olive bias
+Spring	Light, fresh, moderately saturated, yellow/green bias
+Summer	Bright and airy, often cyan/blue/yellow biased
+Winter	Cooler, darker, higher contrast
+Cozy	Warm, medium-dark, moderate saturation
+Serene	Cool-to-neutral, low contrast, moderate-low chroma
+Romantic	Warm pink/red/violet bias with softened contrast
+Playful	Bright, varied hues, moderately high chroma
+Elegant	Restrained chroma, controlled contrast, usually one strong accent
+Luxurious	Deep values, rich chroma, often warm metallic-adjacent hues
+Dramatic	Strong luminance contrast with saturated accents
+Ominous	Very dark palette with narrow, often cool or sickly-warm accents
+Ethereal	Very light values, low-to-medium chroma, cool bias
+Dreamy	Pastel-like but with more violet/pink/blue hue bias
+Industrial	Low chroma, neutral-heavy, dark accents
+Cyberpunk	Dark foundation plus extremely chromatic cyan/magenta/violet accents
+
+I’d actually separate these internally into orthogonal properties, because then you can combine them.
+
+For example:
+
+Harmony: tetradic
+Temperature: warm
+Mood: muted
+Value: dark
+
+That could produce Warm + Muted + Dark + Tetradic, rather than forcing the user to choose one giant preset.
+
+The useful axes would probably be:
+
+Temperature: Warm / Neutral / Cool
+Chroma: Muted / Natural / Vibrant / Neon
+Value: Pastel / Light / Balanced / Deep / Dark
+Character: Earthy / Dusty / Romantic / Moody / Playful / Elegant / Vintage / etc.
+
+That gives you a surprisingly powerful palette system. A request like “standard magenta, tetradic, warm, dusty, deep” becomes completely deterministic enough to generate programmatically while still sounding like how a human would describe the palette.

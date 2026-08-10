@@ -85,6 +85,7 @@ Color Science
    color_tools.conversions
    color_tools.distance
    color_tools.gamut
+   color_tools.harmony
    color_tools.constants
    color_tools.matrices
    color_tools.config
@@ -150,6 +151,7 @@ Command Line Interface
    color_tools.cli_commands.handlers.color
    color_tools.cli_commands.handlers.convert
    color_tools.cli_commands.handlers.cvd
+   color_tools.cli_commands.handlers.harmony
    color_tools.cli_commands.handlers.filament
    color_tools.cli_commands.handlers.image
    color_tools.cli_commands.handlers.name

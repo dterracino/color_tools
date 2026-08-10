@@ -4,6 +4,7 @@ from .name import handle_name_command
 from .validate import handle_validate_command
 from .cvd import handle_cvd_command
 from .color import handle_color_command
+from .harmony import handle_harmony_command
 from .filament import handle_filament_command
 from .convert import handle_convert_command
 from .image import handle_image_command
@@ -13,6 +14,7 @@ __all__ = [
     "handle_validate_command",
     "handle_cvd_command",
     "handle_color_command",
+    "handle_harmony_command",
     "handle_filament_command",
     "handle_convert_command",
     "handle_image_command",

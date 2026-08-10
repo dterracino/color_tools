@@ -75,6 +75,19 @@ class TestCliMain(unittest.TestCase):
         code, _, _ = self._run(['color', '--nearest', '--hex', '#FF0000'])
         self.assertEqual(code, 0)
 
+    def test_harmony_with_style_exits_0(self):
+        """Top-level harmony command accepts mood and tone options."""
+        code, _, _ = self._run([
+            'harmony', '--type', 'triadic', '--hex', '#E0006B',
+            '--mood', 'calm', '--tone', 'dark',
+        ])
+        self.assertEqual(code, 0)
+
+    def test_harmony_requires_type(self):
+        """Top-level harmony command requires --type."""
+        code, _, _ = self._run(['harmony', '--hex', '#E0006B'])
+        self.assertEqual(code, 2)
+
     def test_filament_list_makers_exits_0(self):
         """filament --list-makers exits 0."""
         code, _, _ = self._run(['filament', '--list-makers'])

@@ -418,6 +418,45 @@ python -m color_tools color --palette web --nearest --value 123 200 88 --space r
 - `vga` - VGA 256-color (Mode 13h palette)
 - `web` - Web-safe 216-color palette (6×6×6 RGB cube)
 
+### Harmony Command
+
+Generate an LCH-based harmony from a hex color or from RGB/LCH values:
+
+```bash
+# Basic triadic harmony
+python -m color_tools harmony --type triadic --hex "#E0006B"
+
+# Compose a mood and tone with the harmony
+python -m color_tools harmony --type complementary --hex "#E0006B" --mood calm --tone dark
+
+# Generate directly from RGB values
+python -m color_tools harmony --type analogous --value 224 0 107 --space rgb
+
+# Generate directly from LCH values
+python -m color_tools harmony --type square --value 48.15 76.58 4.77 --space lch
+
+# Grade the base color along with generated colors
+python -m color_tools harmony --type triadic --hex "#E0006B" --mood happy --grade-base
+
+# Preserve out-of-gamut ideal colors without mapping them to sRGB
+python -m color_tools harmony --type complementary --value 50 150 20 --space lch --no-gamut-map
+```
+
+Harmony arguments:
+
+- `--type SCHEME`: Generate `analogous`, `complementary`, `full-spectrum`, `monochromatic`,
+  `rainbow`, `split-complementary`, `triadic`, `square`, or `tetradic`
+- `--hex COLOR`: Base color as a hexadecimal RGB value
+- `--value V1 V2 V3`: Base color as RGB or LCH components
+- `--space {rgb,lch}`: Color space of `--value` (default: `rgb`)
+- `--mood MOOD`: Apply `warm`, `cool`, `happy`, `calm`, `intense`, `sad`, or `energetic`
+- `--tone TONE`: Apply `normal`, `dark`, or `light` independently of mood
+- `--grade-base`: Apply mood and tone to the base color instead of preserving it unchanged
+- `--no-gamut-map`: Leave out-of-gamut colors without displayable RGB or hex values
+
+`--type` and either `--hex` or `--value` are required. RGB channels must be integers from 0
+through 255.
+
 ### Filament Command
 
 Search and query the 3D printing filament database.

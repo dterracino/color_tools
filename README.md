@@ -101,6 +101,9 @@ color-tools color --name coral
 # Find nearest CSS color to an RGB value
 color-tools color --nearest --value 255 128 64 --space rgb
 
+# Generate a calm, dark triadic harmony
+color-tools harmony --type triadic --hex "#E0006B" --mood calm --tone dark
+
 # Find matching 3D printing filaments
 color-tools filament --nearest --value 255 128 64
 

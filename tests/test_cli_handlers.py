@@ -535,6 +535,90 @@ class TestHandleColorCommand(unittest.TestCase):
         self.assertIn('1.', output)
         self.assertIn('2.', output)
 
+# ---------------------------------------------------------------------------
+# Harmony
+# ---------------------------------------------------------------------------
+
+class TestHandleHarmonyCommand(unittest.TestCase):
+    """Tests for the top-level harmony command."""
+
+    def _run_capture(self, args):
+        from color_tools.cli_commands.handlers.harmony import handle_harmony_command
+        captured = io.StringIO()
+        with self.assertRaises(SystemExit) as ctx:
+            with patch('sys.stdout', captured):
+                handle_harmony_command(args)
+        return ctx.exception.code, captured.getvalue()
+
+    def _make_args(self, **kwargs):
+        defaults = dict(
+            value=None, hex=None, scheme='triadic', space='rgb',
+            mood=None, tone='normal', grade_base=False, no_gamut_map=False,
+        )
+        defaults.update(kwargs)
+        return Namespace(**defaults)
+
+    def test_harmony_by_hex_exits_0(self):
+        args = self._make_args(hex='#E0006B')
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn('Harmony: triadic', output)
+        self.assertIn('3. Hue offset:', output)
+
+    def test_harmony_by_rgb_value_exits_0(self):
+        args = self._make_args(scheme='complementary', value=[224, 0, 107])
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn('2. Hue offset:', output)
+
+    def test_harmony_by_lch_value_exits_0(self):
+        args = self._make_args(
+            scheme='complementary',
+            value=[48.15, 76.58, 4.77],
+            space='lch',
+        )
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn('Base LCH: (48.15, 76.58, 4.8°)', output)
+
+    def test_harmony_reports_mood_tone_and_base_grading(self):
+        args = self._make_args(
+            hex='#E0006B',
+            mood='calm',
+            tone='dark',
+            grade_base=True,
+        )
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn('Mood: calm', output)
+        self.assertIn('Tone: dark', output)
+        self.assertIn('Base graded: yes', output)
+
+    def test_harmony_can_leave_color_unmapped(self):
+        args = self._make_args(
+            scheme='complementary',
+            value=[50.0, 150.0, 20.0],
+            space='lch',
+            no_gamut_map=True,
+        )
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn('out of gamut (not mapped)', output)
+
+    def test_harmony_requires_input(self):
+        code, _ = self._run_capture(self._make_args())
+        self.assertEqual(code, 2)
+
+    def test_harmony_rejects_both_inputs(self):
+        args = self._make_args(value=[224, 0, 107], hex='#E0006B')
+        code, _ = self._run_capture(args)
+        self.assertEqual(code, 2)
+
+    def test_harmony_rejects_non_integral_rgb(self):
+        args = self._make_args(value=[224.5, 0, 107])
+        code, _ = self._run_capture(args)
+        self.assertEqual(code, 2)
+
 
 # ---------------------------------------------------------------------------
 # Filament

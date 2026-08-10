@@ -14,6 +14,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+## [6.9.1] - 2026-08-10
+
+### Added
+
+- **Color harmony CLI** — added the top-level `harmony --type` command for generating harmonies
+  from hex, RGB, or LCH input, with optional `--mood`, `--tone`, `--grade-base`, and
+  `--no-gamut-map` controls.
+
+### Fixed
+
+- **Harmony API documentation** — registered `color_tools.harmony` in the Sphinx autosummary
+  tree so its classes, types, and functions appear in the published compiled documentation.
+
 ## [6.9.0] - 2026-08-10
 
 ### Added

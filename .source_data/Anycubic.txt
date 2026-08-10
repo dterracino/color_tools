@@ -2,19 +2,19 @@ Anycubic Filaments
 
 Material	Color	Hex Code    TD Value
 PLA Basic	Clear	#CECABF
-PLA Basic	White	#EFF0F1
+PLA Basic	White	#EFF0F1	5.6
 PLA Basic	Mia White	#F1E9E0
 PLA Basic	Mia Pink	#FAD6C6
 PLA Basic	Peach Pink	#FFC196
-PLA Basic	Yellow	#F3E500
+PLA Basic	Yellow	#F3E500	6
 PLA Basic	Gold	#FFB81C
 PLA Basic	Orange	#FF7F32
 PLA Basic	Pink	#FF8DA1
-PLA Basic	Magenta	#CF4F80
-PLA Basic	Texture Red	#EF3340
+PLA Basic	Magenta	#CF4F80	3.7
+PLA Basic	Texture Red	#EF3340	100
 PLA Basic	Red	#CE3845
 PLA Basic	Purple	#6A6DCD
-PLA Basic	Interstellar Violet	#5B618F
+PLA Basic	Interstellar Violet	#5B618F	2.2
 PLA Basic	Cyan	#23A3C7
 PLA Basic	Tropical Turquoise	#009CBD
 PLA Basic	Blue	#003594
@@ -27,9 +27,9 @@ PLA Basic	Bronze	#7C4D3A
 PLA Basic	Light Grey	#DAD9DB
 PLA Basic	Grey	#B1B3B3
 PLA Basic	Texture Silver	#8A8D8F
-PLA Basic	Texture Grey	#75787B
+PLA Basic	Texture Grey	#75787B	5.6
 PLA Basic	Blue Grey	#768692
-PLA Basic	Black	#212721
+PLA Basic	Black	#212721	0.3
 PLA+	Black	#212721
 PLA+	White	#EFF0F1
 PLA+	Bright Red	#E10600
