@@ -140,7 +140,10 @@ pip install color-match-tools[all]         # Everything
 - This project targets MCP SDK 2.x and uses `MCPServer` from `mcp.server`.
 - Expose library behavior as typed structured output; do not duplicate color calculations in the
   MCP adapter.
-- Test tools through the in-memory `mcp.Client` transport before testing stdio integration.
+- Keep MCP tool input schemas array-free for VS Code/Copilot compatibility. Use separate scalar
+  color components and comma-separated strings for multi-value filters; structured outputs may
+  still contain arrays.
+- Test tools through both the in-memory `mcp.Client` transport and a spawned stdio subprocess.
 
 **Module Structure:**
 - `image/` - Library module (NOT runnable with -m)

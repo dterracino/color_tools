@@ -2,10 +2,13 @@
 
 from __future__ import annotations
 
+import sys
 import unittest
+from pathlib import Path
 from typing import Any
 
 from mcp.client import Client
+from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from color_tools.mcp.server import mcp
 
@@ -42,24 +45,38 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
             },
         )
         self.assertTrue(all(tool.output_schema for tool in tools.values()))
-        self.assertTrue(all(self._arrays_have_items(tool.input_schema) for tool in tools.values()))
+        self.assertTrue(all(not self._contains_array(tool.input_schema) for tool in tools.values()))
+
+    async def test_stdio_tool_schemas_are_array_free(self) -> None:
+        """The actual stdio wire schemas should avoid arrays that VS Code's adapter corrupts."""
+        project_root = Path(__file__).resolve().parents[1]
+        parameters = StdioServerParameters(
+            command=sys.executable,
+            args=["-m", "color_tools.mcp"],
+            cwd=project_root,
+        )
+        async with Client(stdio_client(parameters), mode="legacy", raise_exceptions=True) as client:
+            result = await client.list_tools()
+
+        self.assertEqual(len(result.tools), 9)
+        self.assertTrue(all(not self._contains_array(tool.input_schema) for tool in result.tools))
 
     @classmethod
-    def _arrays_have_items(cls, schema: Any) -> bool:
-        """Return whether every array schema includes VS Code-compatible item metadata."""
+    def _contains_array(cls, schema: Any) -> bool:
+        """Return whether a schema contains an array input unsupported by the VS Code adapter."""
         if isinstance(schema, dict):
-            if schema.get("type") == "array" and "items" not in schema:
-                return False
-            return all(cls._arrays_have_items(value) for value in schema.values())
+            if schema.get("type") == "array":
+                return True
+            return any(cls._contains_array(value) for value in schema.values())
         if isinstance(schema, list):
-            return all(cls._arrays_have_items(value) for value in schema)
-        return True
+            return any(cls._contains_array(value) for value in schema)
+        return False
 
     async def test_analyze_color_returns_matches_and_coordinates(self) -> None:
         """Comprehensive analysis should combine color and filament knowledge."""
         result = await self.call_tool(
             "analyze_color",
-            {"rgb": [255, 128, 64], "named_color_count": 2, "filament_count": 2},
+            {"red": 255, "green": 128, "blue": 64, "named_color_count": 2, "filament_count": 2},
         )
         self.assertEqual(result["coordinates"]["hex"], "#FF8040")
         self.assertEqual(len(result["nearest_named_colors"]), 2)
@@ -70,9 +87,11 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         result = await self.call_tool(
             "convert_color",
             {
-                "value": [50.0, 150.0, 100.0],
                 "source_space": "lab",
                 "target_space": "rgb",
+                "component_1": 50.0,
+                "component_2": 150.0,
+                "component_3": 100.0,
             },
         )
         self.assertFalse(result["in_srgb_gamut"])
@@ -82,20 +101,42 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         direct = await self.call_tool(
             "convert_color",
             {
-                "value": [50.0, 150.0, 100.0],
                 "source_space": "lab",
                 "target_space": "lch",
+                "component_1": 50.0,
+                "component_2": 150.0,
+                "component_3": 100.0,
                 "clamp_rgb": False,
             },
         )
         self.assertEqual(direct["target_value"][0], 50.0)
         self.assertAlmostEqual(direct["target_value"][1], 180.27756377319946)
 
+        rgb = await self.call_tool(
+            "convert_color",
+            {
+                "source_space": "rgb",
+                "target_space": "lab",
+                "component_1": 255,
+                "component_2": 128,
+                "component_3": 64,
+            },
+        )
+        self.assertEqual(rgb["source_value"], [255.0, 128.0, 64.0])
+        self.assertEqual(len(rgb["target_value"]), 3)
+
     async def test_compare_colors_returns_all_metrics(self) -> None:
         """Identical colors should have zero distance in every metric."""
         result = await self.call_tool(
             "compare_colors",
-            {"first_rgb": [12, 34, 56], "second_rgb": [12, 34, 56]},
+            {
+                "first_red": 12,
+                "first_green": 34,
+                "first_blue": 56,
+                "second_red": 12,
+                "second_green": 34,
+                "second_blue": 56,
+            },
         )
         for key in (
             "delta_e_2000",
@@ -111,7 +152,7 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         """Named-color matching should load non-CSS palettes by name."""
         result = await self.call_tool(
             "find_named_colors",
-            {"rgb": [255, 0, 0], "palette": "cga4", "count": 3},
+            {"red": 255, "green": 0, "blue": 0, "palette": "cga4", "count": 3},
         )
         self.assertEqual(result["palette"], "cga4")
         self.assertEqual(len(result["matches"]), 3)
@@ -125,9 +166,11 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         result = await self.call_tool(
             "find_filaments",
             {
-                "rgb": [255, 0, 0],
-                "makers": ["Bambu"],
-                "materials": ["PLA"],
+                "red": 255,
+                "green": 0,
+                "blue": 0,
+                "makers": "Bambu",
+                "materials": "PLA",
                 "count": 3,
             },
         )
@@ -138,13 +181,13 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         """Specialist tools should return typed transforms and validation evidence."""
         cvd = await self.call_tool(
             "transform_color_vision",
-            {"rgb": [255, 0, 0], "deficiency": "deuteranopia"},
+            {"red": 255, "green": 0, "blue": 0, "deficiency": "deuteranopia"},
         )
         self.assertNotEqual(cvd["original"]["rgb"], cvd["transformed"]["rgb"])
 
         gamut = await self.call_tool(
             "map_to_srgb_gamut",
-            {"lab": [50.0, 150.0, 100.0]},
+            {"lightness": 50.0, "a": 150.0, "b": 100.0},
         )
         self.assertFalse(gamut["was_in_gamut"])
         self.assertGreater(gamut["delta_e_2000"], 0.0)

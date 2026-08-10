@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-from collections.abc import Sequence
 from functools import lru_cache
 from typing import Literal
 
@@ -67,14 +66,6 @@ from .models import (
 
 
 RGBChannel = Annotated[int, Field(ge=0, le=255)]
-RGB = Annotated[
-    list[RGBChannel],
-    Field(min_length=3, max_length=3, description="Three sRGB channels from 0 to 255"),
-]
-LAB = Annotated[
-    list[float],
-    Field(min_length=3, max_length=3, description="Three CIE L*a*b* coordinates"),
-]
 Count = Annotated[int, Field(ge=1, le=50)]
 Percentage = Annotated[float, Field(ge=0.0, le=100.0)]
 
@@ -93,16 +84,30 @@ mcp = MCPServer(
 )
 
 
-def _validate_rgb(rgb: Sequence[int]) -> tuple[int, int, int]:
-    if len(rgb) != 3:
-        raise ValueError("RGB requires exactly three channels")
-    if any(channel < 0 or channel > 255 for channel in rgb):
-        raise ValueError("RGB channels must each be between 0 and 255")
-    return (rgb[0], rgb[1], rgb[2])
+def _rgb(red: RGBChannel, green: RGBChannel, blue: RGBChannel) -> tuple[int, int, int]:
+    return (red, green, blue)
+
+
+def _components(
+    component_1: float,
+    component_2: float,
+    component_3: float,
+    component_4: float | None,
+) -> list[float]:
+    values = [component_1, component_2, component_3]
+    if component_4 is not None:
+        values.append(component_4)
+    return values
+
+
+def _split_filter(value: str | None) -> list[str] | None:
+    if value is None:
+        return None
+    values = [item.strip() for item in value.split(",") if item.strip()]
+    return values or None
 
 
 def _coordinates(rgb: tuple[int, int, int]) -> ColorCoordinates:
-    rgb = _validate_rgb(rgb)
     return ColorCoordinates(
         rgb=rgb,
         hex=rgb_to_hex(rgb),
@@ -167,7 +172,7 @@ def _rgb_from_space(value: list[float], space: ColorSpace, clamp: bool) -> tuple
     if space == "rgb":
         if any(not component.is_integer() for component in value):
             raise ValueError("RGB components must be integers")
-        return _validate_rgb(tuple(int(component) for component in value))  # type: ignore[return-value]
+        return _rgb(int(value[0]), int(value[1]), int(value[2]))
     if space == "xyz":
         return xyz_to_rgb(tuple(value), clamp=clamp)  # type: ignore[arg-type]
     if space == "lab":
@@ -227,12 +232,14 @@ def _convert_value(
 
 @mcp.tool()
 def analyze_color(
-    rgb: RGB,
+    red: RGBChannel,
+    green: RGBChannel,
+    blue: RGBChannel,
     named_color_count: Count = 3,
     filament_count: Count = 5,
 ) -> ColorAnalysis:
     """Analyze an sRGB color in all spaces and find named-color and filament matches."""
-    rgb_value = _validate_rgb(tuple(rgb))
+    rgb_value = _rgb(red, green, blue)
     coordinates = _coordinates(rgb_value)
     generated_name, match_type = generate_color_name(rgb_value)
     named = _css_palette().nearest_colors(coordinates.lab, metric="de2000", count=named_color_count)
@@ -254,12 +261,16 @@ def analyze_color(
 
 @mcp.tool()
 def convert_color(
-    value: list[float],
     source_space: ColorSpace,
     target_space: ColorSpace,
+    component_1: float,
+    component_2: float,
+    component_3: float,
+    component_4: float | None = None,
     clamp_rgb: bool = True,
 ) -> ConversionResult:
-    """Convert between RGB, XYZ, LAB, LCH, HSL, CMY, and CMYK using D65 sRGB."""
+    """Convert scalar components between RGB, XYZ, LAB, LCH, HSL, CMY, and CMYK using D65 sRGB."""
+    value = _components(component_1, component_2, component_3, component_4)
     lab = _lab_from_space(value, source_space)
     gamut_status = is_in_srgb_gamut(lab) if source_space in {"xyz", "lab", "lch"} else None
     unclamped_rgb = _rgb_from_space(value, source_space, clamp=False)
@@ -278,10 +289,17 @@ def convert_color(
 
 
 @mcp.tool()
-def compare_colors(first_rgb: RGB, second_rgb: RGB) -> ColorComparison:
+def compare_colors(
+    first_red: RGBChannel,
+    first_green: RGBChannel,
+    first_blue: RGBChannel,
+    second_red: RGBChannel,
+    second_green: RGBChannel,
+    second_blue: RGBChannel,
+) -> ColorComparison:
     """Compare two sRGB colors with every Color Tools perceptual distance metric."""
-    first = _coordinates(_validate_rgb(tuple(first_rgb)))
-    second = _coordinates(_validate_rgb(tuple(second_rgb)))
+    first = _coordinates(_rgb(first_red, first_green, first_blue))
+    second = _coordinates(_rgb(second_red, second_green, second_blue))
     return ColorComparison(
         first=first,
         second=second,
@@ -296,13 +314,15 @@ def compare_colors(first_rgb: RGB, second_rgb: RGB) -> ColorComparison:
 
 @mcp.tool()
 def find_named_colors(
-    rgb: RGB,
+    red: RGBChannel,
+    green: RGBChannel,
+    blue: RGBChannel,
     palette: str = "css",
     metric: DistanceMetric = "de2000",
     count: Count = 5,
 ) -> NamedColorSearchResult:
     """Find nearest named colors in the CSS database or a bundled retro palette."""
-    target = _coordinates(_validate_rgb(tuple(rgb)))
+    target = _coordinates(_rgb(red, green, blue))
     selected_palette = _css_palette() if palette.lower() == "css" else load_palette(palette)
     matches = selected_palette.nearest_colors(target.lab, metric=metric, count=count)
     return NamedColorSearchResult(
@@ -315,25 +335,27 @@ def find_named_colors(
 
 @mcp.tool()
 def find_filaments(
-    rgb: RGB,
+    red: RGBChannel,
+    green: RGBChannel,
+    blue: RGBChannel,
     metric: DistanceMetric = "de2000",
     count: Count = 5,
-    makers: list[str] | None = None,
-    materials: list[str] | None = None,
-    finishes: list[str] | None = None,
+    makers: str | None = None,
+    materials: str | None = None,
+    finishes: str | None = None,
     owned_only: bool = False,
     max_hue_delta: Annotated[float | None, Field(ge=0.0, le=180.0)] = None,
 ) -> FilamentSearchResult:
-    """Find nearest 3D printing filament colors with maker, material, finish, and hue filters."""
-    rgb_value = _validate_rgb(tuple(rgb))
+    """Find filament colors; maker, material, and finish filters accept comma-separated values."""
+    rgb_value = _rgb(red, green, blue)
     target = _coordinates(rgb_value)
     matches = _filament_palette().nearest_filaments(
         rgb_value,
         metric=metric,
         count=count,
-        maker=makers,
-        type_name=materials,
-        finish=finishes,
+        maker=_split_filter(makers),
+        type_name=_split_filter(materials),
+        finish=_split_filter(finishes),
         owned=owned_only,
         max_hue_delta=max_hue_delta,
     )
@@ -360,12 +382,14 @@ def get_filament_catalog() -> FilamentCatalog:
 
 @mcp.tool()
 def transform_color_vision(
-    rgb: RGB,
+    red: RGBChannel,
+    green: RGBChannel,
+    blue: RGBChannel,
     deficiency: CVDType,
     operation: Literal["simulate", "correct"] = "simulate",
 ) -> CVDResult:
     """Simulate a color vision deficiency or apply a discriminability correction."""
-    rgb_value = _validate_rgb(tuple(rgb))
+    rgb_value = _rgb(red, green, blue)
     original = _coordinates(rgb_value)
     transformed_rgb = (
         simulate_cvd(rgb_value, deficiency)
@@ -383,9 +407,9 @@ def transform_color_vision(
 
 
 @mcp.tool()
-def map_to_srgb_gamut(lab: LAB) -> GamutMappingResult:
+def map_to_srgb_gamut(lightness: float, a: float, b: float) -> GamutMappingResult:
     """Check a LAB color and map it into sRGB by preserving lightness and hue while reducing chroma."""
-    lab_value = (lab[0], lab[1], lab[2])
+    lab_value = (lightness, a, b)
     was_in_gamut = is_in_srgb_gamut(lab_value)
     mapped_lab = lab_value if was_in_gamut else find_nearest_in_gamut(lab_value)
     mapped_rgb = lab_to_rgb(mapped_lab)

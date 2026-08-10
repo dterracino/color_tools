@@ -39,6 +39,20 @@ the same client connection.
 Every tool returns typed structured output. Agents should use CIEDE2000 for ordinary perceptual
 matching unless the user requests a different metric.
 
+### Input Conventions
+
+Tool inputs intentionally avoid JSON Schema arrays because some VS Code/Copilot MCP adapters
+discard array item metadata before validating tools.
+
+- RGB colors use separate `red`, `green`, and `blue` integer parameters.
+- LAB colors use separate `lightness`, `a`, and `b` parameters.
+- `convert_color` uses `component_1` through `component_4` in the source color space's normal
+  order. `component_4` is required only for CMYK.
+- `find_filaments` accepts multiple makers, materials, or finishes as comma-separated strings.
+
+Structured outputs still use arrays where appropriate; the compatibility restriction applies only
+to tool input schemas.
+
 ## VS Code
 
 This repository includes `.vscode/mcp.json`, which launches the server from the project virtual

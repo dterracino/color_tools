@@ -7,7 +7,7 @@ This document catalogs all scripts in the `tools/` and `tooling/` directories, p
 ## Status Legend
 
 | Status | Description |
-|--------|-------------|
+| -------- | ------------- |
 | ✅ **KEEP** | Actively useful for ongoing development/maintenance |
 | 🔄 **KEEP (Occasional)** | Useful but only needed occasionally |
 | ⚠️ **REVIEW** | May still be useful but needs evaluation |
@@ -21,11 +21,13 @@ This document catalogs all scripts in the `tools/` and `tooling/` directories, p
 This directory contains palette-related utilities.
 
 ### convert_palettes.py
+
 **Status:** 🔄 **KEEP (Occasional)**
 
 **Purpose:** Converts existing palette files to a new metadata format with compact formatting. Adds metadata like `name`, `description`, `native_resolution`, `display_aspect_ratio`, `pixel_aspect_ratio`, `creator`, `year`, `bit_depth`, etc.
 
 **Usage:** Run when adding new palettes or converting palette format.
+
 ```bash
 python tools/convert_palettes.py
 python tools/convert_palettes.py path/to/palette.json
@@ -36,6 +38,7 @@ python tools/convert_palettes.py path/to/palette.json
 ---
 
 ### generate_genesis_palette.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Generates the Sega Genesis/Mega Drive 512-color 9-bit RGB palette JSON file.
@@ -45,6 +48,7 @@ python tools/convert_palettes.py path/to/palette.json
 ---
 
 ### regenerate_palette_hashes.py
+
 **Status:** 🗑️ **RETIRE** (Superseded)
 
 **Purpose:** Generates SHA-256 hashes for palette files to update `constants.py`.
@@ -54,6 +58,7 @@ python tools/convert_palettes.py path/to/palette.json
 ---
 
 ### revert_palettes.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Reverts palette files from metadata format back to simple array format.
@@ -63,6 +68,7 @@ python tools/convert_palettes.py path/to/palette.json
 ---
 
 ### test_basic_palettes.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Test script to verify palette loading functionality. Tests loading Genesis palette and creating Palette objects.
@@ -72,6 +78,7 @@ python tools/convert_palettes.py path/to/palette.json
 ---
 
 ### test_palettes.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Test script to verify palette loading and image quantization functionality.
@@ -85,6 +92,7 @@ python tools/convert_palettes.py path/to/palette.json
 This directory contains development and data conversion utilities.
 
 ### README.md
+
 **Status:** ✅ **KEEP**
 
 **Purpose:** Documentation for the tooling directory. Explains purpose and usage of key scripts.
@@ -94,6 +102,7 @@ This directory contains development and data conversion utilities.
 ---
 
 ### add_lch.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Adds LCH values to all colors in `color_tools.json` (old data format).
@@ -103,6 +112,7 @@ This directory contains development and data conversion utilities.
 ---
 
 ### add_slugs_to_database.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Adds slug IDs to all filaments in `filaments.json`.
@@ -112,6 +122,7 @@ This directory contains development and data conversion utilities.
 ---
 
 ### bambu_new_filaments.json
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Output/temporary data file from `import_bambu_new.py`.
@@ -121,11 +132,13 @@ This directory contains development and data conversion utilities.
 ---
 
 ### check_duplicates.py
+
 **Status:** 🔄 **KEEP (Occasional)**
 
 **Purpose:** Checks for duplicate entries in `filaments.json`. Reports exact duplicates and near-duplicates (same maker/type/color with different finish).
 
 **Usage:** Run periodically to validate data integrity:
+
 ```bash
 python tooling/check_duplicates.py
 ```
@@ -135,6 +148,7 @@ python tooling/check_duplicates.py
 ---
 
 ### check_extracted_duplicates.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Checks for duplicates in extracted Polymaker and Panchroma data files.
@@ -144,6 +158,7 @@ python tooling/check_duplicates.py
 ---
 
 ### check_plus_sign.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Finds filaments with `+` character in type or finish fields.
@@ -153,6 +168,7 @@ python tooling/check_duplicates.py
 ---
 
 ### compact_arrays.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Compacts JSON arrays to single lines (older version).
@@ -162,11 +178,13 @@ python tooling/check_duplicates.py
 ---
 
 ### compact_color_arrays.py
+
 **Status:** 🔄 **KEEP (Occasional)**
 
 **Purpose:** Reformats JSON files so color value arrays (rgb, hsl, lab, lch) display on single lines instead of multi-line format.
 
 **Usage:** Run after data file modifications:
+
 ```bash
 python tooling/compact_color_arrays.py
 ```
@@ -176,6 +194,7 @@ python tooling/compact_color_arrays.py
 ---
 
 ### compare_panchroma.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Compares current Panchroma filaments vs newly extracted from PDF.
@@ -185,6 +204,7 @@ python tooling/compact_color_arrays.py
 ---
 
 ### compare_polymaker.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Compares current Polymaker data vs newly extracted data from PDF.
@@ -194,6 +214,7 @@ python tooling/compact_color_arrays.py
 ---
 
 ### convert_to_tuples.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Converts `color_tools.json` to use tuple format instead of named objects for RGB, HSL, LAB values.
@@ -203,11 +224,13 @@ python tooling/compact_color_arrays.py
 ---
 
 ### demo_api.py
+
 **Status:** ✅ **KEEP**
 
 **Purpose:** Demonstration script showing how to use the public API with maker synonyms. Shows three different ways to work with FilamentPalette.
 
 **Usage:** Run to verify API works correctly:
+
 ```bash
 python tooling/demo_api.py
 ```
@@ -217,6 +240,7 @@ python tooling/demo_api.py
 ---
 
 ### extract_panchroma.py
+
 **Status:** 📚 **REFERENCE**
 
 **Purpose:** Extracts Panchroma filament data from Polymaker PDF using pdfplumber.
@@ -226,6 +250,7 @@ python tooling/demo_api.py
 ---
 
 ### extract_polymaker.py
+
 **Status:** 📚 **REFERENCE**
 
 **Purpose:** Extracts Polymaker filament data from PDF.
@@ -235,6 +260,7 @@ python tooling/demo_api.py
 ---
 
 ### filament_slugs_preview.json
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Output data file from `generate_slugs.py`.
@@ -244,6 +270,7 @@ python tooling/demo_api.py
 ---
 
 ### filament_slugs_preview.txt
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Human-readable output from `generate_slugs.py`.
@@ -253,6 +280,7 @@ python tooling/demo_api.py
 ---
 
 ### filaments_with_slugs.json
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Output data file from `add_slugs_to_database.py`.
@@ -262,6 +290,7 @@ python tooling/demo_api.py
 ---
 
 ### generate_palette_hashes.py
+
 **Status:** 🗑️ **RETIRE** (Superseded)
 
 **Purpose:** Generates SHA-256 hashes for palette JSON files.
@@ -271,11 +300,13 @@ python tooling/demo_api.py
 ---
 
 ### generate_palettes.py
+
 **Status:** ✅ **KEEP**
 
 **Purpose:** Generates retro palette JSON files (CGA, EGA, VGA, Web Safe) using the color_tools library for accurate color space conversions.
 
 **Usage:** Regenerate all standard palettes:
+
 ```bash
 python tooling/generate_palettes.py
 ```
@@ -285,6 +316,7 @@ python tooling/generate_palettes.py
 ---
 
 ### generate_slugs.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Generates slug IDs for all filaments and outputs for review.
@@ -294,6 +326,7 @@ python tooling/generate_palettes.py
 ---
 
 ### import_bambu_new.py
+
 **Status:** 📚 **REFERENCE**
 
 **Purpose:** Parses new Bambu Lab filament data files from `.source_data` folder.
@@ -303,6 +336,7 @@ python tooling/generate_palettes.py
 ---
 
 ### merge_bambu_filaments.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Merges new Bambu Lab filament data into `filaments.json`.
@@ -312,6 +346,7 @@ python tooling/generate_palettes.py
 ---
 
 ### panchroma_extracted.json
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Output data file from `extract_panchroma.py`.
@@ -321,6 +356,7 @@ python tooling/generate_palettes.py
 ---
 
 ### polymaker_extracted.json
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Output data file from `extract_polymaker.py`.
@@ -330,6 +366,7 @@ python tooling/generate_palettes.py
 ---
 
 ### polymaker_update_preview.txt
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Preview output from `compare_polymaker.py`.
@@ -339,11 +376,13 @@ python tooling/generate_palettes.py
 ---
 
 ### rename_palette_colors.py
+
 **Status:** 🔄 **KEEP (Occasional)**
 
 **Purpose:** Renames palette colors using intelligent color naming from the `color_tools.naming` module.
 
 **Usage:** Run after adding new palettes:
+
 ```bash
 python tooling/rename_palette_colors.py
 ```
@@ -353,6 +392,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### rename_slug_to_id.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Renames `slug` field to `id` and moves it to first position in `filaments.json`.
@@ -362,6 +402,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### replace_polymaker_panchroma.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Replaces Polymaker and Panchroma data in `filaments.json` with corrected extracts.
@@ -371,6 +412,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### show_sample_slugs.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Displays sample slugs from extracted data.
@@ -380,6 +422,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### show_slug_examples.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Shows collision examples from slugged database.
@@ -389,6 +432,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### split_json.py
+
 **Status:** 📚 **REFERENCE**
 
 **Purpose:** Splits `color_tools.json` into `colors.json` and `filaments.json`.
@@ -398,6 +442,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### sync_td_values.py
+
 **Status:** 📚 **REFERENCE**
 
 **Purpose:** Syncs TD (transmissivity) values from HueForge personal library to color_tools database using fuzzy matching.
@@ -407,6 +452,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### test_plus_slugs.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Tests that `+` character is converted to `-plus` in slugs.
@@ -416,6 +462,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### tg16_palette_generator.html
+
 **Status:** 📚 **REFERENCE**
 
 **Purpose:** HTML/JavaScript version of TurboGrafx-16 palette generator with visual preview.
@@ -425,6 +472,7 @@ python tooling/rename_palette_colors.py
 ---
 
 ### tg16_palette_generator.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Python script to generate TurboGrafx-16 512-color palette JSON.
@@ -434,11 +482,13 @@ python tooling/rename_palette_colors.py
 ---
 
 ### update_hashes.py
+
 **Status:** ✅ **KEEP**
 
 **Purpose:** Generates and optionally auto-updates all SHA-256 hashes for the data integrity system (data files, palettes, matrices, constants).
 
 **Usage:**
+
 ```bash
 # View all hashes
 python tooling/update_hashes.py
@@ -455,6 +505,7 @@ python tooling/update_hashes.py --constants-only
 ---
 
 ### verify_database_update.py
+
 **Status:** 🗑️ **RETIRE**
 
 **Purpose:** Verifies corrected Polymaker data is in the database.
@@ -466,18 +517,21 @@ python tooling/update_hashes.py --constants-only
 ## Summary
 
 ### Scripts to Keep (✅ KEEP)
+
 - `tooling/README.md` - Documentation
 - `tooling/demo_api.py` - API demonstration
 - `tooling/generate_palettes.py` - Palette generation
 - `tooling/update_hashes.py` - Hash management (primary tool)
 
 ### Scripts to Keep for Occasional Use (🔄 KEEP Occasional)
+
 - `tools/convert_palettes.py` - Palette format conversion
 - `tooling/check_duplicates.py` - Data quality assurance
 - `tooling/compact_color_arrays.py` - JSON formatting
 - `tooling/rename_palette_colors.py` - Color naming
 
 ### Scripts to Keep as Reference (📚 REFERENCE)
+
 - `tooling/extract_panchroma.py` - PDF extraction reference
 - `tooling/extract_polymaker.py` - PDF extraction reference
 - `tooling/import_bambu_new.py` - Bambu data import reference
@@ -488,6 +542,7 @@ python tooling/update_hashes.py --constants-only
 ### Scripts to Retire (🗑️ RETIRE)
 
 **tools/ directory:**
+
 - `generate_genesis_palette.py`
 - `regenerate_palette_hashes.py`
 - `revert_palettes.py`
@@ -495,6 +550,7 @@ python tooling/update_hashes.py --constants-only
 - `test_palettes.py`
 
 **tooling/ directory (scripts):**
+
 - `add_lch.py`
 - `add_slugs_to_database.py`
 - `check_extracted_duplicates.py`
@@ -515,6 +571,7 @@ python tooling/update_hashes.py --constants-only
 - `verify_database_update.py`
 
 **tooling/ directory (data files):**
+
 - `bambu_new_filaments.json`
 - `filament_slugs_preview.json`
 - `filament_slugs_preview.txt`

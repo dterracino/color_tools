@@ -21,9 +21,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **VS Code MCP tool-schema compatibility** — fixed-length color inputs use constrained lists so
-  generated array schemas include `items`; fixed tuples emitted only `prefixItems`, causing VS Code
-  to reject tools with `tool parameters array type must have items`.
+- **VS Code MCP tool-schema compatibility** — tool inputs now use scalar color components and
+  comma-separated filter strings. Although the server emitted valid arrays with `items`, the
+  VS Code/Copilot adapter discarded that metadata and rejected the tools before invocation.
+  Protocol tests now verify array-free schemas through a real stdio subprocess.
+- **MCP tests in CI** — the test workflow now installs the optional `mcp` dependency before
+  discovering `tests/test_mcp_server.py`.
 
 ## [6.7.0] - 2026-07-11
 
