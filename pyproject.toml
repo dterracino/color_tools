@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "color-match-tools"
-version = "6.7.0"
+version = "6.8.0"
 description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -56,6 +56,11 @@ logging = [
     "rich>=13.0.0",
 ]
 
+# Model Context Protocol server for agent integrations
+mcp = [
+    "mcp>=2.0.0,<3",
+]
+
 # Documentation generation
 docs = [
     "sphinx>=7.0.0",
@@ -78,6 +83,7 @@ all = [
     "color-match-tools[image]",
     "color-match-tools[interactive]",
     "color-match-tools[logging]",
+    "color-match-tools[mcp]",
 ]
 
 [project.urls]
@@ -89,6 +95,7 @@ Documentation = "https://dterracino.github.io/color_tools/"
 
 [project.scripts]
 color_tools = "color_tools.cli:main"
+color-tools-mcp = "color_tools.mcp:main"
 
 [tool.setuptools]
 include-package-data = false

@@ -48,6 +48,8 @@ A comprehensive Python library for color science operations, color space convers
   - **Palette Quantization**: Convert images to retro palettes (CGA, EGA, VGA, Game Boy) with dithering support
   - **Unified Architecture**: All transformations leverage existing color science infrastructure
 - **Gamut Checking**: Verify if colors are representable in sRGB
+- **Agent Integration** *(with [mcp] extra)*: Typed MCP tools for color analysis, conversion,
+  perceptual comparison, palette search, filament matching, gamut mapping, and CVD transforms
 - **Thread-Safe**: Configurable runtime settings per thread
 - **Color Science Integrity**: Built-in verification of color constants
 
@@ -75,6 +77,9 @@ pip install color-match-tools[interactive]
 
 # With colorized console logging (Rich)
 pip install color-match-tools[logging]
+
+# With the Color Tools MCP server for agents
+pip install color-match-tools[mcp]
 
 # With all optional features
 pip install color-match-tools[all]
@@ -132,6 +137,20 @@ print(f"Filament: {filament.maker} {filament.color}")
 ```
 
 See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) for complete API reference and CLI documentation.
+
+### MCP Server
+
+The optional MCP server exposes Color Tools to GitHub Copilot and other MCP-compatible agents as
+typed, structured tools:
+
+```bash
+pip install "color-match-tools[mcp]"
+color-tools-mcp
+```
+
+MCP clients normally launch the stdio server automatically with `python -m color_tools.mcp`.
+See the [MCP server guide](https://github.com/dterracino/color_tools/blob/main/color_tools/mcp/README.md)
+for the tool catalog and client configuration.
 
 ## 🎨 Color Spaces
 

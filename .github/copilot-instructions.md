@@ -107,7 +107,12 @@ image/              # Image processing (optional [image] extra)
   __init__.py       # Public API exports
   README.md         # Image module documentation
   analysis.py       # K-means clustering, luminance redistribution
-mcp/                # MCP server (planned, not yet implemented)
+mcp/                # MCP server (optional [mcp] extra)
+  __init__.py       # Public server exports
+  __main__.py       # python -m color_tools.mcp entry point
+  models.py         # Pydantic structured output contracts
+  server.py         # MCP 2.x tool registration and stdio entry point
+  README.md         # MCP installation, tools, and client configuration
 ```
 
 ### Optional Dependencies
@@ -116,15 +121,26 @@ The project has **zero required external dependencies** (pure Python stdlib).
 **Optional extras** for additional functionality:
 - `[image]` - Image processing (requires Pillow >= 10.0.0)
 - `[interactive]` - Interactive filament library manager TUI (requires prompt_toolkit >= 3.0.0)
-- `[all]` - All optional user-facing features (fuzzy + image + interactive)
+- `[mcp]` - Color Tools MCP server (requires MCP Python SDK >= 2.0.0)
+- `[all]` - All optional user-facing features (fuzzy + image + interactive + logging + MCP)
 
 **Installation:**
 ```bash
 pip install color-match-tools              # Base only
 pip install color-match-tools[image]       # + Image processing
 pip install color-match-tools[interactive] # + Interactive TUI
+pip install color-match-tools[mcp]         # + MCP agent integration
 pip install color-match-tools[all]         # Everything
 ```
+
+### MCP Server Development
+
+- Use the current MCP Python SDK documentation: <https://py.sdk.modelcontextprotocol.io/>.
+- The MCP protocol documentation is at <https://modelcontextprotocol.io/>.
+- This project targets MCP SDK 2.x and uses `MCPServer` from `mcp.server`.
+- Expose library behavior as typed structured output; do not duplicate color calculations in the
+  MCP adapter.
+- Test tools through the in-memory `mcp.Client` transport before testing stdio integration.
 
 **Module Structure:**
 - `image/` - Library module (NOT runnable with -m)

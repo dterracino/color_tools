@@ -1,9 +1,11 @@
 {
   "include": ["."],
-  "exclude": ["**/.source_data/**", "**/tooling/**","**/node_modules", "**/__pycache__", ".venv/**", "venv/**", "env/**", ".github/**", "color_tools/data/**"],
+  "exclude": ["**/.source_data/**", "**/tooling/**","**/node_modules", "**/__pycache__", "**/.venv/**", "**/venv/**", "**/env/**", ".github/**", "color_tools/data/**"],
   "typeCheckingMode": "basic",
   "reportMissingImports": true,
   "reportMissingTypeStubs": false,
   "pythonVersion": "3.10",
-  "pythonPlatform": "All"
+  "pythonPlatform": "All",
+  "venvPath": ".",
+  "venv": ".venv"
 }

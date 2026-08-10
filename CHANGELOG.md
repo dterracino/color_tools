@@ -8,6 +8,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Color Tools MCP server** (`color_tools.mcp`) for MCP-compatible agents:
+  - Nine read-only tools expose color analysis and conversion, all distance metrics, CSS and
+    bundled palette matching, filtered 3D printing filament matching, filament catalog facets,
+    CVD transforms, sRGB gamut mapping, and color-name validation.
+  - Pydantic response models provide validated structured output instead of prose-only results.
+  - Runs over stdio with `color-tools-mcp` or `python -m color_tools.mcp`.
+  - Install with the new optional extra: `pip install color-match-tools[mcp]`.
+  - Includes an in-memory MCP protocol test suite and VS Code workspace configuration.
+
+### Fixed
+
+- **VS Code MCP tool-schema compatibility** — fixed-length color inputs use constrained lists so
+  generated array schemas include `items`; fixed tuples emitted only `prefixItems`, causing VS Code
+  to reject tools with `tool parameters array type must have items`.
+
 ## [6.7.0] - 2026-07-11
 
 ### Added

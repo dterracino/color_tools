@@ -48,13 +48,22 @@ pip install color-match-tools[logging]
 
 Adds Rich for colorized, formatted console log output. Without this extra the logging system falls back to plain `StreamHandler` output automatically — no errors.
 
+**With the Color Tools MCP server:**
+
+```bash
+pip install color-match-tools[mcp]
+```
+
+Adds the official MCP Python SDK and installs the `color-tools-mcp` server command for GitHub
+Copilot and other MCP-compatible agents.
+
 **With all optional features:**
 
 ```bash
 pip install color-match-tools[all]
 ```
 
-Installs everything: fuzzy matching + image processing + interactive manager + logging.
+Installs everything: fuzzy matching + image processing + interactive manager + logging + MCP.
 
 All variants install the `color-tools` command globally in your terminal.
 
@@ -72,7 +81,7 @@ pip install -e .
 This installs:
 
 - Base package in "editable" mode (modify code while using it)
-- All optional dependencies (fuzzy matching, image processing)
+- All optional dependencies (fuzzy matching, image processing, interactive UI, logging, and MCP)
 - Development tools (coverage, pyright, build, twine)
 
 **Minimal development setup (base only):**
@@ -92,7 +101,8 @@ The core module uses **only Python standard library** - **zero external dependen
 - `[image]`: Pillow >= 10.0.0 for image processing features
 - `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
 - `[logging]`: Rich >= 13.0.0 for colorized console log output (plain StreamHandler used as fallback)
-- `[all]`: All of the above (fuzzy + image + interactive + logging)
+- `[mcp]`: MCP >= 2.0.0 for typed agent tools over stdio
+- `[all]`: All of the above (fuzzy + image + interactive + logging + MCP)
 
 **Requirements files (for development/manual installation):**
 
@@ -100,6 +110,7 @@ The core module uses **only Python standard library** - **zero external dependen
 - `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
 - `requirements-image.txt`: Base + Pillow
 - `requirements-interactive.txt`: Base + prompt_toolkit
+- `requirements-mcp.txt`: Base + MCP SDK
 - `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
 
 The validation module works without fuzzywuzzy using a built-in Levenshtein distance implementation. Install fuzzywuzzy for better fuzzy matching performance:
