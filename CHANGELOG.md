@@ -14,6 +14,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+### Changed
+
+- **Documentation theme** — switched back to the ReadTheDocs Sphinx theme after previously compiling with the PyData Sphinx Theme.
+  PyData has some layout issues that weren't noticed until the docs were published.
+
 ## [6.9.2] - 2026-08-10
 
 ### Changed
