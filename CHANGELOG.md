@@ -8,6 +8,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [6.8.1] - 2026-08-10
+
+### Fixed
+
+- **VS Code MCP tool-schema compatibility** — tool inputs now use scalar color components and
+  comma-separated filter strings. Although the server emitted valid arrays with `items`, the
+  VS Code/Copilot adapter discarded that metadata and rejected the tools before invocation.
+  Protocol tests now verify array-free schemas through a real stdio subprocess.
+- **MCP tests in CI** — the test workflow now installs the optional `mcp` dependency before
+  discovering `tests/test_mcp_server.py`.
+
+## [6.8.0] - 2026-08-10
+
 ### Added
 
 - **Color Tools MCP server** (`color_tools.mcp`) for MCP-compatible agents:
@@ -18,15 +31,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Runs over stdio with `color-tools-mcp` or `python -m color_tools.mcp`.
   - Install with the new optional extra: `pip install color-match-tools[mcp]`.
   - Includes an in-memory MCP protocol test suite and VS Code workspace configuration.
-
-### Fixed
-
-- **VS Code MCP tool-schema compatibility** — tool inputs now use scalar color components and
-  comma-separated filter strings. Although the server emitted valid arrays with `items`, the
-  VS Code/Copilot adapter discarded that metadata and rejected the tools before invocation.
-  Protocol tests now verify array-free schemas through a real stdio subprocess.
-- **MCP tests in CI** — the test workflow now installs the optional `mcp` dependency before
-  discovering `tests/test_mcp_server.py`.
 
 ## [6.7.0] - 2026-07-11
 
