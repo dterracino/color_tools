@@ -149,6 +149,65 @@ gameboy_image.save("gameboy_style.png")
 - `find_nearest_in_gamut()` - Find closest displayable color
 - `clamp_to_gamut()` - Force color into sRGB gamut
 
+#### Color Harmonies
+
+- `generate_harmony()` - Generate an LCH-based harmony from an RGB tuple
+- `generate_harmony_lch()` - Generate a harmony directly from an LCH tuple
+
+```python
+from color_tools import generate_harmony, generate_harmony_lch
+
+# Primary RGB API
+calm_triad = generate_harmony(
+  (224, 0, 107),
+  "triadic",
+  mood="calm",
+  tone="dark",
+)
+
+# Direct LCH API for advanced workflows
+warm_complement = generate_harmony_lch(
+  (48.15, 76.58, 4.77),
+  "complementary",
+  mood="warm",
+)
+
+for color in calm_triad.colors:
+  print(color.ideal_lch, color.hex, color.gamut_delta_e)
+```
+
+Supported schemes are `analogous`, `complementary`, `split-complementary`, `triadic`,
+`square`, `tetradic`, `monochromatic`, `rainbow`, and `full-spectrum`. Rainbow and
+full-spectrum are aliases that produce six colors at 60-degree intervals.
+
+Mood and tone compose with the selected harmony:
+
+```text
+base color + harmony + mood + tone
+```
+
+| Mood | Lightness | Chroma and temperature emphasis |
+| --- | --- | --- |
+| `warm` | Preserved | Strengthens warm hues and subdues cool hues |
+| `cool` | Preserved | Strengthens cool hues and subdues warm hues |
+| `happy` | Raised | Higher chroma with warm emphasis |
+| `calm` | Slightly raised | Lower chroma with cool emphasis |
+| `intense` | Increased contrast around mid-lightness | Substantially higher chroma |
+| `sad` | Lowered | Lower chroma with cool emphasis |
+| `energetic` | Alternates lighter and darker | Higher chroma |
+
+The independent `tone` parameter accepts `normal`, `dark`, or `light`. Dark and light use
+proportional lightness shifts, which avoid the clipping caused by fixed additions or
+subtractions. Mood is applied first, tone second, and sRGB gamut mapping last.
+
+The base color remains unchanged by default so the requested anchor color is represented
+exactly. Set `grade_base=True` to apply mood and tone to every color, including the base.
+
+Mood presets are opinionated design heuristics. Emotional color associations vary by culture,
+context, medium, and viewer. Warm and cool presets preserve harmony hue angles; they establish
+temperature emphasis through chroma rather than forcing every palette member into one hue
+family.
+
 #### Palettes
 
 - `Palette.load_default()` - Load CSS color database

@@ -8,6 +8,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### In Progress
+
+- **Image type detection and palette extraction** — added disabled work-in-progress modules for
+  classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
+  sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
+
+## [6.9.0] - 2026-08-10
+
+### Added
+
+- **LCH color harmony API** — added `generate_harmony()` for RGB inputs and
+  `generate_harmony_lch()` for direct CIE LCH inputs. Supported schemes include analogous,
+  complementary, split-complementary, triadic, square, rectangular tetradic, monochromatic,
+  and six-color rainbow/full-spectrum harmonies. Immutable result records preserve ideal LCH
+  relationships and report hue-preserving sRGB gamut mapping.
+- **Composable palette moods and tones** — harmony generation now supports the opinionated
+  `warm`, `cool`, `happy`, `calm`, `intense`, `sad`, and `energetic` mood profiles plus
+  independent `normal`, `dark`, and `light` tones. Transformations operate in LCH before gamut
+  mapping, preserve harmony hue relationships, and leave the base color unchanged unless
+  `grade_base=True` is requested.
+
 ## [6.8.1] - 2026-08-10
 
 ### Fixed

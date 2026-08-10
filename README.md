@@ -138,6 +138,33 @@ print(f"Filament: {filament.maker} {filament.color}")
 
 See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) for complete API reference and CLI documentation.
 
+### Color Harmonies
+
+Generate perceptual color harmonies in CIE LCH space from an RGB base color:
+
+```python
+from color_tools import generate_harmony
+
+palette = generate_harmony(
+  (224, 0, 107),
+  "triadic",
+  mood="calm",
+  tone="dark",
+)
+
+print([color.hex for color in palette.colors])
+```
+
+Harmony schemes include analogous, complementary, split-complementary, triadic, square,
+tetradic, monochromatic, and six-color rainbow/full-spectrum. Optional `warm`, `cool`,
+`happy`, `calm`, `intense`, `sad`, and `energetic` mood presets adjust palette lightness and
+chroma without changing the harmony's hue relationships. Independent `dark` and `light` tones
+can be composed with any mood.
+
+Mood presets are opinionated design heuristics rather than universal psychological rules. The
+base color remains unchanged by default; pass `grade_base=True` to style it with the generated
+colors.
+
 ### MCP Server
 
 The optional MCP server exposes Color Tools to GitHub Copilot and other MCP-compatible agents as

@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.8.1"
+__version__ = "6.9.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -129,6 +129,20 @@ from .gamut import (
     is_in_srgb_gamut,
     find_nearest_in_gamut,
     clamp_to_gamut,
+)
+
+# ============================================================================
+# Color Harmonies (Fixed-Angle LCH Relationships)
+# ============================================================================
+
+from .harmony import (
+    HarmonyColor,
+    HarmonyResult,
+    HarmonyType,
+    MoodType,
+    ToneType,
+    generate_harmony,
+    generate_harmony_lch,
 )
 
 # ============================================================================
@@ -312,6 +326,15 @@ __all__ = [
     "is_in_srgb_gamut",
     "find_nearest_in_gamut",
     "clamp_to_gamut",
+
+    # Color harmonies
+    "HarmonyColor",
+    "HarmonyResult",
+    "HarmonyType",
+    "MoodType",
+    "ToneType",
+    "generate_harmony",
+    "generate_harmony_lch",
     
     # Palettes and data classes
     "Palette",
