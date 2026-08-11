@@ -113,14 +113,27 @@ Export System
    color_tools.export
    color_tools.exporters
    color_tools.exporters.base
+   color_tools.exporters.export_options_base
+   color_tools.exporters.palette_export_data
+   color_tools.exporters.palette_metadata
+   color_tools.exporters.registry
+   color_tools.exporters.ase_exporter
+   color_tools.exporters.autoforge_exporter
+   color_tools.exporters.css_exporter
    color_tools.exporters.csv_exporter
-   color_tools.exporters.json_exporter
    color_tools.exporters.gpl_exporter
    color_tools.exporters.hex_exporter
    color_tools.exporters.jascpal_exporter
-   color_tools.exporters.autoforge_exporter
+   color_tools.exporters.json_exporter
+   color_tools.exporters.kpl_exporter
    color_tools.exporters.lospec_exporter
    color_tools.exporters.paintnet_exporter
+   color_tools.exporters.palette_lut_exporter
+   color_tools.exporters.riffpal_exporter
+   color_tools.exporters.scribus_exporter
+   color_tools.exporters.sketchpalette_exporter
+   color_tools.exporters.soc_exporter
+   color_tools.exporters.swatch_image_exporter
 
 Image Processing *(requires* ``[image]`` *extra)*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

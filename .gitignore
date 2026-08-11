@@ -151,3 +151,4 @@ cython_debug/
 tooling/samples/*
 demos/samples/*
 demos/palette_textures/*
+output/

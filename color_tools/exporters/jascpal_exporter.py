@@ -1,8 +1,22 @@
 """
-JASC-PAL format exporter.
+JASC-PAL palette exporter.
 
-Exports colors in JASC-PAL format used by Paint Shop Pro and other image editors.
-Simple text format with RGB values as space-separated decimals.
+Exports colors to the JASC Paint Shop Pro palette format.
+
+Format:
+
+    JASC-PAL
+    0100
+    <color_count>
+    R G B
+    R G B
+    ...
+
+JASC-PAL is a plain-text RGB palette format commonly used by Paint Shop Pro,
+pixel-art tools, retro graphics utilities, and palette conversion software.
+
+The ``.pal`` extension is shared by multiple palette formats, so the exporter
+registry uses the explicit identifier ``jasc_pal``.
 """
 
 from __future__ import annotations
@@ -10,88 +24,72 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools.exporters.base import PaletteExporter, ExporterMetadata
-from color_tools.exporters import register_exporter
+from color_tools.exporters.base import (
+    ExporterMetadata,
+    PaletteExporter,
+)
+from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
-    from color_tools.filament_palette import FilamentRecord
 
 
 @register_exporter
 class JascPalExporter(PaletteExporter):
     """
-    JASC-PAL format exporter.
-    
-    Exports colors in JASC-PAL format used by Paint Shop Pro and other tools.
-    
-    Format structure:
-        JASC-PAL
-        0100
-        {color_count}
-        R G B
-        R G B
-        ...
-    
-    Example output:
-        JASC-PAL
-        0100
-        8
-        231 224 228
-        239 202 167
-        161 213 180
-    
-    This format is compatible with Paint Shop Pro, Aseprite, and many other
-    image editing applications.
-    
-    Example:
-        >>> from color_tools.exporters import get_exporter
-        >>> exporter = get_exporter('pal')
-        >>> from color_tools.palette import Palette
-        >>> palette = Palette.load_default()
-        >>> path = exporter.export_colors(palette.records[:10], 'colors.pal')
+    Export color palettes in JASC-PAL format.
+
+    JASC-PAL stores 8-bit RGB values as plain text. Color names and alpha
+    values are not supported by the format.
     """
-    
+
     @property
     def metadata(self) -> ExporterMetadata:
+        """Return metadata describing the JASC-PAL exporter."""
         return ExporterMetadata(
-            name='pal',
-            description='JASC-PAL format (Paint Shop Pro)',
-            file_extension='pal',
+            name="jasc_pal",
+            description="JASC Paint Shop Pro palette format",
+            file_extension="pal",
             supports_colors=True,
-            supports_filaments=False,  # Loses filament metadata (maker, type, finish)
+            supports_filaments=False,
         )
-    
+
     def _export_colors_impl(
         self,
         colors: list[ColorRecord],
-        output_path: Path | str | None
+        output_path: Path | str | None,
     ) -> str:
-        """Export colors to JASC-PAL format."""
+        """
+        Export colors to JASC-PAL format.
+
+        Args:
+            colors:
+                Color records to export.
+
+            output_path:
+                Destination PAL file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported PAL file as a string.
+        """
         if output_path is None:
-            output_path = self.generate_filename('colors')
-        
-        output_path = Path(output_path)
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            # Header
-            f.write('JASC-PAL\n')
-            f.write('0100\n')
-            f.write(f'{len(colors)}\n')
-            
-            # Colors as space-separated RGB decimals
+            output_path = self.generate_filename("colors")
+
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with path.open(
+            "w",
+            encoding="ascii",
+            newline="\n",
+        ) as file:
+            file.write("JASC-PAL\n")
+            file.write("0100\n")
+            file.write(f"{len(colors)}\n")
+
             for color in colors:
                 r, g, b = color.rgb
-                f.write(f'{r} {g} {b}\n')
-        
-        return str(output_path)
-    
-    def _export_filaments_impl(
-        self,
-        filaments: list[FilamentRecord],
-        output_path: Path | str | None
-    ) -> str:
-        """Not supported - JASC-PAL format loses filament metadata."""
-        # This won't be called due to supports_filaments=False
-        # But we need to implement the abstract method
-        raise NotImplementedError("JASC-PAL format does not support filaments (loses metadata)")
+                file.write(f"{r} {g} {b}\n")
+
+        return str(path)

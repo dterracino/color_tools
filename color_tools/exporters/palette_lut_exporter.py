@@ -1,25 +1,32 @@
 """
-Palette LUT exporter.
+Palette LUT PNG exporter.
 
-Exports a palette as a 1×N PNG strip suitable for use as a GLSL palette
-LUT texture.  Each pixel in the strip is one palette colour, in palette order.
-The strip can be loaded directly as a GPU texture and sampled with:
+Exports a palette as an N×1 PNG strip suitable for use as a GPU palette
+lookup texture.
 
-    float u   = (float(i) + 0.5) / float(u_palette_size);
-    vec3  col = texture(u_palette, vec2(u, 0.5)).rgb;
+Each pixel represents one palette color in palette order. The texture may be
+sampled directly by palette index:
 
-No external dependencies are required — this exporter uses the built-in
-``SimplePNGWriter`` (pure stdlib) instead of Pillow.
+    float u = (float(i) + 0.5) / float(u_palette_size);
+    vec3 color = texture(u_palette, vec2(u, 0.5)).rgb;
 
-Format details
---------------
-- Width:   number of palette colours (N)
-- Height:  1 pixel (true LUT; sufficient for GPU sampling)
-- Mode:    RGB, 8-bit per channel
-- Sampling: NEAREST filter recommended on the GPU side
+No external dependencies are required. This exporter uses the built-in
+SimplePNGWriter, which is implemented using only the Python standard library.
 
-This exporter supports CSS colour palettes only.  Filaments are not
-meaningful as indexed GPU colour tables.
+Format details:
+    - Width: number of palette colors (N)
+    - Height: 1 pixel
+    - Mode: 8-bit RGB
+    - Ordering: palette order
+    - Recommended GPU filtering: NEAREST
+
+The resulting texture performs indexed palette lookup:
+
+    palette index -> RGB color
+
+A shader may additionally use the texture as the palette source when
+performing nearest-color quantization, but the LUT itself does not perform
+that quantization.
 """
 
 from __future__ import annotations
@@ -27,51 +34,58 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools.exporters import register_exporter
-from color_tools.exporters.base import ExporterMetadata, PaletteExporter
+from color_tools.exporters.base import (
+    ExporterMetadata,
+    PaletteExporter,
+)
+from color_tools.exporters.registry import register_exporter
 from color_tools.image.png_writer import SimplePNGWriter
 
 if TYPE_CHECKING:
-    from color_tools.filament_palette import FilamentRecord
     from color_tools.palette import ColorRecord
 
 
 @register_exporter
 class PaletteLutExporter(PaletteExporter):
     """
-    Palette LUT PNG exporter.
+    Export color palettes as N×1 RGB PNG lookup textures.
 
-    Writes a 1×N PNG strip where each pixel is one palette colour.
-    The output is a valid GPU LUT texture: load it with NEAREST filtering
-    and sample by index to quantise any pixel to the nearest palette colour.
+    Each palette entry is written as one pixel in palette order.
 
-    Example::
+    The resulting image is suitable for uploading directly to a GPU texture
+    and sampling by palette index. NEAREST filtering is recommended so texture
+    sampling does not interpolate between adjacent palette entries.
+
+    Example:
 
         >>> from color_tools.exporters import get_exporter
         >>> from color_tools import load_palette
-        >>> exporter = get_exporter('palette_lut')
-        >>> palette  = load_palette('nes')
-        >>> path = exporter.export_colors(palette.records, 'nes.png')
-        >>> print(path)   # 54×1 px PNG strip
-        nes.png
+        >>>
+        >>> exporter = get_exporter("palette_lut")
+        >>> palette = load_palette("nes")
+        >>> path = exporter.export_colors(
+        ...     palette.records,
+        ...     "nes.png",
+        ... )
 
-    The resulting PNG can be used directly in the ``palette_lut.frag`` shader::
+    GLSL indexed lookup:
 
-        uniform sampler2D u_palette;      // bind nes.png here
-        uniform int       u_palette_size; // 54
+        uniform sampler2D u_palette;
+        uniform int u_palette_size;
 
-    See Also
-    --------
-    ``color_tools.image._png_writer.SimplePNGWriter`` — the underlying writer.
-    ``demos/shaders/palette_lut.frag``                — the companion GLSL shader.
-    ``demos/palette_lut_demo.py``                     — interactive demo.
+        float u = (float(i) + 0.5) / float(u_palette_size);
+        vec3 color = texture(
+            u_palette,
+            vec2(u, 0.5)
+        ).rgb;
     """
 
     @property
     def metadata(self) -> ExporterMetadata:
+        """Return metadata describing the palette LUT exporter."""
         return ExporterMetadata(
             name="palette_lut",
-            description="Palette LUT texture PNG (1×N strip for GLSL shaders)",
+            description="N×1 RGB palette LUT texture for GPU shaders",
             file_extension="png",
             supports_colors=True,
             supports_filaments=False,
@@ -84,19 +98,42 @@ class PaletteLutExporter(PaletteExporter):
         colors: list[ColorRecord],
         output_path: Path | str | None,
     ) -> str:
-        """Write a 1×N LUT PNG strip from a list of ColorRecords."""
+        """
+        Export colors as an N×1 RGB PNG lookup texture.
+
+        Args:
+            colors:
+                Color records to export.
+
+            output_path:
+                Destination PNG file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported PNG file as a string.
+
+        Raises:
+            ValueError:
+                If the palette is empty. SimplePNGWriter requires at least
+                one color.
+        """
         if output_path is None:
-            output_path = Path(f"palette_lut_{len(colors)}.png")
+            output_path = self.generate_filename("colors")
 
-        rgb_tuples = [record.rgb for record in colors]
-        SimplePNGWriter(rgb_tuples, swatch_width=1, swatch_height=1).save(output_path)
-        return str(output_path)
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
 
-    def _export_filaments_impl(
-        self,
-        filaments: list[FilamentRecord],
-        output_path: Path | str | None,
-    ) -> str:
-        """Not supported - Palette LUT format loses filament metadata."""
-        # Unreachable: supports_filaments=False causes base class to raise first
-        raise NotImplementedError  # pragma: no cover
+        rgb_values = [
+            color.rgb
+            for color in colors
+        ]
+
+        writer = SimplePNGWriter(
+            rgb_values,
+            swatch_width=1,
+            swatch_height=1,
+        )
+
+        writer.save(path)
+
+        return str(path)

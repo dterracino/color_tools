@@ -1,10 +1,13 @@
 """
-JSON format exporter for colors and filaments.
+Generic JSON exporter for colors and filaments.
 
-Provides a JSON exporter that outputs raw dataclass data in JSON format.
-Useful for backups, data exchange, and restore operations.
+Exports palette data as structured JSON using the dataclass fields from
+ColorRecord and FilamentRecord.
 
-The exporter is automatically registered and available via the exporter registry.
+The lightweight export_colors() path serializes a raw list of color records.
+
+The palette-aware export_palette() path serializes both palette metadata and
+color records, providing a richer application/data interchange representation.
 """
 
 from __future__ import annotations
@@ -14,80 +17,180 @@ from dataclasses import asdict
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools.exporters.base import PaletteExporter, ExporterMetadata
-from color_tools.exporters import register_exporter
+from color_tools.exporters.base import (
+    ExporterMetadata,
+    PaletteExporter,
+)
+from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
-    from color_tools.palette import ColorRecord
+    from color_tools.exporters.palette_export_data import PaletteExportData
     from color_tools.filament_palette import FilamentRecord
+    from color_tools.palette import ColorRecord
 
 
 @register_exporter
 class JSONExporter(PaletteExporter):
     """
-    JSON format exporter for colors and filaments.
-    
-    Exports data in JSON format with proper indentation and UTF-8 encoding.
-    Output format is identical to the core data files (colors.json, filaments.json),
-    making this exporter suitable for backups and data restoration.
-    
-    Features:
-        - Pretty-printed with 2-space indentation
-        - UTF-8 encoding with non-ASCII characters preserved
-        - Dataclass fields exported as-is (tuples become arrays)
-    
-    Example:
-        >>> from color_tools.exporters import get_exporter
-        >>> exporter = get_exporter('json')
-        >>> from color_tools.palette import Palette
-        >>> palette = Palette.load_default()
-        >>> path = exporter.export_colors(palette.colors, 'my_colors.json')
+    Export colors and filaments as generic JSON.
+
+    Records are serialized directly from their dataclass representation,
+    preserving the available application-level fields without adapting them
+    to a third-party palette specification.
+
+    Palette-aware export additionally preserves the complete PaletteMetadata
+    dataclass.
     """
-    
+
     @property
     def metadata(self) -> ExporterMetadata:
+        """Return metadata describing the generic JSON exporter."""
         return ExporterMetadata(
-            name='json',
-            description='JSON format (raw data, backup/restore)',
-            file_extension='json',
+            name="json",
+            description="Generic JSON format with all record fields",
+            file_extension="json",
             supports_colors=True,
             supports_filaments=True,
+            supports_palette_metadata=True,
         )
-    
+
     def _export_colors_impl(
         self,
         colors: list[ColorRecord],
-        output_path: Path | str | None
+        output_path: Path | str | None,
     ) -> str:
-        """Export colors to JSON format."""
+        """
+        Export colors to generic JSON format.
+
+        Args:
+            colors:
+                Color records to export.
+
+            output_path:
+                Destination JSON file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported JSON file as a string.
+        """
         if output_path is None:
-            output_path = self.generate_filename('colors')
-        
-        output_path = Path(output_path)
-        
-        # Convert dataclasses to dicts
-        data = [asdict(c) for c in colors]
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        
-        return str(output_path)
-    
+            output_path = self.generate_filename("colors")
+
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        data = [
+            asdict(color)
+            for color in colors
+        ]
+
+        self._write_json(path, data)
+
+        return str(path)
+
+    def _export_palette_impl(
+        self,
+        palette: PaletteExportData,
+        output_path: Path | str | None,
+    ) -> str:
+        """
+        Export colors and palette metadata to generic JSON.
+
+        The resulting document contains:
+
+            {
+                "metadata": {...},
+                "colors": [...]
+            }
+
+        Args:
+            palette:
+                Palette colors and metadata.
+
+            output_path:
+                Destination JSON file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported JSON file as a string.
+        """
+        if output_path is None:
+            output_path = self.generate_filename("colors")
+
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        data = {
+            "metadata": asdict(palette.metadata),
+            "colors": [
+                asdict(color)
+                for color in palette.colors
+            ],
+        }
+
+        self._write_json(path, data)
+
+        return str(path)
+
     def _export_filaments_impl(
         self,
         filaments: list[FilamentRecord],
-        output_path: Path | str | None
+        output_path: Path | str | None,
     ) -> str:
-        """Export filaments to JSON format."""
+        """
+        Export filaments to generic JSON format.
+
+        Args:
+            filaments:
+                Filament records to export.
+
+            output_path:
+                Destination JSON file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported JSON file as a string.
+        """
         if output_path is None:
-            output_path = self.generate_filename('filaments')
-        
-        output_path = Path(output_path)
-        
-        # Convert dataclasses to dicts
-        data = [asdict(f) for f in filaments]
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            json.dump(data, f, indent=2, ensure_ascii=False)
-        
-        return str(output_path)
+            output_path = self.generate_filename("filaments")
+
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        data = [
+            asdict(filament)
+            for filament in filaments
+        ]
+
+        self._write_json(path, data)
+
+        return str(path)
+
+    @staticmethod
+    def _write_json(
+        path: Path,
+        data: object,
+    ) -> None:
+        """
+        Write JSON data using the standard exporter formatting.
+
+        Args:
+            path:
+                Destination file path.
+
+            data:
+                JSON-serializable object to write.
+        """
+        with path.open(
+            "w",
+            encoding="utf-8",
+            newline="\n",
+        ) as file:
+            json.dump(
+                data,
+                file,
+                indent=2,
+                ensure_ascii=False,
+            )
+
+            file.write("\n")

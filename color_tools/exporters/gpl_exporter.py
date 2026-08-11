@@ -1,20 +1,23 @@
 """
-GIMP Palette (.gpl) format exporter.
+GIMP Palette (.gpl) exporter.
 
-Exports colors to GIMP Palette format, which is a simple text format
-used by GIMP, Inkscape, Krita, and other graphics applications.
+Exports colors to the GIMP Palette text format used by GIMP, Inkscape,
+Krita, MyPaint, and other graphics applications.
 
-Format specification:
+Format:
+
     GIMP Palette
     Name: palette_name
     Columns: 0
     #
     R   G   B   Color Name
-    255 127 80  coral
-    ...
+    255 127  80  Coral
 
-This exporter demonstrates how to add support for third-party formats
-to the color_tools export system.
+GPL stores 8-bit sRGB values and optional human-readable color names.
+
+Palette-aware export preserves the palette name and preferred column count
+using native GPL header fields. Additional descriptive metadata may be retained
+as comments.
 """
 
 from __future__ import annotations
@@ -22,89 +25,245 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools.exporters.base import PaletteExporter, ExporterMetadata
-from color_tools.exporters import register_exporter
+from color_tools.exporters.base import (
+    ExporterMetadata,
+    PaletteExporter,
+)
+from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
+    from color_tools.exporters.palette_export_data import PaletteExportData
     from color_tools.palette import ColorRecord
-    from color_tools.filament_palette import FilamentRecord
 
 
 @register_exporter
 class GPLExporter(PaletteExporter):
     """
-    GIMP Palette (.gpl) format exporter.
-    
-    Exports colors to the GIMP Palette format, which is supported by:
-        - GIMP (GNU Image Manipulation Program)
-        - Inkscape
-        - Krita
-        - MyPaint
-        - Other graphics applications
-    
-    Format features:
-        - Plain text format
-        - RGB color values (0-255)
-        - Optional color names
-        - Header with palette name
-    
-    Note: This exporter only supports colors (not filaments), as the GPL
-    format is designed for color palettes used in graphics applications.
-    
-    Example:
-        >>> from color_tools.exporters import get_exporter
-        >>> exporter = get_exporter('gpl')
-        >>> from color_tools.palette import Palette
-        >>> palette = Palette.load_default()
-        >>> # Export first 10 colors as a GIMP palette
-        >>> path = exporter.export_colors(palette.colors[:10], 'my_palette.gpl')
+    Export color palettes in GIMP Palette (.gpl) format.
+
+    GPL is a plain-text RGB palette format supported by a broad range of
+    graphics applications.
+
+    Palette and color names are sanitized to prevent embedded line breaks
+    from corrupting the file structure.
+
+    Palette-aware export preserves:
+
+        - name
+        - columns
+
+    Author, description, and tags are written as GPL comments when present.
     """
-    
+
     @property
     def metadata(self) -> ExporterMetadata:
+        """Return metadata describing the GPL exporter."""
         return ExporterMetadata(
-            name='gpl',
-            description='GIMP Palette format (.gpl) for graphics applications',
-            file_extension='gpl',
+            name="gpl",
+            description="GIMP Palette format (.gpl) for graphics applications",
+            file_extension="gpl",
             supports_colors=True,
             supports_filaments=False,
+            supports_palette_metadata=True,
         )
-    
+
     def _export_colors_impl(
         self,
         colors: list[ColorRecord],
-        output_path: Path | str | None
+        output_path: Path | str | None,
     ) -> str:
-        """Export colors to GIMP Palette (.gpl) format."""
+        """
+        Export colors to GIMP Palette format.
+
+        Without palette metadata, the palette name is derived from the output
+        filename and the column count defaults to zero.
+
+        Args:
+            colors:
+                Color records to export.
+
+            output_path:
+                Destination GPL file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported GPL file as a string.
+        """
         if output_path is None:
-            output_path = self.generate_filename('colors')
-        
-        output_path = Path(output_path)
-        
-        # Generate palette name from filename
-        palette_name = output_path.stem
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            # Write header
-            f.write("GIMP Palette\n")
-            f.write(f"Name: {palette_name}\n")
-            f.write("Columns: 0\n")
-            f.write("#\n")
-            
-            # Write colors
+            output_path = self.generate_filename("colors")
+
+        path = Path(output_path)
+
+        return self._write_palette(
+            colors=colors,
+            path=path,
+            name=path.stem,
+            columns=0,
+        )
+
+    def _export_palette_impl(
+        self,
+        palette: PaletteExportData,
+        output_path: Path | str | None,
+    ) -> str:
+        """
+        Export colors and palette metadata to GIMP Palette format.
+
+        Args:
+            palette:
+                Palette colors and metadata.
+
+            output_path:
+                Destination GPL file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported GPL file as a string.
+
+        Raises:
+            ValueError:
+                If the preferred GPL column count exceeds 255.
+        """
+        if output_path is None:
+            output_path = self.generate_filename("colors")
+
+        path = Path(output_path)
+        metadata = palette.metadata
+
+        columns = (
+            metadata.columns
+            if metadata.columns is not None
+            else 0
+        )
+
+        if columns > 255:
+            raise ValueError(
+                "GPL palette columns must be between 0 and 255"
+            )
+
+        return self._write_palette(
+            colors=palette.colors,
+            path=path,
+            name=metadata.name or path.stem,
+            columns=columns,
+            author=metadata.author,
+            description=metadata.description,
+            tags=metadata.tags,
+        )
+
+    def _write_palette(
+        self,
+        *,
+        colors: list[ColorRecord],
+        path: Path,
+        name: str,
+        columns: int,
+        author: str = "",
+        description: str = "",
+        tags: tuple[str, ...] = (),
+    ) -> str:
+        """
+        Serialize a GPL palette to disk.
+
+        Args:
+            colors:
+                Ordered palette colors.
+
+            path:
+                Destination GPL path.
+
+            name:
+                Palette name.
+
+            columns:
+                Preferred display column count.
+
+            author:
+                Optional palette author written as a comment.
+
+            description:
+                Optional description written as a comment.
+
+            tags:
+                Optional tags written as a comment.
+
+        Returns:
+            Path to the exported GPL file as a string.
+        """
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with path.open(
+            "w",
+            encoding="utf-8",
+            newline="\n",
+        ) as file:
+            file.write("GIMP Palette\n")
+            file.write(
+                f"Name: {self._sanitize_line(name)}\n"
+            )
+            file.write(f"Columns: {columns}\n")
+            file.write("#\n")
+
+            if author:
+                file.write(
+                    f"# Author: {self._sanitize_line(author)}\n"
+                )
+
+            if description:
+                file.write(
+                    f"# Description: "
+                    f"{self._sanitize_line(description)}\n"
+                )
+
+            if tags:
+                file.write(
+                    "# Tags: "
+                    + ", ".join(
+                        self._sanitize_line(tag)
+                        for tag in tags
+                    )
+                    + "\n"
+                )
+
+            if author or description or tags:
+                file.write("#\n")
+
             for color in colors:
                 r, g, b = color.rgb
-                # Format: R G B Name (with padding for alignment)
-                f.write(f"{r:3d} {g:3d} {b:3d}\t{color.name}\n")
-        
-        return str(output_path)
-    
-    def _export_filaments_impl(
-        self,
-        filaments: list[FilamentRecord],
-        output_path: Path | str | None
+                color_name = self._sanitize_line(color.name)
+
+                if color_name:
+                    file.write(
+                        f"{r:3d} {g:3d} {b:3d}\t"
+                        f"{color_name}\n"
+                    )
+                else:
+                    file.write(
+                        f"{r:3d} {g:3d} {b:3d}\n"
+                    )
+
+        return str(path)
+
+    @staticmethod
+    def _sanitize_line(
+        value: str | None,
     ) -> str:
-        """Not supported - GPL format is for colors only."""
-        # This won't be called due to supports_filaments=False
-        # But we need to implement the abstract method
-        raise NotImplementedError("GIMP Palette format does not support filaments")
+        """
+        Sanitize text stored in a line-oriented GPL field.
+
+        Args:
+            value:
+                Text to sanitize.
+
+        Returns:
+            Single-line sanitized text.
+        """
+        if not value:
+            return ""
+
+        return (
+            value
+            .replace("\r", " ")
+            .replace("\n", " ")
+            .strip()
+        )

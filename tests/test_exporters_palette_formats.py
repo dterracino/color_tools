@@ -222,8 +222,8 @@ class TestJascPalExporter(unittest.TestCase):
         self.tmp.cleanup()
 
     def test_metadata_name(self):
-        """Exporter name is 'pal'."""
-        self.assertEqual(self.exporter.metadata.name, 'pal')
+        """Legacy 'pal' lookup resolves to canonical 'jasc_pal'."""
+        self.assertEqual(self.exporter.metadata.name, 'jasc_pal')
 
     def test_metadata_supports_colors(self):
         """Exporter supports colors."""

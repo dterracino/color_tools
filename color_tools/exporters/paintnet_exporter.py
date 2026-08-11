@@ -7,90 +7,112 @@ Supports optional comment headers for palette metadata.
 
 from __future__ import annotations
 
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools.exporters.base import PaletteExporter, ExporterMetadata
-from color_tools.exporters import register_exporter
+from color_tools.exporters.base import ExporterMetadata, PaletteExporter
+from color_tools.exporters.export_options_base import ExportOptionsBase
+from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
-    from color_tools.filament_palette import FilamentRecord
+
+
+@dataclass(slots=True)
+class PaintNetOptions(ExportOptionsBase):
+    """Options controlling Paint.NET palette serialization."""
+
+    pad_to_96: bool = False
 
 
 @register_exporter
 class PaintNetExporter(PaletteExporter):
     """
-    PAINT.NET palette format exporter.
-    
-    Exports colors in PAINT.NET's palette format (.txt).
-    Uses AARRGGBB hex format (alpha-first, uppercase, no # prefix).
-    
-    Format structure:
-        ;paint.net Palette File
-        ;Comments start with semicolon
+    Export color palettes in Paint.NET palette format.
+
+    Paint.NET stores colors as 8-digit hexadecimal ARGB values:
+
         AARRGGBB
-        AARRGGBB
-        ...
-    
-    Example output:
-        ;paint.net Palette File
-        ;Palette Name: My Colors
-        ;Colors: 16
-        FF000000
-        FF1D2B53
-        FFFF0000
-    
-    All colors are exported with full opacity (FF alpha channel).
-    
-    Example:
-        >>> from color_tools.exporters import get_exporter
-        >>> exporter = get_exporter('paintnet')
-        >>> from color_tools.palette import Palette
-        >>> palette = Palette.load_default()
-        >>> path = exporter.export_colors(palette.records[:10], 'colors.txt')
+
+    Since ColorRecord currently contains opaque RGB colors, alpha is always
+    written as ``FF``.
+
+    Paint.NET palettes support a maximum of 96 palette entries. Optionally,
+    palettes may be padded to 96 entries with opaque white.
     """
-    
+
+    MAX_COLORS = 96
+
     @property
     def metadata(self) -> ExporterMetadata:
         return ExporterMetadata(
-            name='paintnet',
-            description='PAINT.NET palette format (.txt)',
-            file_extension='txt',
+            name="paintnet",
+            description="Paint.NET palette format",
+            file_extension="txt",
             supports_colors=True,
-            supports_filaments=False,  # Loses filament metadata (maker, type, finish)
+            supports_filaments=False,
+            options_type=PaintNetOptions,
         )
-    
+
     def _export_colors_impl(
         self,
         colors: list[ColorRecord],
-        output_path: Path | str | None
+        output_path: Path | str | None,
     ) -> str:
-        """Export colors to PAINT.NET format."""
-        if output_path is None:
-            output_path = self.generate_filename('colors')
-        
-        output_path = Path(output_path)
-        
-        with open(output_path, 'w', encoding='utf-8') as f:
-            # Header comments
-            f.write(';paint.net Palette File\n')
-            f.write(f';Colors: {len(colors)}\n')
-            
-            # Colors in AARRGGBB format (alpha-first)
-            for color in colors:
-                hex_code = color.hex.lstrip('#').upper()
-                # Prepend FF for full opacity
-                f.write(f'FF{hex_code}\n')
-        
-        return str(output_path)
-    
-    def _export_filaments_impl(
+        return self._write_palette(
+            colors,
+            output_path,
+            pad_to_96=False,
+        )
+
+    def _export_colors_with_options_impl(
         self,
-        filaments: list[FilamentRecord],
-        output_path: Path | str | None
+        colors: list[ColorRecord],
+        output_path: Path | str | None,
+        options: ExportOptionsBase,
     ) -> str:
-        """Not supported - PAINT.NET format loses filament metadata."""
-        # This won't be called due to supports_filaments=False
-        # But we need to implement the abstract method
-        raise NotImplementedError("PAINT.NET format does not support filaments (loses metadata)")
+        assert isinstance(options, PaintNetOptions)
+
+        return self._write_palette(
+            colors,
+            output_path,
+            pad_to_96=options.pad_to_96,
+        )
+
+    def _write_palette(
+        self,
+        colors: list[ColorRecord],
+        output_path: Path | str | None,
+        *,
+        pad_to_96: bool,
+    ) -> str:
+        if len(colors) > self.MAX_COLORS:
+            raise ValueError(
+                f"Paint.NET palettes support at most "
+                f"{self.MAX_COLORS} colors; received {len(colors)}"
+            )
+
+        if output_path is None:
+            output_path = self.generate_filename("colors")
+
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with path.open(
+            "w",
+            encoding="utf-8",
+            newline="\n",
+        ) as file:
+            file.write(";paint.net Palette File\n")
+            file.write(f"; Colors: {len(colors)}\n")
+
+            for color in colors:
+                hex_code = color.hex.removeprefix("#").upper()
+                file.write(f"FF{hex_code}\n")
+
+            if pad_to_96:
+                for _ in range(self.MAX_COLORS - len(colors)):
+                    file.write("FFFFFFFF\n")
+
+        return str(path)

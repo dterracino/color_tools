@@ -226,56 +226,75 @@ Export colors and filaments to various formats for use with external tools:
 
 ### Available Formats
 
-**Universal Formats (Colors + Filaments):**
+| Identifier | Output | Data | Palette metadata | Dependency |
+| --- | --- | --- | --- | --- |
+| `ase` | Adobe Swatch Exchange (`.ase`) | Colors | Yes | `swatch` via `[image]` |
+| `autoforge` | AutoForge CSV (`.csv`) | Filaments | No | None |
+| `css` | CSS custom properties (`.css`) | Colors | No | None |
+| `csv` | Generic CSV (`.csv`) | Colors and filaments | No | None |
+| `gpl` | GIMP Palette (`.gpl`) | Colors | Yes | None |
+| `hex` | Plain HEX list (`.hex`) | Colors | No | None |
+| `jasc_pal` | JASC Paint Shop Pro palette (`.pal`) | Colors | No | None |
+| `json` | Generic JSON (`.json`) | Colors and filaments | Yes for palettes | None |
+| `kpl` | Krita palette (`.kpl`) | Colors | Yes | None |
+| `lospec` | Lospec JSON (`.json`) | Colors | Yes | None |
+| `paintnet` | PAINT.NET palette (`.txt`) | Colors | No | None |
+| `palette_lut` | GPU palette LUT (`.png`) | Colors | No | None |
+| `riff_pal` | Microsoft RIFF palette (`.pal`) | Colors | No | None |
+| `scribus` | Scribus XML palette (`.xml`) | Colors | Yes | None |
+| `sketchpalette` | Sketch Palettes plugin (`.sketchpalette`) | Colors | No | None |
+| `soc` | LibreOffice/OpenOffice palette (`.soc`) | Colors | No | None |
+| `swatch_image` | Presentation swatch sheet (`.png`) | Colors | Yes | Pillow via `[image]` |
 
-- **CSV** - Generic CSV with all fields (preserves full metadata)
-- **JSON** - Raw data format for backup/restore (preserves full metadata)
-
-**Palette/Graphics Applications (Colors Only):**
-
-- **GIMP Palette (.gpl)** - Import into GIMP, Inkscape, Krita
-- **Hex (.hex)** - Simple hex color list (uppercase, no # prefix)
-- **JASC-PAL (.pal)** - Paint Shop Pro palette format (compatible with Aseprite)
-- **PAINT.NET (.txt)** - PAINT.NET palette format (AARRGGBB hex codes)
-- **Lospec JSON (.json)** - Lospec.com palette format for sharing palettes
-
-**3D Printing (Filaments Only):**
-
-- **AutoForge (.csv)** - Specialized CSV for AutoForge/HueForge lithophane workflow
-
-> **Note:** Palette formats (Hex, JASC-PAL, PAINT.NET, Lospec) only export color values and lose filament metadata (maker, type, finish, TD values). For full filament data preservation, use CSV or JSON.
+`list_export_formats()` returns only formats whose optional dependencies are installed by default.
+Pass `available_only=False` to include unavailable formats. Install `color-match-tools[image]`
+for ASE and presentation swatch images.
 
 ### Export Examples
 
 ```python
 from color_tools import Palette, FilamentPalette
 from color_tools.exporters import get_exporter, list_export_formats
+from color_tools.exporters.palette_export_data import PaletteExportData
+from color_tools.exporters.palette_metadata import PaletteMetadata
+from color_tools.exporters.swatch_image_exporter import SwatchImageOptions
 
 # List available formats for colors
-formats = list_export_formats('colors')
-print(formats)
-# {'csv': '...', 'json': '...', 'gpl': '...', 'hex': '...', 'pal': '...', ...}
+formats = list_export_formats("colors")
 
-# Export to various formats
+# Export raw color records
 palette = Palette.load_default()
+get_exporter("gpl").export_colors(palette.records[:20], "colors.gpl")
+get_exporter("jasc_pal").export_colors(palette.records[:20], "colors.pal")
 
-# GIMP Palette for graphics work
-get_exporter('gpl').export_colors(palette.records[:20], 'colors.gpl')
+# Preserve palette-level metadata when the format supports it
+palette_data = PaletteExportData(
+  colors=palette.records[:8],
+  metadata=PaletteMetadata(
+    name="Sample Palette",
+    author="Color Tools",
+    description="Eight colors exported with palette metadata.",
+    columns=4,
+  ),
+)
+get_exporter("json").export_palette(palette_data, "palette.json")
 
-# Hex format for web/programming
-get_exporter('hex').export_colors(palette.records[:20], 'colors.hex')
+# Supply strongly typed, per-export options to configurable exporters
+get_exporter("swatch_image").export_palette(
+  palette_data,
+  "palette.png",
+  options=SwatchImageOptions(show_rgb=True, show_lab=True),
+)
 
-# JASC-PAL for Paint Shop Pro/Aseprite
-get_exporter('pal').export_colors(palette.records[:20], 'colors.pal')
-
-# Lospec JSON for sharing online
-get_exporter('lospec').export_colors(palette.records[:20], 'palette.json')
-
-# Export filaments to AutoForge CSV
+# Export filament records
 filaments = FilamentPalette.load_default()
 bambu_pla = filaments.filter(maker="Bambu Lab", type_name="PLA")
-get_exporter('autoforge').export_filaments(bambu_pla, 'bambu_pla.csv')
+get_exporter("autoforge").export_filaments(bambu_pla, "bambu_pla.csv")
 ```
+
+The functions in `color_tools.export`, including `export_colors()` and `export_filaments()`,
+remain available as backward-compatible facades. New integrations should use the exporter registry
+when they need capability metadata, palette metadata, optional dependency checks, or typed options.
 
 ### Plugin Architecture
 
@@ -288,18 +307,18 @@ from color_tools.exporters.base import PaletteExporter, ExporterMetadata
 @register_exporter
 class MyExporter(PaletteExporter):
     @property
-    def metadata(self):
+  def metadata(self) -> ExporterMetadata:
         return ExporterMetadata(
-            name='myformat',
-            description='My custom format',
-            file_extension='txt',
+      name="myformat",
+      description="My custom format",
+      file_extension="txt",
             supports_colors=True,
             supports_filaments=False,
         )
-    
-    def _export_colors_impl(self, colors, output_path):
-        # Implementation here
-        pass
+
+  def _export_colors_impl(self, colors, output_path) -> str:
+    # Write the file and return its path.
+    return str(output_path)
 ```
 
 See [exporters/gpl_exporter.py](https://github.com/dterracino/color_tools/blob/main/color_tools/exporters/gpl_exporter.py) for a complete example.

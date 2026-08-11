@@ -1,11 +1,12 @@
 """
 AutoForge filament library CSV exporter.
 
-AutoForge is a companion tool for HueForge (3D printing lithophane software).
-It manages filament libraries with transmission distance (TD) values for
-multi-layer transparency planning.
+AutoForge is a companion tool for HueForge that manages filament libraries
+with transmission distance (TD) values for multi-layer color and transparency
+planning.
 
-This exporter converts color_tools filament data to AutoForge's CSV import format.
+This exporter converts color_tools filament data to AutoForge's CSV import
+format.
 """
 
 from __future__ import annotations
@@ -14,91 +15,114 @@ import csv
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools.exporters.base import PaletteExporter, ExporterMetadata
-from color_tools.exporters import register_exporter
+from color_tools.exporters.base import (
+    ExporterMetadata,
+    PaletteExporter,
+)
+from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
-    from color_tools.palette import ColorRecord
     from color_tools.filament_palette import FilamentRecord
 
 
 @register_exporter
 class AutoForgeExporter(PaletteExporter):
     """
-    AutoForge filament library CSV exporter.
-    
-    Exports filaments in the format expected by AutoForge:
+    Export filament palettes to AutoForge CSV format.
+
+    AutoForge expects the following columns:
+
         Brand,Name,TD,Color,Owned
-        Bambu Lab PLA Basic,Jet Black,0.1,#000000,TRUE
-    
-    The Brand column combines maker + type + finish.
-    All exported filaments are marked as Owned=TRUE.
-    
-    AutoForge is used with HueForge for lithophane printing workflows.
-    TD (Transmission Distance) values indicate light transmission through
-    each filament for multi-layer transparency effects.
-    
+
     Example:
-        >>> from color_tools.exporters import get_exporter
-        >>> exporter = get_exporter('autoforge')
-        >>> from color_tools.filament_palette import FilamentPalette
-        >>> palette = FilamentPalette.load_default()
-        >>> bambu = [f for f in palette.filaments if f.maker == 'Bambu Lab']
-        >>> path = exporter.export_filaments(bambu)
+
+        Bambu Lab PLA Basic,Jet Black,0.1,#000000,TRUE
+
+    The Brand field is assembled from the filament maker, material type,
+    and finish. All exported filaments are marked as owned.
     """
-    
+
     @property
     def metadata(self) -> ExporterMetadata:
+        """Return metadata describing the AutoForge exporter."""
         return ExporterMetadata(
-            name='autoforge',
-            description='AutoForge filament library CSV format',
-            file_extension='csv',
+            name="autoforge",
+            description="AutoForge filament library CSV format",
+            file_extension="csv",
             supports_colors=False,
             supports_filaments=True,
         )
-    
-    def _export_colors_impl(
-        self,
-        colors: list[ColorRecord],
-        output_path: Path | str | None
-    ) -> str:
-        """Not supported - AutoForge is filaments-only."""
-        # This won't be called due to supports_colors=False
-        # But we need to implement the abstract method
-        raise NotImplementedError("AutoForge exporter does not support colors")
-    
+
     def _export_filaments_impl(
         self,
         filaments: list[FilamentRecord],
-        output_path: Path | str | None
+        output_path: Path | str | None,
     ) -> str:
-        """Export filaments to AutoForge CSV format."""
+        """
+        Export filaments to AutoForge CSV format.
+
+        Args:
+            filaments:
+                Filament records to export.
+
+            output_path:
+                Destination CSV file. If None, a timestamped filename is
+                generated in the current working directory.
+
+        Returns:
+            Path to the exported CSV file as a string.
+        """
         if output_path is None:
-            output_path = self.generate_filename('filaments')
-        
-        output_path = Path(output_path)
-        
-        with open(output_path, 'w', encoding='utf-8', newline='') as f:
-            writer = csv.writer(f)
-            
-            # Write header
-            writer.writerow(['Brand', 'Name', 'TD', 'Color', 'Owned'])
-            
-            # Write data rows
+            output_path = self.generate_filename("filaments")
+
+        path = Path(output_path)
+        path.parent.mkdir(parents=True, exist_ok=True)
+
+        with path.open("w", encoding="utf-8", newline="") as file:
+            writer = csv.writer(file)
+
+            writer.writerow([
+                "Brand",
+                "Name",
+                "TD",
+                "Color",
+                "Owned",
+            ])
+
             for filament in filaments:
-                # Combine maker, type, and finish for Brand column
-                brand_parts = [filament.maker]
-                if filament.type:
-                    brand_parts.append(filament.type)
-                if filament.finish:
-                    brand_parts.append(filament.finish)
-                brand = ' '.join(brand_parts)
-                
-                name = filament.color
-                td = filament.td_value if filament.td_value is not None else ''
-                color = filament.hex
-                owned = 'TRUE'
-                
-                writer.writerow([brand, name, td, color, owned])
-        
-        return str(output_path)
+                writer.writerow([
+                    self._build_brand(filament),
+                    filament.color,
+                    filament.td_value
+                    if filament.td_value is not None
+                    else "",
+                    filament.hex,
+                    "TRUE",
+                ])
+
+        return str(path)
+
+    @staticmethod
+    def _build_brand(filament: FilamentRecord) -> str:
+        """
+        Build the AutoForge Brand field from filament metadata.
+
+        The field consists of the maker followed by the material type and
+        finish when those values are present.
+
+        Args:
+            filament:
+                Filament record whose brand description should be generated.
+
+        Returns:
+            Combined AutoForge Brand field.
+        """
+        parts = [filament.maker]
+
+        if filament.type:
+            parts.append(filament.type)
+
+        if filament.finish:
+            parts.append(filament.finish)
+
+        return " ".join(parts)

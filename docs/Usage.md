@@ -237,13 +237,24 @@ family.
 
 #### Export
 
-- `export_filaments()` - Export filament data to file (AutoForge CSV, generic CSV, or JSON)
-- `export_colors()` - Export color data to file (generic CSV, JSON, GPL, hex, PAL, PAINT.NET, Lospec, or palette LUT PNG)
-- `list_export_formats()` - List available export formats
-- Individual format exporters: `export_filaments_autoforge()`, `export_filaments_csv()`, `export_filaments_json()`, `export_colors_csv()`, `export_colors_json()`
-- `generate_filename()` - Generate timestamped filename for exports
+- `get_exporter()` - Create a fresh exporter instance by format identifier
+- `list_export_formats()` - Discover registered formats, filtered by data type and dependency availability
+- `export_colors()` - Backward-compatible facade for exporting raw color records
+- `export_filaments()` - Backward-compatible facade for exporting filament records
+- `PaletteExportData` and `PaletteMetadata` - Supply palette-level metadata to compatible formats
+- `ExportOptionsBase` subclasses - Provide strongly typed configuration for a single export operation
+- `generate_filename()` - Generate timestamped filenames
 
-Available export formats: `csv`, `json`, `gpl`, `hex`, `pal`, `paintnet`, `lospec`, `autoforge`, `palette_lut`
+Available format identifiers:
+
+- Colors and filaments: `csv`, `json`
+- Colors: `ase`, `css`, `gpl`, `hex`, `jasc_pal`, `kpl`, `lospec`, `paintnet`,
+  `palette_lut`, `riff_pal`, `scribus`, `sketchpalette`, `soc`, `swatch_image`
+- Filaments: `autoforge`
+
+`ase` requires the `swatch` package and `swatch_image` requires Pillow. Both are installed by
+the `[image]` extra. By default, `list_export_formats()` omits formats whose dependencies are
+unavailable; pass `available_only=False` to list every registered format.
 
 #### PNG Writing (stdlib, no Pillow)
 
@@ -269,26 +280,56 @@ png_bytes = SimplePNGWriter(colors).to_bytes()
 
 ```python
 from color_tools import FilamentPalette, Palette, export_filaments, export_colors
+from color_tools.exporters import get_exporter, list_export_formats
+from color_tools.exporters.palette_export_data import PaletteExportData
+from color_tools.exporters.palette_metadata import PaletteMetadata
+from color_tools.exporters.swatch_image_exporter import SwatchImageOptions
 
-# Export all Bambu Lab PLA filaments to AutoForge CSV
-palette = FilamentPalette.load_default()
-bambu_pla = [f for f in palette.records 
-             if f.maker == "Bambu Lab" and f.type == "PLA"]
-export_filaments(bambu_pla, "bambu_pla_colors.csv", format="autoforge")
+# Discover currently usable color exporters
+formats = list_export_formats("colors")
 
-# Export filtered filaments to generic CSV
-matte_filaments = palette.filter(finish="Matte")
-export_filaments(matte_filaments, "matte_filaments.csv", format="csv")
-
-# Export all colors to JSON
+# Export raw color records through the registry
 color_palette = Palette.load_default()
-export_colors(color_palette.records, "all_colors.json", format="json")
+get_exporter("jasc_pal").export_colors(
+  color_palette.records,
+  "all_colors.pal",
+)
 
-# List available formats
-from color_tools import list_export_formats
-formats = list_export_formats()
-print(f"Available formats: {formats}")
+# Preserve palette-level metadata
+palette_data = PaletteExportData(
+  colors=color_palette.records[:8],
+  metadata=PaletteMetadata(
+    name="Sample Palette",
+    author="Color Tools",
+    description="An eight-color example.",
+    columns=4,
+    tags=("sample", "documentation"),
+  ),
+)
+get_exporter("json").export_palette(palette_data, "sample_palette.json")
+
+# Configure an individual export without mutating the exporter instance
+get_exporter("swatch_image").export_palette(
+  palette_data,
+  "sample_palette.png",
+  options=SwatchImageOptions(
+    show_rgb=True,
+    show_lab=True,
+    show_lch=True,
+  ),
+)
+
+# Existing facade calls remain supported; format precedes output path
+filament_palette = FilamentPalette.load_default()
+matte_filaments = filament_palette.filter(finish="Matte")
+export_filaments(matte_filaments, "csv", "matte_filaments.csv")
+export_colors(color_palette.records, "hex", "all_colors.hex")
 ```
+
+Call `export_colors()` for an ordered list of `ColorRecord` objects when palette-level metadata
+is unnecessary. Call `export_palette()` with `PaletteExportData` when the target format should
+preserve supported fields such as name, author, description, columns, tags, or custom properties.
+Formats that do not support palette metadata safely fall back to raw color export.
 
 ### Data Structures
 
