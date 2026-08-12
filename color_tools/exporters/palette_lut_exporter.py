@@ -5,7 +5,7 @@ Exports a palette as an N×1 PNG strip suitable for use as a GPU palette
 lookup texture.
 
 Each pixel represents one palette color in palette order. The texture may be
-sampled directly by palette index:
+sampled directly by palette index::
 
     float u = (float(i) + 0.5) / float(u_palette_size);
     vec3 color = texture(u_palette, vec2(u, 0.5)).rgb;
@@ -14,13 +14,14 @@ No external dependencies are required. This exporter uses the built-in
 SimplePNGWriter, which is implemented using only the Python standard library.
 
 Format details:
-    - Width: number of palette colors (N)
-    - Height: 1 pixel
-    - Mode: 8-bit RGB
-    - Ordering: palette order
-    - Recommended GPU filtering: NEAREST
 
-The resulting texture performs indexed palette lookup:
+- Width: number of palette colors (N)
+- Height: 1 pixel
+- Mode: 8-bit RGB
+- Ordering: palette order
+- Recommended GPU filtering: NEAREST
+
+The resulting texture performs indexed palette lookup::
 
     palette index -> RGB color
 
@@ -56,7 +57,7 @@ class PaletteLutExporter(PaletteExporter):
     and sampling by palette index. NEAREST filtering is recommended so texture
     sampling does not interpolate between adjacent palette entries.
 
-    Example:
+    Example::
 
         >>> from color_tools.exporters import get_exporter
         >>> from color_tools import load_palette
@@ -68,7 +69,7 @@ class PaletteLutExporter(PaletteExporter):
         ...     "nes.png",
         ... )
 
-    GLSL indexed lookup:
+    GLSL indexed lookup::
 
         uniform sampler2D u_palette;
         uniform int u_palette_size;

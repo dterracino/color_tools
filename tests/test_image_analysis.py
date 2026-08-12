@@ -9,6 +9,7 @@ import sys
 import tempfile
 import os
 from pathlib import Path
+from unittest.mock import patch
 
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent
@@ -393,6 +394,21 @@ class TestRedistributeLuminance(unittest.TestCase):
         
         for change in changes:
             self.assertGreaterEqual(change.delta_e, 0.0)
+
+    def test_delta_e_is_calculated_from_lab_values(self):
+        """Delta E is computed from LAB conversions, not raw RGB tuples."""
+        from color_tools import rgb_to_lab
+        from color_tools.distance import delta_e_2000
+
+        colors = [(100, 50, 30), (200, 180, 160)]
+        changes = self.redistribute_luminance(colors)
+
+        for change in changes:
+            expected = delta_e_2000(
+                rgb_to_lab(change.original_rgb),
+                rgb_to_lab(change.new_rgb),
+            )
+            self.assertAlmostEqual(change.delta_e, expected, places=6)
     
     def test_hueforge_layers_are_assigned(self):
         """Test that Hueforge layers are assigned correctly."""

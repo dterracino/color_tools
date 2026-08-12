@@ -4,6 +4,11 @@ import unittest
 import sys
 from pathlib import Path
 
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover - optional dependency in some environments
+    np = None
+
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent
 if str(parent_dir) not in sys.path:
@@ -13,6 +18,7 @@ from color_tools.distance import (
     delta_e_76,
     delta_e_94,
     delta_e_2000,
+    delta_e_2000_array,
     delta_e_cmc,
     euclidean,
     hsl_euclidean,
@@ -127,6 +133,60 @@ class TestDeltaE2000(unittest.TestCase):
         distance1 = delta_e_2000(lab1, lab2)
         distance2 = delta_e_2000(lab2, lab1)
         self.assertAlmostEqual(distance1, distance2, places=5)
+
+
+@unittest.skipIf(np is None, "NumPy not installed")
+class TestDeltaE2000Array(unittest.TestCase):
+    """Test vectorized CIEDE2000 behavior."""
+
+    def test_scalar_shaped_inputs_match_scalar_function(self):
+        """A single LAB pair should match the scalar implementation."""
+        lab1 = np.array([50.0, 2.6772, -79.7751])
+        lab2 = np.array([50.0, 0.0, -82.7485])
+
+        distance = delta_e_2000_array(lab1, lab2)
+
+        self.assertAlmostEqual(float(distance), delta_e_2000(tuple(lab1), tuple(lab2)), places=5)
+
+    def test_broadcast_one_to_many_matches_scalar_function(self):
+        """A single LAB color should broadcast across many comparisons."""
+        labs1 = np.array([
+            [50.0, 2.6772, -79.7751],
+            [50.0, 3.1571, -77.2803],
+            [60.0, -34.0, 40.0],
+        ])
+        lab2 = np.array([50.0, 0.0, -82.7485])
+
+        distances = delta_e_2000_array(labs1, lab2)
+        expected = np.array([delta_e_2000(tuple(lab1), tuple(lab2)) for lab1 in labs1])
+
+        np.testing.assert_allclose(distances, expected, rtol=1e-10, atol=1e-10)
+
+    def test_many_to_many_matches_scalar_function(self):
+        """Pairwise LAB arrays should match scalar element-by-element results."""
+        labs1 = np.array([
+            [50.0, 2.6772, -79.7751],
+            [50.0, 3.1571, -77.2803],
+            [60.0, -34.0, 40.0],
+        ])
+        labs2 = np.array([
+            [50.0, 0.0, -82.7485],
+            [50.0, 0.0, -82.7485],
+            [62.0, -30.0, 38.0],
+        ])
+
+        distances = delta_e_2000_array(labs1, labs2)
+        expected = np.array([
+            delta_e_2000(tuple(lab1), tuple(lab2))
+            for lab1, lab2 in zip(labs1, labs2)
+        ])
+
+        np.testing.assert_allclose(distances, expected, rtol=1e-10, atol=1e-10)
+
+    def test_rejects_inputs_without_lab_channel_dimension(self):
+        """Inputs must end with the 3-channel LAB axis."""
+        with self.assertRaises(ValueError):
+            delta_e_2000_array(np.array([50.0, 25.0]), np.array([55.0, 20.0]))
 
 
 class TestDeltaECMC(unittest.TestCase):

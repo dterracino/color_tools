@@ -129,11 +129,27 @@ Export System
    color_tools.exporters.lospec_exporter
    color_tools.exporters.paintnet_exporter
    color_tools.exporters.palette_lut_exporter
+   color_tools.exporters.python_exporter
    color_tools.exporters.riffpal_exporter
    color_tools.exporters.scribus_exporter
    color_tools.exporters.sketchpalette_exporter
    color_tools.exporters.soc_exporter
    color_tools.exporters.swatch_image_exporter
+
+Import System
+~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.importers
+   color_tools.importers.base
+   color_tools.importers.registry
+   color_tools.importers.gpl_importer
+   color_tools.importers.hex_importer
+   color_tools.importers.jascpal_importer
+   color_tools.importers.riffpal_importer
 
 Image Processing *(requires* ``[image]`` *extra)*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -147,6 +163,7 @@ Image Processing *(requires* ``[image]`` *extra)*
    color_tools.image.basic
    color_tools.image.blend
    color_tools.image.conversion
+   color_tools.image.dominance
    color_tools.image.watermark
 
 Command Line Interface

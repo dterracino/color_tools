@@ -349,6 +349,21 @@ class TestQuantizeImageToPalette(unittest.TestCase):
         result = quantize_image_to_palette(self._high_color_img(), 'cga4', dither=True)
         self.assertIsInstance(result, PIL.Image.Image)
 
+    def test_de2000_metric_compares_lab_values(self):
+        """de2000 quantization passes LAB tuples to the Delta E function."""
+        from color_tools.image.basic import quantize_image_to_palette
+
+        def _assert_lab_inputs(lab1, lab2, kL=1.0, kC=1.0, kH=1.0):
+            self.assertTrue(all(isinstance(component, float) for component in lab1))
+            self.assertTrue(all(isinstance(component, float) for component in lab2))
+            return 0.0
+
+        with patch('color_tools.distance.delta_e_2000', side_effect=_assert_lab_inputs):
+            result = quantize_image_to_palette(self._low_color_img(), 'cga4', metric='de2000')
+
+        import PIL.Image
+        self.assertIsInstance(result, PIL.Image.Image)
+
     # --- output_path ---
 
     def test_saves_to_output_path(self):

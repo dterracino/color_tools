@@ -4,7 +4,7 @@ Microsoft RIFF PAL palette exporter.
 Exports colors to the binary Microsoft RIFF palette format.
 
 RIFF PAL files use the Resource Interchange File Format (RIFF) container with
-a ``PAL `` form type and a ``data`` chunk containing a Windows LOGPALETTE:
+a ``PAL `` form type and a ``data`` chunk containing a Windows LOGPALETTE::
 
     RIFF
         <size>
@@ -15,7 +15,7 @@ a ``PAL `` form type and a ``data`` chunk containing a Windows LOGPALETTE:
             WORD palNumEntries
             PALETTEENTRY entries[...]
 
-Each PALETTEENTRY contains four bytes:
+Each PALETTEENTRY contains four bytes::
 
     red, green, blue, flags
 

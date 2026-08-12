@@ -952,7 +952,7 @@ def quantize_image_to_palette(
         ... )
     """
     from color_tools.palette import load_palette
-    from ..conversions import rgb_to_lab
+    from ..conversions import rgb_to_hsl, rgb_to_lab
     from ..distance import (
         euclidean, delta_e_76, delta_e_94, delta_e_2000,
         delta_e_cmc, hsl_euclidean
@@ -1066,16 +1066,52 @@ def quantize_image_to_palette(
         colors_to_map = sorted(unique_with_lab, key=lambda x: x[1][0])
         pixels_to_cluster = None  # Not needed for low-color images
     
-    # Select distance function
-    distance_funcs = {
-        'euclidean': euclidean,
-        'de76': delta_e_76,
-        'de94': delta_e_94,
-        'de2000': delta_e_2000,
-        'cmc': delta_e_cmc,
-        'hsl_euclidean': hsl_euclidean
-    }
-    distance_func = distance_funcs.get(metric, delta_e_2000)
+    def _distance_to_palette_color(
+        source_rgb: tuple[int, int, int],
+        source_lab: tuple[float, float, float],
+        palette_record,
+    ) -> float:
+        """Compare source and palette colors in the metric's native space."""
+        if metric == 'euclidean':
+            return euclidean(source_rgb, palette_record.rgb)
+        if metric == 'hsl_euclidean':
+            return hsl_euclidean(
+                rgb_to_hsl(source_rgb),
+                palette_record.hsl,
+            )
+        if metric == 'de76':
+            return delta_e_76(source_lab, palette_record.lab)
+        if metric == 'de94':
+            return delta_e_94(source_lab, palette_record.lab)
+        if metric == 'cmc':
+            return delta_e_cmc(source_lab, palette_record.lab)
+        return delta_e_2000(source_lab, palette_record.lab)
+
+    def _nearest_palette_rgb(
+        source_rgb: tuple[int, int, int],
+        source_lab: tuple[float, float, float],
+    ) -> tuple[int, int, int]:
+        """Find the nearest palette color using the metric's native space."""
+        if metric in {'de76', 'de94', 'de2000', 'cmc'}:
+            color_record, _ = palette.nearest_color(
+                source_lab,
+                space='lab',
+                metric=metric,
+            )
+        elif metric == 'hsl_euclidean':
+            color_record, _ = palette.nearest_color(
+                rgb_to_hsl(source_rgb),
+                space='hsl',
+                metric=metric,
+            )
+        else:
+            color_record, _ = palette.nearest_color(
+                source_rgb,
+                space='rgb',
+                metric=metric,
+            )
+
+        return color_record.rgb
     
     # Map quantized/unique colors to palette colors (collision-free)
     color_map = {}
@@ -1090,8 +1126,11 @@ def quantize_image_to_palette(
             if palette_record.rgb in used_palette_colors:
                 continue  # Skip already-used colors
             
-            # Calculate distance using selected metric
-            dist = distance_func(source_rgb, palette_record.rgb)
+            dist = _distance_to_palette_color(
+                source_rgb,
+                source_lab,
+                palette_record,
+            )
             
             if dist < best_distance:
                 best_distance = dist
@@ -1099,8 +1138,10 @@ def quantize_image_to_palette(
         
         # If all palette colors are used, reuse nearest one
         if best_match is None:
-            color_record, _ = palette.nearest_color(source_rgb, metric=metric)
-            best_match = color_record.rgb
+            best_match = _nearest_palette_rgb(
+                source_rgb,
+                source_lab,
+            )
         
         color_map[source_rgb] = best_match
         used_palette_colors.add(best_match)

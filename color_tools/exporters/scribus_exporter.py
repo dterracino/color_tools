@@ -3,7 +3,7 @@ Scribus XML palette exporter.
 
 Exports colors to Scribus' XML palette format.
 
-Basic RGB structure:
+Basic RGB structure::
 
     <?xml version="1.0" encoding="UTF-8"?>
     <SCRIBUSCOLORS Name="Palette Name">
@@ -103,7 +103,7 @@ class ScribusExporter(PaletteExporter):
 
         Supported metadata:
 
-            - name
+        - name
 
         Scribus' palette XML does not provide standard fields for author,
         description, tags, or preferred column count, so those values are not

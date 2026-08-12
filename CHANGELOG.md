@@ -14,6 +14,43 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+## [6.11.0] - 2026-08-12
+
+### Added
+
+- **Python palette exporter** — added a new `python` exporter that writes palettes as directly
+  usable Python source code with typed options for dictionary, list, tuple, and constants
+  representations, optional metadata blocks, normalized RGB output, alpha inclusion, and hex
+  output.
+- **Perceptual dominant-color image analysis** — added `color_tools.image.dominance` with
+  saliency-aware dominant-color extraction APIs:
+  - `analyze_dominant_colors()` for full analysis output
+  - `dominant_colors()` for the convenience color-only result
+  - `DominantColor` and `DominanceAnalysis` result dataclasses
+- **Vectorized Delta E 2000** — added `delta_e_2000_array()` as a NumPy-accelerated array API
+  for efficient image-scale LAB comparisons with standard broadcasting support.
+- **Palette importer system** — added a registry-backed importer API with automatic format
+  detection and explicit lookup helpers:
+  - `import_palette()`, `detect_importer()`, `get_importer()`, `get_importers_for_extension()`,
+    and `list_import_formats()`
+  - GIMP Palette (`gpl`) importer with support for palette metadata comments emitted by
+    `color_tools`
+  - plain hexadecimal (`hex`) importer
+  - JASC PAL (`jasc_pal`) importer
+  - Microsoft RIFF PAL (`riff_pal`) importer
+- **Importer and exporter regression coverage** — added focused tests for the Python exporter,
+  importer registry and detection, and GPL/HEX/JASC PAL/RIFF PAL palette imports.
+
+### Fixed
+
+- **Image Delta E correctness** — fixed image luminance redistribution and palette quantization
+  paths so LAB-only distance metrics are no longer called with raw RGB tuples:
+  - `image/analysis.py` now converts both colors to LAB before calling `delta_e_2000()`
+  - `image/basic.py` now dispatches quantization metrics in their native spaces
+    (`de76`/`de94`/`de2000`/`cmc` in LAB, `hsl_euclidean` in HSL, `euclidean` in RGB)
+- **RIFF PAL importer registration** — importing `color_tools.importers` now registers and
+  exports `RiffPalImporter` through the public importer package API.
+
 ## [6.10.0] - 2026-08-11
 
 ### Added

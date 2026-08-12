@@ -469,8 +469,11 @@ def redistribute_luminance(colors: List[Tuple[int, int, int]]) -> List[ColorChan
         # Convert back to RGB
         new_rgb = lch_to_rgb(new_lch)
         
-        # Calculate Delta E between original and new
-        delta_e = delta_e_2000(original_rgb, new_rgb)
+        # Delta E formulas operate in LAB, not raw RGB tuples.
+        delta_e = delta_e_2000(
+            rgb_to_lab(original_rgb),
+            rgb_to_lab(new_rgb),
+        )
         
         # Calculate Hueforge layer
         layer = l_value_to_hueforge_layer(new_l)

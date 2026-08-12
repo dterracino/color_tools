@@ -5,6 +5,7 @@ This module provides image color analysis and manipulation tools:
 - Format Conversion: Convert between PNG, JPEG, WebP, HEIC, AVIF, etc. (conversion.py)
 - Watermarking: Add text, image, or SVG watermarks (watermark.py)
 - Color Analysis: Extract dominant colors with K-means clustering (analysis.py)
+- Perceptual Dominance: Find visually dominant colors with saliency-aware analysis (dominance.py)
 - HueForge 3D printing: Luminance redistribution for multi-color printing (analysis.py)
 - CVD Operations: Simulate/correct color vision deficiencies (basic.py)
 - Palette Quantization: Convert to retro palettes with dithering (basic.py)
@@ -108,6 +109,12 @@ try:
         blend_images,
         BLEND_MODES,
     )
+    from .dominance import (
+        DominantColor,
+        DominanceAnalysis,
+        analyze_dominant_colors,
+        dominant_colors,
+    )
     IMAGE_AVAILABLE = True
 except ImportError:
     IMAGE_AVAILABLE = False
@@ -126,6 +133,10 @@ except ImportError:
     redistribute_luminance = _not_available
     format_color_change_report = _not_available
     l_value_to_hueforge_layer = _not_available
+
+    # Dominance analysis functions
+    analyze_dominant_colors = _not_available
+    dominant_colors = _not_available
     
     # Basic analysis functions
     count_unique_colors = _not_available
@@ -160,6 +171,8 @@ except ImportError:
     from typing import Any
     ColorCluster: type[Any] = type('ColorCluster', (), {})
     ColorChange: type[Any] = type('ColorChange', (), {})
+    DominantColor: type[Any] = type('DominantColor', (), {})
+    DominanceAnalysis: type[Any] = type('DominanceAnalysis', (), {})
 
 # SimplePNGWriter is always available — no Pillow required
 from .png_writer import SimplePNGWriter
@@ -171,6 +184,8 @@ __all__ = [
     # Data classes
     'ColorCluster',
     'ColorChange',
+    'DominantColor',
+    'DominanceAnalysis',
     # HueForge functions
     'extract_unique_colors',
     'extract_color_clusters',
@@ -187,6 +202,8 @@ __all__ = [
     'analyze_contrast', 
     'analyze_noise_level',
     'analyze_dynamic_range',
+    'analyze_dominant_colors',
+    'dominant_colors',
     # Image transformation functions
     'transform_image',
     'simulate_cvd_image',

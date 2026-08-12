@@ -1,7 +1,7 @@
 """
 Lospec JSON palette exporter.
 
-Exports colors using Lospec's JSON palette representation:
+Exports colors using Lospec's JSON palette representation::
 
     {
         "name": "Palette Name",
@@ -48,9 +48,9 @@ class LospecExporter(PaletteExporter):
 
     Lospec palettes contain:
 
-        - name
-        - author
-        - colors
+    - name
+    - author
+    - colors
 
     Each color is represented as an ``RRGGBB`` hexadecimal string without a
     leading ``#``.
@@ -115,8 +115,8 @@ class LospecExporter(PaletteExporter):
 
         Supported palette metadata:
 
-            - name
-            - author
+        - name
+        - author
 
         Other PaletteMetadata fields are not represented by the Lospec JSON
         format and are intentionally ignored.

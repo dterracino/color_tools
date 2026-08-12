@@ -3,7 +3,7 @@ CSS custom-properties palette exporter.
 
 Exports palette colors as CSS custom properties inside a :root block.
 
-Example:
+Example::
 
     :root {
         --coral: #FF7F50;

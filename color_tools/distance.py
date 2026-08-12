@@ -332,6 +332,122 @@ def delta_e_2000(
     return dE
 
 
+def delta_e_2000_array(
+    lab1,
+    lab2,
+    kL: float = 1.0,
+    kC: float = 1.0,
+    kH: float = 1.0,
+):
+    """
+    Vectorized Delta E 2000 (CIEDE2000) for NumPy arrays.
+
+    This matches :func:`delta_e_2000` but operates on array inputs shaped
+    ``(..., 3)`` and supports normal NumPy broadcasting. It is intended for
+    image-sized workloads where calling the scalar function in Python loops
+    would be too slow.
+
+    Args:
+        lab1, lab2: Array-like LAB values with trailing dimension 3.
+        kL, kC, kH: Weighting factors (usually all ``1.0``).
+
+    Returns:
+        A NumPy array of Delta E 2000 distances with the broadcasted leading
+        shape of ``lab1`` and ``lab2``.
+    """
+    try:
+        import numpy as np
+    except ImportError as exc:
+        raise ImportError("delta_e_2000_array requires NumPy to be installed") from exc
+
+    lab1 = np.asarray(lab1, dtype=float)
+    lab2 = np.asarray(lab2, dtype=float)
+
+    if lab1.shape[-1] != 3 or lab2.shape[-1] != 3:
+        raise ValueError("lab1 and lab2 must have a trailing dimension of size 3")
+
+    L1, a1, b1 = np.moveaxis(lab1, -1, 0)
+    L2, a2, b2 = np.moveaxis(lab2, -1, 0)
+
+    pow7_term = ColorConstants.DE2000_POW7_BASE ** 7
+
+    C1 = np.hypot(a1, b1)
+    C2 = np.hypot(a2, b2)
+    C_bar = (C1 + C2) / 2.0
+    C_bar7 = C_bar ** 7
+    G = 0.5 * (1.0 - np.sqrt(C_bar7 / (C_bar7 + pow7_term)))
+
+    a1p = (1.0 + G) * a1
+    a2p = (1.0 + G) * a2
+    C1p = np.hypot(a1p, b1)
+    C2p = np.hypot(a2p, b2)
+
+    h1p = np.mod(np.degrees(np.arctan2(b1, a1p)), ColorConstants.HUE_CIRCLE_DEGREES)
+    h2p = np.mod(np.degrees(np.arctan2(b2, a2p)), ColorConstants.HUE_CIRCLE_DEGREES)
+    h1p = np.where((a1p == 0.0) & (b1 == 0.0), 0.0, h1p)
+    h2p = np.where((a2p == 0.0) & (b2 == 0.0), 0.0, h2p)
+
+    dLp = L2 - L1
+    dCp = C2p - C1p
+
+    zero_chroma = (C1p * C2p) == 0.0
+    dhp = h2p - h1p
+    dhp = np.where(dhp > ColorConstants.HUE_HALF_CIRCLE_DEGREES, dhp - ColorConstants.HUE_CIRCLE_DEGREES, dhp)
+    dhp = np.where(dhp < -ColorConstants.HUE_HALF_CIRCLE_DEGREES, dhp + ColorConstants.HUE_CIRCLE_DEGREES, dhp)
+    dhp = np.where(zero_chroma, 0.0, dhp)
+
+    dHp = 2.0 * np.sqrt(C1p * C2p) * np.sin(np.radians(dhp * 0.5))
+
+    Lp_bar = (L1 + L2) / 2.0
+    Cp_bar = (C1p + C2p) / 2.0
+
+    dh = np.abs(h1p - h2p)
+    sum_h = h1p + h2p
+    hp_bar = np.where(
+        zero_chroma,
+        sum_h,
+        np.where(
+            dh > ColorConstants.HUE_HALF_CIRCLE_DEGREES,
+            np.where(
+                sum_h < ColorConstants.HUE_CIRCLE_DEGREES,
+                (sum_h + ColorConstants.HUE_CIRCLE_DEGREES) / 2.0,
+                (sum_h - ColorConstants.HUE_CIRCLE_DEGREES) / 2.0,
+            ),
+            sum_h / 2.0,
+        ),
+    )
+
+    T = (
+        ColorConstants.NORMALIZED_MAX
+        - ColorConstants.DE2000_HUE_WEIGHT_1 * np.cos(np.radians(hp_bar - ColorConstants.DE2000_HUE_OFFSET_1))
+        + ColorConstants.DE2000_HUE_WEIGHT_2 * np.cos(np.radians(ColorConstants.DE2000_HUE_MULT_2 * hp_bar))
+        + ColorConstants.DE2000_HUE_WEIGHT_3 * np.cos(np.radians(ColorConstants.DE2000_HUE_MULT_3 * hp_bar + ColorConstants.DE2000_HUE_OFFSET_3))
+        - ColorConstants.DE2000_HUE_WEIGHT_4 * np.cos(np.radians(ColorConstants.DE2000_HUE_MULT_4 * hp_bar - ColorConstants.DE2000_HUE_OFFSET_4))
+    )
+
+    d_ro = ColorConstants.DE2000_DRO_MULT * np.exp(
+        -(((hp_bar - ColorConstants.DE2000_DRO_CENTER) / ColorConstants.DE2000_DRO_DIVISOR) ** 2)
+    )
+
+    Cp_bar7 = Cp_bar ** 7
+    RC = 2.0 * np.sqrt(Cp_bar7 / (Cp_bar7 + pow7_term))
+
+    L_diff = Lp_bar - ColorConstants.DE2000_L_OFFSET
+    SL = ColorConstants.NORMALIZED_MAX + (
+        ColorConstants.DE2000_L_WEIGHT * (L_diff ** 2)
+    ) / np.sqrt(ColorConstants.DE2000_L_DIVISOR + (L_diff ** 2))
+    SC = ColorConstants.NORMALIZED_MAX + ColorConstants.DE2000_C_WEIGHT * Cp_bar
+    SH = ColorConstants.NORMALIZED_MAX + ColorConstants.DE2000_H_WEIGHT * Cp_bar * T
+    RT = -np.sin(np.radians(2.0 * d_ro)) * RC
+
+    return np.sqrt(
+        (dLp / (kL * SL)) ** 2
+        + (dCp / (kC * SC)) ** 2
+        + (dHp / (kH * SH)) ** 2
+        + RT * (dCp / (kC * SC)) * (dHp / (kH * SH))
+    )
+
+
 # ============================================================================
 # Delta E CMC - Textile Industry Standard
 # ============================================================================

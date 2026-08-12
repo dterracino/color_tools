@@ -167,8 +167,8 @@ def xyz_to_lab(xyz: Tuple[float, float, float]) -> Tuple[float, float, float]:
     b = ColorConstants.LAB_B_SCALE * (fy - fz)
     return (L, a, b)
 
-
 def rgb_to_lab(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
+
     """
     Convert sRGB (0-255) to CIE L*a*b*.
     

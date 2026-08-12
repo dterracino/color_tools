@@ -3,7 +3,7 @@ Python source-code palette exporter.
 
 Exports palettes as directly usable Python source code.
 
-Supported representations:
+Supported representations::
 
     dict
         PALETTE = {
@@ -32,7 +32,7 @@ RGB values may be emitted either as standard 0-255 integers or normalized
 
 Palette metadata may optionally be emitted as a separate Python dictionary.
 
-Example:
+Example::
 
     >>> from color_tools.exporters import get_exporter
     >>> from color_tools.exporters.python_exporter import PythonExportOptions
@@ -93,10 +93,10 @@ class PythonExportOptions(ExportOptionsBase):
 
             Supported values:
 
-                - ``"dict"``
-                - ``"list"``
-                - ``"tuple"``
-                - ``"constants"``
+            - ``"dict"``
+            - ``"list"``
+            - ``"tuple"``
+            - ``"constants"``
 
         value_format:
             Color representation.
@@ -134,7 +134,7 @@ class PythonExportOptions(ExportOptionsBase):
             The metadata variable is derived from this name by appending
             ``_METADATA``.
 
-            For example:
+            For example::
 
                 variable_name="UI_COLORS"
 
@@ -235,15 +235,15 @@ class PythonExporter(PaletteExporter):
 
     Several output structures are available through PythonExportOptions:
 
-        - Dictionary
-        - List
-        - Tuple
-        - Named constants
+    - Dictionary
+    - List
+    - Tuple
+    - Named constants
 
     RGB values may be emitted as 0-255 integers or normalized floating-point
     values. Hexadecimal strings are also supported.
 
-    Example:
+    Example::
 
         >>> exporter = get_exporter("python")
         >>> exporter.export_palette(
@@ -256,7 +256,7 @@ class PythonExporter(PaletteExporter):
         ...     ),
         ... )
 
-    Result:
+    Result::
 
         GAME_COLORS_METADATA = {
             ...
@@ -702,13 +702,13 @@ class PythonExporter(PaletteExporter):
         A missing name falls back to the hexadecimal value. Duplicate names
         receive a numeric suffix.
 
-        Example:
+        Example::
 
             Blue
             Blue
             Blue
 
-        becomes:
+        becomes::
 
             Blue
             Blue 2
@@ -794,16 +794,11 @@ class PythonExporter(PaletteExporter):
         """
         Convert a color name into a legal uppercase Python identifier.
 
-        Examples:
+        Examples::
 
-            Medium Blue
-                -> MEDIUM_BLUE
-
-            Blue / Violet
-                -> BLUE_VIOLET
-
-            80's Neon!
-                -> _80_S_NEON
+            Medium Blue -> MEDIUM_BLUE
+            Blue / Violet -> BLUE_VIOLET
+            80's Neon! -> _80_S_NEON
         """
         identifier = re.sub(
             r"[^A-Za-z0-9_]+",
