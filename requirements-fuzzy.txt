@@ -1,4 +1,4 @@
-# Fuzzy matching extra — defined in pyproject.toml [project.optional-dependencies.fuzzy]
+# Fuzzy matching extra (RapidFuzz) — defined in pyproject.toml [project.optional-dependencies.fuzzy]
 # Install with: pip install -r requirements-fuzzy.txt
 -e .[fuzzy]
 

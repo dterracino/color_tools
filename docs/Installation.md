@@ -22,7 +22,7 @@ pip install color-match-tools
 pip install color-match-tools[fuzzy]
 ```
 
-Adds fuzzywuzzy for better color name validation (validation module has built-in fallback).
+Adds RapidFuzz for better color name validation (validation module has built-in fallback).
 
 **With image processing support:**
 
@@ -97,7 +97,7 @@ The core module uses **only Python standard library** - **zero external dependen
 
 **Optional dependencies:**
 
-- `[fuzzy]`: fuzzywuzzy >= 0.18.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
+- `[fuzzy]`: rapidfuzz >= 3.0.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
 - `[image]`: Pillow >= 10.0.0 for image processing features
 - `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
 - `[logging]`: Rich >= 13.0.0 for colorized console log output (plain StreamHandler used as fallback)
@@ -107,20 +107,20 @@ The core module uses **only Python standard library** - **zero external dependen
 **Requirements files (for development/manual installation):**
 
 - `requirements.txt`: Base package (currently empty - zero dependencies)
-- `requirements-fuzzy.txt`: Base + fuzzywuzzy dependencies
+- `requirements-fuzzy.txt`: Base + RapidFuzz dependency
 - `requirements-image.txt`: Base + Pillow
 - `requirements-interactive.txt`: Base + prompt_toolkit
 - `requirements-mcp.txt`: Base + MCP SDK
 - `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
 
-The validation module works without fuzzywuzzy using a built-in Levenshtein distance implementation. Install fuzzywuzzy for better fuzzy matching performance:
+The validation module works without RapidFuzz using a built-in Levenshtein distance implementation. Install RapidFuzz for better fuzzy matching performance:
 
 ```bash
 pip install color-match-tools[fuzzy]  # OR
-pip install fuzzywuzzy
+pip install rapidfuzz
 ```
 
-**Note:** If `fuzzywuzzy` is not installed, the validation module automatically falls back to a built-in hybrid fuzzy matcher using exact/substring/Levenshtein matching. This provides good results without external dependencies, though `fuzzywuzzy` is recommended for optimal matching accuracy.
+**Note:** If `rapidfuzz` is not installed, the validation module automatically falls back to a built-in hybrid fuzzy matcher using exact/substring/Levenshtein matching. This provides good results without external dependencies, though `rapidfuzz` is recommended for optimal matching accuracy.
 
 ## Hash Update Tooling (Maintainers)
 

@@ -3,21 +3,21 @@ Color validation functions to check if a hex code matches a color name.
 Uses fuzzy matching and perceptual color distance (Delta E 2000).
 Useful for validating imported color data or user input.
 
-Note: For best fuzzy matching results, install the optional fuzzywuzzy package:
-    pip install fuzzywuzzy
+Note: For best fuzzy matching results, install the optional RapidFuzz package:
+    pip install rapidfuzz
     
 A hybrid fallback matcher (exact/substring/Levenshtein) is used when 
-fuzzywuzzy is not available.
+RapidFuzz is not available.
 """
 from __future__ import annotations
 from dataclasses import dataclass
 from typing import Optional
 
 try:
-    from fuzzywuzzy import process
-    HAS_FUZZYWUZZY = True
+    from rapidfuzz import process
+    HAS_RAPIDFUZZ = True
 except ImportError:
-    HAS_FUZZYWUZZY = False
+    HAS_RAPIDFUZZ = False
 
 from .palette import Palette
 from .conversions import hex_to_rgb, rgb_to_lab
@@ -65,7 +65,7 @@ def _levenshtein_distance(s1: str, s2: str) -> int:
 
 def _fuzzy_match_fallback(query: str, choices: list[str]) -> tuple[str, int]:
     """
-    Hybrid fuzzy matching fallback when fuzzywuzzy is not available.
+    Hybrid fuzzy matching fallback when RapidFuzz is not available.
     
     Uses multiple strategies for best results:
     1. Exact match (after normalization) - 100 score
@@ -177,11 +177,11 @@ def validate_color(
         A ColorValidationRecord with the validation results.
         
     Note:
-        Uses fuzzywuzzy for fuzzy matching if available, otherwise falls back
+        Uses RapidFuzz for fuzzy matching if available, otherwise falls back
         to a hybrid matcher using exact/substring/Levenshtein matching.
     """
     # 1. Find the best matching color name from our CSS palette
-    if HAS_FUZZYWUZZY:
+    if HAS_RAPIDFUZZ:
         match_result = process.extractOne(color_name, _color_names)
         if match_result is None:
             return ColorValidationRecord(

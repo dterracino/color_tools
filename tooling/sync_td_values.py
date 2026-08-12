@@ -3,7 +3,7 @@
 Sync TD (transmissivity) values from HueForge personal library to color_tools database.
 
 This script reads the HueForge personal filament library and updates any missing
-td_value fields in the color_tools.json database. It uses fuzzywuzzy for
+td_value fields in the color_tools.json database. It uses RapidFuzz for
 intelligent fuzzy matching to handle naming differences between the databases.
 
 Usage:
@@ -16,16 +16,16 @@ from pathlib import Path
 from typing import Dict, List, Optional, Tuple
 
 try:
-    from fuzzywuzzy import fuzz, process
+    from rapidfuzz import fuzz
 except ImportError:
-    print("Error: fuzzywuzzy is required for this script.")
-    print("Install it with: pip install fuzzywuzzy")
+    print("Error: rapidfuzz is required for this script.")
+    print("Install it with: pip install rapidfuzz")
     exit(1)
 
 
 def calculate_similarity(target_filament: Dict, source_filament: Dict) -> float:
     """
-    Calculate overall similarity between two filaments using fuzzywuzzy.
+    Calculate overall similarity between two filaments using RapidFuzz.
     
     Returns a score from 0.0 to 1.0 where 1.0 is a perfect match.
     Uses weighted combination of brand, type, and color similarities.
@@ -39,7 +39,7 @@ def calculate_similarity(target_filament: Dict, source_filament: Dict) -> float:
     source_type = normalize_type_name(source_filament['Type'])
     source_color = normalize_color_name(source_filament['Name'])
     
-    # Calculate individual similarities using fuzzywuzzy
+    # Calculate individual similarities using RapidFuzz
     brand_sim = fuzz.ratio(target_brand, source_brand) / 100.0
     type_sim = fuzz.ratio(target_type, source_type) / 100.0
     color_sim = fuzz.ratio(target_color, source_color) / 100.0
@@ -199,7 +199,7 @@ def find_best_match(
     best_score = 0.0
     
     for hf_filament in hueforge_filaments:
-        # Use the new fuzzywuzzy-based similarity calculation
+        # Use the RapidFuzz-based similarity calculation
         score = calculate_similarity(target_filament, hf_filament)
         
         if score > best_score and score >= min_similarity:

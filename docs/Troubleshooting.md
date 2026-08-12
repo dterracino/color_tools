@@ -82,17 +82,17 @@ pip install Pillow
 
 ### Fuzzy Matching Not Working Optimally
 
-**Cause:** fuzzywuzzy is not installed.
+**Cause:** `rapidfuzz` is not installed.
 
 **Solution:**
 
 ```bash
 pip install color-match-tools[fuzzy]
 # OR
-pip install fuzzywuzzy
+pip install rapidfuzz
 ```
 
-Note: The validation module will fall back to built-in Levenshtein matching if fuzzywuzzy is not available.
+Note: The validation module will fall back to built-in Levenshtein matching if `rapidfuzz` is not available.
 
 ---
 

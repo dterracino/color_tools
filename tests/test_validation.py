@@ -10,7 +10,7 @@ from color_tools.validation import (
     ColorValidationRecord,
     _levenshtein_distance,
     _fuzzy_match_fallback,
-    HAS_FUZZYWUZZY
+    HAS_RAPIDFUZZ
 )
 
 
@@ -429,14 +429,14 @@ class TestValidateColorRealWorldCases(unittest.TestCase):
         self.assertFalse(wrong_result.is_match)
 
 
-@unittest.skipIf(not HAS_FUZZYWUZZY, "fuzzywuzzy not installed")
-class TestWithFuzzyWuzzy(unittest.TestCase):
-    """Tests specific to when fuzzywuzzy is available."""
+@unittest.skipIf(not HAS_RAPIDFUZZ, "rapidfuzz not installed")
+class TestWithRapidFuzz(unittest.TestCase):
+    """Tests specific to when RapidFuzz is available."""
     
-    def test_fuzzywuzzy_better_matching(self):
-        """Test that fuzzywuzzy provides good fuzzy matching."""
+    def test_rapidfuzz_better_matching(self):
+        """Test that RapidFuzz provides good fuzzy matching."""
         result = validate_color("ligt blu", "#ADD8E6")  # double typo
-        # With fuzzywuzzy, should still find lightblue
+        # With RapidFuzz, should still find lightblue
         self.assertEqual(result.name_match, "lightblue")
         self.assertGreater(result.name_confidence, 0.5)
 

@@ -40,7 +40,7 @@ The following files are demonstration scripts, not unit tests:
 
 - **test_api.py** - Demonstrates public API usage with synonym support
 - **test_synonyms.py** - Demonstrates maker synonym functionality
-- **validation_test.py** - Demonstrates color validation with fuzzy matching (requires fuzzywuzzy)
+- **validation_test.py** - Demonstrates color validation with fuzzy matching (requires rapidfuzz)
 
 Run these as standalone scripts:
 ```bash

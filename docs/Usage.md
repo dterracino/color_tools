@@ -231,7 +231,7 @@ family.
 #### Validation
 
 - `validate_color()` - Validate if hex code matches a color name using fuzzy matching and Delta E
-  - Automatically uses `fuzzywuzzy` if installed, otherwise falls back to hybrid matcher
+  - Automatically uses `rapidfuzz` if installed, otherwise falls back to hybrid matcher
   - Returns `ColorValidationRecord` with match confidence, suggested hex, and Delta E distance
   - Example: `validate_color("light blue", "#ADD8E6")` → validates color name/hex pairing
 

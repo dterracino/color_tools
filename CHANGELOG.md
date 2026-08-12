@@ -14,6 +14,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+## [6.11.1] - 2026-08-12
+
+### Changed
+
+- **RapidFuzz migration for fuzzy matching** — replaced the stale optional `fuzzywuzzy` extra
+  with `rapidfuzz` across packaging, validation, TD sync tooling, tests, and user-facing
+  installation and troubleshooting docs while keeping the built-in fallback matcher for
+  dependency-free use.
+
 ## [6.11.0] - 2026-08-12
 
 ### Added
