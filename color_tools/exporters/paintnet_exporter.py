@@ -20,7 +20,7 @@ if TYPE_CHECKING:
 
 
 @dataclass(slots=True)
-class PaintNetOptions(ExportOptionsBase):
+class PaintNetExportOptions(ExportOptionsBase):
     """Options controlling Paint.NET palette serialization."""
 
     pad_to_96: bool = False
@@ -52,7 +52,7 @@ class PaintNetExporter(PaletteExporter):
             file_extension="txt",
             supports_colors=True,
             supports_filaments=False,
-            options_type=PaintNetOptions,
+            options_type=PaintNetExportOptions,
         )
 
     def _export_colors_impl(
@@ -72,7 +72,7 @@ class PaintNetExporter(PaletteExporter):
         output_path: Path | str | None,
         options: ExportOptionsBase,
     ) -> str:
-        assert isinstance(options, PaintNetOptions)
+        assert isinstance(options, PaintNetExportOptions)
 
         return self._write_palette(
             colors,

@@ -46,7 +46,7 @@ from color_tools.exporters.json_exporter import JSONExporter
 from color_tools.exporters.lospec_exporter import LospecExporter
 from color_tools.exporters.paintnet_exporter import (
     PaintNetExporter,
-    PaintNetOptions,
+    PaintNetExportOptions,
 )
 from color_tools.exporters.palette_lut_exporter import PaletteLutExporter
 from color_tools.exporters.ase_exporter import ASEExporter
@@ -57,6 +57,10 @@ from color_tools.exporters.soc_exporter import SOCExporter
 from color_tools.exporters.scribus_exporter import ScribusExporter
 from color_tools.exporters.kpl_exporter import KPLExporter
 from color_tools.exporters.swatch_image_exporter import SwatchImageExporter
+from color_tools.exporters.python_exporter import (
+    PythonExporter,
+    PythonExportOptions,
+)
 
 
 # Legacy EXPORT_FORMATS compatibility.
@@ -79,7 +83,7 @@ __all__ = [
     "LospecExporter",
     "MissingExporterDependencyError",
     "PaintNetExporter",
-    "PaintNetOptions",
+    "PaintNetExportOptions",
     "PaletteExporter",
     "PaletteLutExporter",
     "RiffPalExporter",
@@ -89,6 +93,8 @@ __all__ = [
     "ScribusExporter",
     "KPLExporter",
     "SwatchImageExporter",
+    "PythonExporter",
+    "PythonExportOptions",
     "EXPORT_FORMATS",
     "get_exporter",
     "list_export_formats",
