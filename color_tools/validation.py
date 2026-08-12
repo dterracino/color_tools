@@ -63,6 +63,21 @@ def _levenshtein_distance(s1: str, s2: str) -> int:
     return previous_row[-1]
 
 
+def _normalize_color_name(value: str) -> str:
+    """
+    Normalize a color name for fuzzy matching.
+
+    This keeps the matching behavior consistent across the built-in fallback
+    and the optional RapidFuzz path.
+    """
+    return (
+        value.lower()
+        .replace(" ", "")
+        .replace("-", "")
+        .replace("_", "")
+    )
+
+
 def _fuzzy_match_fallback(query: str, choices: list[str]) -> tuple[str, int]:
     """
     Hybrid fuzzy matching fallback when RapidFuzz is not available.
@@ -79,11 +94,11 @@ def _fuzzy_match_fallback(query: str, choices: list[str]) -> tuple[str, int]:
     Returns:
         Tuple of (best_match, score) where score is 0-100
     """
-    query_norm = query.lower().replace(" ", "").replace("-", "")
+    query_norm = _normalize_color_name(query)
     
     # Strategy 1: Exact match (normalized)
     for choice in choices:
-        choice_norm = choice.lower().replace(" ", "").replace("-", "")
+        choice_norm = _normalize_color_name(choice)
         if query_norm == choice_norm:
             return (choice, 100)
     
@@ -92,7 +107,7 @@ def _fuzzy_match_fallback(query: str, choices: list[str]) -> tuple[str, int]:
     best_score = 0
     
     for choice in choices:
-        choice_norm = choice.lower().replace(" ", "").replace("-", "")
+        choice_norm = _normalize_color_name(choice)
         
         if query_norm in choice_norm:
             # Substring match - higher score for better coverage
@@ -182,19 +197,34 @@ def validate_color(
     """
     # 1. Find the best matching color name from our CSS palette
     if HAS_RAPIDFUZZ:
-        match_result = process.extractOne(color_name, _color_names)
-        if match_result is None:
-            return ColorValidationRecord(
-                is_match=False,
-                name_match=None,
-                name_confidence=0.0,
-                hex_value=hex_code,
-                suggested_hex=None,
-                delta_e=float('inf'),
-                message="No matching color name could be found."
+        normalized_query = _normalize_color_name(color_name)
+
+        for choice in _color_names:
+            if normalized_query == _normalize_color_name(choice):
+                best_match = choice
+                name_confidence = 1.0
+                break
+        else:
+            normalized_choices = {
+                choice: _normalize_color_name(choice)
+                for choice in _color_names
+            }
+            match_result = process.extractOne(
+                normalized_query,
+                normalized_choices,
             )
-        best_match, name_confidence_raw = match_result[0], match_result[1]
-        name_confidence = float(name_confidence_raw) / 100.0
+            if match_result is None:
+                return ColorValidationRecord(
+                    is_match=False,
+                    name_match=None,
+                    name_confidence=0.0,
+                    hex_value=hex_code,
+                    suggested_hex=None,
+                    delta_e=float('inf'),
+                    message="No matching color name could be found."
+                )
+            best_match, name_confidence_raw = match_result[0], match_result[1]
+            name_confidence = float(name_confidence_raw) / 100.0
     else:
         # Use fallback matcher
         best_match, name_confidence_raw = _fuzzy_match_fallback(color_name, _color_names)

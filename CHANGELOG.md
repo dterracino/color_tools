@@ -14,6 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+## [6.11.2] - 2026-08-12
+
+### Fixed
+
+- **RapidFuzz validation normalization** — made the optional RapidFuzz matcher normalize case,
+  spaces, hyphens, and underscores the same way as the built-in fallback so inputs like
+  `LIGHTBLUE`, `LIGHT BLUE`, and `light_blue` consistently resolve to `lightblue`.
+
 ## [6.11.1] - 2026-08-12
 
 ### Changed
