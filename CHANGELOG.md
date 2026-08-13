@@ -14,6 +14,24 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+## [6.11.3] - 2026-08-13
+
+### Added
+
+- **Dominant-color palette helper** — added `dominant_colors_to_palette()` in
+  `color_tools.image.dominance` and exported it through `color_tools.image` so dominant-color
+  results can be converted directly into palette-ready `ColorRecord` entries for exporters and
+  other palette workflows.
+- **Dominant-color swatch tool** — added `tools/generate_dominant_swatch_image.py` to extract
+  dominant colors from an input image and render them as a PNG swatch sheet through the existing
+  `swatch_image` exporter, with a positional image argument and configurable `--count`.
+
+### Fixed
+
+- **Dominant-color selection removal bug** — fixed `color_tools.image.dominance` so final
+  palette selection removes chosen candidates by identity instead of dataclass equality, avoiding
+  NumPy's ambiguous truth-value error when candidate records contain array fields.
+
 ## [6.11.2] - 2026-08-12
 
 ### Fixed

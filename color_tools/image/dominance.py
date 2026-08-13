@@ -31,8 +31,15 @@ from numpy.typing import NDArray
 from PIL import Image
 from sklearn.cluster import KMeans
 
-from color_tools.conversions import lab_to_rgb, rgb_to_lab
+from color_tools.conversions import (
+    lab_to_rgb,
+    rgb_to_hex,
+    rgb_to_hsl,
+    rgb_to_lab,
+    rgb_to_lch,
+)
 from color_tools.distance import delta_e_2000_array
+from color_tools.palette import ColorRecord
 
 
 RGB: TypeAlias = tuple[int, int, int]
@@ -134,6 +141,45 @@ class DominanceAnalysis:
     focal_radius: float
 
     saliency_map: FloatArray
+
+
+def dominant_colors_to_palette(
+    colors: list[DominantColor] | tuple[DominantColor, ...],
+    *,
+    source: str = "dominance",
+    name_prefix: str = "Dominant",
+) -> list[ColorRecord]:
+    """
+    Convert dominant-color results into palette-ready ColorRecord objects.
+
+    Args:
+        colors:
+            Dominant colors returned by dominant_colors() or
+            analyze_dominant_colors().colors.
+
+        source:
+            Source label recorded on each ColorRecord.
+
+        name_prefix:
+            Prefix used when generating color names such as "Dominant 1".
+    """
+    records: list[ColorRecord] = []
+
+    for index, color in enumerate(colors, start=1):
+        rgb = color.rgb
+        records.append(
+            ColorRecord(
+                name=f"{name_prefix} {index}",
+                hex=rgb_to_hex(rgb),
+                rgb=rgb,
+                hsl=rgb_to_hsl(rgb),
+                lab=rgb_to_lab(rgb),
+                lch=rgb_to_lch(rgb),
+                source=source,
+            )
+        )
+
+    return records
 
 
 # ============================================================================
@@ -1593,8 +1639,14 @@ def analyze_dominant_colors(
             best
         )
 
-        remaining.remove(
-            best
+        best_index = next(
+            index
+            for index, candidate in enumerate(remaining)
+            if candidate is best
+        )
+
+        remaining.pop(
+            best_index
         )
 
     # ------------------------------------------------------------------

@@ -114,6 +114,7 @@ try:
         DominanceAnalysis,
         analyze_dominant_colors,
         dominant_colors,
+        dominant_colors_to_palette,
     )
     IMAGE_AVAILABLE = True
 except ImportError:
@@ -137,6 +138,7 @@ except ImportError:
     # Dominance analysis functions
     analyze_dominant_colors = _not_available
     dominant_colors = _not_available
+    dominant_colors_to_palette = _not_available
     
     # Basic analysis functions
     count_unique_colors = _not_available
@@ -204,6 +206,7 @@ __all__ = [
     'analyze_dynamic_range',
     'analyze_dominant_colors',
     'dominant_colors',
+    'dominant_colors_to_palette',
     # Image transformation functions
     'transform_image',
     'simulate_cvd_image',
