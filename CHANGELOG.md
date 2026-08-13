@@ -14,6 +14,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+### Added
+
+- **Dominance unit-test coverage** — added `tests/test_image_dominance.py` with focused coverage
+  for `DominantColor`, `analyze_dominant_colors()`, `dominant_colors()`,
+  `dominant_colors_to_palette()`, argument validation, transparent-image rejection, and public
+  `color_tools.image` exports using synthetic in-memory images.
+
 ## [6.11.3] - 2026-08-13
 
 ### Added
