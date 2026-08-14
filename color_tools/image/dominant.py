@@ -9,6 +9,7 @@ Enhancements included:
     3. Contrast-aware palette sorting
     4. Skin-tone preservation rules
     5. Depth-estimation weighting
+    6. Semantic segmentation weighting
 """
 
 import os
@@ -173,10 +174,6 @@ def sort_palette_by_contrast(centers_lab: np.ndarray) -> np.ndarray:
 # ------------------------------------------------------------
 
 def compute_depth_map(arr: np.ndarray) -> np.ndarray:
-    """
-    Lightweight monocular depth using MiDaS small model via OpenCV DNN.
-    """
-
     h, w = arr.shape[:2]
 
     model_path = os.path.join(os.path.dirname(cv2.__file__), "model-small.onnx")
@@ -200,11 +197,59 @@ def compute_depth_map(arr: np.ndarray) -> np.ndarray:
 
 
 def depth_weighting(depth_map: np.ndarray) -> np.ndarray:
-    """
-    Foreground = higher weight
-    Background = lower weight
-    """
     return 1.0 - depth_map
+
+
+# ------------------------------------------------------------
+# Enhancement #6: Semantic Segmentation Weighting
+# ------------------------------------------------------------
+
+def compute_segmentation_map(arr: np.ndarray) -> np.ndarray:
+    """
+    Lightweight semantic segmentation using DeepLabv3-small via OpenCV DNN.
+    """
+
+    h, w = arr.shape[:2]
+
+    model_path = os.path.join(os.path.dirname(cv2.__file__), "deeplab-small.onnx")
+    if not os.path.exists(model_path):
+        return np.ones((h, w), dtype=np.float32)
+
+    net = cv2.dnn.readNet(model_path)
+
+    blob = cv2.dnn.blobFromImage(arr, 1/255.0, (256, 256), swapRB=True, crop=False)
+    net.setInput(blob)
+    seg = net.forward()[0]
+
+    seg = np.argmax(seg, axis=0)
+    seg = cv2.resize(seg.astype(np.float32), (w, h), interpolation=cv2.INTER_NEAREST)
+
+    return seg
+
+
+def segmentation_weighting(seg_map: np.ndarray) -> np.ndarray:
+    """
+    Boost meaningful classes.
+    Down-weight background.
+    """
+
+    weights = np.ones_like(seg_map, dtype=np.float32)
+
+    # Example class boosts (DeepLabv3 standard labels)
+    boosts = {
+        15: 2.0,  # person
+        2: 1.5,   # sky
+        17: 1.5,  # clothing
+        18: 1.5,  # hair
+        4: 1.3,   # vegetation
+    }
+
+    for cls, factor in boosts.items():
+        weights[seg_map == cls] *= factor
+
+    weights[seg_map == 0] *= 0.7  # background
+
+    return weights
 
 
 # ------------------------------------------------------------
@@ -264,12 +309,15 @@ def compute_weights(
     center: np.ndarray,
     face: np.ndarray,
     depth: np.ndarray,
+    seg: np.ndarray,
     lab: np.ndarray,
     face_boost: float,
     saliency_boost: float,
     edge_boost: float,
     center_bias_boost: float,
 ) -> np.ndarray:
+
+    seg_w = segmentation_weighting(seg)
 
     weights = (
         1.0
@@ -278,6 +326,7 @@ def compute_weights(
         + center_bias_boost * center
         + face_boost * face
         + 2.0 * depth_weighting(depth)
+        + seg_w
     )
 
     weights = suppress_outliers(lab, weights)
@@ -344,6 +393,7 @@ def extract_dominant_colors(
     center = compute_center_bias(h, w)
     face = compute_face_map(arr)
     depth = compute_depth_map(arr)
+    seg = compute_segmentation_map(arr)
 
     lab = color.rgb2lab(arr)
     lab = lab_smooth(lab)
@@ -352,7 +402,7 @@ def extract_dominant_colors(
     skin_mask = skin_mask_lab(lab)
 
     weights_flat = compute_weights(
-        sal, edges, center, face, depth, lab,
+        sal, edges, center, face, depth, seg, lab,
         face_boost, saliency_boost, edge_boost, center_bias_boost
     )
 
