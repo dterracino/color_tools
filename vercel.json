@@ -1,11 +1,15 @@
 {
   "version": 2,
   "functions": {
-    "badges/*.py": {
+    "api/*.py": {
       "maxDuration": 15,
       "excludeFiles": "{color_tools/**,tests/**,tooling/**,tools/**,docs/**,samples/**,scripts/**,.github/**,.venv/**,dist/**,build/**,.vscode/**,.ruff_cache/**,__pycache__/**}"
     }
   },
+  "rewrites": [
+    { "source": "/badges/color_of_day", "destination": "/api/color_of_day" },
+    { "source": "/badges/filament_of_day", "destination": "/api/filament_of_day" }
+  ],
   "headers": [
     {
       "source": "/badges/(.*)",

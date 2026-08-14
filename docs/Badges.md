@@ -21,14 +21,20 @@ string with SHA-256 and taking `hash % count`.
 
 ```text
 GitHub repo
-  └── api/
-       ├── color_of_day.py       ← Vercel serverless function
-       ├── filament_of_day.py    ← Vercel serverless function
+  └── badges/
+       ├── color_of_day.py       ← Source of truth for badge logic
+       ├── filament_of_day.py    ← Source of truth for badge logic
        └── requirements.txt      ← color-match-tools (installed at build time)
   └── vercel.json                ← Vercel project config
+  └── tooling/generate_vercel_badge_api.py
+                                 ← Generates temporary api/ entrypoints in CI
   └── .github/workflows/
        └── vercel.yml            ← Auto-deploy on push to main
 ```
+
+The deployed functions are generated during GitHub Actions right before `vercel deploy` runs.
+That CI step creates temporary `api/*.py` wrappers plus `api/requirements.txt` so Vercel can
+discover Python functions normally, while the repo keeps the real badge source under `badges/`.
 
 The functions install `color-match-tools` from PyPI at deploy time — they do **not** use the
 local `color_tools/` source tree. The `vercel.json` `excludeFiles` config strips all non-API
@@ -59,8 +65,9 @@ vercel --prod
 
 Push to `main` automatically triggers `.github/workflows/vercel.yml`, which:
 
-1. Runs a preview deploy on any PR targeting `main`
-2. Runs a production deploy on every push to `main`
+1. Generates temporary Vercel-only `api/` entrypoints from `badges/`
+2. Runs a preview deploy on any PR targeting `main`
+3. Runs a production deploy on every push to `main`
 
 No manual action needed for normal releases.
 

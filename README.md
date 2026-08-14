@@ -10,8 +10,8 @@ A comprehensive Python library for color science operations, color space convers
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/dterracino/color_tools/blob/main/LICENSE)
 [![PyPI downloads](https://img.shields.io/pypi/dm/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 
-[![Color of the Day](https://color-tools-nine.vercel.app/badges/color_of_day)](https://color-tools-nine.vercel.app/badges/color_of_day)
-[![Filament of the Day](https://color-tools-nine.vercel.app/badges/filament_of_day)](https://color-tools-nine.vercel.app/badges/filament_of_day)
+[![Color of the Day](https://color-tools-nine.vercel.app/api/color_of_day)](https://color-tools-nine.vercel.app/api/color_of_day)
+[![Filament of the Day](https://color-tools-nine.vercel.app/api/filament_of_day)](https://color-tools-nine.vercel.app/api/filament_of_day)
 
 > **Note:** The swatch images above are served by a personal demo deployment — not a public API.
 > They may change or be unavailable without notice. See [docs/Badges.md](https://github.com/dterracino/color_tools/blob/main/docs/Badges.md) for details.

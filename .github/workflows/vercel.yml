@@ -18,6 +18,9 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
+      - name: Generate Vercel badge entrypoints
+        run: python3 tooling/generate_vercel_badge_api.py
+
       - name: Install Vercel CLI
         run: npm install --global vercel@latest
 
