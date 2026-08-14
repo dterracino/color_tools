@@ -10,6 +10,7 @@ Enhancements included:
     4. Skin-tone preservation rules
     5. Depth-estimation weighting
     6. Semantic segmentation weighting
+    7. Eye-gaze focal point detection (Pylance-clean)
 """
 
 import os
@@ -205,10 +206,6 @@ def depth_weighting(depth_map: np.ndarray) -> np.ndarray:
 # ------------------------------------------------------------
 
 def compute_segmentation_map(arr: np.ndarray) -> np.ndarray:
-    """
-    Lightweight semantic segmentation using DeepLabv3-small via OpenCV DNN.
-    """
-
     h, w = arr.shape[:2]
 
     model_path = os.path.join(os.path.dirname(cv2.__file__), "deeplab-small.onnx")
@@ -228,28 +225,83 @@ def compute_segmentation_map(arr: np.ndarray) -> np.ndarray:
 
 
 def segmentation_weighting(seg_map: np.ndarray) -> np.ndarray:
-    """
-    Boost meaningful classes.
-    Down-weight background.
-    """
-
     weights = np.ones_like(seg_map, dtype=np.float32)
 
-    # Example class boosts (DeepLabv3 standard labels)
     boosts = {
-        15: 2.0,  # person
-        2: 1.5,   # sky
-        17: 1.5,  # clothing
-        18: 1.5,  # hair
-        4: 1.3,   # vegetation
+        15: 2.0,
+        2: 1.5,
+        17: 1.5,
+        18: 1.5,
+        4: 1.3,
     }
 
     for cls, factor in boosts.items():
         weights[seg_map == cls] *= factor
 
-    weights[seg_map == 0] *= 0.7  # background
+    weights[seg_map == 0] *= 0.7
 
     return weights
+
+
+# ------------------------------------------------------------
+# Enhancement #7: Eye-Gaze Focal Point Detection (Pylance-clean)
+# ------------------------------------------------------------
+
+def compute_eye_gaze_map(arr: np.ndarray) -> np.ndarray:
+    h, w = arr.shape[:2]
+
+    face_cascade_path = get_haar_cascade("haarcascade_frontalface_default.xml")
+    face_cascade = cv2.CascadeClassifier(face_cascade_path)
+
+    gray = cv2.cvtColor(arr, cv2.COLOR_RGB2GRAY)
+    faces = face_cascade.detectMultiScale(gray, 1.1, 4)
+
+    gaze_map = np.zeros((h, w), dtype=np.float32)
+
+    model_path = os.path.join(os.path.dirname(cv2.__file__), "lbfmodel.yaml")
+    if not os.path.exists(model_path):
+        return gaze_map
+
+    facemark = cv2.face.createFacemarkLBF()
+    facemark.loadModel(model_path)
+
+    if len(faces) == 0:
+        return gaze_map
+
+    faces_np = np.array(faces, dtype=np.int32)
+
+    ok, landmarks = facemark.fit(arr, faces_np)
+    if not ok:
+        return gaze_map
+
+    for lm in landmarks:
+        pts = lm[0]
+
+        left_eye = pts[36:42]
+        right_eye = pts[42:48]
+
+        left_center = np.mean(left_eye, axis=0)
+        right_center = np.mean(right_eye, axis=0)
+
+        eye_center = (left_center + right_center) / 2.0
+
+        gaze_x = int(eye_center[0] + (eye_center[0] - w / 2) * 0.3)
+        gaze_y = int(eye_center[1] + (eye_center[1] - h / 2) * 0.3)
+
+        gaze_x = np.clip(gaze_x, 0, w - 1)
+        gaze_y = np.clip(gaze_y, 0, h - 1)
+
+        cv2.circle(gaze_map, (gaze_x, gaze_y), 40, 1.0, -1)
+
+    if gaze_map.max() > 0:
+        gaze_map = cv2.GaussianBlur(gaze_map, (51, 51), 0)
+        gaze_map /= gaze_map.max()
+
+    return gaze_map
+
+
+def gaze_weighting(gaze_map: np.ndarray) -> np.ndarray:
+    return 1.0 + 2.0 * gaze_map
 
 
 # ------------------------------------------------------------
@@ -310,6 +362,7 @@ def compute_weights(
     face: np.ndarray,
     depth: np.ndarray,
     seg: np.ndarray,
+    gaze: np.ndarray,
     lab: np.ndarray,
     face_boost: float,
     saliency_boost: float,
@@ -318,6 +371,7 @@ def compute_weights(
 ) -> np.ndarray:
 
     seg_w = segmentation_weighting(seg)
+    gaze_w = gaze_weighting(gaze)
 
     weights = (
         1.0
@@ -327,6 +381,7 @@ def compute_weights(
         + face_boost * face
         + 2.0 * depth_weighting(depth)
         + seg_w
+        + gaze_w
     )
 
     weights = suppress_outliers(lab, weights)
@@ -394,6 +449,7 @@ def extract_dominant_colors(
     face = compute_face_map(arr)
     depth = compute_depth_map(arr)
     seg = compute_segmentation_map(arr)
+    gaze = compute_eye_gaze_map(arr)
 
     lab = color.rgb2lab(arr)
     lab = lab_smooth(lab)
@@ -402,7 +458,7 @@ def extract_dominant_colors(
     skin_mask = skin_mask_lab(lab)
 
     weights_flat = compute_weights(
-        sal, edges, center, face, depth, seg, lab,
+        sal, edges, center, face, depth, seg, gaze, lab,
         face_boost, saliency_boost, edge_boost, center_bias_boost
     )
 
