@@ -8,6 +8,7 @@ Enhancements included:
     2. Palette clustering stability improvements (Balanced)
     3. Contrast-aware palette sorting
     4. Skin-tone preservation rules
+    5. Depth-estimation weighting
 """
 
 import os
@@ -51,10 +52,6 @@ def white_balance_grayworld(arr: np.ndarray) -> np.ndarray:
 # ------------------------------------------------------------
 
 def skin_mask_lab(lab: np.ndarray) -> np.ndarray:
-    """
-    Inclusive Lab-space skin-tone mask.
-    Covers a wide range of ethnicities.
-    """
     L = lab[:, :, 0]
     a = lab[:, :, 1]
     b = lab[:, :, 2]
@@ -73,16 +70,11 @@ def preserve_skin_tones(
     skin_mask: np.ndarray,
     lab_pixels: np.ndarray
 ) -> np.ndarray:
-    """
-    Prevent merging/splitting of skin-tone clusters.
-    Boost skin cluster stability.
-    """
 
     if skin_mask.sum() == 0:
         return centers_lab
 
     skin_pixels = lab_pixels[skin_mask.reshape(-1) > 0]
-
     if len(skin_pixels) == 0:
         return centers_lab
 
@@ -177,6 +169,45 @@ def sort_palette_by_contrast(centers_lab: np.ndarray) -> np.ndarray:
 
 
 # ------------------------------------------------------------
+# Enhancement #5: Depth Estimation Weighting
+# ------------------------------------------------------------
+
+def compute_depth_map(arr: np.ndarray) -> np.ndarray:
+    """
+    Lightweight monocular depth using MiDaS small model via OpenCV DNN.
+    """
+
+    h, w = arr.shape[:2]
+
+    model_path = os.path.join(os.path.dirname(cv2.__file__), "model-small.onnx")
+    if not os.path.exists(model_path):
+        return np.ones((h, w), dtype=np.float32)
+
+    net = cv2.dnn.readNet(model_path)
+
+    blob = cv2.dnn.blobFromImage(arr, 1/255.0, (256, 256), swapRB=True, crop=False)
+    net.setInput(blob)
+    depth = net.forward()[0, 0]
+
+    depth = cv2.resize(depth, (w, h))
+    depth = depth.astype(np.float32)
+
+    depth -= depth.min()
+    if depth.max() > 0:
+        depth /= depth.max()
+
+    return depth
+
+
+def depth_weighting(depth_map: np.ndarray) -> np.ndarray:
+    """
+    Foreground = higher weight
+    Background = lower weight
+    """
+    return 1.0 - depth_map
+
+
+# ------------------------------------------------------------
 # Pipeline Stages
 # ------------------------------------------------------------
 
@@ -232,6 +263,7 @@ def compute_weights(
     edges: np.ndarray,
     center: np.ndarray,
     face: np.ndarray,
+    depth: np.ndarray,
     lab: np.ndarray,
     face_boost: float,
     saliency_boost: float,
@@ -245,6 +277,7 @@ def compute_weights(
         + edge_boost * edges
         + center_bias_boost * center
         + face_boost * face
+        + 2.0 * depth_weighting(depth)
     )
 
     weights = suppress_outliers(lab, weights)
@@ -310,6 +343,7 @@ def extract_dominant_colors(
     edges = compute_edges(arr)
     center = compute_center_bias(h, w)
     face = compute_face_map(arr)
+    depth = compute_depth_map(arr)
 
     lab = color.rgb2lab(arr)
     lab = lab_smooth(lab)
@@ -318,7 +352,7 @@ def extract_dominant_colors(
     skin_mask = skin_mask_lab(lab)
 
     weights_flat = compute_weights(
-        sal, edges, center, face, lab,
+        sal, edges, center, face, depth, lab,
         face_boost, saliency_boost, edge_boost, center_bias_boost
     )
 
