@@ -11,7 +11,8 @@ Pipeline:
       -> RGB to CIELAB
       -> provisional k-means clustering
       -> CIEDE2000 perceptual cluster merging
-      -> spatial and saliency analysis
+      -> spatial analysis and OpenCV saliency detection
+      -> diagnostic multiscale nearest-neighbor support
       -> perceptual dominance scoring
       -> CIEDE2000 diversity selection
       -> requested number of dominant colors
@@ -24,8 +25,9 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import TypeAlias
+from typing import Literal, TypeAlias
 
+import cv2
 import numpy as np
 from numpy.typing import NDArray
 from PIL import Image
@@ -49,6 +51,11 @@ FloatArray: TypeAlias = NDArray[np.float64]
 IntArray: TypeAlias = NDArray[np.int32]
 BoolArray: TypeAlias = NDArray[np.bool_]
 UInt8Array: TypeAlias = NDArray[np.uint8]
+
+SaliencyBackend: TypeAlias = Literal[
+    "opencv_fine_grained",
+    "opencv_spectral",
+]
 
 
 # ============================================================================
@@ -92,7 +99,9 @@ class DominantColor:
             average lightness.
 
         focal_importance:
-            Relative amount of visual attention associated with the cluster.
+            Population-independent visual attention associated with the cluster,
+            based on mean saliency per cluster pixel and normalized against the
+            strongest cluster.
     """
 
     rgb: RGB
@@ -115,24 +124,60 @@ class DominantColor:
 
 
 @dataclass(frozen=True)
+class DominantColorDiagnostic:
+    """Compact diagnostics for one surviving perceptual cluster."""
+
+    rgb: RGB
+    lab: Lab
+
+    population: float
+    population_score: float
+
+    coarse_support: tuple[float, ...]
+    coarse_support_mean: float
+    coarse_support_ratio: float
+    coarse_scale_persistence: float
+    structural_support: float
+    structural_penalty: float
+
+    global_salience: float
+    local_contrast: float
+    spatial_coherence: float
+    lightness_contrast: float
+
+    chroma: float
+    chromatic_prominence: float
+
+    neutrality: float
+    neutral_penalty: float
+
+    focal_saliency_share: float
+    mean_saliency: float
+    normalized_mean_saliency: float
+    focal_importance: float
+
+    base_dominance: float
+    dominance: float
+
+    selected_rank: int | None
+    selection_score: float | None
+    nearest_selected_distance: float | None
+    diversity_multiplier: float | None
+
+    @property
+    def hex(self) -> str:
+        """Return the representative color as #RRGGBB."""
+        return "#{:02X}{:02X}{:02X}".format(*self.rgb)
+
+
+@dataclass(frozen=True)
 class DominanceAnalysis:
     """
     Complete perceptual-dominance analysis.
 
-    Attributes:
-        colors:
-            Selected dominant colors in selection order.
-
-        focal_center:
-            Saliency-weighted focal point as normalized (x, y) coordinates.
-
-        focal_radius:
-            Normalized radius around focal_center containing the configured
-            fraction of accumulated saliency.
-
-        saliency_map:
-            Two-dimensional normalized visual-attention map in the range
-            0..1.
+    The diagnostics intentionally stay compact. They retain the image-level
+    color-pop measurements, the candidate signals still used by the algorithm,
+    and multiscale nearest-neighbor support used for the current experiment.
     """
 
     colors: tuple[DominantColor, ...]
@@ -140,7 +185,17 @@ class DominanceAnalysis:
     focal_center: tuple[float, float]
     focal_radius: float
 
+    neutral_pixel_fraction: float
+    neutral_cluster_fraction: float
+    population_weighted_mean_chroma: float
+    high_chroma_pixel_fraction: float
+    accent_chroma_separation: float
+    color_pop_strength: float
+
+    coarse_dimensions: tuple[int, ...]
+
     saliency_map: FloatArray
+    diagnostics: tuple[DominantColorDiagnostic, ...] = ()
 
 
 def dominant_colors_to_palette(
@@ -196,14 +251,63 @@ class _DominantColorCandidate:
     population: float
     population_score: float
 
+    coarse_support: tuple[float, ...]
+    coarse_support_mean: float
+    coarse_support_ratio: float
+    coarse_scale_persistence: float
+    structural_support: float
+    structural_penalty: float
+
     global_salience: float
     local_contrast: float
     spatial_distribution: float
     spatial_coherence: float
     lightness_contrast: float
-    focal_importance: float
 
+    chroma: float
+    normalized_chroma: float
+    chroma_ratio_to_mean: float
+    chromatic_distinctiveness: float
+    chromatic_prominence: float
+
+    neutrality: float
+    population_protection: float
+    neutral_penalty: float = 0.0
+
+    focal_saliency_share: float = 0.0
+    mean_saliency: float = 0.0
+    normalized_mean_saliency: float = 0.0
+    focal_importance: float = 0.0
+
+    base_dominance: float = 0.0
     dominance: float = 0.0
+
+    selected_rank: int | None = None
+    selection_score: float | None = None
+    nearest_selected_distance: float | None = None
+    diversity_multiplier: float | None = None
+
+
+def _lab_array_to_rgb(
+    lab_array: FloatArray,
+) -> RGB:
+    """Convert a Lab ndarray representative to clamped integer RGB."""
+
+    lab: Lab = (
+        float(lab_array[0]),
+        float(lab_array[1]),
+        float(lab_array[2]),
+    )
+
+    rgb_result = lab_to_rgb(
+        lab
+    )
+
+    return (
+        int(np.clip(round(rgb_result[0]), 0, 255)),
+        int(np.clip(round(rgb_result[1]), 0, 255)),
+        int(np.clip(round(rgb_result[2]), 0, 255)),
+    )
 
 
 # ============================================================================
@@ -246,7 +350,7 @@ def _resize_for_analysis(
 
     return image.resize(
         size,
-        Image.Resampling.LANCZOS,
+        Image.Resampling.NEAREST,
     )
 
 
@@ -297,6 +401,157 @@ def _prepare_image(
         )
 
     return rgb_image, valid_mask
+
+
+def _resize_nearest_short_side(
+    image: Image.Image,
+    target_dimension: int,
+) -> Image.Image:
+    """Resize so the short side matches target_dimension using nearest-neighbor."""
+
+    width, height = image.size
+    smallest = min(width, height)
+
+    if smallest <= target_dimension:
+        return image.copy()
+
+    scale = target_dimension / smallest
+
+    size = (
+        max(1, round(width * scale)),
+        max(1, round(height * scale)),
+    )
+
+    return image.resize(
+        size,
+        Image.Resampling.NEAREST,
+    )
+
+
+def _convert_rgb_values_to_lab(
+    rgb_values: UInt8Array,
+) -> FloatArray:
+    """Convert an N x 3 RGB array to Lab while converting unique RGBs once."""
+
+    if len(rgb_values) == 0:
+        return np.empty(
+            (0, 3),
+            dtype=np.float64,
+        )
+
+    unique_rgb, inverse = np.unique(
+        rgb_values,
+        axis=0,
+        return_inverse=True,
+    )
+
+    unique_lab = np.asarray(
+        [
+            rgb_to_lab(
+                (
+                    int(rgb[0]),
+                    int(rgb[1]),
+                    int(rgb[2]),
+                )
+            )
+            for rgb in unique_rgb
+        ],
+        dtype=np.float64,
+    )
+
+    return np.asarray(
+        unique_lab[inverse],
+        dtype=np.float64,
+    )
+
+
+def _calculate_multiscale_coarse_support(
+    image: Image.Image | str | Path,
+    centroids: FloatArray,
+    *,
+    dimensions: tuple[int, ...],
+    alpha_threshold: int,
+) -> FloatArray:
+    """
+    Measure candidate occupancy on coarse nearest-neighbor views of the source.
+
+    Each coarse pixel is assigned to the nearest surviving full-analysis
+    candidate using CIEDE2000. This intentionally reuses the same candidate
+    colors rather than reclustering each scale independently.
+
+    Returns:
+        Array shaped (candidate_count, scale_count), where each value is the
+        fraction of valid pixels at that scale assigned to the candidate.
+    """
+
+    candidate_count = len(centroids)
+
+    if candidate_count == 0:
+        return np.empty(
+            (0, len(dimensions)),
+            dtype=np.float64,
+        )
+
+    source = _load_image(
+        image
+    ).convert("RGBA")
+
+    support = np.zeros(
+        (candidate_count, len(dimensions)),
+        dtype=np.float64,
+    )
+
+    for scale_index, dimension in enumerate(dimensions):
+        coarse = _resize_nearest_short_side(
+            source,
+            dimension,
+        )
+
+        rgba = np.asarray(
+            coarse,
+            dtype=np.uint8,
+        )
+
+        valid_mask = np.asarray(
+            rgba[..., 3] >= alpha_threshold,
+            dtype=np.bool_,
+        )
+
+        if not np.any(valid_mask):
+            continue
+
+        rgb_values = np.asarray(
+            rgba[..., :3][valid_mask],
+            dtype=np.uint8,
+        )
+
+        coarse_lab = _convert_rgb_values_to_lab(
+            rgb_values
+        )
+
+        distances = np.asarray(
+            delta_e_2000_array(
+                coarse_lab[:, None, :],
+                centroids[None, :, :],
+            ),
+            dtype=np.float64,
+        )
+
+        nearest = np.argmin(
+            distances,
+            axis=1,
+        )
+
+        counts = np.bincount(
+            nearest,
+            minlength=candidate_count,
+        ).astype(np.float64)
+
+        support[:, scale_index] = (
+            counts / len(nearest)
+        )
+
+    return support
 
 
 # ============================================================================
@@ -439,19 +694,30 @@ def _merge_perceptual_clusters(
     Merged representatives are population-weighted Lab averages.
     """
 
+    active_indices = [
+        index
+        for index, population in enumerate(populations)
+        if int(population) > 0
+    ]
+
+    if not active_indices:
+        raise ValueError(
+            "Perceptual cluster merge requires at least one populated cluster."
+        )
+
     merged_centroids = np.asarray(
-        centroids,
+        centroids[active_indices],
         dtype=np.float64,
     ).copy()
 
     merged_populations = np.asarray(
-        populations,
+        populations[active_indices],
         dtype=np.float64,
     ).copy()
 
     groups: list[list[int]] = [
         [index]
-        for index in range(len(merged_centroids))
+        for index in active_indices
     ]
 
     while len(merged_centroids) > 1:
@@ -712,131 +978,159 @@ def _calculate_local_contrast(
 # ============================================================================
 
 
-def _calculate_saliency_map(
-    lab_image: FloatArray,
+def _apply_center_bias(
+    saliency: FloatArray,
     valid_mask: BoolArray,
-    local_contrast: FloatArray,
     *,
     center_bias: float,
 ) -> FloatArray:
     """
-    Estimate visual attention using image-derived characteristics.
+    Optionally blend a weak center prior into an existing saliency map.
 
-    Saliency components:
-        45% local perceptual contrast
-        35% global perceptual uniqueness
-        20% relative lightness contrast
-
-    An optional center prior is blended afterward.
+    The center prior is intentionally weak and optional. It should guide
+    attention estimates rather than replace evidence from the image.
     """
 
-    valid_lab = lab_image[valid_mask]
+    result = np.asarray(
+        saliency,
+        dtype=np.float64,
+    ).copy()
 
-    global_mean_lab = np.asarray(
-        valid_lab.mean(axis=0),
+    if center_bias <= 0.0:
+        result[~valid_mask] = 0.0
+        return result
+
+    height, width = valid_mask.shape
+
+    yy, xx = np.mgrid[
+        0:height,
+        0:width,
+    ]
+
+    nx = (
+        xx - (width - 1) / 2
+    ) / max(width / 2, 1)
+
+    ny = (
+        yy - (height - 1) / 2
+    ) / max(height / 2, 1)
+
+    distance = np.sqrt(
+        nx * nx
+        + ny * ny
+    )
+
+    center = np.clip(
+        1.0 - distance,
+        0.0,
+        1.0,
+    )
+
+    result = (
+        result * (1.0 - center_bias)
+        + center * center_bias
+    )
+
+    result[~valid_mask] = 0.0
+
+    return np.asarray(
+        result,
         dtype=np.float64,
     )
 
-    # ------------------------------------------------------------------
-    # Global perceptual uniqueness
-    # ------------------------------------------------------------------
 
-    uniqueness = np.zeros(
-        valid_mask.shape,
-        dtype=np.float64,
+def _calculate_opencv_saliency_map(
+    rgb_image: UInt8Array,
+    valid_mask: BoolArray,
+    *,
+    backend: Literal[
+        "opencv_fine_grained",
+        "opencv_spectral",
+    ],
+    center_bias: float,
+) -> FloatArray:
+    """
+    Calculate static image saliency with OpenCV contrib.
+
+    Fine Grained is the default because it produces a spatially detailed
+    saliency map that is useful for assigning visual-attention importance to
+    perceptual color clusters.
+    """
+
+    bgr_image = cv2.cvtColor(
+        rgb_image,
+        cv2.COLOR_RGB2BGR,
     )
 
-    uniqueness[valid_mask] = np.asarray(
-        delta_e_2000_array(
-            valid_lab,
-            global_mean_lab,
-        ),
-        dtype=np.float64,
-    )
-
-    uniqueness = _normalize_map(
-        uniqueness,
-        valid_mask,
-    )
-
-    # ------------------------------------------------------------------
-    # Lightness contrast
-    # ------------------------------------------------------------------
-
-    mean_lightness = float(
-        valid_lab[:, 0].mean()
-    )
-
-    lightness = np.zeros(
-        valid_mask.shape,
-        dtype=np.float64,
-    )
-
-    lightness[valid_mask] = np.abs(
-        lab_image[..., 0][valid_mask]
-        - mean_lightness
-    )
-
-    lightness = _normalize_map(
-        lightness,
-        valid_mask,
-    )
-
-    # ------------------------------------------------------------------
-    # Base saliency
-    # ------------------------------------------------------------------
-
-    saliency = (
-        local_contrast * 0.45
-        + uniqueness * 0.35
-        + lightness * 0.20
-    )
-
-    # ------------------------------------------------------------------
-    # Optional compositional center prior
-    # ------------------------------------------------------------------
-
-    if center_bias > 0.0:
-        height, width = valid_mask.shape
-
-        yy, xx = np.mgrid[
-            0:height,
-            0:width,
-        ]
-
-        nx = (
-            xx - (width - 1) / 2
-        ) / max(width / 2, 1)
-
-        ny = (
-            yy - (height - 1) / 2
-        ) / max(height / 2, 1)
-
-        distance = np.sqrt(
-            nx * nx
-            + ny * ny
+    if backend == "opencv_fine_grained":
+        detector = (
+            cv2.saliency.StaticSaliencyFineGrained.create()
+        )
+    else:
+        detector = (
+            cv2.saliency.StaticSaliencySpectralResidual.create()
         )
 
-        center = np.clip(
-            1.0 - distance,
-            0.0,
-            1.0,
+    success, saliency_map = detector.computeSaliency(
+        bgr_image
+    )
+
+    if not success:
+        raise RuntimeError(
+            f"OpenCV saliency computation failed for backend {backend!r}."
         )
 
-        saliency = (
-            saliency * (1.0 - center_bias)
-            + center * center_bias
+    saliency = np.asarray(
+        saliency_map,
+        dtype=np.float64,
+    )
+
+    if saliency.ndim == 3:
+        saliency = saliency[..., 0]
+
+    if saliency.shape != valid_mask.shape:
+        saliency = cv2.resize(
+            saliency,
+            (
+                valid_mask.shape[1],
+                valid_mask.shape[0],
+            ),
+            interpolation=cv2.INTER_LINEAR,
+        )
+        saliency = np.asarray(
+            saliency,
+            dtype=np.float64,
         )
 
     saliency[~valid_mask] = 0.0
 
+    saliency = _apply_center_bias(
+        saliency,
+        valid_mask,
+        center_bias=center_bias,
+    )
+
     return _normalize_map(
-        np.asarray(
-            saliency,
-            dtype=np.float64,
-        ),
+        saliency,
         valid_mask,
         percentile=100.0,
+    )
+
+
+def _calculate_saliency_map(
+    rgb_image: UInt8Array,
+    valid_mask: BoolArray,
+    *,
+    saliency_backend: SaliencyBackend,
+    center_bias: float,
+) -> FloatArray:
+    """Calculate saliency using the configured OpenCV static saliency backend."""
+
+    return _calculate_opencv_saliency_map(
+        rgb_image,
+        valid_mask,
+        backend=saliency_backend,
+        center_bias=center_bias,
     )
 
 
@@ -1113,11 +1407,13 @@ def analyze_dominant_colors(
     diversity_distance: float = 15.0,
     diversity_floor: float = 0.35,
     max_dimension: int = 256,
+    coarse_dimensions: tuple[int, ...] = (32, 64, 96),
     alpha_threshold: int = 16,
     grid_size: int = 4,
     minimum_cell_coverage: float = 0.02,
     kmeans_iterations: int = 100,
     seed: int = 42,
+    saliency_backend: SaliencyBackend = "opencv_fine_grained",
 ) -> DominanceAnalysis:
     """
     Analyze the perceptually dominant colors in an image.
@@ -1157,7 +1453,11 @@ def analyze_dominant_colors(
             redundant with an already-selected color.
 
         max_dimension:
-            Maximum image dimension used during analysis.
+            Maximum image dimension used during the normal analysis path.
+
+        coarse_dimensions:
+            Long-side dimensions used for diagnostic nearest-neighbor structural
+            support. These coarse views do not affect scoring or selection.
 
         alpha_threshold:
             Pixels with lower alpha values are excluded.
@@ -1174,6 +1474,10 @@ def analyze_dominant_colors(
 
         seed:
             Deterministic random seed used by k-means.
+
+        saliency_backend:
+            OpenCV static saliency detector used for focal weighting.
+            Fine Grained is the default; Spectral Residual is also available.
 
     Returns:
         DominanceAnalysis containing selected colors and focal information.
@@ -1228,6 +1532,25 @@ def analyze_dominant_colors(
             "max_dimension must be at least 1."
         )
 
+    if not coarse_dimensions:
+        raise ValueError(
+            "coarse_dimensions must contain at least one dimension."
+        )
+
+    if any(dimension < 1 for dimension in coarse_dimensions):
+        raise ValueError(
+            "Every coarse dimension must be at least 1."
+        )
+
+    coarse_dimensions = tuple(
+        sorted(
+            set(
+                int(dimension)
+                for dimension in coarse_dimensions
+            )
+        )
+    )
+
     if not 0 <= alpha_threshold <= 255:
         raise ValueError(
             "alpha_threshold must be between 0 and 255."
@@ -1246,6 +1569,15 @@ def analyze_dominant_colors(
     if kmeans_iterations < 1:
         raise ValueError(
             "kmeans_iterations must be at least 1."
+        )
+
+    if saliency_backend not in (
+        "opencv_fine_grained",
+        "opencv_spectral",
+    ):
+        raise ValueError(
+            "saliency_backend must be one of "
+            "'opencv_fine_grained' or 'opencv_spectral'."
         )
 
     # ------------------------------------------------------------------
@@ -1272,6 +1604,13 @@ def analyze_dominant_colors(
         valid_lab
     )
 
+    distinct_color_count = len(
+        np.unique(
+            valid_lab,
+            axis=0,
+        )
+    )
+
     # ------------------------------------------------------------------
     # Provisional clustering
     # ------------------------------------------------------------------
@@ -1288,6 +1627,11 @@ def analyze_dominant_colors(
     provisional_clusters = min(
         provisional_clusters,
         total_pixels,
+    )
+
+    provisional_clusters = min(
+        provisional_clusters,
+        distinct_color_count,
     )
 
     (
@@ -1341,6 +1685,13 @@ def analyze_dominant_colors(
         dtype=np.float64,
     )
 
+    coarse_support_matrix = _calculate_multiscale_coarse_support(
+        image,
+        centroids,
+        dimensions=coarse_dimensions,
+        alpha_threshold=alpha_threshold,
+    )
+
     # ------------------------------------------------------------------
     # Spatial analysis
     # ------------------------------------------------------------------
@@ -1354,9 +1705,9 @@ def analyze_dominant_colors(
 
     saliency_map = (
         _calculate_saliency_map(
-            lab_image,
+            rgb_image,
             valid_mask,
-            local_contrast_map,
+            saliency_backend=saliency_backend,
             center_bias=center_bias,
         )
     )
@@ -1416,6 +1767,178 @@ def analyze_dominant_colors(
         )
     )
 
+    # ------------------------------------------------------------------
+    # Chromatic prominence diagnostics
+    # ------------------------------------------------------------------
+    #
+    # Chroma measures distance from the neutral axis in the Lab a*/b* plane.
+    # It is kept image-relative rather than treated as an absolute virtue.
+    #
+    # Chromatic distinctiveness measures how far each cluster's chromatic
+    # vector is from the other surviving clusters, weighted by their image
+    # populations. L* is intentionally excluded here so tonal contrast does
+    # not masquerade as chromatic identity.
+    #
+    # Chromatic prominence is an experimental diagnostic only. The geometric
+    # mean requires a color to be both chromatic and chromatically distinct;
+    # a neutral cluster cannot score highly merely because it is far from a
+    # vivid cluster.
+    # ------------------------------------------------------------------
+
+    cluster_chroma = np.sqrt(
+        centroids[:, 1] ** 2
+        + centroids[:, 2] ** 2
+    )
+
+    max_cluster_chroma = float(
+        cluster_chroma.max()
+    )
+
+    mean_cluster_chroma = float(
+        np.average(
+            cluster_chroma,
+            weights=populations,
+        )
+    )
+
+    chromatic_vectors = np.asarray(
+        centroids[:, 1:3],
+        dtype=np.float64,
+    )
+
+    chromatic_distances = np.linalg.norm(
+        chromatic_vectors[:, None, :]
+        - chromatic_vectors[None, :, :],
+        axis=2,
+    )
+
+    chromatic_distinctiveness = np.asarray(
+        (
+            chromatic_distances
+            * population_fraction[None, :]
+        ).sum(axis=1),
+        dtype=np.float64,
+    )
+
+    max_chromatic_distinctiveness = float(
+        chromatic_distinctiveness.max()
+    )
+
+    if max_chromatic_distinctiveness > 0.0:
+        chromatic_distinctiveness /= max_chromatic_distinctiveness
+
+    # ------------------------------------------------------------------
+    # Image-level color-pop diagnostics
+    # ------------------------------------------------------------------
+    #
+    # These metrics intentionally do not modify ranking yet. They test whether
+    # mostly-neutral images with a relatively small set of strong chromatic
+    # accents can be detected reliably enough to justify a conditional neutral
+    # de-weighting stage later.
+    #
+    # Neutrality uses absolute Lab chroma because the neutral axis is meaningful.
+    # Accent detection is image-relative so naturally muted images are not
+    # mislabeled merely because a few colors are slightly stronger.
+    # ------------------------------------------------------------------
+
+    neutral_chroma_threshold = 12.0
+
+    neutral_clusters = np.asarray(
+        cluster_chroma <= neutral_chroma_threshold,
+        dtype=np.bool_,
+    )
+
+    neutral_pixel_fraction = float(
+        population_fraction[neutral_clusters].sum()
+    )
+
+    neutral_cluster_fraction = float(
+        np.count_nonzero(neutral_clusters)
+        / max(cluster_count, 1)
+    )
+
+    population_weighted_mean_chroma = mean_cluster_chroma
+
+    if mean_cluster_chroma > 0.0:
+        high_chroma_clusters = np.asarray(
+            cluster_chroma >= mean_cluster_chroma * 2.0,
+            dtype=np.bool_,
+        )
+    else:
+        high_chroma_clusters = np.zeros(
+            cluster_count,
+            dtype=np.bool_,
+        )
+
+    high_chroma_pixel_fraction = float(
+        population_fraction[high_chroma_clusters].sum()
+    )
+
+    sorted_chroma = np.sort(
+        np.asarray(
+            cluster_chroma,
+            dtype=np.float64,
+        )
+    )
+
+    accent_count = min(
+        3,
+        len(sorted_chroma),
+    )
+
+    strongest_accent_chroma = float(
+        sorted_chroma[-accent_count:].mean()
+    )
+
+    if mean_cluster_chroma > 0.0:
+        accent_ratio = (
+            strongest_accent_chroma
+            / mean_cluster_chroma
+        )
+    else:
+        accent_ratio = 0.0
+
+    # Ratios around 1.5 are not especially accent-like; 4.0+ is treated as
+    # strongly separated. This is diagnostic normalization, not a scoring rule.
+    accent_chroma_separation = float(
+        np.clip(
+            (accent_ratio - 1.5)
+            / 2.5,
+            0.0,
+            1.0,
+        )
+    )
+
+    # A color-pop composition should have substantial neutral coverage plus
+    # strong accents. Sparse high-chroma coverage reinforces the diagnosis but
+    # does not act as a hard gate.
+    neutral_strength = float(
+        np.clip(
+            (neutral_pixel_fraction - 0.50)
+            / 0.35,
+            0.0,
+            1.0,
+        )
+    )
+
+    accent_sparsity = float(
+        np.clip(
+            (0.35 - high_chroma_pixel_fraction)
+            / 0.30,
+            0.0,
+            1.0,
+        )
+    )
+
+    color_pop_strength = float(
+        neutral_strength
+        * accent_chroma_separation
+        * (
+            0.75
+            + accent_sparsity * 0.25
+        )
+    )
+
     total_saliency = float(
         saliency_map.sum()
     )
@@ -1451,6 +1974,33 @@ def analyze_dominant_colors(
             )
         )
 
+        coarse_support_array = np.asarray(
+            coarse_support_matrix[index],
+            dtype=np.float64,
+        )
+
+        coarse_support = tuple(
+            float(value)
+            for value in coarse_support_array
+        )
+
+        coarse_support_mean = float(
+            coarse_support_array.mean()
+        )
+
+        coarse_support_ratio = (
+            coarse_support_mean / population
+            if population > 0.0
+            else 0.0
+        )
+
+        coarse_scale_persistence = float(
+            np.count_nonzero(
+                coarse_support_array > 0.0
+            )
+            / len(coarse_support_array)
+        )
+
         local_contrast = float(
             local_contrast_map[
                 mask
@@ -1483,15 +2033,78 @@ def analyze_dominant_colors(
             1.0,
         )
 
+        chroma = float(
+            cluster_chroma[index]
+        )
+
+        normalized_chroma = (
+            chroma / max_cluster_chroma
+            if max_cluster_chroma > 0.0
+            else 0.0
+        )
+
+        chroma_ratio_to_mean = (
+            chroma / mean_cluster_chroma
+            if mean_cluster_chroma > 0.0
+            else 0.0
+        )
+
+        cluster_chromatic_distinctiveness = float(
+            chromatic_distinctiveness[index]
+        )
+
+        chromatic_prominence = float(
+            np.sqrt(
+                normalized_chroma
+                * cluster_chromatic_distinctiveness
+            )
+        )
+
+        # ------------------------------------------------------------------
+        # Proposed color-pop neutral handling diagnostics
+        # ------------------------------------------------------------------
+        #
+        # Neutrality is a smooth function of absolute Lab chroma:
+        #   C <= 5   -> fully neutral
+        #   C >= 20  -> fully chromatic for this modifier
+        #
+        # This is intentionally diagnostic only for now.
+        neutrality = float(
+            np.clip(
+                (20.0 - chroma)
+                / 15.0,
+                0.0,
+                1.0,
+            )
+        )
+
+        # Extremely high-coverage colors receive protection from any future
+        # neutral penalty so a genuine background/field color is not discarded
+        # merely because it is neutral.
+        #
+        # Protection ramps from zero at 10% coverage to full at 50% coverage.
+        population_protection = float(
+            np.clip(
+                (population - 0.10)
+                / 0.40,
+                0.0,
+                1.0,
+            )
+        )
+
+        cluster_saliency = saliency_map[mask]
+
         if total_saliency > 0.0:
-            focal_importance = float(
-                saliency_map[
-                    mask
-                ].sum()
+            focal_saliency_share = float(
+                cluster_saliency.sum()
                 / total_saliency
             )
         else:
-            focal_importance = population
+            focal_saliency_share = population
+
+        mean_saliency = float(
+            cluster_saliency.mean()
+        )
 
         candidates.append(
             _DominantColorCandidate(
@@ -1501,6 +2114,12 @@ def analyze_dominant_colors(
                 ),
                 population=population,
                 population_score=population_score,
+                coarse_support=coarse_support,
+                coarse_support_mean=coarse_support_mean,
+                coarse_support_ratio=coarse_support_ratio,
+                coarse_scale_persistence=coarse_scale_persistence,
+                structural_support=1.0,
+                structural_penalty=0.0,
                 global_salience=float(
                     global_salience[index]
                 ),
@@ -1508,55 +2127,185 @@ def analyze_dominant_colors(
                 spatial_distribution=spatial_distribution,
                 spatial_coherence=spatial_coherence,
                 lightness_contrast=lightness_contrast,
-                focal_importance=focal_importance,
+                chroma=chroma,
+                normalized_chroma=normalized_chroma,
+                chroma_ratio_to_mean=chroma_ratio_to_mean,
+                chromatic_distinctiveness=cluster_chromatic_distinctiveness,
+                chromatic_prominence=chromatic_prominence,
+                neutrality=neutrality,
+                population_protection=population_protection,
+                neutral_penalty=0.0,
+                focal_saliency_share=focal_saliency_share,
+                mean_saliency=mean_saliency,
+                focal_importance=mean_saliency,
             )
         )
 
     # ------------------------------------------------------------------
-    # Normalize focal importance against the strongest cluster
+    # Normalize focal diagnostics
+    # ------------------------------------------------------------------
+    #
+    # focal_saliency_share remains available as a diagnostic showing the
+    # fraction of total saliency mass owned by a cluster. It is intentionally
+    # NOT used for focal weighting because it is strongly correlated with
+    # cluster population.
+    #
+    # focal_importance instead uses mean saliency per cluster pixel, normalized
+    # against the strongest cluster. This measures how attention-worthy the
+    # cluster is independently of how much image area it occupies.
     # ------------------------------------------------------------------
 
-    max_focal = max(
-        candidate.focal_importance
+    max_mean_saliency = max(
+        candidate.mean_saliency
         for candidate in candidates
     )
 
-    if max_focal > 0.0:
+    if max_mean_saliency > 0.0:
         for candidate in candidates:
-            candidate.focal_importance /= max_focal
+            normalized_mean_saliency = (
+                candidate.mean_saliency
+                / max_mean_saliency
+            )
+            candidate.normalized_mean_saliency = normalized_mean_saliency
+            candidate.focal_importance = normalized_mean_saliency
+    else:
+        for candidate in candidates:
+            candidate.normalized_mean_saliency = 0.0
+            candidate.focal_importance = 0.0
 
     # ------------------------------------------------------------------
     # Dominance
     # ------------------------------------------------------------------
     #
-    # Base score:
+    # Structural score:
     #
-    #   35% coverage
-    #   20% global perceptual salience
+    #   30% coverage
+    #   35% global perceptual salience
     #   15% local perceptual contrast
-    #   10% spatial distribution
     #   15% spatial coherence
     #    5% relative lightness
     #
-    # Visual attention is deliberately applied as a separate blend rather
-    # than being part of intrinsic perceptual dominance.
+    # Intrinsic dominance:
+    #
+    #   80% structural score
+    #   20% chromatic prominence
+    #
+    # Spatial distribution is retained as diagnostic metadata but is not
+    # rewarded in the base score. Broad image coverage is already represented
+    # by population, and distribution otherwise biases the ranking toward
+    # structural/background colors that appear across many regions.
+    #
+    # Visual attention is deliberately applied as a separate blend using
+    # population-independent mean saliency.
     # ------------------------------------------------------------------
 
     for candidate in candidates:
-        base_dominance = (
-            candidate.population_score * 0.35
-            + candidate.global_salience * 0.20
+        structural_dominance = (
+            candidate.population_score * 0.30
+            + candidate.global_salience * 0.35
             + candidate.local_contrast * 0.15
-            + candidate.spatial_distribution * 0.10
             + candidate.spatial_coherence * 0.15
             + candidate.lightness_contrast * 0.05
         )
 
+        # Chromatic prominence contributes 20% of intrinsic dominance.
+        #
+        # The remaining 80% preserves the existing structural/perceptual
+        # dominance model. This is intentionally a conservative first blend so
+        # chromatic identity can influence ranking without making vivid colors
+        # universally dominant.
+        candidate.base_dominance = (
+            structural_dominance * 0.80
+            + candidate.chromatic_prominence * 0.20
+        )
+
         candidate.dominance = (
-            base_dominance
+            candidate.base_dominance
             * (1.0 - focal_weight)
             + candidate.focal_importance
             * focal_weight
+        )
+
+    # ------------------------------------------------------------------
+    # Color-pop neutral adjustment
+    # ------------------------------------------------------------------
+
+    maximum_neutral_penalty = 0.35
+
+    for candidate in candidates:
+        candidate.neutral_penalty = float(
+            color_pop_strength
+            * candidate.neutrality
+            * (1.0 - candidate.population_protection)
+            * maximum_neutral_penalty
+        )
+
+        candidate.dominance = float(
+            candidate.dominance
+            * (1.0 - candidate.neutral_penalty)
+        )
+
+    # ------------------------------------------------------------------
+    # Multiscale structural-support adjustment
+    # ------------------------------------------------------------------
+    #
+    # Coarse nearest-neighbor views provide evidence that a candidate occupies a
+    # compositionally meaningful region rather than existing mainly as a
+    # high-frequency fringe/antialiasing artifact.
+    #
+    # A candidate that survives at every coarse scale is not penalized.
+    # Partial persistence can be rescued by meaningful absolute coarse coverage.
+    # Population protection prevents coarse sampling from suppressing genuinely
+    # large image regions.
+    #
+    # This modifier is deliberately conservative and does not reward candidates;
+    # it only reduces dominance when structural support is weak.
+    # ------------------------------------------------------------------
+
+    maximum_structural_penalty = 0.50
+    coarse_rescue_coverage = 0.005
+    population_protection_start = 0.001
+    population_protection_full = 0.020
+
+    for candidate in candidates:
+        coarse_coverage_support = float(
+            np.clip(
+                candidate.coarse_support_mean
+                / coarse_rescue_coverage,
+                0.0,
+                1.0,
+            )
+        )
+
+        candidate.structural_support = max(
+            candidate.coarse_scale_persistence,
+            coarse_coverage_support,
+        )
+
+        structural_population_protection = float(
+            np.clip(
+                (
+                    candidate.population
+                    - population_protection_start
+                )
+                / (
+                    population_protection_full
+                    - population_protection_start
+                ),
+                0.0,
+                1.0,
+            )
+        )
+
+        candidate.structural_penalty = float(
+            maximum_structural_penalty
+            * (1.0 - candidate.structural_support)
+            * (1.0 - structural_population_protection)
+        )
+
+        candidate.dominance = float(
+            candidate.dominance
+            * (1.0 - candidate.structural_penalty)
         )
 
     # ------------------------------------------------------------------
@@ -1575,11 +2324,19 @@ def analyze_dominant_colors(
         remaining
         and len(selected) < count
     ):
+        best_selection_score: float
+        best_nearest_distance: float | None
+        best_diversity_multiplier: float
+
         if not selected:
             best = max(
                 remaining,
                 key=lambda candidate: candidate.dominance,
             )
+
+            best_selection_score = best.dominance
+            best_nearest_distance = None
+            best_diversity_multiplier = 1.0
 
         else:
             selected_lab = np.asarray(
@@ -1592,6 +2349,8 @@ def analyze_dominant_colors(
 
             best: _DominantColorCandidate | None = None
             best_score = -np.inf
+            best_distance: float | None = None
+            best_multiplier = 1.0
 
             for candidate in remaining:
                 distances = np.asarray(
@@ -1631,9 +2390,22 @@ def analyze_dominant_colors(
                 if score > best_score:
                     best = candidate
                     best_score = score
+                    best_distance = nearest_distance
+                    best_multiplier = diversity_multiplier
 
             if best is None:
                 break
+
+            best_selection_score = float(
+                best_score
+            )
+            best_nearest_distance = best_distance
+            best_diversity_multiplier = best_multiplier
+
+        best.selected_rank = len(selected) + 1
+        best.selection_score = best_selection_score
+        best.nearest_selected_distance = best_nearest_distance
+        best.diversity_multiplier = best_diversity_multiplier
 
         selected.append(
             best
@@ -1666,32 +2438,8 @@ def analyze_dominant_colors(
             float(lab_array[2]),
         )
 
-        rgb_result = lab_to_rgb(
-            lab
-        )
-
-        rgb: RGB = (
-            int(
-                np.clip(
-                    round(rgb_result[0]),
-                    0,
-                    255,
-                )
-            ),
-            int(
-                np.clip(
-                    round(rgb_result[1]),
-                    0,
-                    255,
-                )
-            ),
-            int(
-                np.clip(
-                    round(rgb_result[2]),
-                    0,
-                    255,
-                )
-            ),
+        rgb: RGB = _lab_array_to_rgb(
+            lab_array
         )
 
         colors.append(
@@ -1709,11 +2457,208 @@ def analyze_dominant_colors(
             )
         )
 
+    diagnostics: list[DominantColorDiagnostic] = []
+
+    for candidate in sorted(
+        candidates,
+        key=lambda item: item.dominance,
+        reverse=True,
+    ):
+        diagnostic_rgb = _lab_array_to_rgb(
+            candidate.lab
+        )
+
+        diagnostic_lab: Lab = (
+            float(candidate.lab[0]),
+            float(candidate.lab[1]),
+            float(candidate.lab[2]),
+        )
+
+        diagnostics.append(
+            DominantColorDiagnostic(
+                rgb=diagnostic_rgb,
+                lab=diagnostic_lab,
+                population=candidate.population,
+                population_score=candidate.population_score,
+                coarse_support=candidate.coarse_support,
+                coarse_support_mean=candidate.coarse_support_mean,
+                coarse_support_ratio=candidate.coarse_support_ratio,
+                coarse_scale_persistence=candidate.coarse_scale_persistence,
+                structural_support=candidate.structural_support,
+                structural_penalty=candidate.structural_penalty,
+                global_salience=candidate.global_salience,
+                local_contrast=candidate.local_contrast,
+                spatial_coherence=candidate.spatial_coherence,
+                lightness_contrast=candidate.lightness_contrast,
+                chroma=candidate.chroma,
+                chromatic_prominence=candidate.chromatic_prominence,
+                neutrality=candidate.neutrality,
+                neutral_penalty=candidate.neutral_penalty,
+                focal_saliency_share=candidate.focal_saliency_share,
+                mean_saliency=candidate.mean_saliency,
+                normalized_mean_saliency=candidate.normalized_mean_saliency,
+                focal_importance=candidate.focal_importance,
+                base_dominance=candidate.base_dominance,
+                dominance=candidate.dominance,
+                selected_rank=candidate.selected_rank,
+                selection_score=candidate.selection_score,
+                nearest_selected_distance=candidate.nearest_selected_distance,
+                diversity_multiplier=candidate.diversity_multiplier,
+            )
+        )
+
     return DominanceAnalysis(
         colors=tuple(colors),
         focal_center=focal_center,
         focal_radius=focal_radius,
+        neutral_pixel_fraction=neutral_pixel_fraction,
+        neutral_cluster_fraction=neutral_cluster_fraction,
+        population_weighted_mean_chroma=population_weighted_mean_chroma,
+        high_chroma_pixel_fraction=high_chroma_pixel_fraction,
+        accent_chroma_separation=accent_chroma_separation,
+        color_pop_strength=color_pop_strength,
+        coarse_dimensions=coarse_dimensions,
         saliency_map=saliency_map,
+        diagnostics=tuple(diagnostics),
+    )
+
+
+def format_dominance_diagnostics(
+    analysis: DominanceAnalysis,
+) -> str:
+    """
+    Format compact candidate diagnostics as tab-separated text.
+
+    The report intentionally omits superseded shadow-selection instrumentation.
+    It focuses on the current image-level classifier, active scoring signals, and
+    diagnostic multiscale nearest-neighbor structural support.
+    """
+
+    coarse_headers = [
+        f"coarse_{dimension}"
+        for dimension in analysis.coarse_dimensions
+    ]
+
+    header_columns = [
+        "selected",
+        "hex",
+        "population",
+        "population_score",
+        *coarse_headers,
+        "coarse_mean",
+        "coarse_ratio",
+        "scale_persistence",
+        "structural_support",
+        "structural_penalty",
+        "global_salience",
+        "local_contrast",
+        "spatial_coherence",
+        "lightness",
+        "lightness_contrast",
+        "chroma",
+        "chromatic_prominence",
+        "neutrality",
+        "neutral_penalty",
+        "focal_saliency_share",
+        "mean_saliency",
+        "normalized_mean_saliency",
+        "focal_importance",
+        "base_dominance",
+        "dominance",
+        "selection_score",
+        "nearest_selected_de00",
+        "diversity_multiplier",
+    ]
+
+    lines = [
+        (
+            f"focal_center=({analysis.focal_center[0]:.6f},"
+            f" {analysis.focal_center[1]:.6f})\t"
+            f"focal_radius={analysis.focal_radius:.6f}"
+        ),
+        (
+            f"neutral_pixel_fraction={analysis.neutral_pixel_fraction:.6f}\t"
+            f"neutral_cluster_fraction={analysis.neutral_cluster_fraction:.6f}\t"
+            f"population_weighted_mean_chroma="
+            f"{analysis.population_weighted_mean_chroma:.6f}\t"
+            f"high_chroma_pixel_fraction="
+            f"{analysis.high_chroma_pixel_fraction:.6f}\t"
+            f"accent_chroma_separation="
+            f"{analysis.accent_chroma_separation:.6f}\t"
+            f"color_pop_strength={analysis.color_pop_strength:.6f}"
+        ),
+        "\t".join(
+            header_columns
+        ),
+    ]
+
+    for diagnostic in analysis.diagnostics:
+        selected = (
+            str(diagnostic.selected_rank)
+            if diagnostic.selected_rank is not None
+            else "-"
+        )
+
+        selection_score = (
+            f"{diagnostic.selection_score:.6f}"
+            if diagnostic.selection_score is not None
+            else "-"
+        )
+
+        nearest_distance = (
+            f"{diagnostic.nearest_selected_distance:.6f}"
+            if diagnostic.nearest_selected_distance is not None
+            else "-"
+        )
+
+        diversity_multiplier = (
+            f"{diagnostic.diversity_multiplier:.6f}"
+            if diagnostic.diversity_multiplier is not None
+            else "-"
+        )
+
+        row = [
+            selected,
+            diagnostic.hex,
+            f"{diagnostic.population:.6f}",
+            f"{diagnostic.population_score:.6f}",
+            *[
+                f"{value:.6f}"
+                for value in diagnostic.coarse_support
+            ],
+            f"{diagnostic.coarse_support_mean:.6f}",
+            f"{diagnostic.coarse_support_ratio:.6f}",
+            f"{diagnostic.coarse_scale_persistence:.6f}",
+            f"{diagnostic.structural_support:.6f}",
+            f"{diagnostic.structural_penalty:.6f}",
+            f"{diagnostic.global_salience:.6f}",
+            f"{diagnostic.local_contrast:.6f}",
+            f"{diagnostic.spatial_coherence:.6f}",
+            f"{diagnostic.lab[0]:.6f}",
+            f"{diagnostic.lightness_contrast:.6f}",
+            f"{diagnostic.chroma:.6f}",
+            f"{diagnostic.chromatic_prominence:.6f}",
+            f"{diagnostic.neutrality:.6f}",
+            f"{diagnostic.neutral_penalty:.6f}",
+            f"{diagnostic.focal_saliency_share:.6f}",
+            f"{diagnostic.mean_saliency:.6f}",
+            f"{diagnostic.normalized_mean_saliency:.6f}",
+            f"{diagnostic.focal_importance:.6f}",
+            f"{diagnostic.base_dominance:.6f}",
+            f"{diagnostic.dominance:.6f}",
+            selection_score,
+            nearest_distance,
+            diversity_multiplier,
+        ]
+
+        lines.append(
+            "\t".join(
+                row
+            )
+        )
+
+    return "\n".join(
+        lines
     )
 
 
@@ -1729,11 +2674,13 @@ def dominant_colors(
     diversity_distance: float = 15.0,
     diversity_floor: float = 0.35,
     max_dimension: int = 256,
+    coarse_dimensions: tuple[int, ...] = (32, 64, 96),
     alpha_threshold: int = 16,
     grid_size: int = 4,
     minimum_cell_coverage: float = 0.02,
     kmeans_iterations: int = 100,
     seed: int = 42,
+    saliency_backend: SaliencyBackend = "opencv_fine_grained",
 ) -> tuple[DominantColor, ...]:
     """
     Return perceptually dominant colors without the additional analysis data.
@@ -1752,9 +2699,11 @@ def dominant_colors(
         diversity_distance=diversity_distance,
         diversity_floor=diversity_floor,
         max_dimension=max_dimension,
+        coarse_dimensions=coarse_dimensions,
         alpha_threshold=alpha_threshold,
         grid_size=grid_size,
         minimum_cell_coverage=minimum_cell_coverage,
         kmeans_iterations=kmeans_iterations,
         seed=seed,
+        saliency_backend=saliency_backend,
     ).colors

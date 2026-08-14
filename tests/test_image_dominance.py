@@ -58,6 +58,46 @@ def _make_transparent_image() -> Image.Image:
     return Image.new("RGBA", (4, 4), (255, 0, 0, 0))
 
 
+def _make_limited_palette_image() -> Image.Image:
+    """Create an image with fewer unique colors than the default cluster count."""
+    colors = [
+        (26, 160, 222),
+        (27, 33, 47),
+        (73, 88, 104),
+        (134, 138, 147),
+        (141, 145, 153),
+        (167, 178, 191),
+        (168, 102, 69),
+        (220, 130, 74),
+        (221, 185, 161),
+        (230, 237, 239),
+    ]
+
+    image = Image.new("RGB", (10, 10))
+
+    for y in range(10):
+        for x in range(10):
+            image.putpixel((x, y), colors[(x + y) % len(colors)])
+
+    return image
+
+
+def _make_indexed_palette_image() -> Image.Image:
+    """Create a paletted image to verify indexed-color support."""
+    image = Image.new("P", (8, 4))
+
+    palette = [0] * (256 * 3)
+    palette[0:3] = [255, 0, 0]
+    palette[3:6] = [0, 0, 255]
+    image.putpalette(palette)
+
+    for x in range(8):
+        for y in range(4):
+            image.putpixel((x, y), 0 if x < 4 else 1)
+
+    return image
+
+
 @unittest.skipUnless(
     DEPENDENCIES_AVAILABLE,
     "Requires Pillow, numpy, and scikit-learn",
@@ -281,6 +321,41 @@ class TestDominanceAnalysis(unittest.TestCase):
         self.assertEqual(
             [round(color.dominance, 8) for color in first],
             [round(color.dominance, 8) for color in second],
+        )
+
+    def test_limited_palette_image_does_not_collapse_to_nan_result(self) -> None:
+        """Images with few unique colors still produce finite multi-color output."""
+        colors = self.dominant_colors(
+            _make_limited_palette_image(),
+            count=8,
+        )
+
+        self.assertEqual(len(colors), 8)
+        self.assertEqual(len({color.rgb for color in colors}), 8)
+        self.assertTrue(
+            all(
+                color.dominance == color.dominance
+                for color in colors
+            )
+        )
+
+    def test_indexed_palette_image_is_supported(self) -> None:
+        """Paletted images should analyze correctly after RGBA conversion."""
+        colors = self.dominant_colors(
+            _make_indexed_palette_image(),
+            count=2,
+        )
+
+        self.assertEqual(len(colors), 2)
+        self.assertEqual(
+            {color.rgb for color in colors},
+            {(255, 0, 0), (0, 0, 255)},
+        )
+        self.assertTrue(
+            all(
+                abs(color.population - 0.5) < 1e-6
+                for color in colors
+            )
         )
 
 

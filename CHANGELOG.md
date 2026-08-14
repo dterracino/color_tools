@@ -14,12 +14,26 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 
+## [6.11.4] - 2026-08-13
+
 ### Added
 
 - **Dominance unit-test coverage** — added `tests/test_image_dominance.py` with focused coverage
   for `DominantColor`, `analyze_dominant_colors()`, `dominant_colors()`,
-  `dominant_colors_to_palette()`, argument validation, transparent-image rejection, and public
-  `color_tools.image` exports using synthetic in-memory images.
+  `dominant_colors_to_palette()`, argument validation, transparent-image rejection, indexed-color
+  image support, and public `color_tools.image` exports using synthetic in-memory images.
+
+### Changed
+
+- **OpenCV image dependency** — switched the optional `image` extra from `opencv-python` to
+  `opencv-contrib-python` so the package can use OpenCV's saliency APIs.
+
+### Fixed
+
+- **Dominant-color low-palette merge failure** — fixed `color_tools.image.dominance` so images
+  with fewer distinct colors than the provisional cluster count, including indexed-color images,
+  no longer carry zero-population k-means clusters into perceptual merging. This prevents invalid
+  centroid division, `NaN` dominance scores, and collapsed one-color swatch output.
 
 ## [6.11.3] - 2026-08-13
 
