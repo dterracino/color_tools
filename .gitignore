@@ -146,9 +146,6 @@ cython_debug/
 .vercel/
 .vercel
 .env*.local
-api/color_of_day.py
-api/filament_of_day.py
-api/requirements.txt
 
 # Other local files
 tooling/samples/*

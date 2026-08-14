@@ -1,12 +1,12 @@
-# Vercel API — Color of the Day & Filament of the Day
+# Badge API — Color of the Day & Filament of the Day
 
-> **Personal demo deployment — not a public API.**
-> This endpoint is hosted for the README swatches only. It carries no SLA, no rate-limit policy,
+> **Personal demo deployment — not the main project API.**
+> These badge endpoints are hosted for the README swatches only. They carry no SLA, no rate-limit policy,
 > and may be taken down or changed at any time without notice. Do not build products against it.
 
 ## Overview
 
-Two Vercel serverless functions serve daily SVG swatch images embedded in the README:
+Two Vercel serverless functions serve daily SVG badge images embedded in the README:
 
 | Endpoint | Description |
 | --- | --- |
@@ -21,22 +21,16 @@ string with SHA-256 and taking `hash % count`.
 
 ```text
 GitHub repo
-  └── badges/
-       ├── color_of_day.py       ← Source of truth for badge logic
-       ├── filament_of_day.py    ← Source of truth for badge logic
+  └── api/
+       ├── color_of_day.py       ← Vercel serverless function
+       ├── filament_of_day.py    ← Vercel serverless function
        └── requirements.txt      ← color-match-tools (installed at build time)
   └── vercel.json                ← Vercel project config
-  └── tooling/generate_vercel_badge_api.py
-                                 ← Generates temporary api/ entrypoints in CI
   └── .github/workflows/
        └── vercel.yml            ← Auto-deploy on push to main
 ```
 
-The deployed functions are generated during GitHub Actions right before `vercel deploy` runs.
-That CI step creates temporary `api/*.py` wrappers plus `api/requirements.txt` so Vercel can
-discover Python functions normally, while the repo keeps the real badge source under `badges/`.
-
-The functions install `color-match-tools` from PyPI at deploy time — they do **not** use the
+These badge functions install `color-match-tools` from PyPI at deploy time — they do **not** use the
 local `color_tools/` source tree. The `vercel.json` `excludeFiles` config strips all non-API
 folders from the bundle to keep the deployment small.
 
@@ -65,9 +59,8 @@ vercel --prod
 
 Push to `main` automatically triggers `.github/workflows/vercel.yml`, which:
 
-1. Generates temporary Vercel-only `api/` entrypoints from `badges/`
-2. Runs a preview deploy on any PR targeting `main`
-3. Runs a production deploy on every push to `main`
+1. Runs a preview deploy on any PR targeting `main`
+2. Runs a production deploy on every push to `main`
 
 No manual action needed for normal releases.
 
