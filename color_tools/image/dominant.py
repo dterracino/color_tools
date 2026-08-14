@@ -7,6 +7,7 @@ Enhancements included:
     1. White-balance normalization (Gray-World)
     2. Palette clustering stability improvements (Balanced)
     3. Contrast-aware palette sorting
+    4. Skin-tone preservation rules
 """
 
 import os
@@ -43,6 +44,58 @@ def white_balance_grayworld(arr: np.ndarray) -> np.ndarray:
     scale = mean_gray / (means + 1e-6)
     balanced = arr_f * scale
     return np.clip(balanced, 0, 255).astype(np.uint8)
+
+
+# ------------------------------------------------------------
+# Enhancement #4: Skin-Tone Preservation
+# ------------------------------------------------------------
+
+def skin_mask_lab(lab: np.ndarray) -> np.ndarray:
+    """
+    Inclusive Lab-space skin-tone mask.
+    Covers a wide range of ethnicities.
+    """
+    L = lab[:, :, 0]
+    a = lab[:, :, 1]
+    b = lab[:, :, 2]
+
+    mask = (
+        (L > 20) & (L < 85) &
+        (a > 5) & (a < 30) &
+        (b > 5) & (b < 40)
+    )
+
+    return mask.astype(np.float32)
+
+
+def preserve_skin_tones(
+    centers_lab: np.ndarray,
+    skin_mask: np.ndarray,
+    lab_pixels: np.ndarray
+) -> np.ndarray:
+    """
+    Prevent merging/splitting of skin-tone clusters.
+    Boost skin cluster stability.
+    """
+
+    if skin_mask.sum() == 0:
+        return centers_lab
+
+    skin_pixels = lab_pixels[skin_mask.reshape(-1) > 0]
+
+    if len(skin_pixels) == 0:
+        return centers_lab
+
+    skin_mean = np.mean(skin_pixels, axis=0)
+
+    refined = []
+    for c in centers_lab:
+        if delta_e(c, skin_mean) < 15.0:
+            refined.append((c * 0.7) + (skin_mean * 0.3))
+        else:
+            refined.append(c)
+
+    return np.array(refined)
 
 
 # ------------------------------------------------------------
@@ -112,13 +165,6 @@ def refine_clusters(centers_lab: np.ndarray) -> np.ndarray:
 # ------------------------------------------------------------
 
 def sort_palette_by_contrast(centers_lab: np.ndarray) -> np.ndarray:
-    """
-    Sort palette by:
-        1. Luminance contrast (descending)
-        2. Chroma (descending)
-        3. Hue (stable fallback)
-    """
-
     L = centers_lab[:, 0]
     a = centers_lab[:, 1]
     b = centers_lab[:, 2]
@@ -126,12 +172,7 @@ def sort_palette_by_contrast(centers_lab: np.ndarray) -> np.ndarray:
     chroma = np.sqrt(a * a + b * b)
     hue = np.arctan2(b, a)
 
-    order = np.lexsort((
-        hue,            # fallback
-        -chroma,        # second priority
-        -L              # primary: high contrast first
-    ))
-
+    order = np.lexsort((hue, -chroma, -L))
     return centers_lab[order]
 
 
@@ -207,12 +248,22 @@ def compute_weights(
     )
 
     weights = suppress_outliers(lab, weights)
+
+    skin_mask = skin_mask_lab(lab)
+    weights[skin_mask] *= 1.5
+
     weights_flat = weights.reshape(-1)
     weights_flat /= float(weights_flat.mean())
     return weights_flat
 
 
-def cluster_colors(lab_pixels: np.ndarray, weights_flat: np.ndarray, n_colors: int) -> np.ndarray:
+def cluster_colors(
+    lab_pixels: np.ndarray,
+    weights_flat: np.ndarray,
+    n_colors: int,
+    skin_mask: np.ndarray
+) -> np.ndarray:
+
     repeat_counts = np.clip((weights_flat * 10.0).astype(int), 1, None)
     weighted_lab = np.repeat(lab_pixels, repeat_counts, axis=0)
 
@@ -224,8 +275,11 @@ def cluster_colors(lab_pixels: np.ndarray, weights_flat: np.ndarray, n_colors: i
     )
     kmeans.fit(weighted_lab)
     centers_lab = kmeans.cluster_centers_
+
     centers_lab = refine_clusters(centers_lab)
+    centers_lab = preserve_skin_tones(centers_lab, skin_mask, lab_pixels)
     centers_lab = sort_palette_by_contrast(centers_lab)
+
     return centers_lab
 
 
@@ -261,12 +315,14 @@ def extract_dominant_colors(
     lab = lab_smooth(lab)
     lab_pixels = lab.reshape(-1, 3)
 
+    skin_mask = skin_mask_lab(lab)
+
     weights_flat = compute_weights(
         sal, edges, center, face, lab,
         face_boost, saliency_boost, edge_boost, center_bias_boost
     )
 
-    centers_lab = cluster_colors(lab_pixels, weights_flat, n_colors)
+    centers_lab = cluster_colors(lab_pixels, weights_flat, n_colors, skin_mask)
     return lab_to_rgb(centers_lab)
 
 
