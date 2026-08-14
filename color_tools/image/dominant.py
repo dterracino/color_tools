@@ -6,6 +6,7 @@ Modular perceptual dominant color extraction with focal-point awareness.
 Enhancements included:
     1. White-balance normalization (Gray-World)
     2. Palette clustering stability improvements (Balanced)
+    3. Contrast-aware palette sorting
 """
 
 import os
@@ -107,6 +108,34 @@ def refine_clusters(centers_lab: np.ndarray) -> np.ndarray:
 
 
 # ------------------------------------------------------------
+# Enhancement #3: Contrast-Aware Palette Sorting
+# ------------------------------------------------------------
+
+def sort_palette_by_contrast(centers_lab: np.ndarray) -> np.ndarray:
+    """
+    Sort palette by:
+        1. Luminance contrast (descending)
+        2. Chroma (descending)
+        3. Hue (stable fallback)
+    """
+
+    L = centers_lab[:, 0]
+    a = centers_lab[:, 1]
+    b = centers_lab[:, 2]
+
+    chroma = np.sqrt(a * a + b * b)
+    hue = np.arctan2(b, a)
+
+    order = np.lexsort((
+        hue,            # fallback
+        -chroma,        # second priority
+        -L              # primary: high contrast first
+    ))
+
+    return centers_lab[order]
+
+
+# ------------------------------------------------------------
 # Pipeline Stages
 # ------------------------------------------------------------
 
@@ -195,7 +224,9 @@ def cluster_colors(lab_pixels: np.ndarray, weights_flat: np.ndarray, n_colors: i
     )
     kmeans.fit(weighted_lab)
     centers_lab = kmeans.cluster_centers_
-    return refine_clusters(centers_lab)
+    centers_lab = refine_clusters(centers_lab)
+    centers_lab = sort_palette_by_contrast(centers_lab)
+    return centers_lab
 
 
 def lab_to_rgb(centers_lab: np.ndarray) -> np.ndarray:
