@@ -1,14 +1,14 @@
 {
   "version": 2,
   "functions": {
-    "api/*.py": {
+    "badges/*.py": {
       "maxDuration": 15,
       "excludeFiles": "{color_tools/**,tests/**,tooling/**,tools/**,docs/**,samples/**,scripts/**,.github/**,.venv/**,dist/**,build/**,.vscode/**,.ruff_cache/**,__pycache__/**}"
     }
   },
   "headers": [
     {
-      "source": "/api/(.*)",
+      "source": "/badges/(.*)",
       "headers": [
         { "key": "Cache-Control", "value": "public, max-age=3600, s-maxage=3600" },
         { "key": "X-Content-Type-Options", "value": "nosniff" }

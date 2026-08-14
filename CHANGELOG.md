@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Image type detection and palette extraction** — added disabled work-in-progress modules for
   classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
+- **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
 ## [6.11.4] - 2026-08-13
 
@@ -22,11 +23,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   for `DominantColor`, `analyze_dominant_colors()`, `dominant_colors()`,
   `dominant_colors_to_palette()`, argument validation, transparent-image rejection, indexed-color
   image support, and public `color_tools.image` exports using synthetic in-memory images.
+- **REST API** — added placeholder for new REST API under development for easily making color_tools
+  functionality available to other applications.
 
 ### Changed
 
 - **OpenCV image dependency** — switched the optional `image` extra from `opencv-python` to
   `opencv-contrib-python` so the package can use OpenCV's saliency APIs.
+- **Badges API** - moved the old Vercel badges API to the badges folder, to make room for the
+  new REST API. The old badges API is no longer available at the old endpoints; the new endpoints
+  must be used. See [docs/Badges.md](https://github.com/dterracino/color_tools/blob/main/docs/Badges.md)
+  for details. Since this service has no SLA, it is not considered a SemVer breaking change.
+  Users should update their links to use the new endpoints.
 
 ### Fixed
 

@@ -14,7 +14,7 @@ A comprehensive Python library for color science operations, color space convers
 [![Filament of the Day](https://color-tools-nine.vercel.app/api/filament_of_day)](https://color-tools-nine.vercel.app/api/filament_of_day)
 
 > **Note:** The swatch images above are served by a personal demo deployment — not a public API.
-> They may change or be unavailable without notice. See [docs/API.md](https://github.com/dterracino/color_tools/blob/main/docs/API.md) for details.
+> They may change or be unavailable without notice. See [docs/Badges.md](https://github.com/dterracino/color_tools/blob/main/docs/Badges.md) for details.
 
 [Changelog](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 
