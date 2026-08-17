@@ -1,0 +1,9 @@
+﻿color\_tools.image.blend
+========================
+
+.. currentmodule:: color_tools.image
+
+.. automodule:: color_tools.image.blend
+   :members:
+   :undoc-members:
+   :show-inheritance:

@@ -1,0 +1,9 @@
+﻿color\_tools.importers.gpl\_importer
+====================================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.gpl_importer
+   :members:
+   :undoc-members:
+   :show-inheritance:
