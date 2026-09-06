@@ -122,7 +122,13 @@ color-tools image --file photo.jpg --quantize-palette cga4 --dither
 ### Library Usage
 
 ```python
-from color_tools import rgb_to_lab, delta_e_2000, Palette, FilamentPalette
+from color_tools import (
+    FilamentCollections,
+    FilamentPalette,
+    Palette,
+    delta_e_2000,
+    rgb_to_lab,
+)
 
 # Convert RGB to LAB
 lab = rgb_to_lab((255, 128, 64))
@@ -137,6 +143,10 @@ print(f"Nearest: {nearest.name} (ΔE: {distance:.2f})")
 filament_palette = FilamentPalette.load_default()
 filament, distance = filament_palette.nearest_filament((255, 128, 64))
 print(f"Filament: {filament.maker} {filament.color}")
+
+# Use a predefined, immutable filament collection
+for filament in FilamentCollections.BAMBU_PLA_BASIC:
+    print(filament.color, filament.hex)
 ```
 
 See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) for complete API reference and CLI documentation.

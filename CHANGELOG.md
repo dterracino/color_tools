@@ -15,6 +15,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.12.0] - 2026-09-06
+
+### Added
+
+- **Predefined filament collections** — added the lazily loaded, cached
+  FilamentCollections API with BAMBU_PLA_BASIC, BAMBU_PLA_MATTE, and
+  BAMBU_PLA_BASICMATTE immutable collections. Predefined collections include all matching
+  records regardless of owned-filament configuration.
+
 ## [6.11.4] - 2026-08-13
 
 ### Added

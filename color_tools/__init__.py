@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.11.4"
+__version__ = "6.12.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -175,6 +175,8 @@ from .filament_palette import (
     load_owned_filaments,
     save_owned_filaments,
 )
+
+from .filament_collections import FilamentCollections
 
 # ============================================================================
 # Color Naming (Generate Names from RGB Values)
@@ -341,6 +343,7 @@ __all__ = [
     # Palettes and data classes
     "Palette",
     "FilamentPalette",
+    "FilamentCollections",
     "ColorRecord",
     "FilamentRecord",
     "load_colors",

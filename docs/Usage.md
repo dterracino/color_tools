@@ -36,7 +36,14 @@ Import and use color_tools functions in your Python code.
 ### Basic Examples
 
 ```python
-from color_tools import rgb_to_lab, delta_e_2000, Palette, FilamentPalette, hex_to_rgb
+from color_tools import (
+    FilamentCollections,
+    FilamentPalette,
+    Palette,
+    delta_e_2000,
+    hex_to_rgb,
+    rgb_to_lab,
+)
 
 # Convert hex to RGB (supports both 3-char and 6-char hex codes)
 rgb1 = hex_to_rgb("#FF8040")  # 6-character hex
@@ -87,6 +94,11 @@ print(f"Nearest filament: {filament.maker} {filament.type} - {filament.color}")
 # Filter filaments by criteria (supports maker synonyms)
 pla_filaments = filament_palette.filter(type_name="PLA", maker="Bambu")  # "Bambu" finds "Bambu Lab"
 print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
+
+# Access predefined immutable collections without configuring filters
+bambu_basic = FilamentCollections.BAMBU_PLA_BASIC
+bambu_matte = FilamentCollections.BAMBU_PLA_MATTE
+bambu_basic_and_matte = FilamentCollections.BAMBU_PLA_BASICMATTE
 
 # Validate color names against hex codes
 from color_tools.validation import validate_color

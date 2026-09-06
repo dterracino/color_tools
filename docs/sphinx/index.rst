@@ -99,6 +99,7 @@ Color & Filament Data
 
    color_tools.palette
    color_tools.filament_palette
+   color_tools.filament_collections
    color_tools.naming
    color_tools.validation
    color_tools.color_deficiency
