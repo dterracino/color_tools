@@ -1,0 +1,9 @@
+﻿color\_tools.importers.registry
+===============================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.registry
+   :members:
+   :undoc-members:
+   :show-inheritance:

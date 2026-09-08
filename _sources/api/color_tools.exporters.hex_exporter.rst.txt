@@ -1,0 +1,9 @@
+﻿color\_tools.exporters.hex\_exporter
+====================================
+
+.. currentmodule:: color_tools.exporters
+
+.. automodule:: color_tools.exporters.hex_exporter
+   :members:
+   :undoc-members:
+   :show-inheritance:

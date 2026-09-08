@@ -1,0 +1,9 @@
+﻿color\_tools.harmony
+====================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.harmony
+   :members:
+   :undoc-members:
+   :show-inheritance:

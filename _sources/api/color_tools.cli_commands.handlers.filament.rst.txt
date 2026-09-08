@@ -1,0 +1,9 @@
+﻿color\_tools.cli\_commands.handlers.filament
+============================================
+
+.. currentmodule:: color_tools.cli_commands.handlers
+
+.. automodule:: color_tools.cli_commands.handlers.filament
+   :members:
+   :undoc-members:
+   :show-inheritance:

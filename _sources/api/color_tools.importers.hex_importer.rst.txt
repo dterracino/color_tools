@@ -1,0 +1,9 @@
+﻿color\_tools.importers.hex\_importer
+====================================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.hex_importer
+   :members:
+   :undoc-members:
+   :show-inheritance:

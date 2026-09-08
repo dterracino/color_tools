@@ -1,0 +1,9 @@
+﻿color\_tools.logging\_config
+============================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.logging_config
+   :members:
+   :undoc-members:
+   :show-inheritance:

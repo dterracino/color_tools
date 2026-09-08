@@ -1,0 +1,3 @@
+# This file tells GitHub Pages not to process files with Jekyll
+# Sphinx generates directories starting with underscores (like _static, _modules)
+# which Jekyll ignores by default. This file prevents that behavior.

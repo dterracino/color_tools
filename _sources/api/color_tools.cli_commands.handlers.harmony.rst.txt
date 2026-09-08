@@ -1,0 +1,9 @@
+﻿color\_tools.cli\_commands.handlers.harmony
+===========================================
+
+.. currentmodule:: color_tools.cli_commands.handlers
+
+.. automodule:: color_tools.cli_commands.handlers.harmony
+   :members:
+   :undoc-members:
+   :show-inheritance:

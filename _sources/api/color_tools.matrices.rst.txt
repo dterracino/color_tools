@@ -1,0 +1,9 @@
+﻿color\_tools.matrices
+=====================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.matrices
+   :members:
+   :undoc-members:
+   :show-inheritance:
