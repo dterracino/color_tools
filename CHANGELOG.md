@@ -15,6 +15,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+### Fixed
+
+- **Color naming cleanup** — removed duplicated no-op hue-variant checks from descriptive naming.
+- **Pylance diagnostics** — resolved argparse subparser typing and nullable CLI value handling errors.
+
 ## [6.12.0] - 2026-09-06
 
 ### Added

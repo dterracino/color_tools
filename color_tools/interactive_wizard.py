@@ -17,12 +17,12 @@ explicitly with::
 
 from __future__ import annotations
 
+import argparse
 import sys
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from pathlib import Path
-    import argparse
 
 from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
 
@@ -66,8 +66,10 @@ def _get_subparser(command: str) -> "argparse.ArgumentParser | None":
         from .cli import build_parser
         parser = build_parser()
         for action in parser._actions:
-            if hasattr(action, '_name_parser_map'):
-                return action._name_parser_map.get(command)
+            if isinstance(action.choices, dict):
+                subparser = action.choices.get(command)
+                if isinstance(subparser, argparse.ArgumentParser):
+                    return subparser
     except Exception:
         pass
     return None

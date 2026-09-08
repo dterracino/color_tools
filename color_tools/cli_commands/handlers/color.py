@@ -92,7 +92,9 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
         sys.exit(0)
     
     if args.nearest:
-        if args.value is None and args.hex is None:
+        value = args.value
+        hex_value = args.hex
+        if value is None and hex_value is None:
             print("Error: --nearest requires either --value or --hex", file=sys.stderr)
             sys.exit(2)
         
@@ -101,9 +103,9 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
         space: str
         
         # Handle hex input
-        if args.hex is not None:
+        if hex_value is not None:
             try:
-                rgb_val = parse_hex_or_exit(args.hex)
+                rgb_val = parse_hex_or_exit(hex_value)
                 val = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                 space = "rgb"  # --hex always implies RGB space
             except ValueError as e:
@@ -111,7 +113,8 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
                 sys.exit(2)
         else:
             # Handle --value input
-            val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
+            assert value is not None
+            val = (float(value[0]), float(value[1]), float(value[2]))
             space = args.space
             
             # Validate LAB/LCH ranges if applicable

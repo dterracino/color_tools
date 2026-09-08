@@ -30,30 +30,34 @@ def handle_convert_command(args: Namespace) -> None:
         0: Success
         2: Invalid input
     """
+    value = args.value
+    hex_value = args.hex
+
     if args.check_gamut:
         # Validate mutual exclusivity of --value and --hex
-        if args.value is not None and args.hex is not None:
+        if value is not None and hex_value is not None:
             print("Error: Cannot specify both --value and --hex", file=sys.stderr)
             sys.exit(2)
         
-        if args.value is None and args.hex is None:
+        if value is None and hex_value is None:
             print("Error: --check-gamut requires either --value or --hex", file=sys.stderr)
             sys.exit(2)
         
         # Handle hex input (convert to LAB for gamut checking)
-        if args.hex is not None:
+        if hex_value is not None:
             try:
-                rgb_val = parse_hex_or_exit(args.hex)
+                rgb_val = parse_hex_or_exit(hex_value)
                 lab = rgb_to_lab(rgb_val)
             except ValueError as e:
                 print(f"Error: {e}", file=sys.stderr)
                 sys.exit(2)
         else:
             # Handle --value input
-            if len(args.value) != 3:
+            assert value is not None
+            if len(value) != 3:
                 print("Error: --check-gamut requires exactly 3 values", file=sys.stderr)
                 sys.exit(2)
-            val = (float(args.value[0]), float(args.value[1]), float(args.value[2]))
+            val = (float(value[0]), float(value[1]), float(value[2]))
             
             # Assume LAB unless otherwise specified
             if args.from_space == "lch":
@@ -76,20 +80,20 @@ def handle_convert_command(args: Namespace) -> None:
     # Color space conversion
     if args.to_space:
         # Validate mutual exclusivity of --value and --hex
-        if args.value is not None and args.hex is not None:
+        if value is not None and hex_value is not None:
             print("Error: Cannot specify both --value and --hex", file=sys.stderr)
             sys.exit(2)
         
-        if args.value is None and args.hex is None:
+        if value is None and hex_value is None:
             print("Error: Color conversion requires either --value or --hex", file=sys.stderr)
             sys.exit(2)
         
         to_space = args.to_space
 
         # Handle hex input
-        if args.hex is not None:
+        if hex_value is not None:
             try:
-                rgb_val = parse_hex_or_exit(args.hex)
+                rgb_val = parse_hex_or_exit(hex_value)
                 val: tuple = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
                 from_space = "rgb"  # --hex always implies RGB space
             except ValueError as e:
@@ -97,6 +101,7 @@ def handle_convert_command(args: Namespace) -> None:
                 sys.exit(2)
         else:
             # Handle --value input - --from is required
+            assert value is not None
             if args.from_space is None:
                 print("Error: --from is required when using --value", file=sys.stderr)
                 sys.exit(2)
@@ -104,15 +109,15 @@ def handle_convert_command(args: Namespace) -> None:
 
             # Validate component count for the source space
             expected = 4 if from_space in _FOUR_COMPONENT_SPACES else 3
-            if len(args.value) != expected:
+            if len(value) != expected:
                 print(
                     f"Error: --from {from_space} requires exactly {expected} values, "
-                    f"got {len(args.value)}",
+                    f"got {len(value)}",
                     file=sys.stderr,
                 )
                 sys.exit(2)
 
-            val = tuple(float(v) for v in args.value)
+            val = tuple(float(v) for v in value)
 
         # ------ Convert source space → RGB (intermediate) ------
         if from_space == "rgb":

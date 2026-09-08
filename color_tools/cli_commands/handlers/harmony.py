@@ -38,17 +38,20 @@ def _print_harmony_result(result: HarmonyResult) -> None:
 
 def handle_harmony_command(args: Namespace) -> None:
     """Handle the top-level ``harmony`` command."""
-    if args.value is not None and args.hex is not None:
+    value = args.value
+    hex_value = args.hex
+
+    if value is not None and hex_value is not None:
         print("Error: Cannot specify both --value and --hex", file=sys.stderr)
         sys.exit(2)
-    if args.value is None and args.hex is None:
+    if value is None and hex_value is None:
         print("Error: harmony requires either --value or --hex", file=sys.stderr)
         sys.exit(2)
 
     try:
-        if args.hex is not None:
+        if hex_value is not None:
             result = generate_harmony(
-                parse_hex_or_exit(args.hex),
+                parse_hex_or_exit(hex_value),
                 args.scheme,
                 map_to_gamut=not args.no_gamut_map,
                 mood=args.mood,
@@ -56,7 +59,8 @@ def handle_harmony_command(args: Namespace) -> None:
                 grade_base=args.grade_base,
             )
         elif args.space == "lch":
-            lch = tuple(float(component) for component in args.value)
+            assert value is not None
+            lch = (float(value[0]), float(value[1]), float(value[2]))
             result = generate_harmony_lch(
                 lch,
                 args.scheme,
@@ -66,11 +70,12 @@ def handle_harmony_command(args: Namespace) -> None:
                 grade_base=args.grade_base,
             )
         else:
-            channels = tuple(float(component) for component in args.value)
+            assert value is not None
+            channels = (float(value[0]), float(value[1]), float(value[2]))
             if any(not channel.is_integer() for channel in channels):
                 raise ValueError("RGB harmony values must be integers")
             result = generate_harmony(
-                tuple(int(channel) for channel in channels),
+                (int(channels[0]), int(channels[1]), int(channels[2])),
                 args.scheme,
                 map_to_gamut=not args.no_gamut_map,
                 mood=args.mood,

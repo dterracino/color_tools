@@ -136,18 +136,8 @@ def determine_base_hue(h: float, s: float, l: float) -> str:
     Returns:
         Base hue name (e.g., "red", "brown", "teal", "yellowish orange")
     """
-    # Check for -ish variant first (works for all hues)
+    # Compute the variant once for the special-case and fallback checks below.
     ish_variant = get_hue_with_ish(h, s)
-    if ish_variant:
-        # For special cases, we still want to check if they apply
-        # but use the -ish hue instead of the base
-        pass  # Will check special cases below
-    # Check for -ish variant first (works for all hues)
-    ish_variant = get_hue_with_ish(h, s)
-    if ish_variant:
-        # For special cases, we still want to check if they apply
-        # but use the -ish hue instead of the base
-        pass  # Will check special cases below
     
     # Gold (yellow hues with moderate low saturation, not too dark)
     # Check BEFORE brown family since it's more specific

@@ -18,25 +18,29 @@ def handle_cvd_command(args: Namespace) -> None:
         0: Success
         2: Invalid input
     """
+    value = args.value
+    hex_value = args.hex
+
     # Validate mutual exclusivity of --value and --hex
-    if args.value is not None and args.hex is not None:
+    if value is not None and hex_value is not None:
         print("Error: Cannot specify both --value and --hex", file=sys.stderr)
         sys.exit(2)
     
-    if args.value is None and args.hex is None:
+    if value is None and hex_value is None:
         print("Error: CVD command requires either --value or --hex", file=sys.stderr)
         sys.exit(2)
     
     # Handle hex input
-    if args.hex is not None:
+    if hex_value is not None:
         try:
-            r, g, b = parse_hex_or_exit(args.hex)
+            r, g, b = parse_hex_or_exit(hex_value)
         except ValueError as e:
             print(f"Error: {e}", file=sys.stderr)
             sys.exit(2)
     else:
         # Handle --value input
-        r, g, b = args.value
+        assert value is not None
+        r, g, b = value
         # Validate RGB values
         if not all(0 <= v <= 255 for v in [r, g, b]):
             print("Error: RGB values must be in range 0-255")

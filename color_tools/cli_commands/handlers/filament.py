@@ -111,25 +111,29 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
         sys.exit(0)
     
     if args.nearest:
+        value = args.value
+        hex_value = args.hex
+
         # Validate mutual exclusivity of --value and --hex
-        if args.value is not None and args.hex is not None:
+        if value is not None and hex_value is not None:
             print("Error: Cannot specify both --value and --hex", file=sys.stderr)
             sys.exit(2)
         
-        if args.value is None and args.hex is None:
+        if value is None and hex_value is None:
             print("Error: --nearest requires either --value or --hex", file=sys.stderr)
             sys.exit(2)
         
         # Handle hex input
-        if args.hex is not None:
+        if hex_value is not None:
             try:
-                rgb_val = parse_hex_or_exit(args.hex)
+                rgb_val = parse_hex_or_exit(hex_value)
             except ValueError as e:
                 print(f"Error: {e}", file=sys.stderr)
                 sys.exit(2)
         else:
             # Handle --value input (RGB values)
-            rgb_val = tuple(args.value)
+            assert value is not None
+            rgb_val = tuple(value)
         
         try:
             # Handle "*" wildcard filters (convert ["*"] to "*" for the API)
