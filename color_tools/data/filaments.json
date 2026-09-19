@@ -801,6 +801,51 @@
     "td_value": 3
   },
   {
+    "id": "bambu-lab-pla-pure-absolute-black",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Pure",
+    "color": "Absolute Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-pure-apricot",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Pure",
+    "color": "Apricot",
+    "hex": "#FFB673",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-pure-baby-blue",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Pure",
+    "color": "Baby Blue",
+    "hex": "#A4DBE8",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-pure-milky-pink",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Pure",
+    "color": "Milky Pink",
+    "hex": "#F7CED7",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-pure-pure-white",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Pure",
+    "color": "Pure White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
     "id": "bambu-lab-pla-silk-plus-baby-blue",
     "maker": "Bambu Lab",
     "type": "PLA",

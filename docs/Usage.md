@@ -697,7 +697,7 @@ python -m color_tools filament --manage
 
 ````text
 ╭─── Filament Library Manager ─────────────────────────────────────────────────╮
-│ 913 total | 42 owned* | Showing 913 filaments                                │
+│ 1,050 total | 42 owned* | Showing 1,050 filaments                            │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ > [✓] Bambu Lab - PLA Matte - Jet Black                                      │
 │   [ ] Bambu Lab - PLA Matte - White                                          │

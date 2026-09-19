@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.12.1] - 2026-09-19
+
+### Added
+
+- **Bambu Lab PLA Pure filament data** — added Absolute Black, Apricot, Baby Blue,
+  Milky Pink, and Pure White with official Bambu Lab hex values and unknown TD values.
+  Total filament count: 1,045 → **1,050**.
+
 ### Fixed
 
 - **Color naming cleanup** — removed duplicated no-op hue-variant checks from descriptive naming.

@@ -1,0 +1,10 @@
+Pure White
+Hex:#FFFFFF
+Baby Blue
+Hex:#A4DBE8
+Absolute Black
+Hex:#000000
+Milky Pink
+Hex:#F7CED7
+Apricot
+Hex:#FFB673
