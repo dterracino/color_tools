@@ -1,0 +1,9 @@
+﻿color\_tools.cli\_commands.handlers.cvd
+=======================================
+
+.. currentmodule:: color_tools.cli_commands.handlers
+
+.. automodule:: color_tools.cli_commands.handlers.cvd
+   :members:
+   :undoc-members:
+   :show-inheritance:

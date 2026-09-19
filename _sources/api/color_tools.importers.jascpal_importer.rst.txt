@@ -1,0 +1,9 @@
+﻿color\_tools.importers.jascpal\_importer
+========================================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.jascpal_importer
+   :members:
+   :undoc-members:
+   :show-inheritance:

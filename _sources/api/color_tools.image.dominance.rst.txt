@@ -1,0 +1,9 @@
+﻿color\_tools.image.dominance
+============================
+
+.. currentmodule:: color_tools.image
+
+.. automodule:: color_tools.image.dominance
+   :members:
+   :undoc-members:
+   :show-inheritance:

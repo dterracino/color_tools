@@ -1,0 +1,9 @@
+﻿color\_tools.image.basic
+========================
+
+.. currentmodule:: color_tools.image
+
+.. automodule:: color_tools.image.basic
+   :members:
+   :undoc-members:
+   :show-inheritance:

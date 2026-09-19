@@ -1,0 +1,9 @@
+﻿color\_tools.filament\_collections
+==================================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.filament_collections
+   :members:
+   :undoc-members:
+   :show-inheritance:

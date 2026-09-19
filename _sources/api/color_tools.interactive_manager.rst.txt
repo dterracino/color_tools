@@ -1,0 +1,9 @@
+﻿color\_tools.interactive\_manager
+=================================
+
+.. currentmodule:: color_tools.interactive_manager
+
+.. automodule:: color_tools.interactive_manager
+   :members:
+   :undoc-members:
+   :show-inheritance:

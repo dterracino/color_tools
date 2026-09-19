@@ -1,0 +1,9 @@
+﻿color\_tools.importers.riffpal\_importer
+========================================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.riffpal_importer
+   :members:
+   :undoc-members:
+   :show-inheritance:

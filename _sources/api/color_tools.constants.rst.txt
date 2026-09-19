@@ -1,0 +1,9 @@
+﻿color\_tools.constants
+======================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.constants
+   :members:
+   :undoc-members:
+   :show-inheritance:
