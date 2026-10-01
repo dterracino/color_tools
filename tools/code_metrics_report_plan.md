@@ -139,4 +139,3 @@ snapshot.
 - [ ] Write the output atomically with safe error handling.
 - [ ] Add all report-specific tests listed above.
 - [ ] Validate both the default and an explicit report destination manually.
-

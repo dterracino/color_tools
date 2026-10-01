@@ -46,11 +46,11 @@
   "terminal": {
     "sort": "path",
     "color": "auto",
-    "problems_only": false,
+    "problems_only": true,
     "fail_on_problems": false
   },
   "report": {
-    "enabled": false,
+    "enabled": true,
     "path": "code_metrics_report.md",
     "include_accepted_findings": true
   }

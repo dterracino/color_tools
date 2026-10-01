@@ -355,4 +355,3 @@ works.
 - [ ] Add all configuration tests listed above.
 - [ ] Copy and validate the script plus sidecar together in the other
       repository.
-
