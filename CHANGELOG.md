@@ -15,6 +15,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.12.3] - 2026-10-03
+
+### Added
+
+- **Inline type information** — added a `py.typed` marker to the distribution so type checkers
+  recognize and use the package's inline type annotations.
+
 ## [6.12.2] - 2026-10-03
 
 ### Fixed
