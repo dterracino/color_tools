@@ -1,0 +1,9 @@
+﻿color\_tools.exporters.palette\_export\_data
+============================================
+
+.. currentmodule:: color_tools.exporters.palette_export_data
+
+.. automodule:: color_tools.exporters.palette_export_data
+   :members:
+   :undoc-members:
+   :show-inheritance:

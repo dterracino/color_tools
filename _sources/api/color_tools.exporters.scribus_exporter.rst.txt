@@ -1,0 +1,9 @@
+﻿color\_tools.exporters.scribus\_exporter
+========================================
+
+.. currentmodule:: color_tools.exporters
+
+.. automodule:: color_tools.exporters.scribus_exporter
+   :members:
+   :undoc-members:
+   :show-inheritance:

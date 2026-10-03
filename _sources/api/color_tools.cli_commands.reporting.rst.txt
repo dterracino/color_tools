@@ -1,0 +1,9 @@
+﻿color\_tools.cli\_commands.reporting
+====================================
+
+.. currentmodule:: color_tools.cli_commands
+
+.. automodule:: color_tools.cli_commands.reporting
+   :members:
+   :undoc-members:
+   :show-inheritance:
