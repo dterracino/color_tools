@@ -15,6 +15,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.12.2] - 2026-10-03
+
+### Fixed
+
+- **Code-metrics test discovery** — moved the portable code-metrics pytest suite beside
+  `tools/code_metrics.py`, keeping it separate from the `color_tools` library's unittest
+  discovery while retaining focused sidecar validation.
+
 ## [6.12.1] - 2026-09-19
 
 ### Added

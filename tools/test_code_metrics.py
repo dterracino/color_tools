@@ -10,7 +10,7 @@ from pathlib import Path
 import pytest
 
 
-SCRIPT = Path(__file__).parents[1] / "tools" / "code_metrics.py"
+SCRIPT = Path(__file__).with_name("code_metrics.py")
 SPEC = importlib.util.spec_from_file_location("code_metrics_tool", SCRIPT)
 assert SPEC is not None and SPEC.loader is not None
 code_metrics = importlib.util.module_from_spec(SPEC)

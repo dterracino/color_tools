@@ -14,6 +14,7 @@ public APIs when refactoring.
 - `code_metrics.py` - the executable scanner and report generator.
 - `code_metrics.json` - repository-specific defaults.
 - `code_metrics_README.md` - this guide.
+- `test_code_metrics.py` - focused pytest coverage for the portable tool.
 
 The script treats the parent of `tools` as the repository root. Relative scan,
 configuration, exclusion, and report paths are resolved from that root, not
@@ -37,6 +38,13 @@ If the repository has a virtual environment, use its Python executable instead:
 
 ```powershell
 .\.venv\Scripts\python.exe tools\code_metrics.py
+```
+
+Run the tool's focused sidecar tests independently from the host library's
+test discovery:
+
+```powershell
+.\.venv\Scripts\python.exe -m pytest tools\test_code_metrics.py -q
 ```
 
 ## Quick start
