@@ -34,8 +34,51 @@ from color_tools.exporters import (
     list_export_formats as _list_export_formats,
     EXPORT_FORMATS,
 )
-from color_tools.palette import ColorRecord
+from color_tools.palette import ColorRecord, Palette
 from color_tools.filament_palette import FilamentRecord
+from color_tools.exporters.export_options_base import ExportOptionsBase
+from color_tools.exporters.palette_export_data import PaletteExportData
+from color_tools.exporters.palette_metadata import PaletteMetadata
+
+
+def export_palette(
+    palette: Palette | PaletteExportData,
+    format_name: str,
+    output_path: Path | str | None = None,
+    *,
+    metadata: PaletteMetadata | None = None,
+    options: ExportOptionsBase | None = None,
+) -> str:
+    """Export a searchable palette or export-data wrapper to a chosen format.
+
+    Supply metadata with a Palette, or embed it in PaletteExportData, not both.
+    Formats without metadata support export colors only. Exporter-specific
+    options, dependency checks, and file errors are handled by the exporter.
+    Returns the output path as a string; an omitted path is exporter-generated.
+    Unknown or non-color formats and conflicting metadata raise ValueError.
+
+    Example:
+        >>> palette = Palette.from_hex(["#f00", "#00f"])
+        >>> path = export_palette(palette, "gpl", "custom.gpl")
+    """
+    if isinstance(palette, PaletteExportData):
+        if metadata is not None:
+            raise ValueError(
+                "Supply metadata on PaletteExportData, not separately"
+            )
+        data = palette
+    elif isinstance(palette, Palette):
+        data = PaletteExportData(
+            colors=palette.records,
+            metadata=metadata if metadata is not None else PaletteMetadata(),
+        )
+    else:
+        raise TypeError("palette must be a Palette or PaletteExportData")
+
+    exporter = get_exporter(format_name.lower())
+    if not exporter.metadata.supports_colors:
+        raise ValueError(f"Format '{format_name}' does not support colors")
+    return exporter.export_palette(data, output_path, options)
 
 
 def list_export_formats(data_type: str = 'both') -> dict[str, str]:
@@ -308,4 +351,3 @@ def export_colors(
     
     # Delegate to exporter
     return exporter.export_colors(colors, output_path)
-

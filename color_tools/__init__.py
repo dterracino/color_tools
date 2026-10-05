@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "6.12.3"
+__version__ = "6.13.0"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -194,6 +194,7 @@ from .export import (
     # Export functions
     export_filaments,
     export_colors,
+    export_palette,
     
     # Format listing
     list_export_formats,
@@ -219,6 +220,8 @@ from .exporters import (
     ExporterMetadata,
     register_exporter,
 )
+from .exporters.palette_export_data import PaletteExportData
+from .exporters.palette_metadata import PaletteMetadata
 
 # ============================================================================
 # Color Validation (Fuzzy Name Matching + Delta E)
@@ -363,6 +366,9 @@ __all__ = [
     # Import/Export
     "export_filaments",
     "export_colors",
+    "export_palette",
+    "PaletteExportData",
+    "PaletteMetadata",
     "list_export_formats",
     "export_filaments_autoforge",
     "export_filaments_csv",

@@ -119,6 +119,7 @@ Export System
    color_tools.exporters.palette_metadata
    color_tools.exporters.registry
    color_tools.exporters.ase_exporter
+   color_tools.exporters.aseprite_exporter
    color_tools.exporters.autoforge_exporter
    color_tools.exporters.css_exporter
    color_tools.exporters.csv_exporter

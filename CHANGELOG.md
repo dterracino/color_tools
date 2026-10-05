@@ -8,6 +8,32 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Aseprite palette exporter** - added dependency-free `aseprite` export using
+  `.aseprite` (distinct from Adobe `.ase`). Writes an sRGB single-frame swatch
+  document with named, opaque palette entries and a compressed background cel.
+  Preserves order and duplicates, uses indexed pixels up to 256 entries and RGBA
+  above that, and supports layer naming and column layout through palette metadata.
+  Accepts 1-65,535 colors and rejects invalid RGB, oversized names, and other extensions.
+  Added its module to the Sphinx autosummary tree for published API documentation.
+- **Custom palette factories** - added `ColorRecord.from_rgb()` / `.from_hex()` and
+  `Palette.from_rgb()` / `.from_hex()` with strict RGB/hex validation, computed
+  color-space values, explicit names, and opt-in `auto_name=True` using the built-in
+  CSS/descriptive naming system. Palette factories preserve order and duplicates,
+  pass the complete palette to near-match naming, and default to `Color 1`, `Color 2`, etc.
+- **Palette export convenience** - added public `export_palette()` for `Palette`
+  and `PaletteExportData`, with optional metadata and exporter-specific options.
+  Exported `PaletteMetadata` and `PaletteExportData` from the package root.
+
+### Changed
+
+- **Color input utilities** - moved the new strict RGB validator and hex parser
+  into private `_color_utils.py`, with a TODO to consolidate existing library
+  validation/parsing in a future refactor without changing current behavior.
+- **Shared record construction** - dominant-color palette conversion now reuses
+  `ColorRecord.from_rgb()` rather than duplicating color-space calculations.
+
 ### In Progress
 
 - **Image type detection and palette extraction** — added disabled work-in-progress modules for

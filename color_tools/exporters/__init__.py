@@ -50,6 +50,7 @@ from color_tools.exporters.paintnet_exporter import (
 )
 from color_tools.exporters.palette_lut_exporter import PaletteLutExporter
 from color_tools.exporters.ase_exporter import ASEExporter
+from color_tools.exporters.aseprite_exporter import AsepriteExporter
 from color_tools.exporters.riffpal_exporter import RiffPalExporter
 from color_tools.exporters.css_exporter import CSSExporter
 from color_tools.exporters.sketchpalette_exporter import SketchPaletteExporter
@@ -73,6 +74,7 @@ EXPORT_FORMATS = get_export_formats_dict()
 __all__ = [
     "AutoForgeExporter",
     "ASEExporter",
+    "AsepriteExporter",
     "CSVExporter",
     "ExporterDependency",
     "ExporterMetadata",

@@ -35,10 +35,7 @@ from sklearn.cluster import KMeans
 
 from color_tools.conversions import (
     lab_to_rgb,
-    rgb_to_hex,
-    rgb_to_hsl,
     rgb_to_lab,
-    rgb_to_lch,
 )
 from color_tools.distance import delta_e_2000_array
 from color_tools.palette import ColorRecord
@@ -223,13 +220,9 @@ def dominant_colors_to_palette(
     for index, color in enumerate(colors, start=1):
         rgb = color.rgb
         records.append(
-            ColorRecord(
+            ColorRecord.from_rgb(
+                rgb,
                 name=f"{name_prefix} {index}",
-                hex=rgb_to_hex(rgb),
-                rgb=rgb,
-                hsl=rgb_to_hsl(rgb),
-                lab=rgb_to_lab(rgb),
-                lch=rgb_to_lch(rgb),
                 source=source,
             )
         )

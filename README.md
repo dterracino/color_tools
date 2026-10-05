@@ -2,6 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
+[![Version](https://img.shields.io/badge/version-6.13.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
@@ -86,6 +87,63 @@ pip install color-match-tools[all]
 ```
 
 See [Installation Guide](https://github.com/dterracino/color_tools/blob/main/docs/Installation.md) for development setup and detailed options.
+
+### Creating and Exporting Custom Palettes
+
+```python
+from color_tools import Palette, PaletteMetadata, export_palette
+
+palette = Palette.from_rgb(
+    [(255, 127, 80), (30, 144, 255), (50, 205, 50)],
+    auto_name=True,
+)
+path = export_palette(
+    palette,
+    "gpl",
+    "my_palette.gpl",
+    metadata=PaletteMetadata(name="My Custom Palette", author="Dave", columns=3),
+)
+```
+
+By default, colors are named `Color 1`, `Color 2`, etc. Set `auto_name=True` to
+use built-in CSS/descriptive names, or pass `names=["Accent", "Background", ...]`
+to supply explicit names (these override auto-naming and must match the color count).
+Use `Palette.from_hex(["#f00", "00ff00"])` for hex inputs, or
+`ColorRecord.from_rgb()` / `ColorRecord.from_hex()` for individual records.
+RGB requires exactly three integers from 0 to 255; hex accepts three or six
+hexadecimal digits with an optional `#`. Invalid values raise `ValueError`.
+Factories preserve order and duplicate colors; auto-generated names may repeat.
+
+Choose a format explicitly using identifiers from `list_export_formats("colors")`;
+use the matching filename extension. Exporters that do not support palette metadata
+still export the colors. Pass exporter-specific `options` when needed, or use
+`PaletteExportData` with embedded metadata instead of a searchable `Palette`.
+Omitting the output path lets the exporter generate a filename.
+
+#### Aseprite Native Palettes
+
+```python
+export_palette(
+    palette,
+    "aseprite",
+    "my_palette.aseprite",
+    metadata=PaletteMetadata(name="My Palette", columns=16),
+)
+```
+
+The dependency-free `aseprite` exporter writes a single-frame swatch document
+with an sRGB palette, color names, and compressed pixels. Use **`.aseprite`**:
+the existing **`ase` / `.ase`** exporter remains Adobe Swatch Exchange.
+Aseprite export rejects filenames with other extensions.
+
+All supplied colors remain opaque, including index zero; no transparent entry
+is inserted. Order and duplicates are preserved. Up to 256 colors use indexed
+pixels; larger palettes use RGBA. The supported palette size is 1-65,535 colors.
+Positive `columns` selects the grid width (capped at the color count); zero or
+None produces a horizontal strip. Unused grid cells repeat the first color.
+The palette name becomes the background layer name, not a native palette-title
+field. Author, description, tags, and arbitrary properties are not preserved.
+Names must fit within 65,535 UTF-8 bytes.
 
 ### CLI Usage
 

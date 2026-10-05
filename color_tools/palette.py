@@ -41,11 +41,13 @@ from typing import Tuple, Dict, List, Optional, Union, Set, Any
 import json
 import logging
 from pathlib import Path
+from collections.abc import Iterable
 
 from color_tools.constants import ColorConstants
-from color_tools.conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb
+from color_tools.conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb, rgb_to_hex, lab_to_lch
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
 from color_tools._palette_utils import _should_prefer_source, _rounded_key, _ensure_list
+from color_tools._color_utils import _validate_rgb, _parse_hex
 
 # Set up logger for override tracking
 logger = logging.getLogger(__name__)
@@ -92,6 +94,66 @@ class ColorRecord:
     lab: Tuple[float, float, float]   # (L*, a*, b*)
     lch: Tuple[float, float, float]   # (L*, C*, H°)
     source: str = "colors.json"      # JSON filename where this record originated
+
+    @classmethod
+    def from_rgb(
+        cls,
+        rgb: tuple[int, int, int],
+        *,
+        name: str | None = None,
+        source: str = "custom",
+        auto_name: bool = False,
+    ) -> ColorRecord:
+        """Create a record from 8-bit RGB, computing all derived color values.
+
+        Explicit names take precedence over auto-naming. Without either, the
+        name is ``Color 1``. Auto-naming uses the built-in CSS/descriptive namer.
+        Invalid channel counts, non-integers, and out-of-range values raise
+        ValueError rather than being coerced or clamped.
+
+        Example:
+            >>> ColorRecord.from_rgb((255, 0, 0), auto_name=True).name
+            'red'
+        """
+        _validate_rgb(rgb)
+        if name is None:
+            if auto_name:
+                # Local import avoids the naming module's dependency on Palette.
+                from color_tools.naming import generate_color_name
+                name, _ = generate_color_name(rgb)
+            else:
+                name = "Color 1"
+        lab = rgb_to_lab(rgb)
+        return cls(
+            name=name,
+            hex=rgb_to_hex(rgb),
+            rgb=rgb,
+            hsl=rgb_to_hsl(rgb),
+            lab=lab,
+            lch=lab_to_lch(lab),
+            source=source,
+        )
+
+    @classmethod
+    def from_hex(
+        cls,
+        hex_code: str,
+        *,
+        name: str | None = None,
+        source: str = "custom",
+        auto_name: bool = False,
+    ) -> ColorRecord:
+        """Create a record from RGB/RRGGBB hex, optionally prefixed with #.
+
+        Naming follows from_rgb(); malformed hex raises ValueError.
+
+        Example:
+            >>> ColorRecord.from_hex("#f00", auto_name=True).name
+            'red'
+        """
+        return cls.from_rgb(
+            _parse_hex(hex_code), name=name, source=source, auto_name=auto_name
+        )
     
     def __str__(self) -> str:
         """Human-readable color representation: name (#hex)"""
@@ -403,6 +465,78 @@ class Palette:
                 self._by_lch[lch_key] = record
     
     @classmethod
+    def from_rgb(
+        cls,
+        rgb_colors: Iterable[tuple[int, int, int]],
+        *,
+        names: Iterable[str] | None = None,
+        name_prefix: str = "Color",
+        source: str = "custom",
+        auto_name: bool = False,
+    ) -> Palette:
+        """Build a searchable palette, preserving input order and duplicates.
+
+        Explicit names must match the color count and override auto-naming.
+        Otherwise names are ``Color 1``, ``Color 2``, etc. (or name_prefix).
+        With auto_name=True, the built-in namer receives the entire RGB list
+        for near-match uniqueness checks. Generated names are not deduplicated.
+        Empty input creates an empty palette. Invalid RGB or name counts raise
+        ValueError.
+
+        Example:
+            >>> Palette.from_rgb([(255, 0, 0)], auto_name=True).records[0].name
+            'red'
+        """
+        colors = list(rgb_colors)
+        for rgb in colors:
+            _validate_rgb(rgb)
+        color_names = list(names) if names is not None else None
+        if color_names is not None and len(color_names) != len(colors):
+            raise ValueError("The number of names must match the number of colors")
+        if color_names is None:
+            if auto_name:
+                from color_tools.naming import generate_color_name
+                color_names = [
+                    generate_color_name(rgb, palette_colors=colors)[0]
+                    for rgb in colors
+                ]
+            else:
+                color_names = [
+                    f"{name_prefix} {index}" for index in range(1, len(colors) + 1)
+                ]
+        return cls([
+            ColorRecord.from_rgb(rgb, name=name, source=source)
+            for rgb, name in zip(colors, color_names)
+        ])
+
+    @classmethod
+    def from_hex(
+        cls,
+        hex_colors: Iterable[str],
+        *,
+        names: Iterable[str] | None = None,
+        name_prefix: str = "Color",
+        source: str = "custom",
+        auto_name: bool = False,
+    ) -> Palette:
+        """Build a palette from RGB/RRGGBB hex strings, with optional #.
+
+        Naming, ordering, and validation follow from_rgb(). Invalid hex raises
+        ValueError.
+
+        Example:
+            >>> Palette.from_hex(["#f00", "00ff00"]).records[1].hex
+            '#00FF00'
+        """
+        return cls.from_rgb(
+            (_parse_hex(value) for value in hex_colors),
+            names=names,
+            name_prefix=name_prefix,
+            source=source,
+            auto_name=auto_name,
+        )
+
+    @classmethod
     def load_default(cls) -> 'Palette':
         """
         Load the default CSS color palette from the package data.
@@ -665,5 +799,3 @@ class Palette:
                     overrides["colors"]["rgb"][str(rgb)] = (core_records[0].source, user_records[0].source)
         
         return overrides
-
-

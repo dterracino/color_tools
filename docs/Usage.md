@@ -260,7 +260,7 @@ family.
 Available format identifiers:
 
 - Colors and filaments: `csv`, `json`
-- Colors: `ase`, `css`, `gpl`, `hex`, `jasc_pal`, `kpl`, `lospec`, `paintnet`,
+- Colors: `ase`, `aseprite`, `css`, `gpl`, `hex`, `jasc_pal`, `kpl`, `lospec`, `paintnet`,
   `palette_lut`, `riff_pal`, `scribus`, `sketchpalette`, `soc`, `swatch_image`
 - Filaments: `autoforge`
 
@@ -288,7 +288,56 @@ SimplePNGWriter(colors, swatch_width=32, swatch_height=32).save("nes_preview.png
 png_bytes = SimplePNGWriter(colors).to_bytes()
 ```
 
-**Export Examples:**
+#### Exporting a Custom RGB Palette
+
+Create a palette directly from RGB tuples, then choose an export format:
+
+```python
+from color_tools import Palette, PaletteMetadata, export_palette
+
+rgb_colors = [
+    (255, 127, 80),
+    (30, 144, 255),
+    (50, 205, 50),
+]
+
+palette = Palette.from_rgb(rgb_colors, auto_name=True)
+
+output_path = export_palette(
+    palette,
+    "aseprite",
+    "my_palette.aseprite",
+    metadata=PaletteMetadata(name="My Custom Palette", columns=3),
+)
+print(f"Exported to {output_path}")
+```
+
+By default, `auto_name=False` produces `Color 1`, `Color 2`, etc. Enable it for
+built-in CSS/descriptive names, or supply explicit names:
+
+```python
+palette = Palette.from_rgb(
+    rgb_colors,
+    names=["Accent", "Background", "Highlight"],
+)
+
+# Reuse the same palette with other formats
+export_palette(palette, "gpl", "my_palette.gpl")
+export_palette(palette, "json", "my_palette.json")
+```
+
+Explicit names override auto-naming and must match the number of colors.
+RGB inputs require three integers from 0 to 255; derived color-space values are
+computed automatically. Order and duplicates are preserved. Hex inputs are also
+supported with `Palette.from_hex(["#f00", "#0f0", "#00f"])`.
+
+Use `aseprite` with **`.aseprite`** for Aseprite's native swatch document;
+`ase` with **`.ase`** remains Adobe Swatch Exchange and requires `swatch`.
+Aseprite exports are opaque, preserve color names, and use `columns` for swatch
+layout. The palette name becomes the background layer name; other palette
+metadata is not preserved by this format.
+
+**Advanced Export Examples:**
 
 ```python
 from color_tools import FilamentPalette, Palette, export_filaments, export_colors
@@ -339,8 +388,11 @@ export_colors(color_palette.records, "hex", "all_colors.hex")
 ```
 
 Call `export_colors()` for an ordered list of `ColorRecord` objects when palette-level metadata
-is unnecessary. Call `export_palette()` with `PaletteExportData` when the target format should
-preserve supported fields such as name, author, description, columns, tags, or custom properties.
+is unnecessary. Call the public `export_palette()` helper with a `Palette` and optional
+`metadata`, or with `PaletteExportData` containing its own metadata. For direct exporter
+calls, use `get_exporter(...).export_palette(palette_data, ...)`. Each format preserves
+only the metadata fields it supports, such as name, author, description, columns, tags,
+or custom properties.
 Formats that do not support palette metadata safely fall back to raw color export.
 
 ### Data Structures
