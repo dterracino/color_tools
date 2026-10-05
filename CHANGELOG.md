@@ -8,6 +8,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### In Progress
+
+- **Image type detection and palette extraction** — added disabled work-in-progress modules for
+  classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
+  sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
+- **Dominance analysis improvements** - under development in dominant.py; currently commented out.
+
+## [6.13.1] - 2026-10-05
+
 ### Added
 
 - **Aseprite palette exporter** - added dependency-free `aseprite` export using
@@ -15,7 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   document with named, opaque palette entries and a compressed background cel.
   Preserves order and duplicates, uses indexed pixels up to 256 entries and RGBA
   above that, and supports layer naming and column layout through palette metadata.
-  Accepts 1-65,535 colors and rejects invalid RGB, oversized names, and other extensions.
+  Prepends a named transparent-black entry by default, controlled by
+  `AsepriteExportOptions(include_transparent=True)`; set False to omit it.
+  Supplied colors remain opaque and ordered without modifying the input palette.
+  Accepts 1-65,534 input colors by default (65,535 without transparency) and rejects
+  invalid RGB, oversized names, and other extensions. Layout and pixel depth account
+  for the added slot, including the 255/256-input-color boundary.
   Added its module to the Sphinx autosummary tree for published API documentation.
 - **Custom palette factories** - added `ColorRecord.from_rgb()` / `.from_hex()` and
   `Palette.from_rgb()` / `.from_hex()` with strict RGB/hex validation, computed
@@ -33,13 +47,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   validation/parsing in a future refactor without changing current behavior.
 - **Shared record construction** - dominant-color palette conversion now reuses
   `ColorRecord.from_rgb()` rather than duplicating color-space calculations.
-
-### In Progress
-
-- **Image type detection and palette extraction** — added disabled work-in-progress modules for
-  classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
-  sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
-- **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
 ## [6.12.3] - 2026-10-03
 

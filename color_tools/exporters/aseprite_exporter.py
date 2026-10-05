@@ -9,11 +9,13 @@ from __future__ import annotations
 
 import struct
 import zlib
+from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
 from color_tools._color_utils import _validate_rgb
 from color_tools.exporters.base import ExporterMetadata, PaletteExporter
+from color_tools.exporters.export_options_base import ExportOptionsBase
 from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
@@ -21,11 +23,29 @@ if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
 
 
+@dataclass(slots=True)
+class AsepriteExportOptions(ExportOptionsBase):
+    """Control Aseprite palette serialization.
+
+    include_transparent defaults to True: prepend a named transparent-black
+    entry at index zero without modifying input records. Supplied colors shift
+    by one index and remain opaque. Set False to export only supplied colors.
+    The added entry counts toward grid layout and the 256-entry indexed limit.
+    """
+
+    include_transparent: bool = True
+
+    def __post_init__(self) -> None:
+        if type(self.include_transparent) is not bool:
+            raise TypeError("include_transparent must be a bool")
+
+
 @register_exporter
 class AsepriteExporter(PaletteExporter):
-    """Export 1-65,535 ordered opaque RGB swatches in native Aseprite format.
+    """Export ordered RGB swatches with a transparent entry by default.
 
-    Up to 256 colors use indexed pixels; larger palettes use RGBA pixels.
+    Up to 256 total entries use indexed pixels; larger palettes use RGBA pixels.
+    Accepts 1-65,534 input colors by default, or 1-65,535 with transparency off.
     Names and duplicate colors are preserved. Palette metadata supplies the
     layer name and grid columns, not a native palette-title field. Other
     metadata is not represented. None/zero columns produce a horizontal strip.
@@ -42,6 +62,7 @@ class AsepriteExporter(PaletteExporter):
             supports_filaments=False,
             supports_palette_metadata=True,
             is_binary=True,
+            options_type=AsepriteExportOptions,
         )
 
     def _export_colors_impl(
@@ -55,6 +76,27 @@ class AsepriteExporter(PaletteExporter):
         return self._write_palette(
             palette.colors, output_path,
             name=palette.metadata.name, columns=palette.metadata.columns,
+        )
+
+    def _export_colors_with_options_impl(
+        self, colors: list[ColorRecord], output_path: Path | str | None,
+        options: ExportOptionsBase,
+    ) -> str:
+        assert isinstance(options, AsepriteExportOptions)
+        return self._write_palette(
+            colors, output_path, name="", columns=None,
+            include_transparent=options.include_transparent,
+        )
+
+    def _export_palette_with_options_impl(
+        self, palette: PaletteExportData, output_path: Path | str | None,
+        options: ExportOptionsBase,
+    ) -> str:
+        assert isinstance(options, AsepriteExportOptions)
+        return self._write_palette(
+            palette.colors, output_path,
+            name=palette.metadata.name, columns=palette.metadata.columns,
+            include_transparent=options.include_transparent,
         )
 
     @staticmethod
@@ -75,12 +117,13 @@ class AsepriteExporter(PaletteExporter):
 
     def _write_palette(
         self, colors: list[ColorRecord], output_path: Path | str | None,
-        *, name: str, columns: int | None,
+        *, name: str, columns: int | None, include_transparent: bool = True,
     ) -> str:
         """Validate and serialize all data before opening the destination."""
-        count = len(colors)
-        if not 1 <= count <= 65535:
-            raise ValueError("Aseprite export requires 1-65,535 colors")
+        count = len(colors) + int(include_transparent)
+        if not colors or count > 65535:
+            maximum = 65534 if include_transparent else 65535
+            raise ValueError(f"Aseprite export requires 1-{maximum:,} input colors")
         if columns is not None and (type(columns) is not int or columns < 0):
             raise ValueError("Aseprite columns must be a nonnegative integer")
         path = Path(output_path if output_path is not None else self.generate_filename("colors"))
@@ -92,6 +135,10 @@ class AsepriteExporter(PaletteExporter):
 
         entries = bytearray(struct.pack("<III8x", count, 0, count - 1))
         rgba = bytearray()
+        if include_transparent:
+            entries.extend(struct.pack("<H4B", 1, 0, 0, 0, 0))
+            entries.extend(self._string("Transparent"))
+            rgba.extend(bytes(4))
         for color in colors:
             _validate_rgb(color.rgb)
             pixel = bytes((*color.rgb, 255))

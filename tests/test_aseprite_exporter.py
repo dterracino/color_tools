@@ -7,11 +7,15 @@ import tempfile
 import unittest
 import zlib
 from dataclasses import replace
+from itertools import product
 from pathlib import Path
 from unittest.mock import patch
 
 from color_tools import Palette, PaletteMetadata, export_palette
-from color_tools.exporters import AsepriteExporter, get_exporter, list_export_formats
+from color_tools.exporters import (
+    AsepriteExporter, AsepriteExportOptions, PaintNetExportOptions,
+    get_exporter, list_export_formats,
+)
 
 
 class TestAsepriteExporter(unittest.TestCase):
@@ -26,15 +30,17 @@ class TestAsepriteExporter(unittest.TestCase):
             get_exporter("aseprite").export_filaments([])
 
     def test_binary_document_and_pixel_boundaries(self) -> None:
-        for count in (1, 5, 252, 256, 257):
-            with self.subTest(count=count), tempfile.TemporaryDirectory() as directory:
+        for input_count, transparent in product((1, 5, 252, 255, 256, 257), (False, True)):
+            count = input_count + int(transparent)
+            with self.subTest(count=count, transparent=transparent), tempfile.TemporaryDirectory() as directory:
                 colors = [(index % 256, (index * 3) % 256, (index * 7) % 256)
-                          for index in range(count)]
+                          for index in range(input_count)]
                 palette = Palette.from_rgb(colors)
                 path = Path(directory) / "nested" / "palette.aseprite"
                 self.assertEqual(
                     export_palette(palette, "aseprite", path,
-                                   metadata=PaletteMetadata(name="Swatches", columns=16)),
+                                   metadata=PaletteMetadata(name="Swatches", columns=16),
+                                   options=AsepriteExportOptions(include_transparent=transparent)),
                     str(path),
                 )
                 data = path.read_bytes()
@@ -69,6 +75,11 @@ class TestAsepriteExporter(unittest.TestCase):
                 self.assertEqual(struct.unpack_from("<III", entries), (count, 0, count - 1))
                 self.assertEqual(entries[12:20], bytes(8))
                 cursor = 20
+                if transparent:
+                    self.assertEqual(entries[cursor:cursor + 6], struct.pack("<H4B", 1, 0, 0, 0, 0))
+                    size = struct.unpack_from("<H", entries, cursor + 6)[0]
+                    self.assertEqual(entries[cursor + 8:cursor + 8 + size], b"Transparent")
+                    cursor += 8 + size
                 for record in palette.records:
                     self.assertEqual(struct.unpack_from("<H", entries, cursor)[0], 1)
                     self.assertEqual(entries[cursor + 2:cursor + 6], bytes((*record.rgb, 255)))
@@ -86,9 +97,11 @@ class TestAsepriteExporter(unittest.TestCase):
                 pixels = zlib.decompress(cel[20:])
                 padding = width * height - count
                 expected = (bytes(range(count)) + bytes(padding) if depth == 8 else
-                            b"".join(bytes((*rgb, 255)) for rgb in colors)
-                            + bytes((*colors[0], 255)) * padding)
+                            (bytes(4) if transparent else b"")
+                            + b"".join(bytes((*rgb, 255)) for rgb in colors)
+                            + (bytes(4) if transparent else bytes((*colors[0], 255))) * padding)
                 self.assertEqual(pixels, expected)
+                self.assertEqual([record.rgb for record in palette.records], colors)
 
     def test_unicode_names_duplicates_and_default_layout(self) -> None:
         palette = Palette.from_hex(["#f00", "#f00"], names=["Rouge \u00e9", ""])
@@ -96,14 +109,15 @@ class TestAsepriteExporter(unittest.TestCase):
             path = Path(directory) / "fallback.aseprite"
             get_exporter("aseprite").export_colors(palette.records, path)
             data = path.read_bytes()
-            self.assertEqual(struct.unpack_from("<HH", data, 8), (2, 1))
+            self.assertEqual(struct.unpack_from("<HH", data, 8), (3, 1))
+            self.assertIn(b"Transparent", data)
             self.assertIn("Rouge \u00e9".encode("utf-8"), data)
             self.assertIn(b"fallback", data)
             self.assertIn(struct.pack("<HBBBB", 0, 255, 0, 0, 255), data)
             for columns in (None, 0, 100):
                 export_palette(palette, "aseprite", path,
                                metadata=PaletteMetadata(columns=columns))
-                self.assertEqual(struct.unpack_from("<HH", path.read_bytes(), 8), (2, 1))
+                self.assertEqual(struct.unpack_from("<HH", path.read_bytes(), 8), (3, 1))
 
     def test_validation_precedes_file_creation(self) -> None:
         palette = Palette.from_hex(["#f00"])
@@ -112,6 +126,7 @@ class TestAsepriteExporter(unittest.TestCase):
             Palette([replace(palette.records[0], rgb=(256, 0, 0))]),
             Palette([replace(palette.records[0], name="\u00e9" * 32768)]),
             Palette(palette.records * 65536),
+            Palette(palette.records * 65535),
         ]
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "invalid.aseprite"
@@ -125,6 +140,20 @@ class TestAsepriteExporter(unittest.TestCase):
             self.assertFalse(path.exists())
             with self.assertRaises(ValueError):
                 export_palette(palette, "aseprite", Path(directory) / "wrong.ase")
+            with self.assertRaises(TypeError):
+                export_palette(palette, "aseprite", path, options=PaintNetExportOptions())
+            with self.assertRaises(TypeError):
+                AsepriteExportOptions(include_transparent=1)  # type: ignore[arg-type]
+
+    def test_color_export_options(self) -> None:
+        palette = Palette.from_hex(["#f00"])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "opt-out.aseprite"
+            get_exporter("aseprite").export_colors(
+                palette.records, path, options=AsepriteExportOptions(include_transparent=False),
+            )
+            self.assertEqual(struct.unpack_from("<H", path.read_bytes(), 32)[0], 1)
+            self.assertNotIn(b"Transparent", path.read_bytes())
 
     def test_generated_extension(self) -> None:
         palette = Palette.from_hex(["#f00"])

@@ -333,8 +333,24 @@ supported with `Palette.from_hex(["#f00", "#0f0", "#00f"])`.
 
 Use `aseprite` with **`.aseprite`** for Aseprite's native swatch document;
 `ase` with **`.ase`** remains Adobe Swatch Exchange and requires `swatch`.
-Aseprite exports are opaque, preserve color names, and use `columns` for swatch
-layout. The palette name becomes the background layer name; other palette
+Aseprite exports prepend a named transparent-black entry at index zero by default.
+Input colors remain opaque, shift by one index, and are not modified. Color names
+are preserved, and `columns` controls layout including the added slot.
+To export only your supplied colors:
+
+```python
+from color_tools.exporters import AsepriteExportOptions
+
+export_palette(
+    palette, "aseprite", "my_palette.aseprite",
+    options=AsepriteExportOptions(include_transparent=False),
+)
+```
+
+Up to 256 total entries use indexed pixels; larger palettes use RGBA. With the
+transparent entry enabled, 256 input colors therefore produce an RGBA document.
+The input limit is 65,534 colors by default, or 65,535 with transparency disabled.
+The palette name becomes the background layer name; other palette
 metadata is not preserved by this format.
 
 **Advanced Export Examples:**

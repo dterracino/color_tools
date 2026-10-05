@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-[![Version](https://img.shields.io/badge/version-6.13.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-6.13.1-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
@@ -136,11 +136,25 @@ with an sRGB palette, color names, and compressed pixels. Use **`.aseprite`**:
 the existing **`ase` / `.ase`** exporter remains Adobe Swatch Exchange.
 Aseprite export rejects filenames with other extensions.
 
-All supplied colors remain opaque, including index zero; no transparent entry
-is inserted. Order and duplicates are preserved. Up to 256 colors use indexed
-pixels; larger palettes use RGBA. The supported palette size is 1-65,535 colors.
+By default, a named transparent-black entry is prepended at index zero for editing.
+All supplied colors remain opaque and shift by one index; input records are not
+modified. To omit that entry:
+
+```python
+from color_tools.exporters import AsepriteExportOptions
+
+export_palette(
+    palette, "aseprite", "opaque_palette.aseprite",
+    options=AsepriteExportOptions(include_transparent=False),
+)
+```
+
+Order and duplicates are preserved. Up to 256 total entries use indexed
+pixels; larger palettes use RGBA. The supported input size is 1-65,534 colors
+with transparency enabled, or 1-65,535 with it disabled.
 Positive `columns` selects the grid width (capped at the color count); zero or
-None produces a horizontal strip. Unused grid cells repeat the first color.
+None produces a horizontal strip. Layout includes the transparent slot.
+Unused grid cells repeat entry zero.
 The palette name becomes the background layer name, not a native palette-title
 field. Author, description, tags, and arbitrary properties are not preserved.
 Names must fit within 65,535 UTF-8 bytes.
