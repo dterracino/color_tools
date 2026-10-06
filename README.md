@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-[![Version](https://img.shields.io/badge/version-6.13.1-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-6.13.2-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
@@ -311,6 +311,7 @@ Export colors and filaments to various formats for use with external tools:
 | Identifier | Output | Data | Palette metadata | Dependency |
 | --- | --- | --- | --- | --- |
 | `ase` | Adobe Swatch Exchange (`.ase`) | Colors | Yes | `swatch` via `[image]` |
+| `aseprite` | Aseprite document (`.aseprite`) | Colors | Yes | None |
 | `autoforge` | AutoForge CSV (`.csv`) | Filaments | No | None |
 | `css` | CSS custom properties (`.css`) | Colors | No | None |
 | `csv` | Generic CSV (`.csv`) | Colors and filaments | No | None |
@@ -322,6 +323,7 @@ Export colors and filaments to various formats for use with external tools:
 | `lospec` | Lospec JSON (`.json`) | Colors | Yes | None |
 | `paintnet` | PAINT.NET palette (`.txt`) | Colors | No | None |
 | `palette_lut` | GPU palette LUT (`.png`) | Colors | No | None |
+| `python` | Typed Python source (`.py`) | Colors | Yes | None |
 | `riff_pal` | Microsoft RIFF palette (`.pal`) | Colors | No | None |
 | `scribus` | Scribus XML palette (`.xml`) | Colors | Yes | None |
 | `sketchpalette` | Sketch Palettes plugin (`.sketchpalette`) | Colors | No | None |

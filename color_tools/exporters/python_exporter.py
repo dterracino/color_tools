@@ -506,8 +506,11 @@ class PythonExporter(PaletteExporter):
         options: PythonExportOptions,
     ) -> str:
         """Build a dictionary representation."""
+        value_type = self._color_value_type(
+            options
+        )
         lines = [
-            f"{options.variable_name} = {{",
+            f"{options.variable_name}: dict[str, {value_type}] = {{",
         ]
 
         names = self._make_unique_names(
@@ -544,8 +547,16 @@ class PythonExporter(PaletteExporter):
         closing: str,
     ) -> str:
         """Build a list or tuple representation."""
+        value_type = self._color_value_type(
+            options
+        )
+        collection_type = (
+            f"list[{value_type}]"
+            if opening == "["
+            else f"tuple[{value_type}, ...]"
+        )
         lines = [
-            f"{options.variable_name} = {opening}",
+            f"{options.variable_name}: {collection_type} = {opening}",
         ]
 
         for color in colors:
@@ -590,6 +601,9 @@ class PythonExporter(PaletteExporter):
                 colors
             )
         )
+        value_type = self._color_value_type(
+            options
+        )
 
         lines = []
 
@@ -603,7 +617,7 @@ class PythonExporter(PaletteExporter):
             )
 
             lines.append(
-                f"{identifier} = {value}"
+                f"{identifier}: {value_type} = {value}"
             )
 
         return "\n".join(
@@ -618,7 +632,7 @@ class PythonExporter(PaletteExporter):
     ) -> str:
         """Build the palette metadata dictionary."""
         lines = [
-            f"{variable_name} = {{",
+            f"{variable_name}: dict[str, object] = {{",
             f'    "name": {metadata.name!r},',
             f'    "author": {metadata.author!r},',
             f'    "description": {metadata.description!r},',
@@ -630,6 +644,33 @@ class PythonExporter(PaletteExporter):
 
         return "\n".join(
             lines
+        )
+
+    @staticmethod
+    def _color_value_type(
+        options: PythonExportOptions,
+    ) -> str:
+        """Return the annotation for one generated color value."""
+        if options.value_format == "hex":
+            return "str"
+
+        channel_type = (
+            "float"
+            if options.normalized
+            else "int"
+        )
+        channel_count = (
+            4
+            if options.include_alpha
+            else 3
+        )
+
+        return (
+            "tuple["
+            + ", ".join(
+                [channel_type] * channel_count
+            )
+            + "]"
         )
 
     def _format_color_value(

@@ -15,6 +15,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.13.2] - 2026-10-06
+
+### Fixed
+
+- **Strictly typed Python palette exports** — generated dictionary, list, tuple, constants,
+  and metadata output now includes explicit built-in type annotations. RGB, RGBA, normalized,
+  hexadecimal, and empty palette output passes Pyright strict type checking without unknown types.
+- **Generated-code type-check regression coverage** — Python exporter tests now write samples for
+  every representation and run Pyright in strict mode against the generated modules, including
+  empty collections and metadata with nested empty values.
+
 ## [6.13.1] - 2026-10-05
 
 ### Added
