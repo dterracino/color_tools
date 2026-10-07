@@ -25,7 +25,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 from pathlib import Path
-from typing import Literal, TypeAlias
+from typing import Literal, Protocol, TypeAlias, cast
 
 import cv2
 import numpy as np
@@ -53,6 +53,19 @@ SaliencyBackend: TypeAlias = Literal[
     "opencv_fine_grained",
     "opencv_spectral",
 ]
+
+
+class _KMeansModel(Protocol):
+    """Typed surface used from scikit-learn's partially typed estimator."""
+
+    cluster_centers_: FloatArray
+
+    def fit_predict(self, x: FloatArray) -> NDArray[np.int64]: ...
+
+
+def _clamp(value: float, lower: float, upper: float) -> float:
+    """Clamp a scalar without invoking NumPy's array overloads."""
+    return max(lower, min(upper, value))
 
 
 # ============================================================================
@@ -297,9 +310,9 @@ def _lab_array_to_rgb(
     )
 
     return (
-        int(np.clip(round(rgb_result[0]), 0, 255)),
-        int(np.clip(round(rgb_result[1]), 0, 255)),
-        int(np.clip(round(rgb_result[2]), 0, 255)),
+        int(_clamp(round(rgb_result[0]), 0, 255)),
+        int(_clamp(round(rgb_result[1]), 0, 255)),
+        int(_clamp(round(rgb_result[2]), 0, 255)),
     )
 
 
@@ -636,7 +649,8 @@ def _provisional_cluster(
         algorithm="lloyd",
     )
 
-    labels_raw = model.fit_predict(lab)
+    typed_model = cast(_KMeansModel, model)
+    labels_raw = typed_model.fit_predict(lab)
 
     labels = np.asarray(
         labels_raw,
@@ -644,7 +658,7 @@ def _provisional_cluster(
     )
 
     centroids = np.asarray(
-        model.cluster_centers_,
+        typed_model.cluster_centers_,
         dtype=np.float64,
     )
 
@@ -698,15 +712,17 @@ def _merge_perceptual_clusters(
             "Perceptual cluster merge requires at least one populated cluster."
         )
 
-    merged_centroids = np.asarray(
+    merged_centroids: FloatArray = np.array(
         centroids[active_indices],
         dtype=np.float64,
-    ).copy()
+        copy=True,
+    )
 
-    merged_populations = np.asarray(
+    merged_populations: FloatArray = np.array(
         populations[active_indices],
         dtype=np.float64,
-    ).copy()
+        copy=True,
+    )
 
     groups: list[list[int]] = [
         [index]
@@ -861,11 +877,7 @@ def _normalize_map(
     if ceiling <= 0.0:
         return result
 
-    result[valid_mask] = np.clip(
-        values[valid_mask] / ceiling,
-        0.0,
-        1.0,
-    )
+    result[valid_mask] = (values[valid_mask] / ceiling).clip(0.0, 1.0)
 
     return result
 
@@ -984,10 +996,11 @@ def _apply_center_bias(
     attention estimates rather than replace evidence from the image.
     """
 
-    result = np.asarray(
+    result: FloatArray = np.array(
         saliency,
         dtype=np.float64,
-    ).copy()
+        copy=True,
+    )
 
     if center_bias <= 0.0:
         result[~valid_mask] = 0.0
@@ -1013,15 +1026,14 @@ def _apply_center_bias(
         + ny * ny
     )
 
-    center = np.clip(
-        1.0 - distance,
+    center: FloatArray = np.asarray(1.0 - distance, dtype=np.float64).clip(
         0.0,
         1.0,
     )
 
-    result = (
-        result * (1.0 - center_bias)
-        + center * center_bias
+    result = np.asarray(
+        result * (1.0 - center_bias) + center * center_bias,
+        dtype=np.float64,
     )
 
     result[~valid_mask] = 0.0
@@ -1893,34 +1905,21 @@ def analyze_dominant_colors(
 
     # Ratios around 1.5 are not especially accent-like; 4.0+ is treated as
     # strongly separated. This is diagnostic normalization, not a scoring rule.
-    accent_chroma_separation = float(
-        np.clip(
-            (accent_ratio - 1.5)
-            / 2.5,
-            0.0,
-            1.0,
-        )
-    )
+    accent_chroma_separation = _clamp((accent_ratio - 1.5) / 2.5, 0.0, 1.0)
 
     # A color-pop composition should have substantial neutral coverage plus
     # strong accents. Sparse high-chroma coverage reinforces the diagnosis but
     # does not act as a hard gate.
-    neutral_strength = float(
-        np.clip(
-            (neutral_pixel_fraction - 0.50)
-            / 0.35,
-            0.0,
-            1.0,
-        )
+    neutral_strength = _clamp(
+        (neutral_pixel_fraction - 0.50) / 0.35,
+        0.0,
+        1.0,
     )
 
-    accent_sparsity = float(
-        np.clip(
-            (0.35 - high_chroma_pixel_fraction)
-            / 0.30,
-            0.0,
-            1.0,
-        )
+    accent_sparsity = _clamp(
+        (0.35 - high_chroma_pixel_fraction) / 0.30,
+        0.0,
+        1.0,
     )
 
     color_pop_strength = float(
@@ -2062,28 +2061,14 @@ def analyze_dominant_colors(
         #   C >= 20  -> fully chromatic for this modifier
         #
         # This is intentionally diagnostic only for now.
-        neutrality = float(
-            np.clip(
-                (20.0 - chroma)
-                / 15.0,
-                0.0,
-                1.0,
-            )
-        )
+        neutrality = _clamp((20.0 - chroma) / 15.0, 0.0, 1.0)
 
         # Extremely high-coverage colors receive protection from any future
         # neutral penalty so a genuine background/field color is not discarded
         # merely because it is neutral.
         #
         # Protection ramps from zero at 10% coverage to full at 50% coverage.
-        population_protection = float(
-            np.clip(
-                (population - 0.10)
-                / 0.40,
-                0.0,
-                1.0,
-            )
-        )
+        population_protection = _clamp((population - 0.10) / 0.40, 0.0, 1.0)
 
         cluster_saliency = saliency_map[mask]
 
@@ -2261,13 +2246,10 @@ def analyze_dominant_colors(
     population_protection_full = 0.020
 
     for candidate in candidates:
-        coarse_coverage_support = float(
-            np.clip(
-                candidate.coarse_support_mean
-                / coarse_rescue_coverage,
-                0.0,
-                1.0,
-            )
+        coarse_coverage_support = _clamp(
+            candidate.coarse_support_mean / coarse_rescue_coverage,
+            0.0,
+            1.0,
         )
 
         candidate.structural_support = max(
@@ -2275,19 +2257,11 @@ def analyze_dominant_colors(
             coarse_coverage_support,
         )
 
-        structural_population_protection = float(
-            np.clip(
-                (
-                    candidate.population
-                    - population_protection_start
-                )
-                / (
-                    population_protection_full
-                    - population_protection_start
-                ),
-                0.0,
-                1.0,
-            )
+        structural_population_protection = _clamp(
+            (candidate.population - population_protection_start)
+            / (population_protection_full - population_protection_start),
+            0.0,
+            1.0,
         )
 
         candidate.structural_penalty = float(

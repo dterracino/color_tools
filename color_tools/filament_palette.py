@@ -19,15 +19,37 @@ import json
 import logging
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, hex_to_rgb, lab_to_lch
 from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
 from color_tools.config import get_dual_color_mode
-from color_tools._palette_utils import _should_prefer_source, _ensure_list
+from color_tools._palette_utils import ensure_list, should_prefer_source
 
 logger: logging.Logger = logging.getLogger(__name__)
+
+LabColor = tuple[float, float, float]
+DistanceFunction = Callable[[LabColor, LabColor], float]
+
+
+class _RequiredFilamentData(TypedDict):
+    """Required fields in one filament JSON record."""
+
+    maker: str
+    type: str
+    color: str
+    hex: str
+
+
+class _FilamentData(_RequiredFilamentData, total=False):
+    """Validated shape of one filament record loaded from JSON."""
+
+    id: str
+    finish: str | None
+    hex2: str | None
+    td_value: float | None
+    other_names: list[str] | None
 
 
 @dataclass(frozen=True)
@@ -125,7 +147,10 @@ class FilamentRecord:
         return f"{self.maker} {self.type}{finish_str} - {self.color} ({self.hex})"
 
 
-def _parse_filament_records(data: list, source_file: str = "JSON data") -> List[FilamentRecord]:
+def _parse_filament_records(
+    data: list[_FilamentData],
+    source_file: str = "JSON data",
+) -> List[FilamentRecord]:
     """
     Parse a list of filament data dictionaries into FilamentRecord objects.
     
@@ -212,7 +237,10 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
         raise ValueError(f"Expected array of filaments at root level in {json_path}")
     
     # Parse core filament records using helper function
-    records = _parse_filament_records(data, str(json_path))
+    records = _parse_filament_records(
+        cast(list[_FilamentData], data),
+        str(json_path),
+    )
     
     # Load optional user filaments from same directory
     user_json_path = data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME
@@ -224,18 +252,21 @@ def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
             raise ValueError(f"Expected array of filaments at root level in {user_json_path}")
         
         # Parse user filament records using helper function
-        user_records = _parse_filament_records(user_data, str(user_json_path))
+        user_records = _parse_filament_records(
+            cast(list[_FilamentData], user_data),
+            str(user_json_path),
+        )
         
         # Detect and log overrides before merging
         if user_records:
             # For filaments, we consider a conflict when maker+type+color+hex all match
-            core_sigs = {}
+            core_sigs: dict[tuple[str, str, str, str], FilamentRecord] = {}
             for r in records:
                 sig = (r.maker, r.type, r.color, r.hex)
                 core_sigs[sig] = r
             
-            exact_overrides = []
-            rgb_overrides = []
+            exact_overrides: list[tuple[str, str, str]] = []
+            rgb_overrides: list[tuple[str, str, str]] = []
             core_rgbs = {r.rgb: r for r in records}
             
             for user_record in user_records:
@@ -302,7 +333,7 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     # Load core synonyms
     try:
         with open(json_path, "r", encoding="utf-8") as f:
-            synonyms = json.load(f)
+            synonyms = cast(dict[str, list[str]], json.load(f))
     except FileNotFoundError:
         synonyms = {}
     
@@ -310,11 +341,11 @@ def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[s
     user_json_path = data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME
     if user_json_path.exists():
         with open(user_json_path, "r", encoding="utf-8") as f:
-            user_synonyms = json.load(f)
+            user_synonyms = cast(dict[str, list[str]], json.load(f))
         
         # Log synonym overrides before merging
-        overridden_makers = []
-        extended_makers = []
+        overridden_makers: list[tuple[str, list[str], list[str]]] = []
+        extended_makers: list[tuple[str, int, int]] = []
         
         # Merge user synonyms into core synonyms
         for maker, user_syn_list in user_synonyms.items():
@@ -394,11 +425,15 @@ def load_owned_filaments(json_path: Path | str | None = None) -> Set[str]:
     if not isinstance(data, dict) or "owned_filaments" not in data:
         raise ValueError(f"Expected {{'owned_filaments': [...]}} structure in {json_path}")
     
-    owned_ids = data["owned_filaments"]
+    data_mapping = cast(dict[str, object], data)
+    owned_ids = data_mapping["owned_filaments"]
     if not isinstance(owned_ids, list):
         raise ValueError(f"Expected 'owned_filaments' to be a list in {json_path}")
+    owned_items = cast(list[object], owned_ids)
+    if not all(isinstance(item, str) for item in owned_items):
+        raise ValueError(f"Expected owned filament IDs to be strings in {json_path}")
     
-    return set(owned_ids)
+    return set(cast(list[str], owned_items))
 
 
 def save_owned_filaments(owned_ids: Set[str], json_path: Path | str | None = None) -> None:
@@ -561,7 +596,7 @@ class FilamentPalette:
         Returns:
             Set of all canonical names and synonyms that match
         """
-        expanded = set()
+        expanded: set[str] = set()
         for maker in makers:
             # Add the original name
             expanded.add(maker)
@@ -620,16 +655,16 @@ class FilamentPalette:
         Returns:
             A list of all matching FilamentRecord objects.
         """
-        makers_to_find = _ensure_list(maker)
+        makers_to_find = ensure_list(maker)
         expanded_makers = self._expand_maker_names(makers_to_find)
         
-        all_filaments = []
+        all_filaments: list[FilamentRecord] = []
         for m in expanded_makers:
             all_filaments.extend(self._by_maker.get(m, []))
         
         # Remove duplicates while preserving order
-        seen = set()
-        unique_filaments = []
+        seen: set[int] = set()
+        unique_filaments: list[FilamentRecord] = []
         for filament in all_filaments:
             filament_id = id(filament)  # Use object identity
             if filament_id not in seen:
@@ -648,9 +683,9 @@ class FilamentPalette:
         Returns:
             A list of all matching FilamentRecord objects.
         """
-        types_to_find = _ensure_list(type_name)
+        types_to_find = ensure_list(type_name)
 
-        all_filaments = []
+        all_filaments: list[FilamentRecord] = []
         for t in types_to_find:
             all_filaments.extend(self._by_type.get(t, []))
         return all_filaments
@@ -675,9 +710,9 @@ class FilamentPalette:
         Returns:
             A list of all matching FilamentRecord objects.
         """
-        finishes_to_find = _ensure_list(finish)
+        finishes_to_find = ensure_list(finish)
             
-        all_filaments = []
+        all_filaments: list[FilamentRecord] = []
         for f in finishes_to_find:
             all_filaments.extend(self._by_finish.get(f, []))
         return all_filaments
@@ -808,6 +843,7 @@ class FilamentPalette:
 
         # Choose distance function
         metric_l = metric.lower()
+        distance_fn: DistanceFunction
         if metric_l in ("de2000", "ciede2000"):
             distance_fn = delta_e_2000
         elif metric_l in ("de94", "cie94"):
@@ -826,7 +862,7 @@ class FilamentPalette:
         for rec in candidates:
             try:
                 d = distance_fn(target_lab, rec.lab)
-                if d < best_d or (d == best_d and best_rec and _should_prefer_source(rec.source, best_rec.source)):
+                if d < best_d or (d == best_d and best_rec and should_prefer_source(rec.source, best_rec.source)):
                     best_rec, best_d = rec, d
             except:
                 # Skip filaments with invalid colors
@@ -909,6 +945,7 @@ class FilamentPalette:
 
         # Choose distance function
         metric_l = metric.lower()
+        distance_fn: DistanceFunction
         if metric_l in ("de2000", "ciede2000"):
             distance_fn = delta_e_2000
         elif metric_l in ("de94", "cie94"):
@@ -1007,10 +1044,13 @@ class FilamentPalette:
             try:
                 import json
                 core_file = Path(__file__).parent / "data" / "maker_synonyms.json"
-                core_synonyms = {}
+                core_synonyms: dict[str, list[str]] = {}
                 if core_file.exists():
                     with open(core_file, 'r') as f:
-                        core_synonyms = json.load(f)
+                        core_synonyms = cast(
+                            dict[str, list[str]],
+                            json.load(f),
+                        )
                 
                 # Compare current synonyms with core synonyms
                 for maker, current_synonyms in self.maker_synonyms.items():

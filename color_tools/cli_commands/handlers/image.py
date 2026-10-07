@@ -13,25 +13,45 @@ Handles all image subcommands:
 import argparse
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 # Image analysis is optional (requires Pillow)
-try:
+if TYPE_CHECKING:
     from ...image import (
-        extract_unique_colors,
-        redistribute_luminance,
-        format_color_change_report,
-        simulate_cvd_image,
-        correct_cvd_image,
-        quantize_image_to_palette,
-        quantize_image_hyab,
-        add_text_watermark,
         add_image_watermark,
         add_svg_watermark,
+        add_text_watermark,
         convert_image,
+        correct_cvd_image,
+        extract_unique_colors,
+        format_color_change_report,
+        quantize_image_hyab,
+        quantize_image_to_palette,
+        redistribute_luminance,
+        simulate_cvd_image,
     )
-    IMAGE_AVAILABLE = True
-except ImportError:
-    IMAGE_AVAILABLE = False
+    _image_available = True
+else:
+    try:
+        from ...image import (
+            add_image_watermark,
+            add_svg_watermark,
+            add_text_watermark,
+            convert_image,
+            correct_cvd_image,
+            extract_unique_colors,
+            format_color_change_report,
+            quantize_image_hyab,
+            quantize_image_to_palette,
+            redistribute_luminance,
+            simulate_cvd_image,
+        )
+    except ImportError:
+        _image_available = False
+    else:
+        _image_available = True
+
+IMAGE_AVAILABLE = _image_available
 
 from ...palette import load_palette
 from ..reporting import get_available_palettes
@@ -280,6 +300,8 @@ def handle_image_command(args: argparse.Namespace) -> None:
                 except ImportError as e:
                     print(f"Error: {e}", file=sys.stderr)
                     sys.exit(1)
+            else:
+                raise RuntimeError("A validated watermark source was not available")
             
             # Save watermarked image
             if output_path:

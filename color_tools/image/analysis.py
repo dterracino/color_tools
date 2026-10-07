@@ -8,17 +8,26 @@ Requires Pillow (PIL) - install with: pip install -r requirements-image.txt
 """
 
 from __future__ import annotations
-from typing import Tuple, List
+from collections.abc import Iterable
+from typing import TYPE_CHECKING, List, Tuple, cast
 from dataclasses import dataclass
 
-try:
+if TYPE_CHECKING:
     from PIL import Image
+
     PILLOW_AVAILABLE = True
-except ImportError:
-    PILLOW_AVAILABLE = False
+else:
+    try:
+        from PIL import Image
+        PILLOW_AVAILABLE = True
+    except ImportError:
+        PILLOW_AVAILABLE = False
 
 from ..conversions import rgb_to_lch, lch_to_rgb, rgb_to_lab, lab_to_rgb
 from ..distance import delta_e_2000, delta_e_hyab
+
+RGBColor = tuple[int, int, int]
+ColorVector = tuple[float, float, float]
 
 
 @dataclass
@@ -217,26 +226,33 @@ def extract_color_clusters(
     img = img.convert("RGB")
 
     # Get all pixels as a list of RGB tuples
-    pixels_rgb = list(img.getdata())  # type: ignore
+    pixels_rgb = list(
+        cast(Iterable[RGBColor], img.getdata())
+    )
 
     # Build working representation
     use_lab = metric in ("lab", "hyab")
     if use_lab:
-        pixels_working: list = [rgb_to_lab(p) for p in pixels_rgb]
+        pixels_working: list[ColorVector] = [
+            rgb_to_lab(p) for p in pixels_rgb
+        ]
     else:
-        pixels_working = list(pixels_rgb)  # type: ignore
+        pixels_working = [
+            (float(r), float(g), float(b))
+            for r, g, b in pixels_rgb
+        ]
 
     # Initialize centroids (evenly spaced through pixel list)
     step = max(1, len(pixels_working) // n_colors)
-    centroids: list = [pixels_working[i * step] for i in range(n_colors)]
+    centroids: list[ColorVector] = [
+        pixels_working[i * step] for i in range(n_colors)
+    ]
 
     # Distance function
-    if metric == "hyab":
-        def _dist(pixel: tuple, centroid: tuple) -> float:
-            return delta_e_hyab(pixel, centroid, l_weight=l_weight)  # type: ignore
-    else:
-        def _dist(pixel: tuple, centroid: tuple) -> float:  # type: ignore
-            return sum((p - c) ** 2 for p, c in zip(pixel, centroid))
+    def _dist(pixel: ColorVector, centroid: ColorVector) -> float:
+        if metric == "hyab":
+            return delta_e_hyab(pixel, centroid, l_weight=l_weight)
+        return sum((p - c) ** 2 for p, c in zip(pixel, centroid))
 
     # Run k-means for n_iter iterations
     cluster_assignments = [0] * len(pixels_working)
@@ -247,14 +263,14 @@ def extract_color_clusters(
             min_dist = float("inf")
             min_idx = 0
             for centroid_idx, centroid in enumerate(centroids):
-                d = _dist(pixel, centroid)  # type: ignore
+                d = _dist(pixel, centroid)
                 if d < min_dist:
                     min_dist = d
                     min_idx = centroid_idx
             cluster_assignments[pixel_idx] = min_idx
 
         # Update centroids
-        new_centroids: list = []
+        new_centroids: list[ColorVector] = []
         for cluster_idx in range(n_colors):
             cluster_pixels = [
                 pixels_working[i]
@@ -263,19 +279,19 @@ def extract_color_clusters(
             ]
 
             if cluster_pixels:
-                n_comp = len(cluster_pixels[0])
                 if use_lab and use_l_median:
                     # Median for L, mean for a and b
                     l_vals = sorted(p[0] for p in cluster_pixels)
                     l_med = l_vals[len(l_vals) // 2]
                     a_mean = sum(p[1] for p in cluster_pixels) / len(cluster_pixels)
                     b_mean = sum(p[2] for p in cluster_pixels) / len(cluster_pixels)
-                    avg: tuple = (l_med, a_mean, b_mean)
+                    avg: ColorVector = (l_med, a_mean, b_mean)
                 else:
-                    avg = tuple(
-                        sum(p[i] for p in cluster_pixels) / len(cluster_pixels)
-                        for i in range(n_comp)
-                    )  # type: ignore
+                    avg = (
+                        sum(p[0] for p in cluster_pixels) / len(cluster_pixels),
+                        sum(p[1] for p in cluster_pixels) / len(cluster_pixels),
+                        sum(p[2] for p in cluster_pixels) / len(cluster_pixels),
+                    )
                 new_centroids.append(avg)
             else:
                 new_centroids.append(centroids[cluster_idx])
@@ -292,15 +308,19 @@ def extract_color_clusters(
 
         centroid = centroids[cluster_idx]
         if use_lab:
-            centroid_rgb_tuple = lab_to_rgb(centroid)  # type: ignore
-            centroid_lab = centroid  # type: ignore
+            centroid_rgb_tuple = lab_to_rgb(centroid)
+            centroid_lab = centroid
         else:
-            centroid_rgb_tuple = tuple(int(round(c)) for c in centroid)  # type: ignore
-            centroid_lab = rgb_to_lab(centroid_rgb_tuple)  # type: ignore
+            centroid_rgb_tuple = (
+                int(round(centroid[0])),
+                int(round(centroid[1])),
+                int(round(centroid[2])),
+            )
+            centroid_lab = rgb_to_lab(centroid_rgb_tuple)
 
         results.append(ColorCluster(
-            centroid_rgb=centroid_rgb_tuple,  # type: ignore
-            centroid_lab=centroid_lab,  # type: ignore
+            centroid_rgb=centroid_rgb_tuple,
+            centroid_lab=centroid_lab,
             pixel_indices=pixel_indices,
             pixel_count=len(pixel_indices),
         ))
@@ -404,7 +424,7 @@ def quantize_image_hyab(
     total_pixels = width * height
 
     # Build pixel→centroid mapping from cluster assignments
-    pixel_to_centroid: list = [None] * total_pixels
+    pixel_to_centroid: list[RGBColor | None] = [None] * total_pixels
     for cluster in clusters:
         rgb = cluster.centroid_rgb
         for idx in cluster.pixel_indices:
@@ -412,11 +432,14 @@ def quantize_image_hyab(
 
     # Fill any unassigned pixels (shouldn't happen, but be safe)
     fallback = clusters[0].centroid_rgb if clusters else (0, 0, 0)
-    out_pixels = [p if p is not None else fallback for p in pixel_to_centroid]
+    out_pixels: list[RGBColor] = [
+        p if p is not None else fallback
+        for p in pixel_to_centroid
+    ]
 
     # Reconstruct image
     out_img = Image.new("RGB", (width, height))
-    out_img.putdata(out_pixels)  # type: ignore
+    out_img.putdata(out_pixels)
     return out_img
 
 
@@ -454,7 +477,7 @@ def redistribute_luminance(colors: List[Tuple[int, int, int]]) -> List[ColorChan
     
     # Redistribute L values evenly
     n_colors = len(colors_lch)
-    results = []
+    results: list[ColorChange] = []
     
     for i, (original_rgb, original_lch) in enumerate(colors_lch):
         # Calculate new L value evenly spaced from 0 to 100

@@ -19,20 +19,22 @@ from __future__ import annotations
 
 import argparse
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from pathlib import Path
-
-from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
-
-# Import prompt_toolkit symbols needed by this module
-try:
     from prompt_toolkit import prompt as _pt_prompt
     from prompt_toolkit.completion import WordCompleter
     from prompt_toolkit.styles import Style
-except ImportError:
-    pass  # PROMPT_TOOLKIT_AVAILABLE from _interactive_utils handles the guard
+else:
+    try:
+        from prompt_toolkit import prompt as _pt_prompt
+        from prompt_toolkit.completion import WordCompleter
+        from prompt_toolkit.styles import Style
+    except ImportError:
+        pass  # PROMPT_TOOLKIT_AVAILABLE handles the guard
+
+from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
 
 __all__ = [
     "run_interactive_wizard",
@@ -44,16 +46,16 @@ __all__ = [
 # Style
 # ---------------------------------------------------------------------------
 
-_WIZARD_STYLE: "Style | None" = None
+_wizard_style: "Style | None" = None
 
 
 def _get_style() -> "Style | None":
-    global _WIZARD_STYLE
-    if _WIZARD_STYLE is None and PROMPT_TOOLKIT_AVAILABLE:
-        _WIZARD_STYLE = Style.from_dict({
+    global _wizard_style
+    if _wizard_style is None and PROMPT_TOOLKIT_AVAILABLE:
+        _wizard_style = Style.from_dict({
             "": "ansicyan",
         })
-    return _WIZARD_STYLE
+    return _wizard_style
 
 
 # ---------------------------------------------------------------------------
@@ -66,8 +68,10 @@ def _get_subparser(command: str) -> "argparse.ArgumentParser | None":
         from .cli import build_parser
         parser = build_parser()
         for action in parser._actions:
-            if isinstance(action.choices, dict):
-                subparser = action.choices.get(command)
+            raw_choices = cast(object, action.choices)
+            if isinstance(raw_choices, dict):
+                choices = cast(dict[str, object], raw_choices)
+                subparser = choices.get(command)
                 if isinstance(subparser, argparse.ArgumentParser):
                     return subparser
     except Exception:

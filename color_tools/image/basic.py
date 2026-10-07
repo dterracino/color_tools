@@ -35,10 +35,56 @@ Example:
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Union, Callable
+from typing import TYPE_CHECKING, Callable, Protocol, Union, cast
 
 if TYPE_CHECKING:
-    import PIL.Image
+    import numpy as np
+    from PIL import Image
+    from numpy.typing import NDArray
+    from skimage import restoration
+
+    from color_tools.palette import ColorRecord
+
+    NUMPY_AVAILABLE = True
+    PILLOW_AVAILABLE = True
+    SCIKIT_IMAGE_AVAILABLE = True
+else:
+    try:
+        import numpy as np
+        NUMPY_AVAILABLE = True
+    except ImportError:
+        NUMPY_AVAILABLE = False
+
+    try:
+        from PIL import Image
+        PILLOW_AVAILABLE = True
+    except ImportError:
+        PILLOW_AVAILABLE = False
+
+    try:
+        from skimage import restoration
+        SCIKIT_IMAGE_AVAILABLE = True
+    except ImportError:
+        SCIKIT_IMAGE_AVAILABLE = False
+
+RGBColor = tuple[int, int, int]
+Matrix3x3 = tuple[
+    tuple[float, float, float],
+    tuple[float, float, float],
+    tuple[float, float, float],
+]
+
+
+class _EstimateSigma(Protocol):
+    """Typed subset of scikit-image noise estimation used here."""
+
+    def __call__(
+        self,
+        image: object,
+        *,
+        channel_axis: int,
+        average_sigmas: bool,
+    ) -> float | list[float]: ...
 
 # --- Analysis Thresholds ---
 THRESHOLD_LOW_CONTRAST = 40.0      # Standard Deviation of pixel brightness
@@ -49,27 +95,7 @@ THRESHOLD_FULL_DYNAMIC_RANGE = 216 # 85% of 0-255 spectrum (216/255)
 GAMMA_DARK_THRESHOLD = 100.0       # Mean brightness for gamma suggestions
 GAMMA_BRIGHT_THRESHOLD = 200.0     # Mean brightness for gamma suggestions
 
-# Check for required dependencies
-try:
-    import numpy as np # type: ignore
-    NUMPY_AVAILABLE = True
-except ImportError:
-    NUMPY_AVAILABLE = False
-
-try:
-    from PIL import Image # type: ignore
-    PILLOW_AVAILABLE = True
-except ImportError:
-    PILLOW_AVAILABLE = False
-
-try:
-    from skimage import restoration # type: ignore
-    SCIKIT_IMAGE_AVAILABLE = True
-except ImportError:
-    SCIKIT_IMAGE_AVAILABLE = False
-
-
-def _check_dependencies():
+def _check_dependencies() -> None:
     """Raise ImportError if required dependencies are not available."""
     if not PILLOW_AVAILABLE:
         raise ImportError(
@@ -83,7 +109,7 @@ def _check_dependencies():
         )
 
 
-def _check_basic_dependencies():
+def _check_basic_dependencies() -> None:
     """Check only Pillow and numpy (for functions that don't need scikit-image)."""
     if not PILLOW_AVAILABLE:
         raise ImportError(
@@ -97,7 +123,7 @@ def _check_basic_dependencies():
         )
 
 
-def _check_noise_dependencies():
+def _check_noise_dependencies() -> None:
     """Check all dependencies including scikit-image for noise analysis."""
     _check_basic_dependencies()
     if not SCIKIT_IMAGE_AVAILABLE:
@@ -153,7 +179,7 @@ def count_unique_colors(image_path: str | Path) -> int:
         
         # Reshape to 2D array where each row is an RGB tuple
         # (H*W) rows, 3 columns
-        pixels_flat = pixels.reshape(-1, 3)
+        pixels_flat = np.reshape(pixels, (-1, 3))
         
         # Find unique rows (unique RGB combinations)
         # np.unique returns sorted unique rows when axis=0
@@ -261,7 +287,7 @@ def get_color_histogram(image_path: str | Path) -> dict[tuple[int, int, int], in
         pixels = np.array(img_rgb)
         
         # Reshape to 2D array where each row is an RGB tuple
-        pixels_flat = pixels.reshape(-1, 3)
+        pixels_flat = np.reshape(pixels, (-1, 3))
         
         # Convert each RGB tuple to a hashable key and count occurrences
         # Use numpy's unique with return_counts for efficiency
@@ -322,7 +348,7 @@ def get_dominant_color(image_path: str | Path) -> tuple[int, int, int]:
         pixels = np.array(img_rgb)
         
         # Reshape to 2D array where each row is an RGB tuple
-        pixels_flat = pixels.reshape(-1, 3)
+        pixels_flat = np.reshape(pixels, (-1, 3))
         
         # Find unique colors and their counts
         unique_colors, counts = np.unique(pixels_flat, axis=0, return_counts=True)
@@ -518,13 +544,17 @@ def analyze_noise_level(
         
         try:
             # Estimate noise sigma using scikit-image
-            sigma_est = restoration.estimate_sigma(
+            estimate_sigma = cast(
+                _EstimateSigma,
+                getattr(restoration, "estimate_sigma"),
+            )
+            sigma_est = estimate_sigma(
                 crop, 
                 channel_axis=-1, 
                 average_sigmas=True
             )
             # Ensure we have a scalar float value
-            if hasattr(sigma_est, '__iter__') and not isinstance(sigma_est, str):
+            if isinstance(sigma_est, list):
                 # If it's an array or list, take the mean
                 sigma_value = float(np.mean(sigma_est))
             else:
@@ -638,7 +668,7 @@ def transform_image(
     transform_func: Callable[[tuple[int, int, int]], tuple[int, int, int]],
     preserve_alpha: bool = True,
     output_path: Path | str | None = None
-) -> 'PIL.Image.Image':
+) -> Image.Image:
     """
     Apply a color transformation function to every pixel of an image.
     
@@ -671,7 +701,6 @@ def transform_image(
         >>> transformed.save("inverted.jpg")
     """
     try:
-        import PIL.Image
         import numpy as np
     except ImportError:
         raise ImportError(
@@ -684,7 +713,7 @@ def transform_image(
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
     
-    with PIL.Image.open(image_path) as _f:
+    with Image.open(image_path) as _f:
         original = _f.copy()
     has_alpha = original.mode in ('RGBA', 'LA') or 'transparency' in original.info
     
@@ -727,7 +756,7 @@ def transform_image(
                 np_image[y, x][:3] = [new_r, new_g, new_b]
     
     # Convert back to PIL Image
-    transformed = PIL.Image.fromarray(np_image, mode=working_image.mode)
+    transformed = Image.fromarray(np_image, mode=working_image.mode)
     
     # Save if output path provided
     if output_path is not None:
@@ -740,10 +769,10 @@ def transform_image(
 
 def _apply_cvd_matrix_vectorized(
     image_path: 'Path | str',
-    sim_matrix: tuple,
-    corr_matrix: 'tuple | None',
+    sim_matrix: Matrix3x3,
+    corr_matrix: Matrix3x3 | None,
     output_path: 'Path | str | None'
-) -> 'PIL.Image.Image':
+) -> Image.Image:
     """
     Apply a CVD transformation to an image using a vectorized numpy matrix multiply.
 
@@ -772,7 +801,6 @@ def _apply_cvd_matrix_vectorized(
         Transformed PIL Image (same mode as the prepared working image).
     """
     try:
-        import PIL.Image
         import numpy as np
     except ImportError:
         raise ImportError(
@@ -784,7 +812,7 @@ def _apply_cvd_matrix_vectorized(
     if not image_path.exists():
         raise FileNotFoundError(f"Image not found: {image_path}")
 
-    with PIL.Image.open(image_path) as _f:
+    with Image.open(image_path) as _f:
         original = _f.copy()
 
     has_alpha = original.mode in ('RGBA', 'LA') or 'transparency' in original.info
@@ -798,32 +826,55 @@ def _apply_cvd_matrix_vectorized(
     else:
         working_image = original.convert('RGB')
 
-    np_image = np.array(working_image, dtype=np.uint8)
+    np_image: NDArray[np.uint8] = np.asarray(
+        working_image,
+        dtype=np.uint8,
+    )
 
     # Build float32 numpy matrices once
-    sim_mat = np.array(sim_matrix, dtype=np.float32)
-    corr_mat = np.array(corr_matrix, dtype=np.float32) if corr_matrix is not None else None
+    sim_mat: NDArray[np.float32] = np.asarray(sim_matrix, dtype=np.float32)
+    corr_mat: NDArray[np.float32] | None = (
+        np.asarray(corr_matrix, dtype=np.float32)
+        if corr_matrix is not None
+        else None
+    )
 
     # Extract RGB channels as float32 in [0, 1]
-    rgb_f = np_image[..., :3].astype(np.float32) / 255.0  # shape (H, W, 3)
+    rgb_f: NDArray[np.float32] = (
+        np_image[..., :3].astype(np.float32) / 255.0
+    )
+    sim_transpose: NDArray[np.float32] = np.transpose(sim_mat)
 
     if corr_mat is None:
         # Simulation: single matrix multiply
-        result_f = rgb_f @ sim_mat.T
+        result_f: NDArray[np.float32] = np.matmul(
+            rgb_f,
+            sim_transpose,
+        )
     else:
         # Fidaner daltonization: apply correction to the error signal
-        sim_f = rgb_f @ sim_mat.T
+        sim_f: NDArray[np.float32] = np.matmul(rgb_f, sim_transpose)
         error_f = rgb_f - sim_f
-        shift_f = error_f @ corr_mat.T
+        corr_transpose: NDArray[np.float32] = np.transpose(corr_mat)
+        shift_f: NDArray[np.float32] = np.matmul(
+            error_f,
+            corr_transpose,
+        )
         result_f = rgb_f + shift_f
 
     # Quantize back to uint8
-    result_u8 = np.clip(result_f * 255.0, 0, 255).astype(np.uint8)
+    result_u8: NDArray[np.uint8] = (
+        (result_f * 255.0).clip(0, 255).astype(np.uint8)
+    )
 
-    out_array = np_image.copy()
+    out_array: NDArray[np.uint8] = np.array(
+        np_image,
+        dtype=np.uint8,
+        copy=True,
+    )
     out_array[..., :3] = result_u8
 
-    transformed = PIL.Image.fromarray(out_array, mode=working_image.mode)
+    transformed = Image.fromarray(out_array, mode=working_image.mode)
 
     if output_path is not None:
         output_path = Path(output_path) if not isinstance(output_path, Path) else output_path
@@ -837,7 +888,7 @@ def simulate_cvd_image(
     image_path: Path | str,
     deficiency_type: str,
     output_path: Path | str | None = None
-) -> 'PIL.Image.Image':
+) -> Image.Image:
     """
     Simulate color vision deficiency for an entire image.
     
@@ -873,7 +924,7 @@ def correct_cvd_image(
     image_path: Path | str,
     deficiency_type: str,
     output_path: Path | str | None = None
-) -> 'PIL.Image.Image':
+) -> Image.Image:
     """
     Apply color vision deficiency correction to an entire image.
     
@@ -910,7 +961,7 @@ def quantize_image_to_palette(
     metric: str = 'de2000',
     dither: bool = False,
     output_path: Path | str | None = None
-) -> 'PIL.Image.Image':
+) -> Image.Image:
     """
     Convert an image to use only colors from a specified palette.
     
@@ -965,7 +1016,6 @@ def quantize_image_to_palette(
         raise ValueError(str(e)) from e
     
     try:
-        import PIL.Image
         import numpy as np
     except ImportError:
         raise ImportError(
@@ -979,7 +1029,7 @@ def quantize_image_to_palette(
         raise FileNotFoundError(f"Image not found: {image_path}")
     
     # Load image
-    with PIL.Image.open(image_path) as _src:
+    with Image.open(image_path) as _src:
         original = _src.convert('RGB')
     pixels_rgb: list[tuple[int, int, int]] = list(original.getdata())  # type: ignore[arg-type]
     
@@ -1055,7 +1105,10 @@ def quantize_image_to_palette(
             (int(round(centroid[0])), int(round(centroid[1])), int(round(centroid[2])))
             for centroid in centroids
         ]
-        pixels_to_cluster = {i: quantized_colors[pixel_assignments[i]] for i in range(len(pixels_rgb))}
+        pixels_to_cluster: dict[int, RGBColor] | None = {
+            i: quantized_colors[int(pixel_assignments[i])]
+            for i in range(len(pixels_rgb))
+        }
         
         # Sort quantized colors by L-value for better palette matching
         quantized_with_lab = [(rgb, rgb_to_lab(rgb)) for rgb in quantized_colors]
@@ -1069,7 +1122,7 @@ def quantize_image_to_palette(
     def _distance_to_palette_color(
         source_rgb: tuple[int, int, int],
         source_lab: tuple[float, float, float],
-        palette_record,
+        palette_record: ColorRecord,
     ) -> float:
         """Compare source and palette colors in the metric's native space."""
         if metric == 'euclidean':
@@ -1114,8 +1167,8 @@ def quantize_image_to_palette(
         return color_record.rgb
     
     # Map quantized/unique colors to palette colors (collision-free)
-    color_map = {}
-    used_palette_colors = set()
+    color_map: dict[RGBColor, RGBColor] = {}
+    used_palette_colors: set[RGBColor] = set()
     
     for source_rgb, source_lab in colors_to_map:
         # Find nearest UNUSED palette color
@@ -1150,7 +1203,7 @@ def quantize_image_to_palette(
     if not dither:
         if pixels_to_cluster is not None:
             # High-color: Map through k-means clusters
-            quantized_pixels = [
+            quantized_pixels: list[RGBColor] = [
                 color_map[pixels_to_cluster[i]] 
                 for i in range(len(pixels_rgb))
             ]
@@ -1158,7 +1211,7 @@ def quantize_image_to_palette(
             # Low-color: Direct mapping
             quantized_pixels = [color_map[pixel] for pixel in pixels_rgb]
         
-        quantized = PIL.Image.new('RGB', original.size)
+        quantized = Image.new('RGB', original.size)
         quantized.putdata(quantized_pixels)
         
         if output_path is not None:
@@ -1186,7 +1239,12 @@ def quantize_image_to_palette(
             pixel_idx = y * width + x
             
             # Get current pixel color
-            old_rgb = tuple(np.clip(np_image[y, x], 0, 255).astype(int))
+            clipped = np_image[y, x].clip(0, 255)
+            old_rgb: RGBColor = (
+                int(clipped[0]),
+                int(clipped[1]),
+                int(clipped[2]),
+            )
             
             # Map to palette color (through k-means cluster if high-color image)
             if pixels_to_cluster is not None:
@@ -1209,8 +1267,8 @@ def quantize_image_to_palette(
                     np_image[ny, nx] += error * weight
     
     # Convert back to PIL Image
-    np_image = np.clip(np_image, 0, 255).astype(np.uint8)
-    dithered = PIL.Image.fromarray(np_image, mode='RGB')
+    np_image = np_image.clip(0, 255).astype(np.uint8)
+    dithered = Image.fromarray(np_image, mode='RGB')
     
     # Save if requested
     if output_path is not None:

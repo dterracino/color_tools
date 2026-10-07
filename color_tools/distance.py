@@ -52,7 +52,6 @@ if TYPE_CHECKING:
     from numpy.typing import ArrayLike, NDArray
 
 from .constants import ColorConstants
-from .conversions import lab_to_lch
 
 
 # ============================================================================
@@ -155,10 +154,8 @@ def delta_e_94(
     Returns:
         Delta E 1994 value (lower = more similar)
     """
-    if K1 is None:
-        K1 = ColorConstants.DE94_K1
-    if K2 is None:
-        K2 = ColorConstants.DE94_K2
+    k1_value = ColorConstants.DE94_K1 if K1 is None else K1
+    k2_value = ColorConstants.DE94_K2 if K2 is None else K2
         
     L1, a1, b1 = lab1
     L2, a2, b2 = lab2
@@ -175,11 +172,15 @@ def delta_e_94(
     dH_sq = da*da + db*db - dC*dC
     
     # Weighting functions (make the formula perceptually uniform)
-    SL = ColorConstants.NORMALIZED_MAX
-    SC = ColorConstants.NORMALIZED_MAX + K1 * C1
-    SH = ColorConstants.NORMALIZED_MAX + K2 * C1
+    lightness_weight = ColorConstants.NORMALIZED_MAX
+    chroma_weight = ColorConstants.NORMALIZED_MAX + k1_value * C1
+    hue_weight = ColorConstants.NORMALIZED_MAX + k2_value * C1
     
-    return math.sqrt((dL/(kL*SL))**2 + (dC/(kC*SC))**2 + (dH_sq/((kH*SH)**2)))
+    return math.sqrt(
+        (dL / (kL * lightness_weight)) ** 2
+        + (dC / (kC * chroma_weight)) ** 2
+        + (dH_sq / ((kH * hue_weight) ** 2))
+    )
 
 
 # ============================================================================
@@ -501,9 +502,9 @@ def delta_e_cmc(
 
     # Lightness weight
     if L1 < ColorConstants.CMC_L_THRESHOLD:
-        SL = ColorConstants.CMC_L_LOW
+        sl = ColorConstants.CMC_L_LOW
     else:
-        SL = (ColorConstants.CMC_L_SCALE * L1) / (ColorConstants.NORMALIZED_MAX + ColorConstants.CMC_L_DIVISOR * L1)
+        sl = (ColorConstants.CMC_L_SCALE * L1) / (ColorConstants.NORMALIZED_MAX + ColorConstants.CMC_L_DIVISOR * L1)
     
     # Chroma weight
     SC = ColorConstants.CMC_C_SCALE * C1 / (ColorConstants.NORMALIZED_MAX + ColorConstants.CMC_C_DIVISOR * C1) + ColorConstants.CMC_C_OFFSET
@@ -512,16 +513,16 @@ def delta_e_cmc(
     h1 = _atan2_deg(b1, a1)
     if ColorConstants.CMC_HUE_MIN <= h1 <= ColorConstants.CMC_HUE_MAX:
         # Red/magenta region
-        T = ColorConstants.CMC_T_IN_RANGE + abs(ColorConstants.CMC_T_COS_MULT_IN * math.cos(math.radians(h1 + ColorConstants.CMC_T_HUE_OFFSET_IN)))
+        hue_factor = ColorConstants.CMC_T_IN_RANGE + abs(ColorConstants.CMC_T_COS_MULT_IN * math.cos(math.radians(h1 + ColorConstants.CMC_T_HUE_OFFSET_IN)))
     else:
         # Other regions
-        T = ColorConstants.CMC_T_OUT_RANGE + abs(ColorConstants.CMC_T_COS_MULT_OUT * math.cos(math.radians(h1 + ColorConstants.CMC_T_HUE_OFFSET_OUT)))
+        hue_factor = ColorConstants.CMC_T_OUT_RANGE + abs(ColorConstants.CMC_T_COS_MULT_OUT * math.cos(math.radians(h1 + ColorConstants.CMC_T_HUE_OFFSET_OUT)))
 
     F = math.sqrt((C1 ** ColorConstants.CMC_F_POWER) / (C1 ** ColorConstants.CMC_F_POWER + ColorConstants.CMC_F_DIVISOR)) if C1 != 0 else 0.0
-    SH = SC * (F * T + (ColorConstants.NORMALIZED_MAX - F))
+    SH = SC * (F * hue_factor + (ColorConstants.NORMALIZED_MAX - F))
 
     # Combine all the weighted differences
-    term_L = (dL / (l * SL)) ** 2
+    term_L = (dL / (l * sl)) ** 2
     term_C = (dC / (c * SC)) ** 2
     term_H = (math.sqrt(dH_sq) / SH) ** 2 if SH != 0 else 0.0
 

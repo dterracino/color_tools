@@ -8,6 +8,7 @@ from __future__ import annotations
 import argparse
 import sys
 import logging
+from logging import LogRecord
 from pathlib import Path
 
 from ..constants import ColorConstants
@@ -26,10 +27,10 @@ def show_override_report(json_dir: str | None = None) -> None:
         json_dir: Optional directory containing JSON files. If None, uses package default.
     """
     # Set up logging to capture override messages
-    log_messages = []
+    log_messages: list[str] = []
     
     class ListHandler(logging.Handler):
-        def emit(self, record):
+        def emit(self, record: LogRecord) -> None:
             log_messages.append(self.format(record))
     
     # Configure logging to capture override info
@@ -78,12 +79,12 @@ def show_override_report(json_dir: str | None = None) -> None:
             print("\nNo user overrides detected.")
         
         # Count sources
-        color_sources = {}
+        color_sources: dict[str, int] = {}
         for record in palette.records:
             source = record.source
             color_sources[source] = color_sources.get(source, 0) + 1
         
-        filament_sources = {}
+        filament_sources: dict[str, int] = {}
         for record in filament_palette.records:
             source = record.source
             filament_sources[source] = filament_sources.get(source, 0) + 1
@@ -192,7 +193,7 @@ def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[st
     else:
         data_dir = Path(json_path)
     
-    palette_names = []
+    palette_names: list[str] = []
     
     # Core palettes
     core_palettes_dir = data_dir / "palettes"
@@ -206,7 +207,7 @@ def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[st
         palette_names.extend(user_palettes)
     
     # Load each palette and count colors
-    palette_data = []
+    palette_data: list[tuple[str, int]] = []
     for name in sorted(palette_names):
         try:
             palette = load_palette(name, json_path)
@@ -248,8 +249,8 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
         if not ColorConstants.verify_integrity():
             print("ERROR: ColorConstants integrity check FAILED!", file=sys.stderr)
             print("The color science constants have been modified.", file=sys.stderr)
-            print(f"Expected hash: {ColorConstants._EXPECTED_HASH}", file=sys.stderr)
-            print(f"Current hash:  {ColorConstants._compute_hash()}", file=sys.stderr)
+            print(f"Expected hash: {ColorConstants.expected_hash()}", file=sys.stderr)
+            print(f"Current hash:  {ColorConstants.compute_hash()}", file=sys.stderr)
             sys.exit(1)
         print("✓ ColorConstants integrity verified")
     
@@ -259,7 +260,7 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
             print("ERROR: Transformation matrices integrity check FAILED!", file=sys.stderr)
             print("The CVD transformation matrices have been modified.", file=sys.stderr)
             print(f"Expected hash: {ColorConstants.MATRICES_EXPECTED_HASH}", file=sys.stderr)
-            print(f"Current hash:  {ColorConstants._compute_matrices_hash()}", file=sys.stderr)
+            print(f"Current hash:  {ColorConstants.compute_matrices_hash()}", file=sys.stderr)
             sys.exit(1)
         print("✓ Transformation matrices integrity verified")
     

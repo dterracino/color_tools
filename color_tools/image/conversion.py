@@ -7,17 +7,23 @@ for lossless and lossy formats.
 
 from __future__ import annotations
 from pathlib import Path
-from typing import Literal
+from typing import Callable, Literal, cast
 
 try:
     from PIL import Image
     # Try to import pillow-heif for HEIC support
     try:
-        from pillow_heif import register_heif_opener
-        register_heif_opener()
-        _HEIF_AVAILABLE = True
+        import pillow_heif
     except ImportError:
-        _HEIF_AVAILABLE = False
+        heif_available = False
+    else:
+        register_heif_opener = cast(
+            Callable[[], None],
+            getattr(pillow_heif, "register_heif_opener"),
+        )
+        register_heif_opener()
+        heif_available = True
+    _HEIF_AVAILABLE = heif_available
 except ImportError:
     raise ImportError(
         "Image conversion requires Pillow. Install with: pip install color-match-tools[image]"

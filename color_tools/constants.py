@@ -9,7 +9,7 @@ never be modified as they represent fundamental color science.
 from __future__ import annotations
 import json
 import hashlib
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     from pathlib import Path
@@ -150,13 +150,13 @@ class ColorConstants:
         constant is accidentally (or maliciously) modified, the hash won't match.
         """
         # Collect all UPPERCASE attributes (our constant naming convention)
-        constants = {}
+        constants: dict[str, object] = {}
         for name in dir(cls):
             if name.isupper() and not name.startswith('_'):
                 value = getattr(cls, name)
                 # Convert tuples to lists for JSON serialization
                 if isinstance(value, tuple):
-                    value = list(value)
+                    value = list(cast(tuple[object, ...], value))
                 constants[name] = value
         
         # Create stable JSON representation (sorted keys for consistency)
@@ -172,6 +172,16 @@ class ColorConstants:
             True if all constants match expected values, False if tampered with.
         """
         return cls._compute_hash() == cls._EXPECTED_HASH
+
+    @classmethod
+    def expected_hash(cls) -> str:
+        """Return the expected integrity hash for the color constants."""
+        return cls._EXPECTED_HASH
+
+    @classmethod
+    def compute_hash(cls) -> str:
+        """Compute the current integrity hash for the color constants."""
+        return cls._compute_hash()
     
     # This hash is computed once when the constants are known to be correct
     # Computed hash of all color science constants (SHA-256)
@@ -235,7 +245,7 @@ class ColorConstants:
     # This verifies the 6 CVD matrices haven't been modified
     # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_matrices_hash())"
     # Updated 2026-04-22: Added ALL_SIMULATION and ALL_CORRECTION combined matrices
-    MATRICES_EXPECTED_HASH = "8a86dd258153ce6a25507292c2e3d4dd0999734cf0784397a3814963ad7c2630"
+    MATRICES_EXPECTED_HASH: str = "8a86dd258153ce6a25507292c2e3d4dd0999734cf0784397a3814963ad7c2630"
     
     @staticmethod
     def verify_data_file(filepath: Path, expected_hash: str) -> bool:
@@ -282,7 +292,7 @@ class ColorConstants:
         else:
             data_dir = Path(data_dir)
         
-        errors = []
+        errors: list[str] = []
         
         # Verify colors.json
         colors_path = data_dir / cls.COLORS_JSON_FILENAME
@@ -392,6 +402,11 @@ class ColorConstants:
             # Hash hasn't been set yet - skip verification
             return True
         return cls._compute_matrices_hash() == cls.MATRICES_EXPECTED_HASH
+
+    @classmethod
+    def compute_matrices_hash(cls) -> str:
+        """Compute the current integrity hash for the transformation matrices."""
+        return cls._compute_matrices_hash()
     
     @classmethod
     def generate_user_data_hash(cls, file_path: "Path | str") -> str:
@@ -512,7 +527,7 @@ class ColorConstants:
             # No user directory means no user files to verify
             return True, []
         
-        errors = []
+        errors: list[str] = []
         
         # Check all user data files
         user_files = [

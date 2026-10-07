@@ -28,6 +28,10 @@ colors use their hexadecimal value as the ColorRecord name.
 from __future__ import annotations
 
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from color_tools.palette import ColorRecord
 
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
@@ -179,7 +183,7 @@ class JascPalImporter(PaletteImporter):
                 f"declared {declared_count}, found {len(color_lines)}"
             )
 
-        colors = []
+        colors: list[ColorRecord] = []
 
         for index, raw_line in enumerate(
             color_lines,

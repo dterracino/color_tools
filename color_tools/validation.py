@@ -11,13 +11,18 @@ RapidFuzz is not available.
 """
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Optional
+from typing import TYPE_CHECKING, Optional
 
-try:
+if TYPE_CHECKING:
     from rapidfuzz import process
+
     HAS_RAPIDFUZZ = True
-except ImportError:
-    HAS_RAPIDFUZZ = False
+else:
+    try:
+        from rapidfuzz import process
+        HAS_RAPIDFUZZ = True
+    except ImportError:
+        HAS_RAPIDFUZZ = False
 
 from .palette import Palette
 from .conversions import hex_to_rgb, rgb_to_lab

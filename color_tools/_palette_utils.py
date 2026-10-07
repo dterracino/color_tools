@@ -6,10 +6,7 @@ classes. These functions are private (prefixed with _) and not part of the
 public API.
 """
 
-from typing import Tuple, Union, List
-
-
-def _should_prefer_source(new_source: str, current_source: str) -> bool:
+def should_prefer_source(new_source: str, current_source: str) -> bool:
     """
     Determine if new_source should be preferred over current_source for ties.
     
@@ -41,7 +38,7 @@ def _should_prefer_source(new_source: str, current_source: str) -> bool:
     return False
 
 
-def _rounded_key(nums: Tuple[float, ...], ndigits: int = 2) -> str:
+def rounded_key(nums: tuple[float, ...], ndigits: int = 2) -> str:
     """
     Create a string key from rounded numeric values.
     
@@ -59,7 +56,7 @@ def _rounded_key(nums: Tuple[float, ...], ndigits: int = 2) -> str:
     return ",".join(str(round(x, ndigits)) for x in nums)
 
 
-def _ensure_list(value: Union[str, List[str]]) -> List[str]:
+def ensure_list(value: str | list[str]) -> list[str]:
     """
     Ensures the input is a list of strings, wrapping if it's a single string.
     

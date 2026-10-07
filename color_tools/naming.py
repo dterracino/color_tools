@@ -289,9 +289,6 @@ def is_unique_near_claim(
     
     css_rgb = css_color.rgb
     css_lab = rgb_to_lab(css_rgb)
-    my_lab = rgb_to_lab(rgb)
-    my_distance = delta_e_2000(my_lab, css_lab)
-    
     # Check if any other palette color is also close to this CSS color
     for other_rgb in palette_colors:
         if other_rgb == rgb:
@@ -361,7 +358,7 @@ def generate_color_name(
             return (f"near {nearest_css.name}", "near")
     
     # Step 3: Generate descriptive name
-    h, s, l_hsl = rgb_to_hsl(rgb)
+    h, s, _ = rgb_to_hsl(rgb)
     # LAB already calculated above for near-match check
     l_lab = lab[0]  # Use LAB L* for lightness (more perceptually uniform)
     

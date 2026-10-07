@@ -43,7 +43,7 @@ import logging
 import logging.handlers
 import re
 from pathlib import Path
-from typing import Any
+from typing import TYPE_CHECKING, Any
 
 
 # ============================================================================
@@ -73,11 +73,16 @@ _LIBRARY_LOGGER_NAME: str = "color_tools"
 # Rich availability (graceful optional import)
 # ============================================================================
 
-try:
+if TYPE_CHECKING:
     from rich.logging import RichHandler as _RichHandler  # type: ignore[import]
+
     _RICH_AVAILABLE: bool = True
-except ImportError:  # pragma: no cover
-    _RICH_AVAILABLE = False
+else:
+    try:
+        from rich.logging import RichHandler as _RichHandler
+        _RICH_AVAILABLE = True
+    except ImportError:  # pragma: no cover
+        _RICH_AVAILABLE = False
 
 # ============================================================================
 # OWASP: log-injection prevention

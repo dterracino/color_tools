@@ -20,20 +20,26 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pathlib import Path
 
-    from .filament_palette import FilamentPalette, FilamentRecord
-
-from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
-
-# Import prompt_toolkit symbols needed by this module
-try:
     from prompt_toolkit import Application
     from prompt_toolkit.key_binding import KeyBindings
-    from prompt_toolkit.layout import Layout, HSplit, VSplit, Window
+    from prompt_toolkit.key_binding.key_processor import KeyPressEvent
+    from prompt_toolkit.layout import HSplit, Layout, Window
     from prompt_toolkit.layout.controls import FormattedTextControl
-    from prompt_toolkit.widgets import TextArea, Frame, Label
     from prompt_toolkit.styles import Style
-except ImportError:
-    pass  # PROMPT_TOOLKIT_AVAILABLE from _interactive_utils handles the guard
+
+    from .filament_palette import FilamentPalette, FilamentRecord
+else:
+    try:
+        from prompt_toolkit import Application
+        from prompt_toolkit.key_binding import KeyBindings
+        from prompt_toolkit.key_binding.key_processor import KeyPressEvent
+        from prompt_toolkit.layout import HSplit, Layout, Window
+        from prompt_toolkit.layout.controls import FormattedTextControl
+        from prompt_toolkit.styles import Style
+    except ImportError:
+        pass  # PROMPT_TOOLKIT_AVAILABLE handles the guard
+
+from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
 
 __all__ = [
     'run_interactive_manager',
@@ -125,13 +131,13 @@ class InteractiveFilamentManager:
         # Build UI
         self._build_ui()
     
-    def _build_ui(self):
+    def _build_ui(self) -> None:
         """Build the prompt_toolkit UI layout."""
         # Create key bindings
         kb = KeyBindings()
         
         @kb.add('q')
-        def quit_app(event):
+        def quit_app(event: KeyPressEvent) -> None:
             """Quit the application."""
             if self.changes_made:
                 # Enter quit confirmation mode
@@ -141,7 +147,7 @@ class InteractiveFilamentManager:
                 event.app.exit()
         
         @kb.add('y')
-        def confirm_yes(event):
+        def confirm_yes(event: KeyPressEvent) -> None:
             """Confirm save and quit."""
             if self.quit_confirm_mode:
                 self.palette.owned_filaments = self.owned_ids
@@ -149,13 +155,13 @@ class InteractiveFilamentManager:
                 event.app.exit()
         
         @kb.add('n')
-        def confirm_no(event):
+        def confirm_no(event: KeyPressEvent) -> None:
             """Quit without saving."""
             if self.quit_confirm_mode:
                 event.app.exit()
         
         @kb.add('escape')
-        def escape_action(event):
+        def escape_action(event: KeyPressEvent) -> None:
             """Exit filter/confirm mode or quit application."""
             if self.filter_mode:
                 self.filter_mode = False
@@ -169,7 +175,7 @@ class InteractiveFilamentManager:
                     event.app.exit()
         
         @kb.add('space')
-        def toggle_owned(event):
+        def toggle_owned(event: KeyPressEvent) -> None:
             """Toggle owned status of current filament."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 filament = self.filtered_filaments[self.current_index]
@@ -181,7 +187,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('down')
-        def move_down(event):
+        def move_down(event: KeyPressEvent) -> None:
             """Move selection down."""
             if not self.filter_mode and not self.quit_confirm_mode and self.current_index < len(self.filtered_filaments) - 1:
                 self.current_index += 1
@@ -190,7 +196,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('up')
-        def move_up(event):
+        def move_up(event: KeyPressEvent) -> None:
             """Move selection up."""
             if not self.filter_mode and not self.quit_confirm_mode and self.current_index > 0:
                 self.current_index -= 1
@@ -199,7 +205,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('home')
-        def jump_to_start(event):
+        def jump_to_start(event: KeyPressEvent) -> None:
             """Jump to first filament."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 self.current_index = 0
@@ -207,7 +213,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('end')
-        def jump_to_end(event):
+        def jump_to_end(event: KeyPressEvent) -> None:
             """Jump to last filament."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 max_index = len(self.filtered_filaments) - 1
@@ -217,7 +223,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('pagedown')
-        def page_down(event):
+        def page_down(event: KeyPressEvent) -> None:
             """Move selection down by one page."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 max_index = len(self.filtered_filaments) - 1
@@ -228,7 +234,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('pageup')
-        def page_up(event):
+        def page_up(event: KeyPressEvent) -> None:
             """Move selection up by one page."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 self.current_index = max(self.current_index - self.page_size, 0)
@@ -238,7 +244,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('s')
-        def save_and_continue(event):
+        def save_and_continue(event: KeyPressEvent) -> None:
             """Save changes."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 self.palette.owned_filaments = self.owned_ids
@@ -247,7 +253,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('r')
-        def revert_changes(event):
+        def revert_changes(event: KeyPressEvent) -> None:
             """Revert unsaved ownership changes."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 # Reload from saved state
@@ -256,7 +262,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('c')
-        def clear_filters(event):
+        def clear_filters(event: KeyPressEvent) -> None:
             """Clear all filters."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 self.filter_maker = ""
@@ -267,7 +273,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('f')
-        def enter_filter_mode(event):
+        def enter_filter_mode(event: KeyPressEvent) -> None:
             """Enter filter mode."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 self.filter_mode = True
@@ -275,21 +281,21 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         @kb.add('tab')
-        def next_filter_field(event):
+        def next_filter_field(event: KeyPressEvent) -> None:
             """Move to next filter field."""
             if self.filter_mode:
                 self.filter_field_index = (self.filter_field_index + 1) % 4
                 self._update_display()
         
         @kb.add('s-tab')  # Shift+Tab
-        def prev_filter_field(event):
+        def prev_filter_field(event: KeyPressEvent) -> None:
             """Move to previous filter field."""
             if self.filter_mode:
                 self.filter_field_index = (self.filter_field_index - 1) % 4
                 self._update_display()
         
         @kb.add('backspace')
-        def backspace_filter(event):
+        def backspace_filter(event: KeyPressEvent) -> None:
             """Backspace in filter mode."""
             if self.filter_mode:
                 if self.filter_field_index == 0 and self.filter_maker:
@@ -307,7 +313,7 @@ class InteractiveFilamentManager:
         from prompt_toolkit.filters import Condition
         
         @kb.add('<any>', filter=Condition(lambda: self.filter_mode))
-        def handle_text_input(event):
+        def handle_text_input(event: KeyPressEvent) -> None:
             """Handle text input in filter mode."""
             if event.data and len(event.data) == 1 and event.data.isprintable():
                 if self.filter_field_index == 0:
@@ -359,9 +365,9 @@ class InteractiveFilamentManager:
             mouse_support=True
         )
     
-    def _get_display_text(self):
+    def _get_display_text(self) -> list[tuple[str, str]]:
         """Generate the formatted text for display."""
-        result = []
+        result: list[tuple[str, str]] = []
         
         # Header
         total = len(self.palette.records)
@@ -512,10 +518,10 @@ class InteractiveFilamentManager:
         
         return result
     
-    def _show_exit_summary(self):
+    def _show_exit_summary(self) -> None:
         """Display summary of changes made during session."""
         # Compare original state to final saved state
-        final_saved = self.palette.owned_filaments if self.palette.owned_filaments else set()
+        final_saved: set[str] = set(self.palette.owned_filaments or ())
         
         added = final_saved - self.original_owned_ids
         removed = self.original_owned_ids - final_saved
@@ -553,12 +559,12 @@ class InteractiveFilamentManager:
         
         print()  # Extra newline for spacing
     
-    def _update_display(self):
+    def _update_display(self) -> None:
         """Force display refresh."""
         if hasattr(self, 'app'):
             self.app.invalidate()
     
-    def _apply_filters(self):
+    def _apply_filters(self) -> None:
         """Apply current filters to filament list."""
         filtered = self.palette.records
         

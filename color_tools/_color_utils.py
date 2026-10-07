@@ -36,7 +36,7 @@ def validate_rgb(rgb: tuple[int, int, int]) -> None:
         raise ValueError("RGB channels must be between 0 and 255")
 
 
-def _parse_hex(hex_code: str) -> tuple[int, int, int]:
+def parse_hex(hex_code: str) -> tuple[int, int, int]:
     """Validate an RGB hex string and return its three 8-bit integer channels.
 
     Accepts exactly three or six ASCII hexadecimal digits, optionally preceded
@@ -55,7 +55,7 @@ def _parse_hex(hex_code: str) -> tuple[int, int, int]:
         ValueError: If the syntax is invalid or hex_to_rgb() cannot parse it.
 
     Example:
-        >>> _parse_hex("#24c")
+        >>> parse_hex("#24c")
         (34, 68, 204)
     """
     value = hex_code.removeprefix("#")

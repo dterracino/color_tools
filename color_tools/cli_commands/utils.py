@@ -6,7 +6,7 @@ Helper functions used across CLI command handlers to reduce duplication.
 
 from __future__ import annotations
 import sys
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, cast
 
 if TYPE_CHECKING:
     import argparse
@@ -101,14 +101,17 @@ def is_valid_lab(lab_tuple: object) -> bool:
     Returns:
         True if valid Lab values, False otherwise
     """
-    if not isinstance(lab_tuple, (tuple, list)) or len(lab_tuple) != 3:
+    if not isinstance(lab_tuple, (tuple, list)):
         return False
 
-    L, a, b = lab_tuple
-
-    # Type check
-    if not all(isinstance(v, (int, float)) for v in (L, a, b)):
+    components = cast(tuple[object, ...] | list[object], lab_tuple)
+    if len(components) != 3:
         return False
+    if not all(isinstance(v, (int, float)) for v in components):
+        return False
+
+    numeric = cast(tuple[int | float, ...] | list[int | float], components)
+    L, a, b = (float(v) for v in numeric)
 
     return (ColorConstants.NORMALIZED_MIN <= L <= ColorConstants.XYZ_SCALE_FACTOR) and \
            (ColorConstants.AB_MIN <= a <= ColorConstants.AB_MAX) and \
@@ -126,14 +129,17 @@ def is_valid_lch(lch_tuple: object) -> bool:
     Returns:
         True if valid LCh values, False otherwise
     """
-    if not isinstance(lch_tuple, (tuple, list)) or len(lch_tuple) != 3:
+    if not isinstance(lch_tuple, (tuple, list)):
         return False
 
-    L, C, h = lch_tuple
-
-    # Type check
-    if not all(isinstance(v, (int, float)) for v in (L, C, h)):
+    components = cast(tuple[object, ...] | list[object], lch_tuple)
+    if len(components) != 3:
         return False
+    if not all(isinstance(v, (int, float)) for v in components):
+        return False
+
+    numeric = cast(tuple[int | float, ...] | list[int | float], components)
+    L, C, h = (float(v) for v in numeric)
 
     return (ColorConstants.NORMALIZED_MIN <= L <= ColorConstants.XYZ_SCALE_FACTOR) and \
            (ColorConstants.CHROMA_MIN <= C <= ColorConstants.CHROMA_MAX) and \

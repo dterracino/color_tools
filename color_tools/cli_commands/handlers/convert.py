@@ -2,6 +2,7 @@
 
 import sys
 from argparse import Namespace
+from typing import cast
 
 from ..utils import parse_hex_or_exit
 from ...conversions import (
@@ -30,8 +31,8 @@ def handle_convert_command(args: Namespace) -> None:
         0: Success
         2: Invalid input
     """
-    value = args.value
-    hex_value = args.hex
+    value = cast(list[float] | None, args.value)
+    hex_value = cast(str | None, args.hex)
 
     if args.check_gamut:
         # Validate mutual exclusivity of --value and --hex
@@ -57,13 +58,17 @@ def handle_convert_command(args: Namespace) -> None:
             if len(value) != 3:
                 print("Error: --check-gamut requires exactly 3 values", file=sys.stderr)
                 sys.exit(2)
-            val = (float(value[0]), float(value[1]), float(value[2]))
+            gamut_value: tuple[float, float, float] = (
+                float(value[0]),
+                float(value[1]),
+                float(value[2]),
+            )
             
             # Assume LAB unless otherwise specified
             if args.from_space == "lch":
-                lab = lch_to_lab(val)
+                lab = lch_to_lab(gamut_value)
             else:
-                lab = val
+                lab = gamut_value
         
         in_gamut = is_in_srgb_gamut(lab)
         print(f"LAB({lab[0]:.2f}, {lab[1]:.2f}, {lab[2]:.2f}) is {'IN' if in_gamut else 'OUT OF'} sRGB gamut")
@@ -89,12 +94,17 @@ def handle_convert_command(args: Namespace) -> None:
             sys.exit(2)
         
         to_space = args.to_space
+        val: tuple[float, ...]
 
         # Handle hex input
         if hex_value is not None:
             try:
                 rgb_val = parse_hex_or_exit(hex_value)
-                val: tuple = (float(rgb_val[0]), float(rgb_val[1]), float(rgb_val[2]))
+                val = (
+                    float(rgb_val[0]),
+                    float(rgb_val[1]),
+                    float(rgb_val[2]),
+                )
                 from_space = "rgb"  # --hex always implies RGB space
             except ValueError as e:
                 print(f"Error: {e}", file=sys.stderr)
@@ -120,18 +130,22 @@ def handle_convert_command(args: Namespace) -> None:
             val = tuple(float(v) for v in value)
 
         # ------ Convert source space → RGB (intermediate) ------
+        triple = (val[0], val[1], val[2])
         if from_space == "rgb":
             rgb = (int(val[0]), int(val[1]), int(val[2]))
         elif from_space == "hsl":
-            rgb = hsl_to_rgb(val)
+            rgb = hsl_to_rgb(triple)
         elif from_space == "lab":
-            rgb = lab_to_rgb(val)
+            rgb = lab_to_rgb(triple)
         elif from_space == "lch":
-            rgb = lch_to_rgb(val)
+            rgb = lch_to_rgb(triple)
         elif from_space == "cmy":
-            rgb = cmy_to_rgb(val)
+            rgb = cmy_to_rgb(triple)
         elif from_space == "cmyk":
-            rgb = cmyk_to_rgb(val)
+            cmyk = tuple(val)
+            if len(cmyk) != 4:
+                raise ValueError("CMYK input requires four components")
+            rgb = cmyk_to_rgb((cmyk[0], cmyk[1], cmyk[2], cmyk[3]))
         else:
             print(f"Error: Unsupported source space '{from_space}'", file=sys.stderr)
             sys.exit(2)

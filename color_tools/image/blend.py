@@ -51,19 +51,23 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Callable
 
 if TYPE_CHECKING:
-    import PIL.Image
+    import numpy as np
+    from PIL import Image
 
-try:
-    import numpy as np  # type: ignore
     NUMPY_AVAILABLE = True
-except ImportError:
-    NUMPY_AVAILABLE = False
-
-try:
-    from PIL import Image  # type: ignore
     PILLOW_AVAILABLE = True
-except ImportError:
-    PILLOW_AVAILABLE = False
+else:
+    try:
+        import numpy as np
+        NUMPY_AVAILABLE = True
+    except ImportError:
+        NUMPY_AVAILABLE = False
+
+    try:
+        from PIL import Image
+        PILLOW_AVAILABLE = True
+    except ImportError:
+        PILLOW_AVAILABLE = False
 
 
 def _check_dependencies() -> None:
@@ -86,7 +90,7 @@ def _check_dependencies() -> None:
 
 def _clip01(x: np.ndarray) -> np.ndarray:
     """Clip float array to [0, 1]."""
-    return np.clip(x, 0.0, 1.0)
+    return x.clip(0.0, 1.0)
 
 
 def _lum(c: np.ndarray) -> np.ndarray:
@@ -360,7 +364,7 @@ def blend_images(
     mode: str = "normal",
     opacity: float = 1.0,
     output_path: str | Path | None = None,
-) -> PIL.Image.Image:
+) -> Image.Image:
     """
     Blend two images using a Photoshop-compatible blend mode.
 

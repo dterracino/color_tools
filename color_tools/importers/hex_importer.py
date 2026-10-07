@@ -33,6 +33,10 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from color_tools.palette import ColorRecord
 
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
@@ -154,7 +158,7 @@ class HexImporter(PaletteImporter):
                 f"Unable to decode HEX palette '{input_path}' as UTF-8"
             ) from exc
 
-        colors = []
+        colors: list[ColorRecord] = []
 
         for line_number, raw_line in enumerate(
             lines,

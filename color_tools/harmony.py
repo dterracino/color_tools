@@ -4,7 +4,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 import math
-from typing import Literal
+from typing import Literal, cast
 
 from .constants import ColorConstants
 from .conversions import (
@@ -147,25 +147,34 @@ def _apply_tone(
     return (lightness, chroma, hue)
 
 
-def _validate_rgb(rgb: tuple[int, int, int]) -> None:
-    if not isinstance(rgb, tuple) or len(rgb) != 3:
+def _validate_rgb(rgb: object) -> None:
+    if not isinstance(rgb, tuple):
         raise ValueError("RGB must be a tuple of three integer channels")
-    if any(isinstance(channel, bool) or not isinstance(channel, int) for channel in rgb):
+    channels = cast(tuple[object, ...], rgb)
+    if len(channels) != 3:
+        raise ValueError("RGB must be a tuple of three integer channels")
+    if any(isinstance(channel, bool) or not isinstance(channel, int) for channel in channels):
         raise ValueError("RGB channels must be integers")
     if any(
         channel < ColorConstants.RGB_MIN or channel > ColorConstants.RGB_MAX
-        for channel in rgb
+        for channel in cast(tuple[int, ...], channels)
     ):
         raise ValueError("RGB channels must be between 0 and 255")
 
 
-def _validate_lch(lch: tuple[float, float, float]) -> tuple[float, float, float]:
-    if not isinstance(lch, tuple) or len(lch) != 3:
+def _validate_lch(lch: object) -> tuple[float, float, float]:
+    if not isinstance(lch, tuple):
         raise ValueError("LCH must be a tuple of three numeric components")
-    if any(isinstance(component, bool) or not isinstance(component, (int, float)) for component in lch):
+    components = cast(tuple[object, ...], lch)
+    if len(components) != 3:
+        raise ValueError("LCH must be a tuple of three numeric components")
+    if any(isinstance(component, bool) or not isinstance(component, (int, float)) for component in components):
         raise ValueError("LCH components must be numeric")
 
-    lightness, chroma, hue = (float(component) for component in lch)
+    lightness, chroma, hue = (
+        float(component)
+        for component in cast(tuple[int | float, ...], components)
+    )
     if not all(math.isfinite(component) for component in (lightness, chroma, hue)):
         raise ValueError("LCH components must be finite")
     if not ColorConstants.NORMALIZED_MIN <= lightness <= ColorConstants.XYZ_SCALE_FACTOR:

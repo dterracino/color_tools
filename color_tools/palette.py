@@ -37,20 +37,34 @@ Example:
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Tuple, Dict, List, Optional, Union, Set, Any
+from typing import Dict, List, Optional, Tuple, TypedDict, cast
 import json
 import logging
 from pathlib import Path
 from collections.abc import Iterable
 
 from color_tools.constants import ColorConstants
-from color_tools.conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb, rgb_to_hex, lab_to_lch
+from color_tools.conversions import rgb_to_lab, rgb_to_hsl, rgb_to_hex, lab_to_lch
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
-from color_tools._palette_utils import _should_prefer_source, _rounded_key, _ensure_list
-from color_tools._color_utils import _parse_hex, validate_rgb
+from color_tools._palette_utils import rounded_key, should_prefer_source
+from color_tools._color_utils import parse_hex, validate_rgb
+
+# Compatibility alias retained for callers that imported the historical helper.
+_should_prefer_source = should_prefer_source
 
 # Set up logger for override tracking
 logger: logging.Logger = logging.getLogger(__name__)
+
+
+class _ColorRecordData(TypedDict):
+    """Validated shape of one color record loaded from JSON."""
+
+    name: str
+    hex: str
+    rgb: list[int]
+    hsl: list[float]
+    lab: list[float]
+    lch: list[float]
 
 
 # ============================================================================
@@ -152,7 +166,7 @@ class ColorRecord:
             'red'
         """
         return cls.from_rgb(
-            _parse_hex(hex_code), name=name, source=source, auto_name=auto_name
+            parse_hex(hex_code), name=name, source=source, auto_name=auto_name
         )
     
     def __str__(self) -> str:
@@ -164,7 +178,10 @@ class ColorRecord:
 # Data Loading
 # ============================================================================
 
-def _parse_color_records(data: list, source_file: str = "JSON data") -> List[ColorRecord]:
+def _parse_color_records(
+    data: list[_ColorRecordData],
+    source_file: str = "JSON data",
+) -> List[ColorRecord]:
     """
     Parse a list of color data dictionaries into ColorRecord objects.
     
@@ -257,7 +274,10 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         raise ValueError(f"Expected array of colors at root level in {json_path}")
     
     # Parse color records using helper function
-    records = _parse_color_records(data, str(json_path))
+    records = _parse_color_records(
+        cast(list[_ColorRecordData], data),
+        str(json_path),
+    )
     
     # Load optional user colors from same directory
     user_json_path = data_dir / ColorConstants.USER_COLORS_JSON_FILENAME
@@ -269,15 +289,18 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
             raise ValueError(f"Expected array of colors at root level in {user_json_path}")
         
         # Parse user color records using helper function
-        user_records = _parse_color_records(user_data, str(user_json_path))
+        user_records = _parse_color_records(
+            cast(list[_ColorRecordData], user_data),
+            str(user_json_path),
+        )
         
         # Detect and log overrides before merging
         if user_records:
             core_names = {r.name.lower(): r for r in records}
             core_rgbs = {r.rgb: r for r in records}
             
-            name_overrides = []
-            rgb_overrides = []
+            name_overrides: list[tuple[str, str, str]] = []
+            rgb_overrides: list[tuple[str, str, str]] = []
             
             for user_record in user_records:
                 # Check for name conflicts
@@ -370,7 +393,7 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     
     if palette_file is None:
         # Build list of available palettes from both locations
-        available = []
+        available: list[str] = []
         
         # Core palettes
         core_palettes_dir = data_dir / "palettes"
@@ -406,7 +429,10 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
         raise ValueError(f"Expected array of colors at root level in {palette_file}")
     
     # Parse color records using shared helper function
-    records = _parse_color_records(data, str(palette_file))
+    records = _parse_color_records(
+        cast(list[_ColorRecordData], data),
+        str(palette_file),
+    )
     
     return Palette(records)
 
@@ -444,24 +470,24 @@ class Palette:
         # Populate indices with override priority
         for record in records:
             name_key = record.name.lower()
-            hsl_key = _rounded_key(record.hsl)
-            lab_key = _rounded_key(record.lab)
-            lch_key = _rounded_key(record.lch)
+            hsl_key = rounded_key(record.hsl)
+            lab_key = rounded_key(record.lab)
+            lch_key = rounded_key(record.lch)
             
             # For each index, check if we should override existing entry
-            if name_key not in self._by_name or _should_prefer_source(record.source, self._by_name[name_key].source):
+            if name_key not in self._by_name or should_prefer_source(record.source, self._by_name[name_key].source):
                 self._by_name[name_key] = record
                 
-            if record.rgb not in self._by_rgb or _should_prefer_source(record.source, self._by_rgb[record.rgb].source):
+            if record.rgb not in self._by_rgb or should_prefer_source(record.source, self._by_rgb[record.rgb].source):
                 self._by_rgb[record.rgb] = record
                 
-            if hsl_key not in self._by_hsl or _should_prefer_source(record.source, self._by_hsl[hsl_key].source):
+            if hsl_key not in self._by_hsl or should_prefer_source(record.source, self._by_hsl[hsl_key].source):
                 self._by_hsl[hsl_key] = record
                 
-            if lab_key not in self._by_lab or _should_prefer_source(record.source, self._by_lab[lab_key].source):
+            if lab_key not in self._by_lab or should_prefer_source(record.source, self._by_lab[lab_key].source):
                 self._by_lab[lab_key] = record
                 
-            if lch_key not in self._by_lch or _should_prefer_source(record.source, self._by_lch[lch_key].source):
+            if lch_key not in self._by_lch or should_prefer_source(record.source, self._by_lch[lch_key].source):
                 self._by_lch[lch_key] = record
     
     @classmethod
@@ -529,7 +555,7 @@ class Palette:
             '#00FF00'
         """
         return cls.from_rgb(
-            (_parse_hex(value) for value in hex_colors),
+            (parse_hex(value) for value in hex_colors),
             names=names,
             name_prefix=name_prefix,
             source=source,
@@ -556,15 +582,15 @@ class Palette:
 
     def find_by_hsl(self, hsl: Tuple[float, float, float], rounding: int = 2) -> Optional[ColorRecord]:
         """Find color by HSL match (with rounding for fuzzy matching)."""
-        return self._by_hsl.get(_rounded_key(hsl, rounding))
+        return self._by_hsl.get(rounded_key(hsl, rounding))
 
     def find_by_lab(self, lab: Tuple[float, float, float], rounding: int = 2) -> Optional[ColorRecord]:
         """Find color by LAB match (with rounding for fuzzy matching)."""
-        return self._by_lab.get(_rounded_key(lab, rounding))
+        return self._by_lab.get(rounded_key(lab, rounding))
 
     def find_by_lch(self, lch: Tuple[float, float, float], rounding: int = 2) -> Optional[ColorRecord]:
         """Find color by LCH match (with rounding for fuzzy matching)."""
-        return self._by_lch.get(_rounded_key(lch, rounding))
+        return self._by_lch.get(rounded_key(lch, rounding))
 
     def nearest_color(
         self,
@@ -599,7 +625,7 @@ class Palette:
         if space.lower() == "rgb":
             for r in self.records:
                 d = euclidean(tuple(map(float, value)), tuple(map(float, r.rgb)))
-                if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
+                if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
             return best_rec, best_d  # type: ignore
@@ -608,7 +634,7 @@ class Palette:
         if space.lower() == "hsl":
             for r in self.records:
                 d = hsl_euclidean(value, r.hsl)
-                if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
+                if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
             return best_rec, best_d  # type: ignore
@@ -618,7 +644,7 @@ class Palette:
             for r in self.records:
                 # LCH has circular hue like HSL, so we need special handling
                 d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
-                if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
+                if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
             return best_rec, best_d  # type: ignore
@@ -650,7 +676,7 @@ class Palette:
                 d = delta_e_cmc(value, r.lab, l=l, c=c)
             else:
                 d = fn(value, r.lab)  # type: ignore
-            if d < best_d or (d == best_d and best_rec and _should_prefer_source(r.source, best_rec.source)):
+            if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
                 best_rec, best_d = r, d
 
         logger.debug(

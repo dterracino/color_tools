@@ -32,13 +32,18 @@ from pathlib import Path
 from color_tools.exporters import (
     get_exporter,
     list_export_formats as _list_export_formats,
-    EXPORT_FORMATS,
+    EXPORT_FORMATS as EXPORT_FORMATS,
 )
 from color_tools.palette import ColorRecord, Palette
 from color_tools.filament_palette import FilamentRecord
 from color_tools.exporters.export_options_base import ExportOptionsBase
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
+
+
+def _is_palette(value: object) -> bool:
+    """Return whether a runtime value is a searchable Palette."""
+    return isinstance(value, Palette)
 
 
 def export_palette(
@@ -67,7 +72,7 @@ def export_palette(
                 "Supply metadata on PaletteExportData, not separately"
             )
         data = palette
-    elif isinstance(palette, Palette):
+    elif _is_palette(palette):
         data = PaletteExportData(
             colors=palette.records,
             metadata=metadata if metadata is not None else PaletteMetadata(),

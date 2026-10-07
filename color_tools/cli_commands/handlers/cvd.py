@@ -51,10 +51,8 @@ def handle_cvd_command(args: Namespace) -> None:
     # Apply transformation based on mode
     if args.mode == "simulate":
         result = simulate_cvd(rgb, args.type)
-        action = "simulated for"
     else:  # correct
         result = correct_cvd(rgb, args.type)
-        action = "corrected for"
     
     # Format deficiency type name
     deficiency_names = {

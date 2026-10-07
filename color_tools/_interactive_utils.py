@@ -9,11 +9,10 @@ stay in sync automatically.
 
 from __future__ import annotations
 
-try:
-    import prompt_toolkit as _pt  # noqa: F401
-    PROMPT_TOOLKIT_AVAILABLE = True
-except ImportError:
-    PROMPT_TOOLKIT_AVAILABLE = False
+from importlib.util import find_spec
+
+
+PROMPT_TOOLKIT_AVAILABLE = find_spec("prompt_toolkit") is not None
 
 __all__ = [
     "PROMPT_TOOLKIT_AVAILABLE",

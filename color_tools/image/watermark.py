@@ -54,7 +54,7 @@ from __future__ import annotations
 
 import io
 from pathlib import Path
-from typing import Literal
+from typing import Literal, Protocol, cast
 
 from PIL import Image, ImageDraw, ImageFont
 
@@ -64,6 +64,19 @@ Position = Literal[
     "center-left", "center", "center-right",
     "bottom-left", "bottom-center", "bottom-right"
 ]
+
+
+class _SVGToPNG(Protocol):
+    """Typed portion of CairoSVG used by SVG watermark conversion."""
+
+    def __call__(
+        self,
+        *,
+        url: str,
+        output_width: int | None,
+        output_height: int | None,
+        scale: float,
+    ) -> bytes | None: ...
 
 
 
@@ -403,11 +416,12 @@ def add_svg_watermark(
         )
     
     # Convert SVG to PNG in memory
-    png_data = cairosvg.svg2png(
+    svg_to_png = cast(_SVGToPNG, getattr(cairosvg, "svg2png"))
+    png_data = svg_to_png(
         url=str(svg_path),
         output_width=width,
         output_height=height,
-        scale=scale if (width is None and height is None) else 1.0  # type: ignore[arg-type]
+        scale=scale if (width is None and height is None) else 1.0,
     )
     
     # Load PNG into PIL Image

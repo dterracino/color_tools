@@ -459,7 +459,7 @@ class PaletteImporter(ABC):
 
     @staticmethod
     def _validate_rgb(
-        rgb: tuple[int, int, int],
+        rgb: tuple[object, ...],
     ) -> None:
         """
         Validate an RGB tuple.
@@ -478,18 +478,12 @@ class PaletteImporter(ABC):
                 "RGB colors must contain exactly three channels"
             )
 
-        if any(
-            not isinstance(channel, int)
-            for channel in rgb
-        ):
-            raise ValueError(
-                "RGB channels must be integers"
-            )
-
-        if any(
-            channel < 0 or channel > 255
-            for channel in rgb
-        ):
-            raise ValueError(
-                f"RGB channels must be between 0 and 255: {rgb}"
-            )
+        for channel in rgb:
+            if not isinstance(channel, int):
+                raise ValueError(
+                    "RGB channels must be integers"
+                )
+            if channel < 0 or channel > 255:
+                raise ValueError(
+                    f"RGB channels must be between 0 and 255: {rgb}"
+                )

@@ -33,6 +33,10 @@ from __future__ import annotations
 
 import struct
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from color_tools.palette import ColorRecord
 
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
@@ -226,7 +230,7 @@ class RiffPalImporter(PaletteImporter):
         *,
         data_chunk: bytes,
         source: str,
-    ) -> list:
+    ) -> list[ColorRecord]:
         """
         Parse a LOGPALETTE structure from a RIFF data chunk.
 
@@ -267,7 +271,7 @@ class RiffPalImporter(PaletteImporter):
                 "declared palette size"
             )
 
-        colors = []
+        colors: list[ColorRecord] = []
 
         for index in range(color_count):
             entry_offset = 4 + index * 4
