@@ -15,15 +15,15 @@ try:
     try:
         import pillow_heif
     except ImportError:
-        heif_available = False
+        _heif_available = False
     else:
-        register_heif_opener = cast(
+        _register_heif_opener = cast(
             Callable[[], None],
             getattr(pillow_heif, "register_heif_opener"),
         )
-        register_heif_opener()
-        heif_available = True
-    _HEIF_AVAILABLE = heif_available
+        _register_heif_opener()
+        _heif_available = True
+    _HEIF_AVAILABLE = _heif_available
 except ImportError:
     raise ImportError(
         "Image conversion requires Pillow. Install with: pip install color-match-tools[image]"
