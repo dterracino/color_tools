@@ -55,7 +55,7 @@ video or preserve source audio.
 ## Keyboard shortcuts
 
 | Key | Action |
-|-----|--------|
+| ----- | -------- |
 | `1`–`9` | Select the corresponding discovered shader |
 | `+` / `-` | Increase / decrease pixel-block size |
 | `D` | Toggle ordered dithering |
@@ -70,7 +70,7 @@ without discarding the shader that is already working.
 ## Included shaders
 
 | Name | Description |
-|------|-------------|
+| ------ | ------------- |
 | `nes` | NES 54-color global nearest-color conversion |
 | `gameboy` | Original Game Boy DMG four-shade conversion |
 | `cga16` | IBM CGA 16-color RGBI conversion |
@@ -91,7 +91,7 @@ The demo sets these uniforms when the shader declares them and ignores them
 otherwise:
 
 | Uniform | Type | Value |
-|---------|------|-------|
+| --------- | ------ | ------- |
 | `u_texture` | `sampler2D` | Source image/video on texture unit 0 |
 | `u_palette` | `sampler2D` | Palette strip on texture unit 1 |
 | `u_palette_size` | `int` | Number of colors in the palette strip |
@@ -124,7 +124,7 @@ The demo dependencies are separate from the main library and listed in
 `demos/requirements.txt`:
 
 | Package | Purpose |
-|---------|---------|
+| --------- | --------- |
 | `pygame` | Window, input, and OpenGL context |
 | `moderngl` | OpenGL 3.3 resource and draw API |
 | `numpy` | Frame and texture data |
