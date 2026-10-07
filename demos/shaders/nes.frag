@@ -3,7 +3,7 @@
 // Quantises every pixel to the closest colour in the NES master palette (54
 // colours, NTSC canonical set from the color_tools library).
 //
-// The nearest-colour search is done entirely in linear RGB so the result
+// The nearest-colour search is done on the palette's encoded sRGB values so it
 // matches what color_tools.distance.euclidean() would return.  For an even
 // more perceptually accurate match swap the distance function below to the
 // CIE76 / CIEDE2000 version (commented out at the bottom of this file).
@@ -33,7 +33,7 @@ uniform float     u_pixelate; // default 4.0  (NES res ~256x224 → block=2–4)
 uniform float     u_dither;   // default 0.0
 
 // ---------------------------------------------------------------------------
-// NES 54-colour palette (linear RGB, derived from color_tools nes.json)
+// NES 54-colour palette (encoded sRGB, derived from color_tools nes.json)
 // ---------------------------------------------------------------------------
 const int NES_SIZE = 54;
 const vec3 NES_PALETTE[54] = vec3[54](
@@ -111,7 +111,7 @@ float bayer4x4(ivec2 p) {
 }
 
 // ---------------------------------------------------------------------------
-// Nearest-colour search in linear RGB space
+// Nearest-colour search in encoded sRGB space
 // (identical to color_tools.distance.euclidean)
 // ---------------------------------------------------------------------------
 vec3 nearest_nes(vec3 color) {

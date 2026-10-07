@@ -1,495 +1,475 @@
 #!/usr/bin/env python3
-"""
-Palette Shader Demo
-===================
-Real-time palette conversion demo using pygame + moderngl.
+"""Interactive image/video preview for the fragment shaders in ``demos/shaders``.
 
-Loads an image or video and applies a retro-platform palette shader,
-displaying the result in a live window.
-
-Supported palettes
-------------------
-  nes       Nintendo Entertainment System (54 colours)
-  gameboy   Original Game Boy DMG (4 shades of green)
-  cga16     IBM CGA 16-colour palette
-  pico8     PICO-8 fantasy console (16 colours)
-
-Usage
------
-  python palette_shader_demo.py image.png --palette nes
-  python palette_shader_demo.py video.mp4 --palette gameboy --pixelate 4
-  python palette_shader_demo.py image.jpg --palette cga16 --dither 0.8
-  python palette_shader_demo.py image.jpg --palette pico8 --pixelate 3 --dither 0.5
-
-Keyboard shortcuts
-------------------
-  1-4       Switch palette  (1=NES, 2=Game Boy, 3=CGA16, 4=PICO-8)
-  +/-       Increase/decrease pixel-block size
-  D         Toggle dither on/off
-  R         Reload shaders from disk (hot-reload)
-  S         Save screenshot  (palette_screenshot.png)
-  Space     Pause / resume video
-  Q / Esc   Quit
+Every ``*.frag`` file is discovered automatically. Shaders may declare any of
+the standard uniforms documented in ``demos/README.md``; uniforms they omit are
+simply ignored. ``palette_lut.frag`` can use any named color_tools palette or a
+custom palette-strip image without requiring a generated file on disk.
 """
 
 from __future__ import annotations
 
 import argparse
-import sys
+import math
 import time
+from collections.abc import Callable
+from dataclasses import dataclass
 from pathlib import Path
-from typing import Optional
+from typing import Protocol, cast
 
-# Third-party imports
-try:
-    import pygame
-except ImportError:
-    print("pygame is required.  Run:  pip install -r requirements.txt")
-    sys.exit(1)
-
-try:
-    import moderngl
-except ImportError:
-    print("moderngl is required.  Run:  pip install -r requirements.txt")
-    sys.exit(1)
-
-try:
-    import numpy as np
-except ImportError:
-    print("numpy is required.  Run:  pip install -r requirements.txt")
-    sys.exit(1)
-
-try:
-    from PIL import Image
-except ImportError:
-    print("Pillow is required.  Run:  pip install -r requirements.txt")
-    sys.exit(1)
-
-# Optional: opencv for video
 try:
     import cv2
-    HAS_CV2 = True
-except ImportError:
-    HAS_CV2 = False
+    import moderngl
+    import numpy as np
+    import pygame
+    from numpy.typing import NDArray
+    from PIL import Image
+except ImportError as exc:
+    print(f"Missing demo dependency: {exc.name}")
+    print("Run: python -m pip install -r demos/requirements.txt")
+    raise SystemExit(1) from exc
 
-# ---------------------------------------------------------------------------
-# Paths
-# ---------------------------------------------------------------------------
-DEMO_DIR   = Path(__file__).parent
+try:
+    from color_tools import load_palette
+except ImportError as exc:
+    print("color_tools is required. Run: python -m pip install -e .")
+    raise SystemExit(1) from exc
+
+
+RGBFrame = NDArray[np.uint8]
+UniformValue = int | float | tuple[float, float]
+VertexArrayFactory = Callable[
+    [moderngl.Program, list[tuple[moderngl.Buffer, str, str, str]]],
+    moderngl.VertexArray,
+]
+
+
+class _VertexArrayContext(Protocol):
+    """Typed view of the ModernGL context method missing from its stub."""
+
+    vertex_array: VertexArrayFactory
+
+
+DEMO_DIR = Path(__file__).resolve().parent
 SHADER_DIR = DEMO_DIR / "shaders"
+VERTEX_SHADER_PATH = SHADER_DIR / "quad.vert"
+VIDEO_SUFFIXES = frozenset({".mp4", ".avi", ".mov", ".mkv", ".webm", ".flv", ".wmv", ".m4v"})
 
-PALETTES = {
-    "nes":     {"frag": "nes.frag",     "default_pixelate": 4.0, "label": "NES"},
-    "gameboy": {"frag": "gameboy.frag", "default_pixelate": 4.0, "label": "Game Boy"},
-    "cga16":   {"frag": "cga16.frag",   "default_pixelate": 3.0, "label": "CGA 16"},
-    "pico8":   {"frag": "pico8.frag",   "default_pixelate": 3.0, "label": "PICO-8"},
+_SHADER_DEFAULTS: dict[str, tuple[str, float]] = {
+    "nes": ("NES", 4.0),
+    "gameboy": ("Game Boy", 4.0),
+    "cga16": ("CGA 16", 3.0),
+    "pico8": ("PICO-8", 3.0),
+    "palette_lut": ("Palette LUT", 3.0),
 }
-PALETTE_KEYS = list(PALETTES.keys())
+_PREFERRED_SHADER_ORDER = tuple(_SHADER_DEFAULTS)
 
 
-# ---------------------------------------------------------------------------
-# Shader helpers
-# ---------------------------------------------------------------------------
+@dataclass(frozen=True, slots=True)
+class ShaderDefinition:
+    """A discovered fragment shader and its presentation defaults."""
+
+    name: str
+    path: Path
+    label: str
+    default_pixelate: float
+
+
+@dataclass(slots=True)
+class ProgramResources:
+    """ModernGL resources that must be replaced and released together."""
+
+    program: moderngl.Program
+    vertex_array: moderngl.VertexArray
+    vertex_buffer: moderngl.Buffer
+
+    def release(self) -> None:
+        """Release the program and its associated quad geometry."""
+        self.vertex_array.release()
+        self.vertex_buffer.release()
+        self.program.release()
+
+
+def discover_shaders(directory: Path = SHADER_DIR) -> tuple[ShaderDefinition, ...]:
+    """Discover every fragment shader, retaining stable shortcuts for known shaders."""
+    paths = {path.stem: path for path in directory.glob("*.frag")}
+    preferred = [name for name in _PREFERRED_SHADER_ORDER if name in paths]
+    names = preferred + sorted(set(paths).difference(preferred))
+    definitions: list[ShaderDefinition] = []
+    for name in names:
+        label, default_pixelate = _SHADER_DEFAULTS.get(
+            name,
+            (name.replace("_", " ").replace("-", " ").title(), 1.0),
+        )
+        definitions.append(ShaderDefinition(name, paths[name], label, default_pixelate))
+    return tuple(definitions)
+
 
 def _read_shader(path: Path) -> str:
-    """Read a GLSL shader file and return its source."""
-    with open(path, "r", encoding="utf-8") as f:
-        return f.read()
+    """Read UTF-8 GLSL source."""
+    return path.read_text(encoding="utf-8")
 
 
-def build_program(ctx: moderngl.Context, palette: str) -> moderngl.Program:
-    """Compile and link a shader program for the given palette."""
-    vert_src = _read_shader(SHADER_DIR / "quad.vert")
-    frag_src = _read_shader(SHADER_DIR / PALETTES[palette]["frag"])
-    return ctx.program(vertex_shader=vert_src, fragment_shader=frag_src)
+def _create_program_resources(
+    ctx: moderngl.Context,
+    shader: ShaderDefinition,
+) -> ProgramResources:
+    """Compile a shader and create its fullscreen quad resources."""
+    program = ctx.program(
+        vertex_shader=_read_shader(VERTEX_SHADER_PATH),
+        fragment_shader=_read_shader(shader.path),
+    )
+    if "u_texture" not in program:
+        program.release()
+        raise ValueError(f"{shader.path.name} must declare uniform sampler2D u_texture")
+
+    vertices = np.array(
+        [
+            -1.0, -1.0, 0.0, 0.0,
+            1.0, -1.0, 1.0, 0.0,
+            1.0, 1.0, 1.0, 1.0,
+            -1.0, -1.0, 0.0, 0.0,
+            1.0, 1.0, 1.0, 1.0,
+            -1.0, 1.0, 0.0, 1.0,
+        ],
+        dtype=np.float32,
+    )
+    vertex_buffer = ctx.buffer(vertices.tobytes())
+    create_vertex_array = cast(_VertexArrayContext, ctx).vertex_array
+    vertex_array = create_vertex_array(
+        program,
+        [(vertex_buffer, "2f 2f", "in_position", "in_texcoord")],
+    )
+    return ProgramResources(program, vertex_array, vertex_buffer)
 
 
-# ---------------------------------------------------------------------------
-# Texture helpers
-# ---------------------------------------------------------------------------
-
-def make_texture(ctx: moderngl.Context, rgb_array: np.ndarray) -> moderngl.Texture:
-    """
-    Create a moderngl texture from a numpy uint8 array of shape (H, W, 3).
-    The texture is flipped vertically because OpenGL's origin is bottom-left.
-    """
-    h, w = rgb_array.shape[:2]
-    # OpenGL expects image data from the bottom row upward
-    flipped = np.ascontiguousarray(np.flipud(rgb_array))
-    tex = ctx.texture((w, h), 3, flipped.tobytes())
-    tex.filter = (moderngl.NEAREST, moderngl.NEAREST)
-    tex.repeat_x = False
-    tex.repeat_y = False
-    return tex
+def _set_uniform(program: moderngl.Program, name: str, value: UniformValue) -> None:
+    """Set an optional uniform when the active shader declares it."""
+    member = program.get(name, None)
+    if isinstance(member, moderngl.Uniform):
+        member.value = value
 
 
-def load_image(path: Path) -> np.ndarray:
-    """Load an image file and return an RGB numpy uint8 array (H, W, 3)."""
-    img = Image.open(path).convert("RGB")
-    return np.array(img, dtype=np.uint8)
+def _make_rgb_texture(ctx: moderngl.Context, frame: RGBFrame) -> moderngl.Texture:
+    """Upload one RGB frame using OpenGL's bottom-left row order."""
+    height, width = frame.shape[:2]
+    flipped = np.ascontiguousarray(np.flipud(frame))
+    texture = ctx.texture((int(width), int(height)), 3, flipped.tobytes())
+    texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+    texture.repeat_x = False
+    texture.repeat_y = False
+    return texture
 
 
-# ---------------------------------------------------------------------------
-# Fullscreen-quad VAO
-# ---------------------------------------------------------------------------
-
-def make_quad_vao(ctx: moderngl.Context, program: moderngl.Program) -> moderngl.VertexArray:
-    """
-    Create a fullscreen quad (two triangles) covering clip-space [-1, 1].
-    Vertex layout: position (x,y), texcoord (u,v) — 4 floats per vertex.
-    """
-    # Two triangles forming a quad that covers the entire screen
-    vertices = np.array([
-        # x,     y,    u,    v
-        -1.0, -1.0,  0.0,  0.0,
-         1.0, -1.0,  1.0,  0.0,
-         1.0,  1.0,  1.0,  1.0,
-        -1.0, -1.0,  0.0,  0.0,
-         1.0,  1.0,  1.0,  1.0,
-        -1.0,  1.0,  0.0,  1.0,
-    ], dtype=np.float32)
-
-    vbo = ctx.buffer(vertices.tobytes())
-    return ctx.vertex_array(program, [(vbo, "2f 2f", "in_position", "in_texcoord")])
+def _load_image(path: Path) -> RGBFrame:
+    """Decode a still image as an RGB uint8 frame."""
+    with Image.open(path) as image:
+        return np.array(image.convert("RGB"), dtype=np.uint8, copy=True)
 
 
-# ---------------------------------------------------------------------------
-# Video reader
-# ---------------------------------------------------------------------------
+def _load_lut_colors(palette_name: str, lut_path: Path | None) -> RGBFrame:
+    """Load palette colors from color_tools or the first row of a custom image."""
+    if lut_path is None:
+        palette = load_palette(palette_name)
+        colors = np.asarray([record.rgb for record in palette.records], dtype=np.uint8)
+    else:
+        with Image.open(lut_path) as image:
+            pixels = np.asarray(image.convert("RGB"), dtype=np.uint8)
+        colors = pixels[0] if pixels.ndim == 3 else pixels
+    if colors.ndim != 2 or colors.shape[1] != 3 or colors.shape[0] == 0:
+        raise ValueError("Palette LUT must contain at least one RGB color")
+    return np.ascontiguousarray(colors, dtype=np.uint8)
+
+
+def _make_lut_texture(
+    ctx: moderngl.Context,
+    palette_name: str,
+    lut_path: Path | None,
+) -> tuple[moderngl.Texture, int]:
+    """Create a one-row palette texture for LUT-driven shaders."""
+    colors = _load_lut_colors(palette_name, lut_path)
+    size = int(colors.shape[0])
+    texture = ctx.texture((size, 1), 3, colors.tobytes())
+    texture.filter = (moderngl.NEAREST, moderngl.NEAREST)
+    texture.repeat_x = False
+    texture.repeat_y = False
+    return texture, size
+
 
 class VideoReader:
-    """Wraps an OpenCV VideoCapture, exposes frames as RGB numpy arrays."""
+    """Time an OpenCV video stream and expose RGB frames."""
 
     def __init__(self, path: Path) -> None:
-        if not HAS_CV2:
-            raise RuntimeError(
-                "opencv-python is required for video support.\n"
-                "Run:  pip install -r requirements.txt"
-            )
-        self.cap = cv2.VideoCapture(str(path))
-        if not self.cap.isOpened():
+        self._capture = cv2.VideoCapture(str(path))
+        if not self._capture.isOpened():
             raise FileNotFoundError(f"Cannot open video: {path}")
-        self.fps = self.cap.get(cv2.CAP_PROP_FPS) or 30.0
+        measured_fps = float(self._capture.get(cv2.CAP_PROP_FPS))
+        self.fps = measured_fps if math.isfinite(measured_fps) and measured_fps > 0 else 30.0
         self._paused = False
-        self._last_frame: Optional[np.ndarray] = None
         self._next_frame_time = time.monotonic()
 
-    def next_frame(self) -> Optional[np.ndarray]:
-        """Return the next frame (RGB uint8), or None if the stream ended."""
+    def next_frame(self, *, force: bool = False) -> RGBFrame | None:
+        """Return a newly decoded frame when it is due, otherwise return ``None``."""
         now = time.monotonic()
-        if self._paused:
-            return self._last_frame
-        if now < self._next_frame_time:
-            return self._last_frame
-
-        ret, bgr = self.cap.read()
-        if not ret:
-            # Loop back to beginning
-            self.cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            ret, bgr = self.cap.read()
-            if not ret:
-                return self._last_frame
-
+        if self._paused or (not force and now < self._next_frame_time):
+            return None
+        read_ok, bgr = self._capture.read()
+        if not read_ok:
+            self._capture.set(cv2.CAP_PROP_POS_FRAMES, 0)
+            read_ok, bgr = self._capture.read()
+        if not read_ok:
+            return None
+        self._next_frame_time = now + (1.0 / self.fps)
         rgb = cv2.cvtColor(bgr, cv2.COLOR_BGR2RGB)
-        self._last_frame = rgb
-        self._next_frame_time = now + 1.0 / self.fps
-        return rgb
+        return np.asarray(rgb, dtype=np.uint8)
 
     def toggle_pause(self) -> None:
+        """Toggle playback and resume without trying to catch up."""
         self._paused = not self._paused
+        self._next_frame_time = time.monotonic()
 
     @property
     def paused(self) -> bool:
+        """Return whether playback is paused."""
         return self._paused
 
     def release(self) -> None:
-        self.cap.release()
+        """Release the OpenCV capture."""
+        self._capture.release()
 
 
-# ---------------------------------------------------------------------------
-# Main application
-# ---------------------------------------------------------------------------
+def _open_source(path: Path) -> tuple[RGBFrame, VideoReader | None]:
+    """Open an image or video and return its first frame."""
+    if path.suffix.casefold() not in VIDEO_SUFFIXES:
+        try:
+            return _load_image(path), None
+        except (OSError, ValueError):
+            pass
+    video = VideoReader(path)
+    frame = video.next_frame(force=True)
+    if frame is None:
+        video.release()
+        raise ValueError(f"Could not decode an image or video frame from {path}")
+    return frame, video
+
+
+def _window_size(frame: RGBFrame, scale: float) -> tuple[int, int]:
+    """Calculate an aspect-preserving window bounded to 1024 pixels per side."""
+    source_height, source_width = frame.shape[:2]
+    width = max(1, int(source_width * scale))
+    height = max(1, int(source_height * scale))
+    if max(width, height) > 1024:
+        fit = 1024 / max(width, height)
+        width = max(1, int(width * fit))
+        height = max(1, int(height * fit))
+    return width, height
+
 
 def run(
     source_path: Path,
-    palette: str,
+    shader_name: str,
     pixelate: float,
     dither: float,
     window_scale: float,
+    *,
+    lut_palette: str,
+    lut_path: Path | None,
 ) -> None:
-    """
-    Open the source image/video, create the window, and run the render loop.
-    """
-    # ------------------------------------------------------------------
-    # Detect source type
-    # ------------------------------------------------------------------
-    is_video = source_path.suffix.lower() in {
-        ".mp4", ".avi", ".mov", ".mkv", ".webm", ".flv", ".wmv",
-    }
+    """Open an image or video and run the interactive shader preview."""
+    shaders = discover_shaders()
+    shader_by_name = {shader.name: shader for shader in shaders}
+    current_shader = shader_by_name[shader_name]
+    frame, video = _open_source(source_path)
+    window_width, window_height = _window_size(frame, window_scale)
+    source_height, source_width = (int(value) for value in frame.shape[:2])
 
-    video: Optional[VideoReader] = None
-    frame: Optional[np.ndarray] = None
-
-    if is_video:
-        print(f"Loading video: {source_path}")
-        video = VideoReader(source_path)
-        # Grab first frame to determine dimensions
-        frame = video.next_frame()
-        if frame is None:
-            print("Error: could not read first frame from video.")
-            sys.exit(1)
-        src_h, src_w = frame.shape[:2]
-    else:
-        print(f"Loading image: {source_path}")
-        frame = load_image(source_path)
-        src_h, src_w = frame.shape[:2]
-
-    # ------------------------------------------------------------------
-    # Compute window dimensions (preserve aspect ratio)
-    # ------------------------------------------------------------------
-    win_w = int(src_w * window_scale)
-    win_h = int(src_h * window_scale)
-    # Clamp to reasonable screen size
-    max_dim = 1024
-    if win_w > max_dim or win_h > max_dim:
-        scale = max_dim / max(win_w, win_h)
-        win_w = int(win_w * scale)
-        win_h = int(win_h * scale)
-
-    # ------------------------------------------------------------------
-    # pygame + moderngl setup
-    # ------------------------------------------------------------------
     pygame.init()
-    pygame.display.set_caption(f"Palette Demo – {PALETTES[palette]['label']}")
-
-    # OpenGL 3.3 core context
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
-    pygame.display.gl_set_attribute(
-        pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE
-    )
+    pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, 1)
-
-    screen = pygame.display.set_mode((win_w, win_h), pygame.OPENGL | pygame.DOUBLEBUF)
-    clock  = pygame.time.Clock()
+    pygame.display.set_mode((window_width, window_height), pygame.OPENGL | pygame.DOUBLEBUF)
+    clock = pygame.time.Clock()
 
     ctx = moderngl.create_context()
-
-    # ------------------------------------------------------------------
-    # Build shader program and geometry
-    # ------------------------------------------------------------------
-    current_palette  = palette
-    pixelate_val     = pixelate if pixelate > 0 else PALETTES[palette]["default_pixelate"]
-    dither_val       = dither
-
-    program = build_program(ctx, current_palette)
-    vao     = make_quad_vao(ctx, program)
-    texture = make_texture(ctx, frame)
-    texture.use(0)
+    source_texture = _make_rgb_texture(ctx, frame)
+    source_texture.use(0)
+    lut_texture, lut_size = _make_lut_texture(ctx, lut_palette, lut_path)
+    lut_texture.use(1)
+    resources = _create_program_resources(ctx, current_shader)
+    pixelate_value = pixelate if pixelate > 0 else current_shader.default_pixelate
+    dither_value = dither
+    started_at = time.monotonic()
+    frame_number = 0
 
     def set_uniforms() -> None:
-        if "u_pixelate" in program:
-            program["u_pixelate"].value = pixelate_val  # type: ignore[union-attr]
-        if "u_dither" in program:
-            program["u_dither"].value = dither_val  # type: ignore[union-attr]
-        if "u_texture" in program:
-            program["u_texture"].value = 0  # type: ignore[union-attr]
-
-    set_uniforms()
+        program = resources.program
+        _set_uniform(program, "u_texture", 0)
+        _set_uniform(program, "u_palette", 1)
+        _set_uniform(program, "u_palette_size", lut_size)
+        _set_uniform(program, "u_pixelate", pixelate_value)
+        _set_uniform(program, "u_dither", dither_value)
+        _set_uniform(program, "u_resolution", (float(window_width), float(window_height)))
+        _set_uniform(program, "u_source_resolution", (float(source_width), float(source_height)))
 
     def update_title() -> None:
-        pal_label = PALETTES[current_palette]["label"]
-        pix_str   = f"pixelate={pixelate_val:.0f}"
-        dth_str   = f"dither={dither_val:.1f}"
-        paused    = "  [PAUSED]" if (video and video.paused) else ""
+        paused = " [PAUSED]" if video is not None and video.paused else ""
         pygame.display.set_caption(
-            f"Palette Demo – {pal_label}  {pix_str}  {dth_str}{paused}"
+            f"Palette Shader – {current_shader.label}  "
+            f"pixelate={pixelate_value:.0f}  dither={dither_value:.1f}{paused}"
         )
 
-    def switch_palette(new_palette: str) -> None:
-        nonlocal current_palette, program, vao, pixelate_val
-        current_palette = new_palette
-        pixelate_val    = PALETTES[new_palette]["default_pixelate"]
-        program.release()
-        vao.release()
-        program = build_program(ctx, current_palette)
-        vao     = make_quad_vao(ctx, program)
-        texture.use(0)
+    def replace_shader(next_shader: ShaderDefinition, *, reset_pixelate: bool) -> None:
+        nonlocal current_shader, resources, pixelate_value
+        replacement = _create_program_resources(ctx, next_shader)
+        previous = resources
+        resources = replacement
+        current_shader = next_shader
+        if reset_pixelate:
+            pixelate_value = next_shader.default_pixelate
+        source_texture.use(0)
+        lut_texture.use(1)
         set_uniforms()
         update_title()
-        print(f"Switched to {PALETTES[new_palette]['label']} palette")
+        previous.release()
+        print(f"Shader: {next_shader.label} ({next_shader.path.name})")
 
-    def reload_shaders() -> None:
-        """Hot-reload shaders from disk."""
-        nonlocal program, vao
-        try:
-            program.release()
-            vao.release()
-            program = build_program(ctx, current_palette)
-            vao     = make_quad_vao(ctx, program)
-            texture.use(0)
-            set_uniforms()
-            print(f"Shaders reloaded for {PALETTES[current_palette]['label']}")
-        except Exception as exc:
-            print(f"Shader reload failed: {exc}")
-
+    set_uniforms()
     update_title()
-    print("\nKeyboard shortcuts:")
-    print("  1-4   Switch palette (1=NES, 2=Game Boy, 3=CGA16, 4=PICO-8)")
-    print("  +/-   Increase/decrease pixel-block size")
-    print("  D     Toggle dither")
-    print("  R     Reload shaders from disk")
-    print("  S     Save screenshot")
-    print("  Space Pause/resume video")
-    print("  Q/Esc Quit\n")
+    print(f"Loaded {'video' if video is not None else 'image'}: {source_path}")
+    print(f"LUT palette: {lut_path if lut_path is not None else lut_palette} ({lut_size} colors)")
+    print("\nDiscovered shaders:")
+    for index, shader in enumerate(shaders, 1):
+        shortcut = str(index) if index <= 9 else "-"
+        print(f"  {shortcut:>2}  {shader.name:20s} {shader.path.name}")
+    print("\nKeys: 1-9 shader, +/- pixel size, D dither, R reload, S screenshot,")
+    print("      Space pause video, Q/Esc quit\n")
 
-    # ------------------------------------------------------------------
-    # Render loop
-    # ------------------------------------------------------------------
     running = True
     screenshot_count = 0
-
-    while running:
-        # ---- events --------------------------------------------------
-        for event in pygame.event.get():
-            if event.type == pygame.QUIT:
-                running = False
-
-            elif event.type == pygame.KEYDOWN:
-                key = event.key
-
-                # Quit
-                if key in (pygame.K_q, pygame.K_ESCAPE):
+    try:
+        while running:
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
                     running = False
-
-                # Switch palette (1-4)
-                elif key == pygame.K_1:
-                    switch_palette("nes")
-                elif key == pygame.K_2:
-                    switch_palette("gameboy")
-                elif key == pygame.K_3:
-                    switch_palette("cga16")
-                elif key == pygame.K_4:
-                    switch_palette("pico8")
-
-                # Pixel-block size
-                elif key in (pygame.K_PLUS, pygame.K_EQUALS, pygame.K_KP_PLUS):
-                    pixelate_val = min(pixelate_val + 1.0, 32.0)
-                    set_uniforms()
-                    update_title()
-                elif key in (pygame.K_MINUS, pygame.K_KP_MINUS):
-                    pixelate_val = max(pixelate_val - 1.0, 1.0)
-                    set_uniforms()
-                    update_title()
-
-                # Dither toggle
-                elif key == pygame.K_d:
-                    dither_val = 0.0 if dither_val > 0 else 1.0
-                    set_uniforms()
-                    update_title()
-
-                # Reload shaders
-                elif key == pygame.K_r:
-                    reload_shaders()
-
-                # Screenshot
-                elif key == pygame.K_s:
-                    screenshot_count += 1
-                    fname = DEMO_DIR / f"screenshot_{current_palette}_{screenshot_count:03d}.png"
-                    # Read back the framebuffer
-                    raw = ctx.screen.read(components=3)
-                    img = Image.frombytes("RGB", (win_w, win_h), raw)
-                    img = img.transpose(Image.Transpose.FLIP_TOP_BOTTOM)
-                    img.save(fname)
-                    print(f"Screenshot saved: {fname}")
-
-                # Pause/resume video
-                elif key == pygame.K_SPACE:
-                    if video:
+                elif event.type == pygame.KEYDOWN:
+                    key = int(event.key)
+                    if key in (pygame.K_q, pygame.K_ESCAPE):
+                        running = False
+                    elif event.unicode in "123456789":
+                        shader_index = int(event.unicode) - 1
+                        if shader_index < len(shaders):
+                            try:
+                                replace_shader(shaders[shader_index], reset_pixelate=True)
+                            except (moderngl.Error, OSError, ValueError) as exc:
+                                print(f"Shader switch failed: {exc}")
+                    elif key in (pygame.K_PLUS, pygame.K_EQUALS, pygame.K_KP_PLUS):
+                        pixelate_value = min(pixelate_value + 1.0, 32.0)
+                        set_uniforms()
+                        update_title()
+                    elif key in (pygame.K_MINUS, pygame.K_KP_MINUS):
+                        pixelate_value = max(pixelate_value - 1.0, 1.0)
+                        set_uniforms()
+                        update_title()
+                    elif key == pygame.K_d:
+                        dither_value = 0.0 if dither_value > 0 else 1.0
+                        set_uniforms()
+                        update_title()
+                    elif key == pygame.K_r:
+                        try:
+                            replace_shader(current_shader, reset_pixelate=False)
+                        except (moderngl.Error, OSError, ValueError) as exc:
+                            print(f"Shader reload failed; keeping current shader: {exc}")
+                    elif key == pygame.K_s:
+                        screenshot_count += 1
+                        output = DEMO_DIR / f"screenshot_{current_shader.name}_{screenshot_count:03d}.png"
+                        raw = ctx.screen.read(components=3)
+                        image = Image.frombytes("RGB", (window_width, window_height), raw)
+                        image.transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(output)
+                        print(f"Screenshot saved: {output}")
+                    elif key == pygame.K_SPACE and video is not None:
                         video.toggle_pause()
                         update_title()
 
-        # ---- video frame update ------------------------------------
-        if video:
-            new_frame = video.next_frame()
-            if new_frame is not None and not video.paused:
-                frame = new_frame
-                # Update GPU texture in-place
-                flipped = np.ascontiguousarray(np.flipud(frame))
-                texture.write(flipped.tobytes())
+            if video is not None:
+                next_frame = video.next_frame()
+                if next_frame is not None:
+                    flipped = np.ascontiguousarray(np.flipud(next_frame))
+                    source_texture.write(flipped.tobytes())
 
-        # ---- render ------------------------------------------------
-        ctx.viewport = (0, 0, win_w, win_h)
-        ctx.clear(0.0, 0.0, 0.0)
-        vao.render(moderngl.TRIANGLES)
-        pygame.display.flip()
-
-        clock.tick(60)
-
-    # ------------------------------------------------------------------
-    # Cleanup
-    # ------------------------------------------------------------------
-    if video:
-        video.release()
-    texture.release()
-    vao.release()
-    program.release()
-    pygame.quit()
+            _set_uniform(resources.program, "u_time", time.monotonic() - started_at)
+            _set_uniform(resources.program, "u_frame", frame_number)
+            ctx.viewport = (0, 0, window_width, window_height)
+            ctx.clear(0.0, 0.0, 0.0)
+            resources.vertex_array.render(moderngl.TRIANGLES)
+            pygame.display.flip()
+            frame_number += 1
+            clock.tick(60)
+    finally:
+        if video is not None:
+            video.release()
+        resources.release()
+        lut_texture.release()
+        source_texture.release()
+        pygame.quit()
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
+def _build_parser(shaders: tuple[ShaderDefinition, ...]) -> argparse.ArgumentParser:
+    """Build the command-line parser from the discovered shader catalog."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("source", nargs="?", type=Path, help="Image or video file to preview")
+    parser.add_argument(
+        "--shader", "--palette", dest="shader", choices=[shader.name for shader in shaders],
+        default="nes" if any(shader.name == "nes" for shader in shaders) else shaders[0].name,
+        help="Starting fragment shader; --palette is retained as an alias",
+    )
+    parser.add_argument("--pixelate", type=float, default=0.0, help="Pixel-block size; 0 uses shader default")
+    parser.add_argument("--dither", type=float, default=0.0, help="Ordered-dither strength from 0.0 to 1.0")
+    parser.add_argument("--scale", type=float, default=1.0, help="Window scale factor")
+    parser.add_argument("--lut-palette", default="nes", metavar="NAME", help="color_tools palette for LUT shaders")
+    parser.add_argument("--lut", type=Path, metavar="IMAGE", help="Custom horizontal palette strip for LUT shaders")
+    parser.add_argument("--list-shaders", action="store_true", help="List discovered fragment shaders and exit")
+    return parser
+
 
 def main() -> None:
-    parser = argparse.ArgumentParser(
-        description="Retro palette shader demo (pygame + moderngl)",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__,
-    )
-    parser.add_argument(
-        "source",
-        type=Path,
-        help="Image or video file to display",
-    )
-    parser.add_argument(
-        "--palette",
-        choices=list(PALETTES.keys()),
-        default="nes",
-        help="Starting palette (default: nes)",
-    )
-    parser.add_argument(
-        "--pixelate",
-        type=float,
-        default=0.0,
-        help="Pixel-block size (0 = use palette default, 1 = off)",
-    )
-    parser.add_argument(
-        "--dither",
-        type=float,
-        default=0.0,
-        help="Bayer dither strength: 0.0 (off) to 1.0 (full)",
-    )
-    parser.add_argument(
-        "--scale",
-        type=float,
-        default=1.0,
-        help="Window scale factor (default: 1.0)",
-    )
-
+    """Parse arguments and start the demo."""
+    shaders = discover_shaders()
+    if not shaders:
+        raise SystemExit(f"No .frag shaders found in {SHADER_DIR}")
+    parser = _build_parser(shaders)
     args = parser.parse_args()
+    if bool(args.list_shaders):
+        for shader in shaders:
+            print(f"{shader.name:20s} {shader.path.name}")
+        return
 
-    source = args.source
-    if not source.exists():
-        print(f"Error: file not found: {source}")
-        sys.exit(1)
+    source = cast(Path | None, args.source)
+    if source is None:
+        parser.error("source is required unless --list-shaders is used")
+    if not source.is_file():
+        parser.error(f"source file not found: {source}")
+    lut_path = cast(Path | None, args.lut)
+    if lut_path is not None and not lut_path.is_file():
+        parser.error(f"LUT image not found: {lut_path}")
+    pixelate = float(args.pixelate)
+    dither = float(args.dither)
+    scale = float(args.scale)
+    if pixelate < 0:
+        parser.error("--pixelate must be zero or greater")
+    if not 0.0 <= dither <= 1.0:
+        parser.error("--dither must be between 0.0 and 1.0")
+    if not math.isfinite(scale) or scale <= 0:
+        parser.error("--scale must be a positive finite number")
 
     run(
-        source_path=source,
-        palette=args.palette,
-        pixelate=args.pixelate,
-        dither=args.dither,
-        window_scale=args.scale,
+        source,
+        str(args.shader),
+        pixelate,
+        dither,
+        scale,
+        lut_palette=str(args.lut_palette),
+        lut_path=lut_path,
     )
 
 

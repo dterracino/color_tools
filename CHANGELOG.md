@@ -29,6 +29,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Consistent CLI entry points** — package installs now provide the documented
   `color-tools` command as well as the backward-compatible `color_tools` alias;
   both invoke the same CLI as `python -m color_tools`.
+- **Universal shader preview palettes** — the palette shader demo can now feed
+  any named `color_tools` palette or a custom palette strip to `palette_lut.frag`.
 
 ### Changed
 
@@ -41,6 +43,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   now ignore case and surrounding whitespace.
 - **Nearest-filament color filtering** — the existing `filament --color` option now
   constrains `--nearest` searches instead of being ignored by that operation.
+- **Generalized palette shader demo** — fragment shaders are discovered from the
+  shader directory, image and video sources share one preview path, and shader
+  switching and hot reload preserve the working program if compilation fails.
+
+### Fixed
+
+- **Strictly typed palette shader demo** — resolved all strict Pyright diagnostics,
+  removed unsafe uniform assignments, and corrected resource replacement and video
+  frame timing so switches do not leak buffers or repeatedly upload stale frames.
 
 ## [6.15.0] - 2026-10-06
 

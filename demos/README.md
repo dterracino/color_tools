@@ -1,198 +1,133 @@
 # Palette Shader Demo
 
-Real-time retro-palette conversion demo built with **pygame** and **moderngl**.
+Real-time image and video preview for the GLSL shaders in `demos/shaders`,
+built with pygame and ModernGL. The demo discovers fragment shaders at startup,
+so adding a compatible `.frag` file does not require changing Python code.
 
-Load any image or video and watch it rendered as if it came from a classic
-gaming system — NES, Game Boy, IBM CGA, or PICO-8 — entirely on the GPU via
-a GLSL fragment shader.
-
----
+The system-specific shaders contain fixed palettes. The generic `palette_lut`
+shader can use any palette shipped by `color_tools`, or a custom palette-strip
+image, without recompiling GLSL.
 
 ## Quick start
 
 ```bash
-# 1. Install dependencies (only for this demo — does not touch the main library)
-pip install -r demos/requirements.txt
+python -m pip install -r demos/requirements.txt
 
-# 2. Run with an image
-python demos/palette_shader_demo.py my_photo.jpg --palette nes
+# Still image with a system-specific shader
+python demos/palette_shader_demo.py photo.jpg --shader nes
 
-# 3. Run with a video
-python demos/palette_shader_demo.py gameplay.mp4 --palette gameboy --pixelate 4
+# Video with another fixed shader
+python demos/palette_shader_demo.py gameplay.mp4 --shader gameboy --pixelate 4
+
+# Any color_tools palette through the generic LUT shader
+python demos/palette_shader_demo.py photo.jpg --shader palette_lut --lut-palette ega16
+
+# A custom horizontal palette strip
+python demos/palette_shader_demo.py photo.jpg --shader palette_lut --lut my_palette.png
+
+# Show every discovered shader
+python demos/palette_shader_demo.py --list-shaders
 ```
 
----
+`--palette` remains an alias for `--shader` for compatibility with older
+commands.
 
-## Usage
+## Options
 
-```
-python palette_shader_demo.py SOURCE [options]
+```text
+python demos/palette_shader_demo.py SOURCE [options]
 
-positional arguments:
-  SOURCE              Image or video file (.jpg, .png, .mp4, .avi, …)
-
-options:
-  --palette {nes,gameboy,cga16,pico8}
-                      Starting palette (default: nes)
-  --pixelate FLOAT    Pixel-block size; 0 = use palette default, 1 = off
-  --dither FLOAT      Bayer 4×4 dither strength: 0.0 (off) to 1.0 (full)
-  --scale FLOAT       Window scale factor (default: 1.0)
-```
-
-### Examples
-
-```bash
-# NES palette, default pixel-block size (4×4)
-python demos/palette_shader_demo.py photo.jpg --palette nes
-
-# Game Boy green tones, strong dither
-python demos/palette_shader_demo.py photo.png --palette gameboy --dither 0.8
-
-# CGA 16-colour, no pixelation, light dither
-python demos/palette_shader_demo.py video.mp4 --palette cga16 --pixelate 1 --dither 0.4
-
-# PICO-8, 3×3 blocks, no dither
-python demos/palette_shader_demo.py trailer.mp4 --palette pico8 --pixelate 3
+--shader NAME        Starting fragment shader (default: nes)
+--palette NAME       Backward-compatible alias for --shader
+--pixelate FLOAT     Pixel-block size; 0 uses the shader default, 1 disables it
+--dither FLOAT       Ordered-dither strength from 0.0 to 1.0
+--scale FLOAT        Initial window scale factor
+--lut-palette NAME   Named color_tools palette for LUT shaders (default: nes)
+--lut IMAGE          Custom horizontal palette strip for LUT shaders
+--list-shaders       List discovered fragment shaders and exit
 ```
 
----
+Pillow decodes still images. OpenCV decodes video and provides the source frame
+rate. Playback loops at the end of the video. The demo is a preview tool: it can
+save the displayed frame as a screenshot, but it does not encode processed
+video or preserve source audio.
 
 ## Keyboard shortcuts
 
 | Key | Action |
 |-----|--------|
-| `1` | NES palette |
-| `2` | Game Boy (DMG) palette |
-| `3` | CGA 16-colour palette |
-| `4` | PICO-8 palette |
+| `1`–`9` | Select the corresponding discovered shader |
 | `+` / `-` | Increase / decrease pixel-block size |
-| `D` | Toggle Bayer dither on/off |
-| `R` | Hot-reload shaders from disk |
-| `S` | Save screenshot to `demos/` |
+| `D` | Toggle ordered dithering |
+| `R` | Hot-reload the active shader |
+| `S` | Save a screenshot to `demos/` |
 | `Space` | Pause / resume video |
 | `Q` / `Esc` | Quit |
 
----
+Shader switches and reloads are transactional: a compile failure is reported
+without discarding the shader that is already working.
 
-## Supported palettes
+## Included shaders
 
-| Name | Colours | System |
-|------|--------:|--------|
-| `nes` | 54 | Nintendo Entertainment System (NTSC master palette) |
-| `gameboy` | 4 | Original Game Boy DMG (green LCD) |
-| `cga16` | 16 | IBM CGA full palette |
-| `pico8` | 16 | PICO-8 fantasy console |
-
-More palettes are available in `color_tools/data/palettes/` (see
-`generate_palette_textures.py --list`).  Adding a new palette requires:
-
-1. A `.frag` file in `demos/shaders/` following the same pattern as the
-   existing shaders.
-2. An entry in the `PALETTES` dict at the top of `palette_shader_demo.py`.
-
----
-
-## Shaders
-
-All shaders live in `demos/shaders/`.  They are self-contained and can be
-copied directly into any other moderngl / OpenGL project.
-
-| File | Description |
+| Name | Description |
 |------|-------------|
-| `quad.vert` | Fullscreen-quad vertex shader (shared by all effects) |
-| `nes.frag` | NES 54-colour palette quantisation + optional Bayer dither |
-| `gameboy.frag` | Game Boy DMG 4-shade greyscale + optional Bayer dither |
-| `cga16.frag` | CGA 16-colour palette + optional Bayer dither |
-| `pico8.frag` | PICO-8 16-colour palette + optional Bayer dither |
+| `nes` | NES 54-color global nearest-color conversion |
+| `gameboy` | Original Game Boy DMG four-shade conversion |
+| `cga16` | IBM CGA 16-color RGBI conversion |
+| `pico8` | PICO-8 16-color conversion |
+| `palette_lut` | Generic nearest-color conversion using a palette texture |
 
-### Shader uniforms (all palette shaders)
+The fixed shaders approximate each platform's colors and coarse resolution;
+they do not enforce original hardware tile, sprite, per-cell palette, signal,
+or scanout restrictions.
 
-| Uniform | Type | Default | Description |
-|---------|------|---------|-------------|
-| `u_texture` | `sampler2D` | — | Source image / video frame |
-| `u_pixelate` | `float` | 4.0 | Pixel-block size (1 = disabled) |
-| `u_dither` | `float` | 0.0 | Bayer 4×4 dither strength (0–1) |
+## Adding a shader
 
-### Using a shader in another project
+Place a `.frag` file in `demos/shaders`. Its filename stem becomes its CLI name.
+Every shader must target GLSL 3.3, work with `quad.vert`, declare
+`sampler2D u_texture`, and write `fragColor`.
 
-```python
-import moderngl, numpy as np
+The demo sets these uniforms when the shader declares them and ignores them
+otherwise:
 
-ctx = moderngl.create_context()
+| Uniform | Type | Value |
+|---------|------|-------|
+| `u_texture` | `sampler2D` | Source image/video on texture unit 0 |
+| `u_palette` | `sampler2D` | Palette strip on texture unit 1 |
+| `u_palette_size` | `int` | Number of colors in the palette strip |
+| `u_pixelate` | `float` | Current pixel-block size |
+| `u_dither` | `float` | Current dither strength |
+| `u_resolution` | `vec2` | Output viewport size in pixels |
+| `u_source_resolution` | `vec2` | Source texture size in pixels |
+| `u_time` | `float` | Seconds since preview startup |
+| `u_frame` | `int` | Rendered frame number |
 
-vert = open("shaders/quad.vert").read()
-frag = open("shaders/nes.frag").read()      # swap for any palette shader
-prog = ctx.program(vertex_shader=vert, fragment_shader=frag)
-
-# Bind your texture, set uniforms, render a fullscreen quad
-prog["u_texture"]  = 0
-prog["u_pixelate"] = 4.0
-prog["u_dither"]   = 0.0
-```
-
----
+A shader with additional required uniforms needs a corresponding application
+control or a default encoded in the shader. Unknown shaders use a display label
+derived from their filename and a default pixel-block size of 1.
 
 ## Palette texture generator
 
-`generate_palette_textures.py` bakes every palette JSON file into a 1×N PNG
-strip that can be used as a GPU palette texture instead of a hard-coded array:
+The demo builds its LUT in memory. `generate_palette_textures.py` remains useful
+when another application needs palette strips on disk:
 
 ```bash
-# Generate PNG strips for all common palettes
-python demos/generate_palette_textures.py
-
-# List all available palettes
 python demos/generate_palette_textures.py --list
-
-# Generate a specific palette and print its GLSL snippet
 python demos/generate_palette_textures.py --palette nes --glsl
 ```
 
-Output files are written to `demos/palette_textures/`.
-
----
-
-## Where should shaders live in the library?
-
-When the shader collection matures, a natural home in the `color_tools`
-package would be:
-
-```
-color_tools/
-  shaders/
-    palette/
-      nes.frag
-      gameboy.frag
-      cga16.frag
-      pico8.frag
-      ...
-    common/
-      quad.vert
-      palette_lookup.glsl   # shared GLSL include / snippet
-    README.md
-```
-
-This keeps the GLSL shaders alongside the palette JSON data they are derived
-from and allows them to be installed with the package via a `MANIFEST.in`
-glob.  Users could then import a shader path with:
-
-```python
-from importlib.resources import files
-shader_path = files("color_tools.shaders.palette") / "nes.frag"
-```
-
-For now, all shaders live in `demos/shaders/` as requested.
-
----
+Generated files are written to `demos/palette_textures/`.
 
 ## Dependencies
 
-All listed in `demos/requirements.txt` — separate from the main library:
+The demo dependencies are separate from the main library and listed in
+`demos/requirements.txt`:
 
 | Package | Purpose |
 |---------|---------|
-| `pygame` | Window, event loop, OpenGL context creation |
-| `moderngl` | Pythonic OpenGL 3.3 wrapper |
-| `numpy` | Fast array operations for texture data |
-| `Pillow` | Image loading and screenshot saving |
-| `opencv-python` | Video decoding (optional — required only for video files) |
+| `pygame` | Window, input, and OpenGL context |
+| `moderngl` | OpenGL 3.3 resource and draw API |
+| `numpy` | Frame and texture data |
+| `Pillow` | Still-image decoding and screenshots |
+| `opencv-python` | Video decoding |
+| `color-match-tools` | Palette catalog and loading |
