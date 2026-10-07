@@ -11,6 +11,10 @@ from __future__ import annotations
 import hashlib
 from datetime import date
 from http.server import BaseHTTPRequestHandler
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from color_tools.palette import ColorRecord
 
 
 def _today_index(count: int) -> int:
@@ -20,7 +24,7 @@ def _today_index(count: int) -> int:
     return hash_val % count
 
 
-def _build_svg(color) -> str:
+def _build_svg(color: ColorRecord) -> str:
     bg = color.hex if color.hex.startswith("#") else f"#{color.hex}"
     name = color.name.replace("-", " ").title()
     hex_upper = bg.upper()
@@ -45,7 +49,7 @@ def _build_svg(color) -> str:
 
 
 class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self) -> None:
         from color_tools.palette import Palette
 
         palette = Palette.load_default()
@@ -60,5 +64,5 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(svg.encode("utf-8"))
 
-    def log_message(self, format, *args):  # noqa: A002
+    def log_message(self, format: str, *args: object) -> None:  # noqa: A002
         pass

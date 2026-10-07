@@ -19,9 +19,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
-- **Strict exporter typing** — resolved all strict Pyright diagnostics in the exporter
-  package, including optional dependency boundaries, Pillow drawing types, numeric
-  formatting, and generated palette metadata.
+- **Strict package typing** — resolved all strict Pyright diagnostics across the
+  `color_tools` package, including CLI handlers, palette loading, image analysis,
+  optional dependency boundaries, NumPy arrays, and importer/exporter internals.
+  The built wheel now reports 100% type completeness under Pyright `--verifytypes`
+  with its feature extras installed and passes a strict external consumer check.
 
 ### Added
 

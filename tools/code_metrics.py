@@ -24,6 +24,7 @@ import ast
 import copy
 import fnmatch
 import io
+from importlib.util import find_spec
 import json
 import os
 import re
@@ -33,14 +34,9 @@ import tempfile
 import tokenize
 from dataclasses import asdict, dataclass
 from pathlib import Path
-from typing import Any, Sequence
+from typing import Any, Sequence, cast
 
-try:
-    import rich  # noqa: F401
-
-    RICH_AVAILABLE = True
-except ImportError:
-    RICH_AVAILABLE = False
+RICH_AVAILABLE = find_spec("rich") is not None
 
 
 REPO_ROOT = Path(__file__).resolve().parent.parent
@@ -236,7 +232,11 @@ def _merge_known(base: dict[str, Any], override: dict[str, Any], prefix: str = "
         if isinstance(base[key], dict):
             if not isinstance(value, dict):
                 raise ConfigError(f"{field} must be an object")
-            _merge_known(base[key], value, field)
+            _merge_known(
+                cast(dict[str, Any], base[key]),
+                cast(dict[str, Any], value),
+                field,
+            )
         else:
             base[key] = value
 
@@ -256,7 +256,8 @@ def _boolean(value: Any, field: str) -> bool:
 def _strings(value: Any, field: str) -> tuple[str, ...]:
     if not isinstance(value, list):
         raise ConfigError(f"{field} must be an array of nonempty strings")
-    return tuple(_string(item, f"{field}[{index}]") for index, item in enumerate(value))
+    items = cast(list[Any], value)
+    return tuple(_string(item, f"{field}[{index}]") for index, item in enumerate(items))
 
 
 def _threshold(value: Any, field: str, *, allow_zero: bool = False) -> int | None:
@@ -337,7 +338,7 @@ def _load_raw_config(path: Path | None, *, explicit: bool) -> tuple[dict[str, An
         raise ConfigError(f"cannot read configuration {path}: {exc}") from exc
     if not isinstance(loaded, dict):
         raise ConfigError("configuration root must be an object")
-    _merge_known(raw, loaded)
+    _merge_known(raw, cast(dict[str, Any], loaded))
     return raw, path.as_posix()
 
 
@@ -647,13 +648,14 @@ def build_report(metrics: Sequence[FileMetrics], thresholds: Thresholds) -> Metr
 def _sort_value(file: FileReport, key: str) -> int:
     metrics = file.metrics
     monoliths = sum(f.category == "monoliths" for f in file.findings)
-    values = {
+    values: dict[str, int | None] = {
         "size": metrics.size_bytes, "lines": metrics.line_count, "code": metrics.code_line_count,
         "comment": metrics.comment_line_count, "classes": metrics.class_count,
         "functions": metrics.function_count, "methods": metrics.method_count,
         "monoliths": monoliths, "chars": metrics.char_count,
     }
-    return int(values[key] if values[key] is not None else -1)
+    value = values[key]
+    return value if value is not None else -1
 
 
 def ordered_files(files: Sequence[FileReport], sort_key: str) -> list[FileReport]:

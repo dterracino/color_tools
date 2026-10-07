@@ -11,6 +11,10 @@ from __future__ import annotations
 import hashlib
 from datetime import date
 from http.server import BaseHTTPRequestHandler
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from color_tools.filament_palette import FilamentRecord
 
 
 def _today_index(count: int) -> int:
@@ -20,7 +24,7 @@ def _today_index(count: int) -> int:
     return hash_val % count
 
 
-def _build_svg(filament) -> str:
+def _build_svg(filament: FilamentRecord) -> str:
     bg = filament.hex if filament.hex.startswith("#") else f"#{filament.hex}"
     r, g, b = filament.rgb
     hex_upper = bg.upper()
@@ -50,7 +54,7 @@ def _build_svg(filament) -> str:
 
 
 class handler(BaseHTTPRequestHandler):
-    def do_GET(self):
+    def do_GET(self) -> None:
         from color_tools.filament_palette import FilamentPalette
 
         fp = FilamentPalette.load_default()
@@ -65,5 +69,5 @@ class handler(BaseHTTPRequestHandler):
         self.end_headers()
         self.wfile.write(svg.encode("utf-8"))
 
-    def log_message(self, format, *args):  # noqa: A002
+    def log_message(self, format: str, *args: object) -> None:  # noqa: A002
         pass
