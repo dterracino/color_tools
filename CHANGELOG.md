@@ -15,6 +15,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.13.3] - 2026-10-06
+
+### Fixed
+
+- **Complete installed-package typing** — annotated the remaining public CLI, configuration,
+  NumPy distance, palette, image, interactive, and MCP APIs. The built wheel now reaches 100%
+  type completeness under Pyright `--verifytypes` when its declared feature extras are installed.
+- **Optional image API signatures** — static analyzers now retain the real image-function and
+  result types while runtime imports continue to provide the existing install-extra fallback.
+
+### Added
+
+- **Wheel typing regression gate** — CI now builds and installs the wheel in an isolated
+  environment, verifies the bundled `py.typed` public surface, and checks a strict external
+  consumer covering core, NumPy, image, filament, and MCP APIs.
+
 ## [6.13.2] - 2026-10-06
 
 ### Fixed

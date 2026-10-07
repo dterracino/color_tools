@@ -20,6 +20,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from pathlib import Path
 
+    from .filament_palette import FilamentPalette, FilamentRecord
+
 from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
 
 # Import prompt_toolkit symbols needed by this module
@@ -86,7 +88,7 @@ class InteractiveFilamentManager:
     - Auto-saves changes
     """
     
-    def __init__(self, palette):
+    def __init__(self, palette: FilamentPalette) -> None:
         """
         Initialize the interactive manager.
         
@@ -97,9 +99,11 @@ class InteractiveFilamentManager:
             raise ImportError("prompt_toolkit is required for interactive mode")
         
         self.palette = palette
-        self.owned_ids = palette.owned_filaments.copy() if palette.owned_filaments else set()
-        self.original_owned_ids = self.owned_ids.copy()  # Track original state for exit summary
-        self.filtered_filaments = list(palette.records)
+        self.owned_ids: set[str] = (
+            palette.owned_filaments.copy() if palette.owned_filaments else set()
+        )
+        self.original_owned_ids: set[str] = self.owned_ids.copy()
+        self.filtered_filaments: list[FilamentRecord] = list(palette.records)
         
         # Filter state
         self.filter_maker = ""
@@ -113,8 +117,8 @@ class InteractiveFilamentManager:
         self.quit_confirm_mode = False
         
         # UI state
-        self.current_index = 0
-        self.scroll_offset = 0
+        self.current_index: int = 0
+        self.scroll_offset: int = 0
         self.page_size = 12  # Reduced to make room for filter UI
         self.changes_made = False
         
@@ -320,7 +324,7 @@ class InteractiveFilamentManager:
         self.kb = kb
         
         # Create the main display control
-        self.main_control = FormattedTextControl(
+        self.main_control: FormattedTextControl = FormattedTextControl(
             text=self._get_display_text,
             focusable=True,
             key_bindings=kb
@@ -328,11 +332,11 @@ class InteractiveFilamentManager:
         
         # Create layout
         # Height: header(3) + filters(3 when active) + filaments(12) + footer(3) = 18-21
-        self.root_container = HSplit([
+        self.root_container: HSplit = HSplit([
             Window(content=self.main_control)
         ])
         
-        self.layout = Layout(self.root_container)
+        self.layout: Layout = Layout(self.root_container)
         
         # Define styling
         style = Style.from_dict({
@@ -347,7 +351,7 @@ class InteractiveFilamentManager:
         })
         
         # Create application
-        self.app = Application(
+        self.app: Application[None] = Application(
             layout=self.layout,
             key_bindings=kb,
             style=style,
@@ -572,7 +576,7 @@ class InteractiveFilamentManager:
         self.current_index = 0
         self.scroll_offset = 0
     
-    def run(self):
+    def run(self) -> None:
         """Run the interactive manager application."""
         try:
             self.app.run()

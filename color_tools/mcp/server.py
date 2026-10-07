@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Literal
+from typing import Any, Literal
 
 from mcp.server.mcpserver import MCPServer
 from pydantic import Field
@@ -70,7 +70,7 @@ Count = Annotated[int, Field(ge=1, le=50)]
 Percentage = Annotated[float, Field(ge=0.0, le=100.0)]
 
 
-mcp = MCPServer(
+mcp: MCPServer[Any] = MCPServer(
     "color-tools",
     title="Color Tools",
     description="Authoritative color science calculations and 3D printing filament color matching.",

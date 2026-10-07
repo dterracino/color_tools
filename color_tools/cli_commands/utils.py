@@ -90,7 +90,7 @@ def parse_hex_or_exit(hex_string: str) -> tuple[int, int, int]:
     return result
 
 
-def is_valid_lab(lab_tuple) -> bool:
+def is_valid_lab(lab_tuple: object) -> bool:
     """
     Validate if a Lab tuple is within the standard 8-bit Lab range.
     Lab tuple format: (L*, a*, b*)
@@ -115,7 +115,7 @@ def is_valid_lab(lab_tuple) -> bool:
            (ColorConstants.AB_MIN <= b <= ColorConstants.AB_MAX)
 
 
-def is_valid_lch(lch_tuple) -> bool:
+def is_valid_lch(lch_tuple: object) -> bool:
     """
     Validate if an LCh(ab) tuple is within the standard range.
     LCh tuple format: (L*, C*, h°)

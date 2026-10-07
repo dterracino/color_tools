@@ -50,7 +50,7 @@ from color_tools._palette_utils import _should_prefer_source, _rounded_key, _ens
 from color_tools._color_utils import _validate_rgb, _parse_hex
 
 # Set up logger for override tracking
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 # ============================================================================

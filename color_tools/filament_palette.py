@@ -27,7 +27,7 @@ from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_c
 from color_tools.config import get_dual_color_mode
 from color_tools._palette_utils import _should_prefer_source, _ensure_list
 
-logger = logging.getLogger(__name__)
+logger: logging.Logger = logging.getLogger(__name__)
 
 
 @dataclass(frozen=True)
@@ -500,8 +500,10 @@ class FilamentPalette:
     
     def __init__(self, records: List[FilamentRecord], maker_synonyms: Optional[Dict[str, List[str]]] = None, owned_filaments: Optional[Set[str]] = None) -> None:
         self.records = records
-        self.maker_synonyms = maker_synonyms or {}
-        self.owned_filaments = owned_filaments if owned_filaments is not None else set()
+        self.maker_synonyms: Dict[str, List[str]] = maker_synonyms or {}
+        self.owned_filaments: Set[str] = (
+            owned_filaments if owned_filaments is not None else set()
+        )
         
         # Create various lookup indices (note: Lists, not single items!)
         # Multiple filaments can share the same maker/type/color

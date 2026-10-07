@@ -80,8 +80,8 @@ class SimplePNGWriter:
         self.colors       = colors
         self.swatch_width = swatch_width
         self.swatch_height = swatch_height
-        self.width  = len(colors) * swatch_width
-        self.height = swatch_height
+        self.width: int = len(colors) * swatch_width
+        self.height: int = swatch_height
 
     # ------------------------------------------------------------------
     # Public

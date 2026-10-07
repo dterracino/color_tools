@@ -10,6 +10,7 @@ Handles all image subcommands:
 - Palette Quantization: Convert images to retro palettes (CGA, EGA, VGA, etc.) with dithering
 """
 
+import argparse
 import sys
 from pathlib import Path
 
@@ -36,7 +37,7 @@ from ...palette import load_palette
 from ..reporting import get_available_palettes
 
 
-def handle_image_command(args):
+def handle_image_command(args: argparse.Namespace) -> None:
     """Handle all image processing commands."""
     if not IMAGE_AVAILABLE:
         print("Error: Image processing requires Pillow", file=sys.stderr)

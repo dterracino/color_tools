@@ -17,7 +17,11 @@ class ColorConfig(threading.local):
     threading.local() so each thread gets its own independent config.
     """
     
-    def __init__(self):
+    dual_color_mode: str
+    gamut_tolerance: float
+    gamut_max_iterations: int
+
+    def __init__(self) -> None:
         # Dual-color filament handling
         self.dual_color_mode = "first"  # Options: "first", "last", "mix"
         

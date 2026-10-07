@@ -44,8 +44,12 @@ Example:
 """
 
 from __future__ import annotations
-from typing import Tuple
+from typing import TYPE_CHECKING, Tuple
 import math
+
+if TYPE_CHECKING:
+    import numpy as np
+    from numpy.typing import ArrayLike, NDArray
 
 from .constants import ColorConstants
 from .conversions import lab_to_lch
@@ -333,12 +337,12 @@ def delta_e_2000(
 
 
 def delta_e_2000_array(
-    lab1,
-    lab2,
+    lab1: ArrayLike,
+    lab2: ArrayLike,
     kL: float = 1.0,
     kC: float = 1.0,
     kH: float = 1.0,
-):
+) -> NDArray[np.float64]:
     """
     Vectorized Delta E 2000 (CIEDE2000) for NumPy arrays.
 

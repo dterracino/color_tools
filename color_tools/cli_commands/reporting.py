@@ -5,6 +5,7 @@ Functions for generating override reports and managing hash files for user data 
 """
 
 from __future__ import annotations
+import argparse
 import sys
 import logging
 from pathlib import Path
@@ -218,7 +219,7 @@ def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[st
     return palette_data
 
 
-def handle_verification_flags(args) -> bool:
+def handle_verification_flags(args: argparse.Namespace) -> bool:
     """
     Handle all verification flags and early-exit conditions.
     

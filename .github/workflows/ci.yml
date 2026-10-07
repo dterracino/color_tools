@@ -40,6 +40,26 @@ jobs:
           python -m coverage run -m unittest discover tests
           python -m coverage xml
 
+      - name: Verify installed-wheel type completeness
+        if: matrix.python-version == '3.12'
+        run: |
+          TYPECHECK_ROOT="$RUNNER_TEMP/color-tools-typecheck"
+          python -m build --wheel --outdir "$TYPECHECK_ROOT/dist"
+          python -m venv "$TYPECHECK_ROOT/base-venv"
+          python -m venv "$TYPECHECK_ROOT/venv"
+          WHEEL_PATH=$(find "$TYPECHECK_ROOT/dist" -name '*.whl' -print -quit)
+          "$TYPECHECK_ROOT/base-venv/bin/python" -m pip install "$WHEEL_PATH" pyright
+          "$TYPECHECK_ROOT/venv/bin/python" -m pip install "$WHEEL_PATH[all]" pyright
+          cp tests/typecheck/base_consumer.py "$TYPECHECK_ROOT/base_consumer.py"
+          cp tests/typecheck/strict_consumer.py "$TYPECHECK_ROOT/strict_consumer.py"
+          cd "$TYPECHECK_ROOT"
+          . base-venv/bin/activate
+          pyright base_consumer.py
+          deactivate
+          . venv/bin/activate
+          pyright --verifytypes color_tools --ignoreexternal
+          pyright strict_consumer.py
+
       - name: Upload coverage to Codecov
         # Only upload from one Python version to avoid duplicate reports
         if: matrix.python-version == '3.12'

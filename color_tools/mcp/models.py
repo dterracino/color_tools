@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Literal
+from typing import ClassVar, Literal
 
 from pydantic import BaseModel, ConfigDict, Field
 
@@ -23,7 +23,7 @@ CVDType = Literal[
 class MCPModel(BaseModel):
     """Base model with immutable values and strict unknown-field handling."""
 
-    model_config = ConfigDict(extra="forbid", frozen=True)
+    model_config: ClassVar[ConfigDict] = ConfigDict(extra="forbid", frozen=True)
 
 
 class ColorCoordinates(MCPModel):

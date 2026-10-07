@@ -70,111 +70,134 @@ Example:
 
 from __future__ import annotations
 
-# Check if Pillow is available
-try:
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
     from .analysis import (
-        ColorCluster,
         ColorChange,
-        extract_unique_colors,
+        ColorCluster,
         extract_color_clusters,
-        quantize_image_hyab,
-        redistribute_luminance,
+        extract_unique_colors,
         format_color_change_report,
         l_value_to_hueforge_layer,
+        quantize_image_hyab,
+        redistribute_luminance,
     )
     from .basic import (
+        analyze_brightness,
+        analyze_contrast,
+        analyze_dynamic_range,
+        analyze_noise_level,
+        correct_cvd_image,
         count_unique_colors,
         get_color_histogram,
         get_dominant_color,
         is_indexed_mode,
-        analyze_brightness,
-        analyze_contrast,
-        analyze_noise_level,
-        analyze_dynamic_range,
-        transform_image,
-        simulate_cvd_image,
-        correct_cvd_image,
         quantize_image_to_palette,
+        simulate_cvd_image,
+        transform_image,
     )
-    from .watermark import (
-        add_text_watermark,
-        add_image_watermark,
-        add_svg_watermark,
-    )
-    from .conversion import (
-        convert_image,
-        get_supported_formats,
-    )
-    from .blend import (
-        blend_images,
-        BLEND_MODES,
-    )
+    from .blend import BLEND_MODES, blend_images
+    from .conversion import convert_image, get_supported_formats
     from .dominance import (
-        DominantColor,
         DominanceAnalysis,
+        DominantColor,
         analyze_dominant_colors,
         dominant_colors,
         dominant_colors_to_palette,
     )
-    IMAGE_AVAILABLE = True
-except ImportError:
-    IMAGE_AVAILABLE = False
-    
-    # Provide helpful error messages
-    def _not_available(*args, **kwargs):
-        raise ImportError(
-            "Image processing requires Pillow. "
-            "Install with: pip install color-match-tools[image]"
+    from .watermark import (
+        add_image_watermark,
+        add_svg_watermark,
+        add_text_watermark,
+    )
+
+    IMAGE_AVAILABLE: bool
+else:
+    try:
+        from .analysis import (
+            ColorChange,
+            ColorCluster,
+            extract_color_clusters,
+            extract_unique_colors,
+            format_color_change_report,
+            l_value_to_hueforge_layer,
+            quantize_image_hyab,
+            redistribute_luminance,
         )
-    
-    # HueForge functions
-    extract_unique_colors = _not_available
-    extract_color_clusters = _not_available
-    quantize_image_hyab = _not_available
-    redistribute_luminance = _not_available
-    format_color_change_report = _not_available
-    l_value_to_hueforge_layer = _not_available
+        from .basic import (
+            analyze_brightness,
+            analyze_contrast,
+            analyze_dynamic_range,
+            analyze_noise_level,
+            correct_cvd_image,
+            count_unique_colors,
+            get_color_histogram,
+            get_dominant_color,
+            is_indexed_mode,
+            quantize_image_to_palette,
+            simulate_cvd_image,
+            transform_image,
+        )
+        from .blend import BLEND_MODES, blend_images
+        from .conversion import convert_image, get_supported_formats
+        from .dominance import (
+            DominanceAnalysis,
+            DominantColor,
+            analyze_dominant_colors,
+            dominant_colors,
+            dominant_colors_to_palette,
+        )
+        from .watermark import (
+            add_image_watermark,
+            add_svg_watermark,
+            add_text_watermark,
+        )
 
-    # Dominance analysis functions
-    analyze_dominant_colors = _not_available
-    dominant_colors = _not_available
-    dominant_colors_to_palette = _not_available
-    
-    # Basic analysis functions
-    count_unique_colors = _not_available
-    get_color_histogram = _not_available
-    get_dominant_color = _not_available
-    is_indexed_mode = _not_available
-    analyze_brightness = _not_available
-    analyze_contrast = _not_available
-    analyze_noise_level = _not_available
-    analyze_dynamic_range = _not_available
-    
-    # Image transformation functions
-    transform_image = _not_available
-    simulate_cvd_image = _not_available
-    correct_cvd_image = _not_available
-    quantize_image_to_palette = _not_available
-    
-    # Watermarking functions
-    add_text_watermark = _not_available
-    add_image_watermark = _not_available
-    add_svg_watermark = _not_available
-    
-    # Conversion functions
-    convert_image = _not_available
-    get_supported_formats = _not_available
+        IMAGE_AVAILABLE = True
+    except ImportError:
+        from typing import Any
 
-    # Blend functions
-    blend_images = _not_available
-    BLEND_MODES: dict = {}
+        IMAGE_AVAILABLE = False
 
-    # Dummy classes for type hints - use Any to avoid type conflicts
-    from typing import Any
-    ColorCluster: type[Any] = type('ColorCluster', (), {})
-    ColorChange: type[Any] = type('ColorChange', (), {})
-    DominantColor: type[Any] = type('DominantColor', (), {})
-    DominanceAnalysis: type[Any] = type('DominanceAnalysis', (), {})
+        def _not_available(*args: object, **kwargs: object) -> None:
+            raise ImportError(
+                "Image processing requires Pillow. "
+                "Install with: pip install color-match-tools[image]"
+            )
+
+        extract_unique_colors = _not_available
+        extract_color_clusters = _not_available
+        quantize_image_hyab = _not_available
+        redistribute_luminance = _not_available
+        format_color_change_report = _not_available
+        l_value_to_hueforge_layer = _not_available
+        analyze_dominant_colors = _not_available
+        dominant_colors = _not_available
+        dominant_colors_to_palette = _not_available
+        count_unique_colors = _not_available
+        get_color_histogram = _not_available
+        get_dominant_color = _not_available
+        is_indexed_mode = _not_available
+        analyze_brightness = _not_available
+        analyze_contrast = _not_available
+        analyze_noise_level = _not_available
+        analyze_dynamic_range = _not_available
+        transform_image = _not_available
+        simulate_cvd_image = _not_available
+        correct_cvd_image = _not_available
+        quantize_image_to_palette = _not_available
+        add_text_watermark = _not_available
+        add_image_watermark = _not_available
+        add_svg_watermark = _not_available
+        convert_image = _not_available
+        get_supported_formats = _not_available
+        blend_images = _not_available
+        BLEND_MODES: dict[str, Any] = {}
+        ColorCluster: type[Any] = type("ColorCluster", (), {})
+        ColorChange: type[Any] = type("ColorChange", (), {})
+        DominantColor: type[Any] = type("DominantColor", (), {})
+        DominanceAnalysis: type[Any] = type("DominanceAnalysis", (), {})
 
 # SimplePNGWriter is always available — no Pillow required
 from .png_writer import SimplePNGWriter
