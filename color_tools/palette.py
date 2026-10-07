@@ -47,7 +47,7 @@ from color_tools.constants import ColorConstants
 from color_tools.conversions import hex_to_rgb, rgb_to_lab, rgb_to_hsl, lab_to_rgb, rgb_to_hex, lab_to_lch
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
 from color_tools._palette_utils import _should_prefer_source, _rounded_key, _ensure_list
-from color_tools._color_utils import _validate_rgb, _parse_hex
+from color_tools._color_utils import _parse_hex, validate_rgb
 
 # Set up logger for override tracking
 logger: logging.Logger = logging.getLogger(__name__)
@@ -115,7 +115,7 @@ class ColorRecord:
             >>> ColorRecord.from_rgb((255, 0, 0), auto_name=True).name
             'red'
         """
-        _validate_rgb(rgb)
+        validate_rgb(rgb)
         if name is None:
             if auto_name:
                 # Local import avoids the naming module's dependency on Palette.
@@ -489,7 +489,7 @@ class Palette:
         """
         colors = list(rgb_colors)
         for rgb in colors:
-            _validate_rgb(rgb)
+            validate_rgb(rgb)
         color_names = list(names) if names is not None else None
         if color_names is not None and len(color_names) != len(colors):
             raise ValueError("The number of names must match the number of colors")

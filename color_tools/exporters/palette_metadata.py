@@ -15,6 +15,11 @@ from dataclasses import dataclass, field
 from typing import Any
 
 
+def _empty_properties() -> dict[str, Any]:
+    """Create an explicitly typed empty metadata property mapping."""
+    return {}
+
+
 @dataclass(slots=True)
 class PaletteMetadata:
     """
@@ -59,7 +64,7 @@ class PaletteMetadata:
     description: str = ""
     columns: int | None = None
     tags: tuple[str, ...] = ()
-    properties: dict[str, Any] = field(default_factory=dict)
+    properties: dict[str, Any] = field(default_factory=_empty_properties)
 
     def __post_init__(self) -> None:
         """Normalize and validate metadata."""

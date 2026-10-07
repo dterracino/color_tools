@@ -263,8 +263,9 @@ family.
 Available format identifiers:
 
 - Colors and filaments: `csv`, `json`
-- Colors: `ase`, `aseprite`, `css`, `gpl`, `hex`, `jasc_pal`, `kpl`, `lospec`, `paintnet`,
-  `palette_lut`, `riff_pal`, `scribus`, `sketchpalette`, `soc`, `swatch_image`
+- Colors: `ase`, `aseprite`, `css`, `glsl`, `gpl`, `hex`, `jasc_pal`, `kpl`, `lospec`,
+  `paintnet`, `palette_lut`, `python`, `riff_pal`, `scribus`, `sketchpalette`, `soc`,
+  `swatch_image`
 - Filaments: `autoforge`
 
 `ase` requires the `swatch` package and `swatch_image` requires Pillow. Both are installed by
@@ -355,6 +356,34 @@ transparent entry enabled, 256 input colors therefore produce an RGBA document.
 The input limit is 65,534 colors by default, or 65,535 with transparency disabled.
 The palette name becomes the background layer name; other palette
 metadata is not preserved by this format.
+
+#### Exporting GLSL Shader Palettes
+
+The dependency-free `glsl` exporter writes reusable shader source as a constant
+array, named constants, or preprocessor defines. Values are normalized to 0.0-1.0
+by default and use `vec3`; enable alpha to emit opaque `vec4` values.
+
+```python
+from color_tools.exporters import GLSLExportOptions
+
+export_palette(
+    palette,
+    "glsl",
+    "my_palette.glsl",
+    options=GLSLExportOptions(
+        representation="defines",
+        normalized=False,
+        include_alpha=True,
+        identifier_prefix="GAME_",
+    ),
+)
+```
+
+Raw 0-255 channels remain GLSL floating-point literals such as `255.0` and
+`0.0`. Set `representation="array"` for indexed access or
+`representation="constants"` for named `const` values. `include_version=True`
+places `#version 330 core` first; customize it with `version`. Color names are
+converted to legal, unique GLSL identifiers for constants and defines.
 
 **Advanced Export Examples:**
 

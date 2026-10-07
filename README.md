@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-[![Version](https://img.shields.io/badge/version-6.14.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-6.15.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
@@ -158,6 +158,28 @@ Unused grid cells repeat entry zero.
 The palette name becomes the background layer name, not a native palette-title
 field. Author, description, tags, and arbitrary properties are not preserved.
 Names must fit within 65,535 UTF-8 bytes.
+
+#### GLSL Shader Palettes
+
+```python
+from color_tools.exporters import GLSLExportOptions
+
+export_palette(
+    palette,
+    "glsl",
+    "my_palette.glsl",
+    options=GLSLExportOptions(
+        representation="defines",
+        normalized=False,
+        identifier_prefix="GAME_",
+    ),
+)
+```
+
+The dependency-free `glsl` exporter supports constant arrays, named constants,
+and `#define` macros. It emits normalized `vec3` values by default, with options
+for opaque `vec4` output, raw 0-255 floating-point channels such as `255.0`,
+palette metadata comments, and an optional `#version` directive.
 
 ### CLI Usage
 
@@ -336,6 +358,7 @@ Export colors and filaments to various formats for use with external tools:
 | `autoforge` | AutoForge CSV (`.csv`) | Filaments | No | None |
 | `css` | CSS custom properties (`.css`) | Colors | No | None |
 | `csv` | Generic CSV (`.csv`) | Colors and filaments | No | None |
+| `glsl` | GLSL shader source (`.glsl`) | Colors | Yes | None |
 | `gpl` | GIMP Palette (`.gpl`) | Colors | Yes | None |
 | `hex` | Plain HEX list (`.hex`) | Colors | No | None |
 | `jasc_pal` | JASC Paint Shop Pro palette (`.pal`) | Colors | No | None |

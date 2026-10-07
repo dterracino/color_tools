@@ -63,14 +63,17 @@ from color_tools.exporters.export_options_base import ExportOptionsBase
 from color_tools.exporters.registry import register_exporter
 
 if TYPE_CHECKING:
+    from PIL.ImageDraw import ImageDraw
     from PIL.ImageFont import FreeTypeFont, ImageFont, TransposedFont
 
     from color_tools.exporters.palette_export_data import PaletteExportData
     from color_tools.palette import ColorRecord
 
     FontType = ImageFont | FreeTypeFont | TransposedFont
+    DrawType = ImageDraw
 else:
     FontType = object
+    DrawType = object
 
 
 @dataclass(slots=True)
@@ -331,7 +334,7 @@ class SwatchImageExporter(PaletteExporter):
             ValueError:
                 If the palette contains no colors.
         """
-        from PIL import Image, ImageDraw, ImageFont
+        from PIL import Image, ImageDraw
 
         if not colors:
             raise ValueError(
@@ -343,7 +346,7 @@ class SwatchImageExporter(PaletteExporter):
             exist_ok=True,
         )
 
-        fonts = self._load_fonts(ImageFont)
+        fonts = self._load_fonts()
 
         title_font = fonts["title"]
         description_font = fonts["description"]
@@ -521,15 +524,15 @@ class SwatchImageExporter(PaletteExporter):
     def _draw_card(
         self,
         *,
-        draw,
+        draw: DrawType,
         color: ColorRecord,
         index: int,
         x: int,
         y: int,
         card_height: int,
-        name_font,
-        value_font,
-        index_font,
+        name_font: FontType,
+        value_font: FontType,
+        index_font: FontType,
         options: SwatchImageOptions,
     ) -> None:
         """Draw a single palette swatch card."""
@@ -858,11 +861,11 @@ class SwatchImageExporter(PaletteExporter):
     def _calculate_header_height(
         self,
         *,
-        draw,
+        draw: DrawType,
         title: str,
-        title_font,
+        title_font: FontType,
         description_lines: list[str],
-        description_font,
+        description_font: FontType,
     ) -> int:
         """Calculate vertical space required by the optional header."""
         if (
@@ -907,9 +910,9 @@ class SwatchImageExporter(PaletteExporter):
     @staticmethod
     def _fit_text(
         *,
-        draw,
+        draw: DrawType,
         text: str,
-        font,
+        font: FontType,
         max_width: int,
     ) -> str:
         """Fit a single line within a maximum rendered width."""
@@ -957,9 +960,9 @@ class SwatchImageExporter(PaletteExporter):
     @staticmethod
     def _wrap_text(
         *,
-        draw,
+        draw: DrawType,
         text: str,
-        font,
+        font: FontType,
         max_width: int,
     ) -> list[str]:
         """Wrap text to a maximum rendered width."""
@@ -1007,7 +1010,6 @@ class SwatchImageExporter(PaletteExporter):
     @classmethod
     def _load_fonts(
         cls,
-        image_font,
     ) -> dict[str, FontType]:
         """
         Load all fonts used by the exporter.
@@ -1021,27 +1023,22 @@ class SwatchImageExporter(PaletteExporter):
         """
         return {
             "title": cls._create_font(
-                image_font=image_font,
                 preferred="DejaVuSans-Bold.ttf",
                 size=cls.TITLE_FONT_SIZE,
             ),
             "description": cls._create_font(
-                image_font=image_font,
                 preferred="DejaVuSans.ttf",
                 size=cls.DESCRIPTION_FONT_SIZE,
             ),
             "name": cls._create_font(
-                image_font=image_font,
                 preferred="DejaVuSans.ttf",
                 size=cls.NAME_FONT_SIZE,
             ),
             "value": cls._create_font(
-                image_font=image_font,
                 preferred="DejaVuSansMono.ttf",
                 size=cls.VALUE_FONT_SIZE,
             ),
             "index": cls._create_font(
-                image_font=image_font,
                 preferred="DejaVuSans-Bold.ttf",
                 size=cls.INDEX_FONT_SIZE,
             ),
@@ -1050,10 +1047,9 @@ class SwatchImageExporter(PaletteExporter):
     @staticmethod
     def _create_font(
         *,
-        image_font,
         preferred: str,
         size: int,
-    ):
+    ) -> FontType:
         """
         Create a font at the requested size.
 
@@ -1062,22 +1058,24 @@ class SwatchImageExporter(PaletteExporter):
         the requested size rather than silently falling back to the tiny
         historical default size.
         """
+        from PIL import ImageFont
+
         try:
-            return image_font.truetype(
+            return ImageFont.truetype(
                 preferred,
                 size,
             )
 
         except OSError:
-            return image_font.load_default(
+            return ImageFont.load_default(
                 size=size
             )
 
     @staticmethod
     def _text_height(
-        draw,
+        draw: DrawType,
         text: str,
-        font,
+        font: FontType,
     ) -> int:
         """Return the rendered height of a specific string."""
         bbox = draw.textbbox(
@@ -1086,14 +1084,14 @@ class SwatchImageExporter(PaletteExporter):
             font=font,
         )
 
-        return (
+        return math.ceil(
             bbox[3] - bbox[1]
         )
 
     @staticmethod
     def _font_line_height(
-        draw,
-        font,
+        draw: DrawType,
+        font: FontType,
     ) -> int:
         """Return a practical rendered line height for a font."""
         bbox = draw.textbbox(
@@ -1102,6 +1100,6 @@ class SwatchImageExporter(PaletteExporter):
             font=font,
         )
 
-        return (
+        return math.ceil(
             bbox[3] - bbox[1]
         )

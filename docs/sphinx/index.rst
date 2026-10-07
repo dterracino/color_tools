@@ -123,6 +123,7 @@ Export System
    color_tools.exporters.autoforge_exporter
    color_tools.exporters.css_exporter
    color_tools.exporters.csv_exporter
+   color_tools.exporters.glsl_exporter
    color_tools.exporters.gpl_exporter
    color_tools.exporters.hex_exporter
    color_tools.exporters.jascpal_exporter

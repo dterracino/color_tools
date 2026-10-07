@@ -81,6 +81,11 @@ if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
 
 
+def _is_export_options_type(value: type[object]) -> bool:
+    """Return whether a runtime class is a supported options type."""
+    return issubclass(value, ExportOptionsBase)
+
+
 @dataclass(frozen=True, slots=True)
 class ExporterDependency:
     """
@@ -210,10 +215,7 @@ class ExporterMetadata:
 
         if (
             self.options_type is not None
-            and not issubclass(
-                self.options_type,
-                ExportOptionsBase,
-            )
+            and not _is_export_options_type(self.options_type)
         ):
             raise TypeError(
                 "Exporter options_type must inherit from ExportOptionsBase"

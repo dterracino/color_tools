@@ -605,7 +605,7 @@ class PythonExporter(PaletteExporter):
             options
         )
 
-        lines = []
+        lines: list[str] = []
 
         for color, identifier in zip(
             colors,

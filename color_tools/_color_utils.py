@@ -8,7 +8,7 @@ from color_tools.conversions import hex_to_rgb
 # future refactor, accounting for existing callers' differing input/error behavior.
 
 
-def _validate_rgb(rgb: tuple[int, int, int]) -> None:
+def validate_rgb(rgb: tuple[int, int, int]) -> None:
     """Check that RGB contains exactly three built-in integers in 0-255.
 
     Channels are interpreted as red, green, and blue, in that order. Both
@@ -28,7 +28,7 @@ def _validate_rgb(rgb: tuple[int, int, int]) -> None:
             built-in integer, or a channel is outside the inclusive 0-255 range.
 
     Example:
-        >>> _validate_rgb((255, 127, 0))
+        >>> validate_rgb((255, 127, 0))
     """
     if len(rgb) != 3 or any(type(channel) is not int for channel in rgb):
         raise ValueError("RGB must contain exactly three integer channels")

@@ -18,7 +18,7 @@ an ASE Color Group.
 from __future__ import annotations
 
 from pathlib import Path
-from typing import TYPE_CHECKING, Any
+from typing import TYPE_CHECKING, Any, Protocol, cast
 
 from color_tools.exporters.base import (
     ExporterDependency,
@@ -30,6 +30,14 @@ from color_tools.exporters.registry import register_exporter
 if TYPE_CHECKING:
     from color_tools.exporters.palette_export_data import PaletteExportData
     from color_tools.palette import ColorRecord
+
+
+class _SwatchWriter(Protocol):
+    """Typed portion of the third-party swatch module used here."""
+
+    @staticmethod
+    def write(obj: object, filename: str) -> None:
+        """Write swatch data to an ASE file."""
 
 
 @register_exporter
@@ -171,7 +179,7 @@ class ASEExporter(PaletteExporter):
         path = Path(output_path)
         path.parent.mkdir(parents=True, exist_ok=True)
 
-        swatch.write(
+        cast(_SwatchWriter, swatch).write(
             data,
             str(path),
         )

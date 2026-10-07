@@ -62,6 +62,10 @@ from color_tools.exporters.python_exporter import (
     PythonExporter,
     PythonExportOptions,
 )
+from color_tools.exporters.glsl_exporter import (
+    GLSLExporter,
+    GLSLExportOptions,
+)
 
 
 # Legacy EXPORT_FORMATS compatibility.
@@ -80,6 +84,8 @@ __all__ = [
     "ExporterDependency",
     "ExporterMetadata",
     "GPLExporter",
+    "GLSLExporter",
+    "GLSLExportOptions",
     "HexExporter",
     "JascPalExporter",
     "JSONExporter",

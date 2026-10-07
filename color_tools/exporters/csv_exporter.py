@@ -148,7 +148,7 @@ class CSVExporter(PaletteExporter):
 
     @staticmethod
     def _format_tuple(
-        values: tuple,
+        values: tuple[int | float, ...],
         precision: int | None = None,
     ) -> str:
         """

@@ -13,7 +13,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
-from color_tools._color_utils import _validate_rgb
+from color_tools._color_utils import validate_rgb
 from color_tools.exporters.base import ExporterMetadata, PaletteExporter
 from color_tools.exporters.export_options_base import ExportOptionsBase
 from color_tools.exporters.registry import register_exporter
@@ -140,7 +140,7 @@ class AsepriteExporter(PaletteExporter):
             entries.extend(self._string("Transparent"))
             rgba.extend(bytes(4))
         for color in colors:
-            _validate_rgb(color.rgb)
+            validate_rgb(color.rgb)
             pixel = bytes((*color.rgb, 255))
             entries.extend(struct.pack("<H", 1 if color.name else 0))
             entries.extend(pixel)

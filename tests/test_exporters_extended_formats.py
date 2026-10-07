@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import importlib.util
 import json
+import shutil
 import subprocess
 import struct
 import sys
@@ -17,6 +18,7 @@ from pathlib import Path
 from typing import Any
 
 from color_tools.exporters import (
+    GLSLExportOptions,
     MissingExporterDependencyError,
     PaintNetExportOptions,
     get_exporter,
@@ -50,6 +52,7 @@ class TestExporterRegistry(ExtendedExporterTestCase):
             {
                 "ase",
                 "css",
+                "glsl",
                 "kpl",
                 "python",
                 "riff_pal",
@@ -425,6 +428,185 @@ class TestPythonExporter(ExtendedExporterTestCase):
                 f"{result.stdout}\n{result.stderr}"
             ),
         )
+
+
+class TestGLSLExporter(ExtendedExporterTestCase):
+    def setUp(self) -> None:
+        super().setUp()
+        self.palette = PaletteExportData(
+            self.colors,
+            PaletteMetadata(
+                name="Primary Colors",
+                author="Color Tools",
+                description="Bright\nRGB primaries",
+                tags=("shader", "rgb"),
+            ),
+        )
+
+    def test_default_array_uses_normalized_vec3_values(self) -> None:
+        path = self.output_path("palette.glsl")
+
+        get_exporter("glsl").export_colors(self.colors, path)
+
+        content = path.read_text(encoding="utf-8")
+        self.assertIn("const int PALETTE_SIZE = 3;", content)
+        self.assertIn("const vec3 PALETTE[3] = vec3[3](", content)
+        self.assertIn(
+            "vec3(1.000000, 0.000000, 0.000000),  // red",
+            content,
+        )
+        self.assertIn(
+            "vec3(0.000000, 0.000000, 1.000000)  // blue",
+            content,
+        )
+
+    def test_defines_support_raw_rgba_and_unique_identifiers(self) -> None:
+        colors = [
+            replace(self.colors[0], name="80's Neon!"),
+            replace(self.colors[1], name="80's Neon!"),
+            replace(self.colors[2], name=""),
+        ]
+        path = self.output_path("palette_defines.glsl")
+
+        get_exporter("glsl").export_colors(
+            colors,
+            path,
+            options=GLSLExportOptions(
+                representation="defines",
+                normalized=False,
+                include_alpha=True,
+                identifier_prefix="GAME_",
+            ),
+        )
+
+        content = path.read_text(encoding="utf-8")
+        self.assertIn("#define PALETTE_SIZE 3", content)
+        self.assertIn(
+            "#define GAME_80_S_NEON vec4(255.0, 0.0, 0.0, 255.0)",
+            content,
+        )
+        self.assertIn(
+            "#define GAME_80_S_NEON_2 vec4(0.0, 255.0, 0.0, 255.0)",
+            content,
+        )
+        self.assertIn(
+            "#define GAME_0000FF vec4(0.0, 0.0, 255.0, 255.0)",
+            content,
+        )
+
+    def test_constants_can_include_version_and_palette_metadata(self) -> None:
+        path = self.output_path("palette_constants.glsl")
+
+        get_exporter("glsl").export_palette(
+            self.palette,
+            path,
+            options=GLSLExportOptions(
+                representation="constants",
+                include_version=True,
+                version="330 core",
+                identifier_prefix="DEMO_",
+                precision=3,
+            ),
+        )
+
+        content = path.read_text(encoding="utf-8")
+        self.assertTrue(content.startswith("#version 330 core\n"))
+        self.assertIn("// Name: Primary Colors", content)
+        self.assertIn("// Author: Color Tools", content)
+        self.assertIn("// Description: Bright RGB primaries", content)
+        self.assertIn("// Tags: shader, rgb", content)
+        self.assertIn(
+            "const vec3 DEMO_RED = vec3(1.000, 0.000, 0.000);",
+            content,
+        )
+
+    def test_options_reject_invalid_values(self) -> None:
+        invalid_cases = (
+            ({"representation": "tuple"}, "representation"),
+            ({"variable_name": "3_PALETTE"}, "variable_name"),
+            ({"variable_name": "gl_palette"}, "reserved 'gl_'"),
+            ({"identifier_prefix": "bad-prefix"}, "identifier_prefix"),
+            ({"precision": 0}, "precision"),
+            ({"version": "latest"}, "version"),
+        )
+
+        for values, message in invalid_cases:
+            with self.subTest(values=values):
+                with self.assertRaisesRegex(ValueError, message):
+                    GLSLExportOptions(**values)  # type: ignore[arg-type]
+
+    def test_empty_palette_is_rejected(self) -> None:
+        with self.assertRaisesRegex(ValueError, "at least one color"):
+            get_exporter("glsl").export_colors(
+                [],
+                self.output_path("empty.glsl"),
+            )
+
+    @unittest.skipUnless(
+        shutil.which("glslangValidator"),
+        "glslangValidator is not installed",
+    )
+    def test_generated_representations_compile_as_fragment_shaders(self) -> None:
+        cases = (
+            (
+                "array",
+                GLSLExportOptions(
+                    representation="array",
+                    include_version=True,
+                ),
+                "vec4(PALETTE[0], 1.0)",
+            ),
+            (
+                "constants",
+                GLSLExportOptions(
+                    representation="constants",
+                    include_version=True,
+                ),
+                "vec4(RED, 1.0)",
+            ),
+            (
+                "defines",
+                GLSLExportOptions(
+                    representation="defines",
+                    normalized=False,
+                    include_alpha=True,
+                    include_version=True,
+                ),
+                "RED",
+            ),
+        )
+
+        for name, options, expression in cases:
+            with self.subTest(representation=name):
+                path = self.output_path(f"compiled_{name}.frag")
+                get_exporter("glsl").export_colors(
+                    self.colors,
+                    path,
+                    options=options,
+                )
+                with path.open("a", encoding="utf-8", newline="\n") as shader:
+                    shader.write(
+                        "\nlayout(location = 0) out vec4 fragment_color;\n"
+                        "void main() {\n"
+                        f"    fragment_color = {expression};\n"
+                        "}\n"
+                    )
+
+                result = subprocess.run(
+                    ["glslangValidator", "-S", "frag", str(path)],
+                    capture_output=True,
+                    text=True,
+                    timeout=30,
+                    check=False,
+                )
+                self.assertEqual(
+                    result.returncode,
+                    0,
+                    msg=(
+                        "Generated GLSL failed to compile:\n"
+                        f"{result.stdout}\n{result.stderr}"
+                    ),
+                )
 
 
 class TestRiffPalExporter(ExtendedExporterTestCase):

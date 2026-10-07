@@ -18,6 +18,7 @@ from color_tools import (
     rgb_to_lab,
     rgb_to_lab_array,
 )
+from color_tools.exporters import GLSLExportOptions, PaletteExporter, get_exporter
 from color_tools.image import simulate_cvd_image
 from color_tools.mcp.models import ColorCoordinates
 
@@ -52,6 +53,14 @@ assert_type(lab_array, NDArray[np.float64])
 assert_type(delta_e_2000_array(lab_array, lab_array[0]), NDArray[np.float64])
 
 assert_type(simulate_cvd_image("sample.png", "protanopia"), Image.Image)
+
+glsl_options = GLSLExportOptions(
+    representation="defines",
+    normalized=False,
+    include_alpha=True,
+)
+assert_type(glsl_options.normalized, bool)
+assert_type(get_exporter("glsl"), PaletteExporter)
 
 coordinates = ColorCoordinates(
     rgb=(255, 128, 64),

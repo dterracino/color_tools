@@ -15,6 +15,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.15.0] - 2026-10-06
+
+### Fixed
+
+- **Strict exporter typing** — resolved all strict Pyright diagnostics in the exporter
+  package, including optional dependency boundaries, Pillow drawing types, numeric
+  formatting, and generated palette metadata.
+
+### Added
+
+- **GLSL shader palette export** — added dependency-free `glsl` output as constant arrays,
+  named constants, or `#define` macros. Exports `vec3` or `vec4` values with normalized
+  channels by default, optional raw 0-255 floating-point values, comments, metadata,
+  size constants, identifier prefixes, and an optional `#version` directive.
+
 ## [6.14.0] - 2026-10-06
 
 ### Fixed
