@@ -463,7 +463,30 @@ Examples:
     filament_parser.add_argument(
         "--color", 
         type=str, 
-        help="Filter by color name"
+        help="Filter by color name (also applies to --nearest)"
+    )
+    filament_parser.add_argument(
+        "--exclude-maker",
+        nargs='+',
+        type=str,
+        help="With --nearest, exclude matching makers"
+    )
+    filament_parser.add_argument(
+        "--exclude-type",
+        nargs='+',
+        type=str,
+        help="With --nearest, exclude matching filament types"
+    )
+    filament_parser.add_argument(
+        "--exclude-finish",
+        nargs='+',
+        type=str,
+        help="With --nearest, exclude matching finishes"
+    )
+    filament_parser.add_argument(
+        "--exclude-color",
+        type=str,
+        help="With --nearest, exclude a matching color name"
     )
     filament_parser.add_argument(
         "--dual-color-mode",

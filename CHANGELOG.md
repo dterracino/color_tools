@@ -15,6 +15,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
+## [6.16.0] - 2026-10-07
+
+### Added
+
+- **Batch and lazy color naming** — added `generate_color_names()` and
+  `iter_color_names()` with one shared CSS palette load per non-empty iteration.
+- **Reusable filament criteria** — added case-insensitive `FilamentFilterCriteria`
+  plus additive filtering and nearest-search methods supporting simultaneous inclusion
+  and exclusion criteria for maker, filament type, finish, and color name.
+- **Nearest-filament CLI exclusions** — added `--exclude-maker`, `--exclude-type`,
+  `--exclude-finish`, and `--exclude-color` for `filament --nearest` searches.
+- **Consistent CLI entry points** — package installs now provide the documented
+  `color-tools` command as well as the backward-compatible `color_tools` alias;
+  both invoke the same CLI as `python -m color_tools`.
+
+### Changed
+
+- **Consolidated color naming** — `generate_color_name()` and palette auto-naming now
+  use the shared batch implementation, eliminating repeated color-data loads.
+- **Consolidated filament matching** — scalar and plural nearest searches now share
+  filtering, hue constraints, metric resolution, distance ranking, and user-source
+  tie-breaking. Existing public method signatures remain unchanged.
+- **Consistent filament filtering** — maker, maker synonym, type, and finish filters
+  now ignore case and surrounding whitespace.
+- **Nearest-filament color filtering** — the existing `filament --color` option now
+  constrains `--nearest` searches instead of being ignored by that operation.
+
 ## [6.15.0] - 2026-10-06
 
 ### Fixed

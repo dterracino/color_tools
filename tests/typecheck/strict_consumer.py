@@ -10,17 +10,20 @@ from PIL import Image
 
 from color_tools import (
     ColorRecord,
+    FilamentFilterCriteria,
     FilamentPalette,
     FilamentRecord,
     Palette,
     delta_e_2000,
     delta_e_2000_array,
+    generate_color_names,
     rgb_to_lab,
     rgb_to_lab_array,
 )
 from color_tools.exporters import GLSLExportOptions, PaletteExporter, get_exporter
 from color_tools.image import simulate_cvd_image
 from color_tools.mcp.models import ColorCoordinates
+from color_tools.naming import MatchType
 
 
 lab = rgb_to_lab((255, 128, 64))
@@ -39,6 +42,18 @@ filament, filament_distance = filaments.nearest_filament(
 assert_type(filament, FilamentRecord)
 assert_type(filament_distance, float)
 assert_type(filaments.owned_filaments, set[str])
+criteria = FilamentFilterCriteria(type_name="PLA", color=["Red", "Blue"])
+assert_type(criteria.color_values, frozenset[str] | None)
+assert_type(filaments.filter_by_criteria(criteria, owned=False), list[FilamentRecord])
+assert_type(
+    filaments.nearest_filaments_by_criteria(
+        (255, 128, 64),
+        include=criteria,
+        owned=False,
+    ),
+    list[tuple[FilamentRecord, float]],
+)
+assert_type(generate_color_names([(255, 0, 0)]), list[tuple[str, MatchType]])
 
 array_distances = delta_e_2000_array(
     np.array([[50.0, 0.0, 0.0]], dtype=np.float64),

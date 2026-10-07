@@ -6,6 +6,7 @@ from pathlib import Path
 
 from ..utils import parse_hex_or_exit
 from ...config import set_dual_color_mode
+from ...filament_filter_criteria import FilamentFilterCriteria
 from ...filament_palette import FilamentPalette
 from ...export import export_filaments, list_export_formats
 
@@ -23,6 +24,19 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
         1: Filament not found or error
         2: Invalid input
     """
+    has_exclusions = any(
+        value is not None
+        for value in (
+            args.exclude_maker,
+            args.exclude_type,
+            args.exclude_finish,
+            args.exclude_color,
+        )
+    )
+    if has_exclusions and not args.nearest:
+        print("Error: exclusion filters require --nearest", file=sys.stderr)
+        sys.exit(2)
+
     # Handle --manage (interactive mode) early - doesn't need palette loaded yet
     if hasattr(args, 'manage') and args.manage:
         from ...interactive_manager import run_interactive_manager
@@ -109,7 +123,7 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
             count = len(filament_palette.find_by_finish(finish))
             print(f"  {finish} ({count} filaments)")
         sys.exit(0)
-    
+
     if args.nearest:
         value = args.value
         hex_value = args.hex
@@ -136,20 +150,28 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
             rgb_val = tuple(value)
         
         try:
-            # Handle "*" wildcard filters (convert ["*"] to "*" for the API)
-            maker_filter = "*" if args.maker == ["*"] else args.maker
-            type_filter = "*" if args.type == ["*"] else args.type  
-            finish_filter = "*" if args.finish == ["*"] else args.finish
+            # Omitted fields and the established "*" wildcard are unconstrained.
+            include = FilamentFilterCriteria(
+                maker=None if args.maker == ["*"] else args.maker,
+                type_name=None if args.type == ["*"] else args.type,
+                finish=None if args.finish == ["*"] else args.finish,
+                color=args.color,
+            )
+            exclude = FilamentFilterCriteria(
+                maker=args.exclude_maker,
+                type_name=args.exclude_type,
+                finish=args.exclude_finish,
+                color=args.exclude_color,
+            )
             
             if args.count > 1:
                 # Multiple results
-                results = filament_palette.nearest_filaments(
+                results = filament_palette.nearest_filaments_by_criteria(
                     rgb_val,
                     metric=args.metric,
                     count=args.count,
-                    maker=maker_filter,
-                    type_name=type_filter,
-                    finish=finish_filter,
+                    include=include,
+                    exclude=exclude,
                     owned=owned_filter,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,
@@ -161,12 +183,11 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
                     print(f"   {rec}")
             else:
                 # Single result (backward compatibility)
-                rec, d = filament_palette.nearest_filament(
+                rec, d = filament_palette.nearest_filament_by_criteria(
                     rgb_val,
                     metric=args.metric,
-                    maker=maker_filter,
-                    type_name=type_filter,
-                    finish=finish_filter,
+                    include=include,
+                    exclude=exclude,
                     owned=owned_filter,
                     cmc_l=args.cmc_l,
                     cmc_c=args.cmc_c,

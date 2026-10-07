@@ -95,6 +95,19 @@ print(f"Nearest filament: {filament.maker} {filament.type} - {filament.color}")
 pla_filaments = filament_palette.filter(type_name="PLA", maker="Bambu")  # "Bambu" finds "Bambu Lab"
 print(f"Found {len(pla_filaments)} Bambu Lab PLA filaments")
 
+# Reuse case-insensitive criteria for inclusion and exclusion
+from color_tools import FilamentFilterCriteria
+
+available_pla = filament_palette.filter_by_criteria(
+    include=FilamentFilterCriteria(type_name="pla"),
+    exclude=FilamentFilterCriteria(maker="bambu", finish="silk"),
+)
+nearest_pla, distance = filament_palette.nearest_filament_by_criteria(
+    (180, 100, 200),
+    include=FilamentFilterCriteria(type_name=["PLA", "PETG"]),
+    exclude=FilamentFilterCriteria(finish="silk"),
+)
+
 # Access predefined immutable collections without configuring filters
 bambu_basic = FilamentCollections.BAMBU_PLA_BASIC
 bambu_matte = FilamentCollections.BAMBU_PLA_MATTE
@@ -235,8 +248,21 @@ family.
 - `palette.find_by_lch()` - Look up by LCH value (with rounding)
 - `filament_palette.nearest_filament()` - Find nearest filament
 - `filament_palette.filter()` - Filter by maker, type, finish, color (supports maker synonyms)
+- `filament_palette.filter_by_criteria()` - Apply reusable maker, type, finish, and color inclusions and exclusions
+- `filament_palette.nearest_filament_by_criteria()` - Find the nearest filament within reusable criteria
 - `filament_palette.find_by_maker()` - Get all filaments from a maker (supports synonyms)
 - `filament_palette.find_by_type()` - Get all filaments of a type
+
+`FilamentFilterCriteria` accepts one string or an iterable for `maker`, `type_name`,
+`finish`, and `color`. Values within a field use OR semantics; active fields use AND semantics.
+Matching, including maker synonyms, ignores case and surrounding whitespace. An exclusion
+removes a record only when every active exclusion field matches. Empty exclusion criteria
+exclude nothing. The existing filtering and nearest-search methods remain available with
+their original signatures.
+
+For color naming, `generate_color_names()` eagerly returns a list of `(name, match_type)`
+tuples with one CSS palette load. `iter_color_names()` provides the same results lazily and
+does not load the palette until its first input is requested.
 
 #### Configuration
 
@@ -632,6 +658,15 @@ python -m color_tools filament --nearest --value 100 150 200 --metric cmc --cmc-
 
 # Restrict results to the same hue family (prevents blue→purple substitution, etc.)
 python -m color_tools filament --nearest --hex "#5c94fc" --count 5 --max-hue-delta 30
+
+# Restrict candidates by color name
+python -m color_tools filament --nearest --hex "#ed1c24" --color "Red"
+
+# Exclude silk finishes from the nearest search
+python -m color_tools filament --nearest --hex "#ed1c24" --exclude-finish "Silk" "Silk+"
+
+# Exclude only Bambu Lab records whose type is PETG (exclusion fields use AND)
+python -m color_tools filament --nearest --hex "#ed1c24" --exclude-maker "Bambu Lab" --exclude-type PETG
 ```
 
 #### Handle Dual-Color Filaments
@@ -702,6 +737,15 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+"). Use "*" to bypass this filter.
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+"). Use "*" to bypass this filter.
 - `--color NAME`: Filter by color name
+- `--exclude-maker NAME [NAME ...]`: With `--nearest`, exclude matching makers
+- `--exclude-type NAME [NAME ...]`: With `--nearest`, exclude matching filament types
+- `--exclude-finish NAME [NAME ...]`: With `--nearest`, exclude matching finishes
+- `--exclude-color NAME`: With `--nearest`, exclude a matching color name
+
+Values within one exclusion option use OR semantics. Different exclusion fields use
+AND semantics, so `--exclude-maker "Bambu Lab" --exclude-type PETG` excludes Bambu Lab
+PETG records rather than excluding every Bambu Lab and every PETG record. Exclusion
+options require `--nearest`.
 
 **Owned Filaments (v6.0.0+):**
 

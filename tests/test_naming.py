@@ -3,6 +3,9 @@ Unit tests for color naming functionality.
 """
 
 import unittest
+from unittest.mock import patch
+
+from color_tools.palette import Palette
 from color_tools.naming import (
     get_lightness_modifier,
     get_saturation_modifier,
@@ -11,8 +14,10 @@ from color_tools.naming import (
     get_generic_hue,
     is_unique_near_claim,
     generate_color_name,
+    generate_color_names,
+    iter_color_names,
 )
-from color_tools.conversions import rgb_to_hsl, rgb_to_lab
+from color_tools.conversions import rgb_to_hsl
 
 
 class TestLightnessModifier(unittest.TestCase):
@@ -319,7 +324,7 @@ class TestGenerateColorName(unittest.TestCase):
         self.assertIn("red", name)
         # Should be exact, near, or generated with "red" in name
         self.assertIn(match_type, ["exact", "near", "generated"])
-    
+
     def test_gray_generation(self):
         """Test achromatic (gray) color generation."""
         # Low saturation should produce gray
@@ -352,6 +357,7 @@ class TestGenerateColorName(unittest.TestCase):
         # High saturation color
         rgb = (200, 0, 0)
         name, match_type = generate_color_name(rgb)
+        self.assertIsInstance(name, str)
         if match_type == "generated":
             # Should have saturation modifier or none for medium
             # vivid, deep, bright, or empty for medium saturation
@@ -361,7 +367,7 @@ class TestGenerateColorName(unittest.TestCase):
         """Test that -ish variants can appear in generated names."""
         # Color near a hue boundary with high saturation
         rgb = (255, 80, 0)  # Near red/orange boundary
-        h, s, _ = rgb_to_hsl(rgb)
+        _h, s, _ = rgb_to_hsl(rgb)
         if s >= 40:  # Above -ish threshold
             name, match_type = generate_color_name(rgb)
             # Might have -ish variant if near boundary
@@ -396,6 +402,55 @@ class TestGenerateColorName(unittest.TestCase):
         # Should handle palette context without error
         self.assertIsInstance(name, str)
         self.assertIn(match_type, ["exact", "near", "generated"])
+
+
+class TestGenerateColorNames(unittest.TestCase):
+    """Test eager and lazy batch color naming."""
+
+    def test_batch_matches_scalar_results_and_preserves_order(self):
+        """Batch naming preserves order, duplicates, and scalar results."""
+        colors = [(255, 0, 0), (12, 34, 56), (255, 0, 0)]
+        expected = [generate_color_name(color) for color in colors]
+        self.assertEqual(generate_color_names(colors), expected)
+
+    def test_batch_loads_default_palette_once(self):
+        """An eager batch shares one default palette load."""
+        with patch(
+            "color_tools.naming.Palette.load_default",
+            wraps=Palette.load_default,
+        ) as load_default:
+            generate_color_names([(255, 0, 0), (0, 0, 255), (12, 34, 56)])
+        load_default.assert_called_once_with()
+
+    def test_scalar_delegates_to_batch(self):
+        """The scalar API is a compatibility wrapper around the batch API."""
+        expected = ("custom", "generated")
+        with patch(
+            "color_tools.naming.generate_color_names",
+            return_value=[expected],
+        ) as generate_many:
+            result = generate_color_name((1, 2, 3), near_threshold=2.5)
+        self.assertEqual(result, expected)
+        generate_many.assert_called_once_with(((1, 2, 3),), None, 2.5)
+
+    def test_iterator_loads_lazily_once(self):
+        """The lazy API waits for iteration and then shares one load."""
+        with patch(
+            "color_tools.naming.Palette.load_default",
+            wraps=Palette.load_default,
+        ) as load_default:
+            names = iter_color_names([(255, 0, 0), (0, 0, 255)])
+            load_default.assert_not_called()
+            self.assertEqual(next(names), ("red", "exact"))
+            load_default.assert_called_once_with()
+            self.assertEqual(next(names), ("blue", "exact"))
+            load_default.assert_called_once_with()
+
+    def test_empty_iterator_does_not_load_palette(self):
+        """An empty iterator performs no data loading."""
+        with patch("color_tools.naming.Palette.load_default") as load_default:
+            self.assertEqual(list(iter_color_names([])), [])
+        load_default.assert_not_called()
 
 
 class TestIsUniqueNearClaim(unittest.TestCase):

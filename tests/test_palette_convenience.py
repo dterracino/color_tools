@@ -80,12 +80,13 @@ class TestPaletteFactories(unittest.TestCase):
 
     def test_naming_context_and_explicit_precedence(self) -> None:
         colors = [(255, 10, 10), (255, 20, 20)]
-        with patch("color_tools.naming.generate_color_name", return_value=("warm", "generated")) as namer:
+        with patch(
+            "color_tools.naming.generate_color_names",
+            return_value=[("warm", "generated"), ("warm", "generated")],
+        ) as namer:
             palette = Palette.from_rgb(colors, auto_name=True)
             self.assertEqual([record.name for record in palette.records], ["warm", "warm"])
-            self.assertEqual(namer.call_count, 2)
-            for call in namer.call_args_list:
-                self.assertEqual(call.kwargs["palette_colors"], colors)
+            namer.assert_called_once_with(colors, palette_colors=colors)
             namer.reset_mock()
             Palette.from_rgb(colors, names=["A", "B"], auto_name=True)
             ColorRecord.from_rgb(colors[0], name="Explicit", auto_name=True)

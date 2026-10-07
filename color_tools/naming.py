@@ -9,6 +9,7 @@ This module provides intelligent color naming that:
 """
 
 from __future__ import annotations
+from collections.abc import Iterable, Iterator
 from typing import Literal
 from .conversions import rgb_to_hsl, rgb_to_lab
 from .distance import delta_e_2000
@@ -257,9 +258,10 @@ def get_generic_hue(h: float) -> str:
         return "magenta"
 
 
-def is_unique_near_claim(
+def _is_unique_near_claim(
     rgb: tuple[int, int, int],
     css_name: str,
+    palette: Palette,
     palette_colors: list[tuple[int, int, int]] | None = None,
     threshold: float = 5.0
 ) -> bool:
@@ -281,8 +283,6 @@ def is_unique_near_claim(
     if palette_colors is None:
         return True  # No palette context, allow the claim
     
-    # Load CSS colors to get the target RGB
-    palette = Palette.load_default()
     css_color = palette.find_by_name(css_name)
     if not css_color:
         return False
@@ -304,45 +304,31 @@ def is_unique_near_claim(
     return True
 
 
-def generate_color_name(
+def is_unique_near_claim(
     rgb: tuple[int, int, int],
+    css_name: str,
+    palette_colors: list[tuple[int, int, int]] | None = None,
+    threshold: float = 5.0,
+) -> bool:
+    """Return whether an RGB value uniquely qualifies as near a CSS color."""
+    if palette_colors is None:
+        return True
+    return _is_unique_near_claim(
+        rgb,
+        css_name,
+        Palette.load_default(),
+        palette_colors,
+        threshold,
+    )
+
+
+def _generate_color_name(
+    rgb: tuple[int, int, int],
+    palette: Palette,
     palette_colors: list[tuple[int, int, int]] | None = None,
     near_threshold: float = 5.0
 ) -> tuple[str, MatchType]:
-    """
-    Generate a descriptive name for an RGB color.
-    
-    This function follows a priority-based naming strategy:
-    1. Exact match with CSS colors
-    2. Near match with CSS colors (within threshold, uniquely)
-    3. Generated descriptive name based on HSL properties
-    
-    Generated names avoid collisions with CSS color names by falling back
-    to generic hue names when necessary.
-    
-    Args:
-        rgb: RGB tuple (0-255 for each component)
-        palette_colors: Optional list of all RGB colors in palette (for near match uniqueness)
-        near_threshold: Delta E threshold for "near" matches (default 5.0)
-        
-    Returns:
-        Tuple of (name, match_type) where:
-        - name: Color name string
-        - match_type: "exact", "near", or "generated"
-        
-    Examples:
-        >>> generate_color_name((255, 0, 0))
-        ('red', 'exact')
-        
-        >>> generate_color_name((255, 10, 10))
-        ('near red', 'near')
-        
-        >>> generate_color_name((128, 128, 255))
-        ('medium bright blue', 'generated')
-    """
-    # Load CSS colors palette
-    palette = Palette.load_default()
-    
+    """Generate one name using an already-loaded CSS palette."""
     # Step 1: Check for exact match in CSS colors
     css_match = palette.find_by_rgb(rgb)
     if css_match:
@@ -354,7 +340,13 @@ def generate_color_name(
     nearest_css, distance = palette.nearest_color(lab, space="lab", metric="de2000")
     if distance < near_threshold:
         # Check if this is a unique claim
-        if is_unique_near_claim(rgb, nearest_css.name, palette_colors, near_threshold):
+        if _is_unique_near_claim(
+            rgb,
+            nearest_css.name,
+            palette,
+            palette_colors,
+            near_threshold,
+        ):
             return (f"near {nearest_css.name}", "near")
     
     # Step 3: Generate descriptive name
@@ -395,3 +387,53 @@ def generate_color_name(
     
     # No collision, use generated name
     return (generated_name, "generated")
+
+
+def iter_color_names(
+    rgb_colors: Iterable[tuple[int, int, int]],
+    palette_colors: list[tuple[int, int, int]] | None = None,
+    near_threshold: float = 5.0,
+) -> Iterator[tuple[str, MatchType]]:
+    """Lazily generate names while loading the CSS palette at most once.
+
+    The palette is loaded when the first input color is requested. Empty
+    iterables therefore perform no palette loading.
+    """
+    color_iterator = iter(rgb_colors)
+    try:
+        first_color = next(color_iterator)
+    except StopIteration:
+        return
+
+    palette = Palette.load_default()
+    yield _generate_color_name(first_color, palette, palette_colors, near_threshold)
+    for rgb in color_iterator:
+        yield _generate_color_name(rgb, palette, palette_colors, near_threshold)
+
+
+def generate_color_names(
+    rgb_colors: Iterable[tuple[int, int, int]],
+    palette_colors: list[tuple[int, int, int]] | None = None,
+    near_threshold: float = 5.0,
+) -> list[tuple[str, MatchType]]:
+    """Generate names for RGB colors with one shared CSS palette load."""
+    return list(iter_color_names(rgb_colors, palette_colors, near_threshold))
+
+
+def generate_color_name(
+    rgb: tuple[int, int, int],
+    palette_colors: list[tuple[int, int, int]] | None = None,
+    near_threshold: float = 5.0,
+) -> tuple[str, MatchType]:
+    """Generate a descriptive name and match classification for one RGB color.
+
+    Naming prioritizes exact CSS matches, then unique near matches, and finally
+    descriptive HSL/LAB-based names.
+
+    Examples:
+        >>> generate_color_name((255, 0, 0))
+        ('red', 'exact')
+        >>> generate_color_name((255, 10, 10))
+        ('near red', 'near')
+    """
+    return generate_color_names((rgb,), palette_colors, near_threshold)[0]

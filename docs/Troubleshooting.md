@@ -9,6 +9,7 @@ This document covers common errors, data integrity verification, performance opt
 ## Table of Contents
 
 - [Error Handling](#error-handling)
+- [Installed command runs an older version](#installed-command-runs-an-older-version)
 - [Data Integrity Verification](#data-integrity-verification)
 - [Performance Notes](#performance-notes)
 - [Technical Notes](#technical-notes)
@@ -21,6 +22,31 @@ This document covers common errors, data integrity verification, performance opt
 ## Error Handling
 
 Common errors and solutions:
+
+### Installed command runs an older version
+
+`color-tools`, `color_tools`, and `python -m color_tools` can resolve through
+different Python installations when several Python versions are installed. Compare
+their locations and versions on Windows PowerShell:
+
+```powershell
+Get-Command color-tools,color_tools -All
+color-tools --version
+color_tools --version
+py -m color_tools --version
+```
+
+For work in a source checkout, prefer `py -m color_tools`. To refresh installed
+launchers, run pip through the intended interpreter rather than through an ambiguous
+standalone `pip` command:
+
+```powershell
+py -3.12 -m pip install --upgrade color-match-tools
+```
+
+Replace `3.12` with the Python version whose Scripts directory appears in
+`Get-Command`. A current installation provides both `color-tools` and `color_tools`,
+and both report the same package version.
 
 ### "Color not found"
 

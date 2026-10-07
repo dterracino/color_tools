@@ -171,6 +171,25 @@ class TestFilamentCommand(unittest.TestCase):
         self.assertIn("2.", stdout)
         self.assertIn("3.", stdout)
 
+    def test_filament_nearest_with_color_filter(self):
+        """filament --nearest should apply the existing color-name filter."""
+        exit_code, stdout, stderr = self.run_cli(
+            "filament", "--nearest", "--hex", "FF0000",
+            "--color", "Red", "--all-filaments",
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertIn("Red", stdout)
+
+    def test_filament_nearest_with_exclusion(self):
+        """filament --nearest should accept and apply exclusion flags."""
+        exit_code, stdout, stderr = self.run_cli(
+            "filament", "--nearest", "--hex", "FF0000",
+            "--maker", "Bambu Lab", "--exclude-maker", "Bambu Lab",
+            "--all-filaments", expect_error=True,
+        )
+        self.assertEqual(exit_code, 1)
+        self.assertIn("No filaments match", stdout)
+
 
 class TestConvertCommand(unittest.TestCase):
     """Test color space conversion command."""

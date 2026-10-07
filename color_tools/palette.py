@@ -521,10 +521,13 @@ class Palette:
             raise ValueError("The number of names must match the number of colors")
         if color_names is None:
             if auto_name:
-                from color_tools.naming import generate_color_name
+                from color_tools.naming import generate_color_names
                 color_names = [
-                    generate_color_name(rgb, palette_colors=colors)[0]
-                    for rgb in colors
+                    name
+                    for name, _match_type in generate_color_names(
+                        colors,
+                        palette_colors=colors,
+                    )
                 ]
             else:
                 color_names = [

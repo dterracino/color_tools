@@ -18,6 +18,7 @@ from __future__ import annotations
 import json
 import logging
 from dataclasses import dataclass, field
+from functools import cmp_to_key
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
@@ -26,11 +27,13 @@ from color_tools.conversions import rgb_to_lab, hex_to_rgb, lab_to_lch
 from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
 from color_tools.config import get_dual_color_mode
 from color_tools._palette_utils import ensure_list, should_prefer_source
+from color_tools.filament_filter_criteria import FilamentFilterCriteria
 
 logger: logging.Logger = logging.getLogger(__name__)
 
 LabColor = tuple[float, float, float]
 DistanceFunction = Callable[[LabColor, LabColor], float]
+_FilamentMatch = tuple["FilamentRecord", float]
 
 
 class _RequiredFilamentData(TypedDict):
@@ -519,6 +522,37 @@ def _filter_by_hue(
     return result
 
 
+def _resolve_distance_function(metric: str, cmc_l: float, cmc_c: float) -> DistanceFunction:
+    """Resolve a supported metric name to its LAB distance function."""
+    metric_name = metric.casefold()
+    if metric_name in ("de2000", "ciede2000"):
+        return delta_e_2000
+    if metric_name in ("de94", "cie94"):
+        return delta_e_94
+    if metric_name in ("de76", "cie76"):
+        return delta_e_76
+    if metric_name == "euclidean":
+        return euclidean
+    if metric_name in ("cmc", "decmc"):
+        return lambda lab1, lab2: delta_e_cmc(lab1, lab2, l=cmc_l, c=cmc_c)
+    if metric_name == "hyab":
+        return delta_e_hyab
+    raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
+
+
+def _compare_filament_matches(left: _FilamentMatch, right: _FilamentMatch) -> int:
+    """Order matches by distance, preferring user sources for exact ties."""
+    if left[1] < right[1]:
+        return -1
+    if left[1] > right[1]:
+        return 1
+    if should_prefer_source(left[0].source, right[0].source):
+        return -1
+    if should_prefer_source(right[0].source, left[0].source):
+        return 1
+    return 0
+
+
 class FilamentPalette:
     """
     Filament palette with multiple indexing strategies for fast lookup.
@@ -600,14 +634,15 @@ class FilamentPalette:
         for maker in makers:
             # Add the original name
             expanded.add(maker)
+            normalized_maker = maker.strip().casefold()
             
-            # Check if this maker IS a canonical name
-            if maker in self.maker_synonyms:
-                expanded.update(self.maker_synonyms[maker])
-            
-            # Check if this maker is a synonym for a canonical name
+            # Match canonical names and synonyms case-insensitively.
             for canonical, synonyms in self.maker_synonyms.items():
-                if maker in synonyms:
+                normalized_synonyms = {synonym.strip().casefold() for synonym in synonyms}
+                if (
+                    normalized_maker == canonical.strip().casefold()
+                    or normalized_maker in normalized_synonyms
+                ):
                     expanded.add(canonical)
                     expanded.update(synonyms)
         
@@ -626,8 +661,63 @@ class FilamentPalette:
         if value is None:
             return None
         if isinstance(value, str):
-            return {value}
-        return set(value)
+            return {value.strip().casefold()}
+        return {item.strip().casefold() for item in value}
+
+    def _expand_criteria_makers(
+        self,
+        criteria: FilamentFilterCriteria | None,
+    ) -> FilamentFilterCriteria | None:
+        """Return criteria with maker synonyms expanded by this palette."""
+        if criteria is None or criteria.maker_values is None:
+            return criteria
+        expanded_makers = self._expand_maker_names(list(criteria.maker_values))
+        return FilamentFilterCriteria(
+            maker=expanded_makers,
+            type_name=criteria.type_name_values,
+            finish=criteria.finish_values,
+            color=criteria.color_values,
+        )
+
+    def _filter_records(
+        self,
+        include: FilamentFilterCriteria | None,
+        exclude: FilamentFilterCriteria | None,
+        owned: bool | None,
+    ) -> list[FilamentRecord]:
+        """Apply ownership, inclusion, and exclusion criteria."""
+        use_owned = bool(self.owned_filaments) if owned is None else owned
+        results = (
+            [record for record in self.records if record.id in self.owned_filaments]
+            if use_owned
+            else list(self.records)
+        )
+
+        expanded_include = self._expand_criteria_makers(include)
+        expanded_exclude = self._expand_criteria_makers(exclude)
+        if expanded_include is not None and not expanded_include.is_empty:
+            results = [
+                record
+                for record in results
+                if expanded_include.matches(
+                    record.maker,
+                    record.type,
+                    record.finish,
+                    record.color,
+                )
+            ]
+        if expanded_exclude is not None and not expanded_exclude.is_empty:
+            results = [
+                record
+                for record in results
+                if not expanded_exclude.matches(
+                    record.maker,
+                    record.type,
+                    record.finish,
+                    record.color,
+                )
+            ]
+        return results
 
     @classmethod
     def load_default(cls) -> 'FilamentPalette':
@@ -748,34 +838,28 @@ class FilamentPalette:
         Returns:
             A list of FilamentRecord objects matching the criteria.
         """
-        # Auto-detect owned filtering if not explicitly specified
-        if owned is None:
-            owned = len(self.owned_filaments) > 0
-        
-        # Start with owned or all records
-        if owned:
-            results = [r for r in self.records if r.id in self.owned_filaments]
-        else:
-            results = self.records
-        
-        makers_set = self._normalize_filter_values(maker)
-        types_set = self._normalize_filter_values(type_name)
-        finishes_set = self._normalize_filter_values(finish)
-        
-        # Expand maker names to include synonyms
-        if makers_set:
-            makers_set = self._expand_maker_names(list(makers_set))
-        
-        if makers_set:
-            results = [r for r in results if r.maker in makers_set]
-        if types_set:
-            results = [r for r in results if r.type in types_set]
-        if finishes_set:
-            results = [r for r in results if r.finish and r.finish in finishes_set]
-        if color:
-            results = [r for r in results if r.color.lower() == color.lower()]
-            
-        return results
+        include = FilamentFilterCriteria(
+            maker=maker,
+            type_name=type_name,
+            finish=finish,
+            color=color if color else None,
+        )
+        return self._filter_records(include, None, owned)
+
+    def filter_by_criteria(
+        self,
+        include: FilamentFilterCriteria | None = None,
+        exclude: FilamentFilterCriteria | None = None,
+        *,
+        owned: bool | None = None,
+    ) -> list[FilamentRecord]:
+        """Filter filaments with reusable inclusion and exclusion criteria.
+
+        Active fields within each criterion use AND semantics, while multiple
+        values within a field use OR semantics. An exclusion removes a record
+        only when the complete exclusion criterion matches.
+        """
+        return self._filter_records(include, exclude, owned)
 
     def nearest_filament(
         self,
@@ -816,61 +900,18 @@ class FilamentPalette:
         Returns:
             (nearest_filament_record, distance) tuple.
         """
-        target_lab = rgb_to_lab(target_rgb)
-        
-        # Handle "*" wildcard filters (ignore filter if "*" is passed)
-        maker_filter = None if maker == "*" else maker
-        type_filter = None if type_name == "*" else type_name
-        finish_filter = None if finish == "*" else finish
-        
-        # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter, owned=owned)
-        
-        if not candidates:
-            raise ValueError("No filaments match the specified filters")
-
-        # Apply hue-angle filter if requested and target is chromatic
-        if max_hue_delta is not None:
-            candidates = _filter_by_hue(candidates, target_lab, max_hue_delta)
-            if not candidates:
-                raise ValueError(
-                    f"No filaments found within {max_hue_delta}° hue of the target color. "
-                    "Try a larger --max-hue-delta value."
-                )
-        
-        best_rec: Optional[FilamentRecord] = None
-        best_d = float("inf")
-
-        # Choose distance function
-        metric_l = metric.lower()
-        distance_fn: DistanceFunction
-        if metric_l in ("de2000", "ciede2000"):
-            distance_fn = delta_e_2000
-        elif metric_l in ("de94", "cie94"):
-            distance_fn = delta_e_94
-        elif metric_l in ("de76", "cie76"):
-            distance_fn = delta_e_76
-        elif metric_l == "euclidean":
-            distance_fn = lambda lab1, lab2: euclidean(lab1, lab2)
-        elif metric_l in ("cmc", "decmc"):
-            distance_fn = lambda lab1, lab2: delta_e_cmc(lab1, lab2, l=cmc_l, c=cmc_c)
-        elif metric_l == "hyab":
-            distance_fn = delta_e_hyab
-        else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
-
-        for rec in candidates:
-            try:
-                d = distance_fn(target_lab, rec.lab)
-                if d < best_d or (d == best_d and best_rec and should_prefer_source(rec.source, best_rec.source)):
-                    best_rec, best_d = rec, d
-            except:
-                # Skip filaments with invalid colors
-                continue
-        
-        if best_rec is None:
-            raise ValueError("No valid filaments found")
-
+        best_rec, best_d = self.nearest_filaments(
+            target_rgb,
+            metric,
+            1,
+            maker=maker,
+            type_name=type_name,
+            finish=finish,
+            owned=owned,
+            cmc_l=cmc_l,
+            cmc_c=cmc_c,
+            max_hue_delta=max_hue_delta,
+        )[0]
         logger.debug(
             "nearest_filament: target=%s metric=%s → %s %s %s (%.4f)",
             target_rgb, metric, best_rec.maker, best_rec.type, best_rec.color, best_d,
@@ -917,24 +958,80 @@ class FilamentPalette:
         Returns:
             List of (filament_record, distance) tuples sorted by distance (closest first).
         """
-        # Limit count to reasonable maximum
-        count = min(count, 50)
-        count = max(count, 1)
-        
-        target_lab = rgb_to_lab(target_rgb)
-        
-        # Handle "*" wildcard filters (ignore filter if "*" is passed)
         maker_filter = None if maker == "*" else maker
         type_filter = None if type_name == "*" else type_name
         finish_filter = None if finish == "*" else finish
-        
-        # Apply filters by calling our powerful filter() method first!
-        candidates = self.filter(maker=maker_filter, type_name=type_filter, finish=finish_filter, owned=owned)
-        
+        include = FilamentFilterCriteria(
+            maker=maker_filter,
+            type_name=type_filter,
+            finish=finish_filter,
+        )
+        return self.nearest_filaments_by_criteria(
+            target_rgb,
+            metric,
+            count,
+            include=include,
+            owned=owned,
+            cmc_l=cmc_l,
+            cmc_c=cmc_c,
+            max_hue_delta=max_hue_delta,
+        )
+
+    def nearest_filament_by_criteria(
+        self,
+        target_rgb: tuple[int, int, int],
+        metric: str = "de2000",
+        *,
+        include: FilamentFilterCriteria | None = None,
+        exclude: FilamentFilterCriteria | None = None,
+        owned: bool | None = None,
+        cmc_l: float = ColorConstants.CMC_L_DEFAULT,
+        cmc_c: float = ColorConstants.CMC_C_DEFAULT,
+        max_hue_delta: float | None = None,
+    ) -> tuple[FilamentRecord, float]:
+        """Find the nearest filament using reusable inclusion and exclusion criteria."""
+        best_record, best_distance = self.nearest_filaments_by_criteria(
+            target_rgb,
+            metric,
+            1,
+            include=include,
+            exclude=exclude,
+            owned=owned,
+            cmc_l=cmc_l,
+            cmc_c=cmc_c,
+            max_hue_delta=max_hue_delta,
+        )[0]
+        logger.debug(
+            "nearest_filament_by_criteria: target=%s metric=%s → %s %s %s (%.4f)",
+            target_rgb,
+            metric,
+            best_record.maker,
+            best_record.type,
+            best_record.color,
+            best_distance,
+        )
+        return best_record, best_distance
+
+    def nearest_filaments_by_criteria(
+        self,
+        target_rgb: tuple[int, int, int],
+        metric: str = "de2000",
+        count: int = 5,
+        *,
+        include: FilamentFilterCriteria | None = None,
+        exclude: FilamentFilterCriteria | None = None,
+        owned: bool | None = None,
+        cmc_l: float = ColorConstants.CMC_L_DEFAULT,
+        cmc_c: float = ColorConstants.CMC_C_DEFAULT,
+        max_hue_delta: float | None = None,
+    ) -> list[tuple[FilamentRecord, float]]:
+        """Find the nearest filaments using reusable inclusion and exclusion criteria."""
+        limited_count = max(1, min(count, 50))
+        target_lab = rgb_to_lab(target_rgb)
+        candidates = self.filter_by_criteria(include, exclude, owned=owned)
         if not candidates:
             raise ValueError("No filaments match the specified filters")
 
-        # Apply hue-angle filter if requested and target is chromatic
         if max_hue_delta is not None:
             candidates = _filter_by_hue(candidates, target_lab, max_hue_delta)
             if not candidates:
@@ -943,38 +1040,20 @@ class FilamentPalette:
                     "Try a larger --max-hue-delta value."
                 )
 
-        # Choose distance function
-        metric_l = metric.lower()
-        distance_fn: DistanceFunction
-        if metric_l in ("de2000", "ciede2000"):
-            distance_fn = delta_e_2000
-        elif metric_l in ("de94", "cie94"):
-            distance_fn = delta_e_94
-        elif metric_l in ("de76", "cie76"):
-            distance_fn = delta_e_76
-        elif metric_l == "euclidean":
-            distance_fn = lambda lab1, lab2: euclidean(lab1, lab2)
-        elif metric_l in ("cmc", "decmc"):
-            distance_fn = lambda lab1, lab2: delta_e_cmc(lab1, lab2, l=cmc_l, c=cmc_c)
-        elif metric_l == "hyab":
-            distance_fn = delta_e_hyab
-        else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
-
-        results: List[Tuple[FilamentRecord, float]] = []
-        for rec in candidates:
+        distance_fn = _resolve_distance_function(metric, cmc_l, cmc_c)
+        results: list[_FilamentMatch] = []
+        for record in candidates:
             try:
-                d = distance_fn(target_lab, rec.lab)
-                results.append((rec, d))
-            except:
-                # Skip filaments with invalid colors
+                distance = distance_fn(target_lab, record.lab)
+                results.append((record, distance))
+            except (ArithmeticError, ValueError):
                 continue
-        
+
         if not results:
             raise ValueError("No valid filaments found")
-        
-        results.sort(key=lambda x: x[1])
-        return results[:count]
+
+        results.sort(key=cmp_to_key(_compare_filament_matches))
+        return results[:limited_count]
 
     @property
     def makers(self) -> List[str]:

@@ -65,7 +65,13 @@ pip install color-match-tools[all]
 
 Installs everything: fuzzy matching + image processing + interactive manager + logging + MCP.
 
-All variants install the `color-tools` command globally in your terminal.
+All variants install `color-tools` as the canonical command and `color_tools` as
+a backward-compatible alias. Both commands invoke the same CLI as
+`python -m color_tools`.
+
+If an installed command reports a different version from `python -m color_tools`,
+your shell is resolving an older launcher from another Python installation. See
+the [troubleshooting guide](Troubleshooting.md#installed-command-runs-an-older-version).
 
 ## For Development
 

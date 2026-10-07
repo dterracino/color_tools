@@ -9,7 +9,7 @@ Welcome to the Color Tools API documentation! This library provides comprehensiv
 
 1. **As a library:** ``from color_tools import rgb_to_lab``
 2. **As a CLI tool:** ``python -m color_tools color --name coral``  
-3. **As installed command:** ``color_tools filament --list-makers`` (needs pip install)
+3. **As installed command:** ``color-tools filament --list-makers`` (needs pip install)
 
 Quick Start
 -----------
@@ -99,6 +99,7 @@ Color & Filament Data
 
    color_tools.palette
    color_tools.filament_palette
+   color_tools.filament_filter_criteria
    color_tools.filament_collections
    color_tools.naming
    color_tools.validation

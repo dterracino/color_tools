@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-[![Version](https://img.shields.io/badge/version-6.15.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-6.16.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
@@ -113,6 +113,9 @@ Use `Palette.from_hex(["#f00", "00ff00"])` for hex inputs, or
 RGB requires exactly three integers from 0 to 255; hex accepts three or six
 hexadecimal digits with an optional `#`. Invalid values raise `ValueError`.
 Factories preserve order and duplicate colors; auto-generated names may repeat.
+For direct batch naming, `generate_color_names(colors)` returns all `(name, match_type)`
+results after loading the CSS color data once. Use `iter_color_names(colors)` for lazy
+processing; it waits until iteration begins and still shares one data load.
 
 Choose a format explicitly using identifiers from `list_export_formats("colors")`;
 use the matching filename extension. Exporters that do not support palette metadata
@@ -183,6 +186,12 @@ palette metadata comments, and an optional `#version` directive.
 
 ### CLI Usage
 
+After installation, `color-tools` is the canonical command. The legacy
+`color_tools` spelling remains available as an alias. When developing from a
+checkout, use `python -m color_tools` (or `py -m color_tools` on Windows) to
+guarantee that Python runs the current source tree rather than an older launcher
+elsewhere on `PATH`.
+
 ```bash
 # Interactive wizard — guided prompts for color, filament, and convert
 # (requires: pip install color-match-tools[interactive])
@@ -218,6 +227,7 @@ color-tools image --file photo.jpg --quantize-palette cga4 --dither
 ```python
 from color_tools import (
     FilamentCollections,
+    FilamentFilterCriteria,
     FilamentPalette,
     Palette,
     delta_e_2000,
@@ -237,6 +247,13 @@ print(f"Nearest: {nearest.name} (ΔE: {distance:.2f})")
 filament_palette = FilamentPalette.load_default()
 filament, distance = filament_palette.nearest_filament((255, 128, 64))
 print(f"Filament: {filament.maker} {filament.color}")
+
+# Include red or blue PLA but exclude silk finishes; matching is case-insensitive
+filament, distance = filament_palette.nearest_filament_by_criteria(
+    (255, 128, 64),
+    include=FilamentFilterCriteria(type_name="pla", color=["red", "blue"]),
+    exclude=FilamentFilterCriteria(finish="silk"),
+)
 
 # Use a predefined, immutable filament collection
 for filament in FilamentCollections.BAMBU_PLA_BASIC:

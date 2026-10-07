@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "color-match-tools"
-version = "6.15.0"
+version = "6.16.0"
 description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
 readme = "README.md"
 requires-python = ">=3.10"
@@ -96,6 +96,7 @@ Changelog = "https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md"
 Documentation = "https://dterracino.github.io/color_tools/"
 
 [project.scripts]
+color-tools = "color_tools.cli:main"
 color_tools = "color_tools.cli:main"
 color-tools-mcp = "color_tools.mcp:main"
 

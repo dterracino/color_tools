@@ -639,6 +639,8 @@ class TestHandleFilamentCommand(unittest.TestCase):
         defaults = dict(
             value=None, hex=None,
             nearest=False, maker=None, type=None, finish=None, color=None,
+            exclude_maker=None, exclude_type=None,
+            exclude_finish=None, exclude_color=None,
             list_makers=False, list_types=False, list_finishes=False,
             list_export_formats=False, export=None, output=None,
             metric='de2000', count=1, cmc_l=2.0, cmc_c=1.0,
@@ -733,6 +735,31 @@ class TestHandleFilamentCommand(unittest.TestCase):
         args = self._make_args(nearest=True, hex='#FF0000', count=3)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
+
+    def test_exclusions_require_nearest(self):
+        """Exclusion options are deliberately scoped to nearest searches."""
+        args = self._make_args(exclude_finish=['Silk'])
+        code, _ = self._run_capture(args)
+        self.assertEqual(code, 2)
+
+    def test_nearest_honors_color_filter(self):
+        """The existing color option now constrains nearest candidates."""
+        args = self._make_args(nearest=True, hex='#FF0000', color='Red')
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn('Red', output)
+
+    def test_nearest_honors_exclusion_filter(self):
+        """Nearest searches exclude records matching all exclusion fields."""
+        args = self._make_args(
+            nearest=True,
+            hex='#FF0000',
+            maker=['Bambu Lab'],
+            exclude_maker=['Bambu Lab'],
+        )
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 1)
+        self.assertIn('No filaments match', output)
 
     def test_nearest_invalid_hex_exits_2(self):
         """--nearest with invalid hex exits 2."""
