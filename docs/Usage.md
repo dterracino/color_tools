@@ -132,6 +132,8 @@ gameboy_image.save("gameboy_style.png")
 #### Color Conversions
 
 - `rgb_to_lab()`, `lab_to_rgb()` - RGB ↔ LAB conversion (most common)
+- `rgb_to_lab_array()` - shape-preserving NumPy conversion for sRGB arrays shaped `(..., 3)`;
+  its LAB output can be passed directly to `delta_e_2000_array()` (requires the `[image]` extra)
 - `rgb_to_lch()`, `lch_to_rgb()` - RGB ↔ LCH conversion  
 - `rgb_to_hsl()`, `hsl_to_rgb()` - RGB ↔ HSL conversion (0-360, 0-100, 0-100 range)
 - `rgb_to_winhsl240()` - RGB → winHSL240: Windows OS (Paint, WordPad, Win32 GDI) — H: 0–239, S/L: 0–240
@@ -150,6 +152,7 @@ gameboy_image.save("gameboy_style.png")
 #### Distance Metrics
 
 - `delta_e_2000()` - CIEDE2000 (recommended)
+- `delta_e_2000_array()` - vectorized CIEDE2000 for NumPy arrays (requires the `[image]` extra)
 - `delta_e_94()` - CIE94
 - `delta_e_76()` - CIE76
 - `delta_e_cmc()` - CMC color difference

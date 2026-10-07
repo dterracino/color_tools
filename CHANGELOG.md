@@ -15,7 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
 - **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
-## [6.13.3] - 2026-10-06
+## [6.14.0] - 2026-10-06
 
 ### Fixed
 
@@ -27,6 +27,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Array RGB to LAB conversion** — added public `rgb_to_lab_array()` support for sRGB
+  colors, palettes, and images shaped `(..., 3)`. It preserves leading dimensions, returns
+  `float64` LAB values, and composes directly with `delta_e_2000_array()`.
 - **Wheel typing regression gate** — CI now builds and installs the wheel in an isolated
   environment, verifies the bundled `py.typed` public surface, and checks a strict external
   consumer covering core, NumPy, image, filament, and MCP APIs.

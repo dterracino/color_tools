@@ -31,11 +31,15 @@ Example:
 """
 
 from __future__ import annotations
-from typing import Optional, Tuple
+from typing import TYPE_CHECKING, Optional, Tuple
 import math
 import colorsys
 
 from .constants import ColorConstants
+
+if TYPE_CHECKING:
+    import numpy as np
+    from numpy.typing import ArrayLike, NDArray
 
 
 # ============================================================================
@@ -109,7 +113,7 @@ def _srgb_to_linear(c: float) -> float:
     return ((c + ColorConstants.SRGB_GAMMA_OFFSET) / ColorConstants.SRGB_GAMMA_DIVISOR) ** ColorConstants.SRGB_GAMMA_POWER
 
 
-def rgb_to_xyz(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
+def rgb_to_xyz(rgb: Tuple[int | float, int | float, int | float]) -> Tuple[float, float, float]:
     """
     Convert sRGB (0-255) to CIE XYZ using D65 illuminant.
     
@@ -167,7 +171,7 @@ def xyz_to_lab(xyz: Tuple[float, float, float]) -> Tuple[float, float, float]:
     b = ColorConstants.LAB_B_SCALE * (fy - fz)
     return (L, a, b)
 
-def rgb_to_lab(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
+def rgb_to_lab(rgb: Tuple[int | float, int | float, int | float]) -> Tuple[float, float, float]:
 
     """
     Convert sRGB (0-255) to CIE L*a*b*.
@@ -176,6 +180,61 @@ def rgb_to_lab(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     Goes RGB → XYZ → LAB in one shot.
     """
     return xyz_to_lab(rgb_to_xyz(rgb))
+
+
+def rgb_to_lab_array(rgb: ArrayLike) -> NDArray[np.float64]:
+    """Convert one or more sRGB colors to CIE L*a*b* using D65.
+
+    The final dimension contains the red, green, and blue channels in the
+    0-255 sRGB range. Any leading dimensions are preserved, so a single color
+    with shape ``(3,)``, a palette with shape ``(n, 3)``, and an image with
+    shape ``(height, width, 3)`` produce LAB arrays with the same respective
+    shapes. The returned array always has the ``numpy.float64`` dtype.
+
+    Each color is converted by :func:`rgb_to_lab`, keeping the scalar and array
+    conversion behavior consistent. The result can be passed directly to
+    :func:`color_tools.distance.delta_e_2000_array` for vectorized color
+    difference calculations.
+
+    Args:
+        rgb: Array-like sRGB values with a trailing dimension of size 3.
+
+    Returns:
+        A ``numpy.float64`` array of CIE L*a*b* values with the same shape as
+        ``rgb``.
+
+    Raises:
+        ImportError: If NumPy is not installed.
+        ValueError: If ``rgb`` does not have a trailing dimension of size 3.
+
+    Example:
+        >>> import numpy as np
+        >>> from color_tools import delta_e_2000_array, rgb_to_lab_array
+        >>> rgb = np.array([[255, 0, 0], [0, 255, 0]], dtype=np.uint8)
+        >>> lab = rgb_to_lab_array(rgb)
+        >>> lab.shape
+        (2, 3)
+        >>> delta_e_2000_array(lab, lab[0]).shape
+        (2,)
+    """
+    try:
+        import numpy as np
+    except ImportError as exc:  # pragma: no cover - depends on installation extras
+        raise ImportError("rgb_to_lab_array requires NumPy to be installed") from exc
+
+    rgb_array = np.asarray(rgb, dtype=np.float64)
+    if rgb_array.ndim == 0 or rgb_array.shape[-1] != 3:
+        raise ValueError("rgb must have a trailing dimension of size 3")
+
+    colors = np.reshape(rgb_array, (-1, 3))
+    converted = np.asarray(
+        [
+            rgb_to_lab((float(color[0]), float(color[1]), float(color[2])))
+            for color in colors
+        ],
+        dtype=np.float64,
+    )
+    return np.reshape(converted, rgb_array.shape)
 
 
 # ============================================================================

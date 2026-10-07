@@ -16,6 +16,7 @@ from color_tools import (
     delta_e_2000,
     delta_e_2000_array,
     rgb_to_lab,
+    rgb_to_lab_array,
 )
 from color_tools.image import simulate_cvd_image
 from color_tools.mcp.models import ColorCoordinates
@@ -43,6 +44,12 @@ array_distances = delta_e_2000_array(
     np.array([[51.0, 0.0, 0.0]], dtype=np.float64),
 )
 assert_type(array_distances, NDArray[np.float64])
+
+lab_array = rgb_to_lab_array(
+    np.array([[255, 128, 64], [0, 0, 0]], dtype=np.uint8)
+)
+assert_type(lab_array, NDArray[np.float64])
+assert_type(delta_e_2000_array(lab_array, lab_array[0]), NDArray[np.float64])
 
 assert_type(simulate_cvd_image("sample.png", "protanopia"), Image.Image)
 

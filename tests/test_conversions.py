@@ -4,6 +4,11 @@ import unittest
 import sys
 from pathlib import Path
 
+try:
+    import numpy as np
+except ImportError:  # pragma: no cover - optional dependency in some environments
+    np = None
+
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent
 if str(parent_dir) not in sys.path:
@@ -11,7 +16,7 @@ if str(parent_dir) not in sys.path:
 
 from color_tools.conversions import (
     hex_to_rgb, rgb_to_hex,
-    rgb_to_lab, lab_to_rgb,
+    rgb_to_lab, rgb_to_lab_array, lab_to_rgb,
     rgb_to_lch, lch_to_rgb,
     lab_to_lch, lch_to_lab,
     rgb_to_xyz, xyz_to_rgb,
@@ -23,6 +28,60 @@ from color_tools.conversions import (
     rgb_to_cmy, cmy_to_rgb,
     rgb_to_cmyk, cmyk_to_rgb,
 )
+
+
+@unittest.skipIf(np is None, "NumPy is not installed")
+class TestRGBToLABArray(unittest.TestCase):
+    """Test shape-preserving array conversion from RGB to LAB."""
+
+    def test_single_color_matches_scalar_conversion(self):
+        """A single RGB color should match rgb_to_lab exactly."""
+        assert np is not None
+        actual = rgb_to_lab_array([255, 128, 64])
+
+        np.testing.assert_allclose(actual, rgb_to_lab((255, 128, 64)))
+        self.assertEqual(actual.shape, (3,))
+        self.assertEqual(actual.dtype, np.float64)
+
+    def test_palette_preserves_shape_and_values(self):
+        """A palette should retain its leading dimension and scalar values."""
+        assert np is not None
+        rgb = np.array([[255, 0, 0], [0, 255, 0], [0, 0, 255]], dtype=np.uint8)
+
+        actual = rgb_to_lab_array(rgb)
+        expected = np.asarray(
+            [rgb_to_lab((int(color[0]), int(color[1]), int(color[2]))) for color in rgb],
+            dtype=np.float64,
+        )
+
+        np.testing.assert_allclose(actual, expected)
+        self.assertEqual(actual.shape, rgb.shape)
+
+    def test_image_preserves_all_leading_dimensions(self):
+        """Image-shaped input should produce an equally shaped LAB image."""
+        assert np is not None
+        rgb = np.array(
+            [[[255, 255, 255], [0, 0, 0]], [[255, 0, 0], [0, 255, 0]]],
+            dtype=np.uint8,
+        )
+
+        actual = rgb_to_lab_array(rgb)
+
+        self.assertEqual(actual.shape, (2, 2, 3))
+        np.testing.assert_allclose(actual[1, 0], rgb_to_lab((255, 0, 0)))
+
+    def test_empty_palette_preserves_shape(self):
+        """An empty palette with RGB channels should remain empty and shaped."""
+        assert np is not None
+        actual = rgb_to_lab_array(np.empty((0, 3), dtype=np.uint8))
+
+        self.assertEqual(actual.shape, (0, 3))
+        self.assertEqual(actual.dtype, np.float64)
+
+    def test_rejects_invalid_trailing_dimension(self):
+        """Inputs must identify colors with exactly three trailing channels."""
+        with self.assertRaisesRegex(ValueError, "trailing dimension of size 3"):
+            rgb_to_lab_array([[255, 0, 0, 255]])
 
 
 class TestHexRGBConversions(unittest.TestCase):

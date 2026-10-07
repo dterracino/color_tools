@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-[![Version](https://img.shields.io/badge/version-6.13.3-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-6.14.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
@@ -222,6 +222,27 @@ for filament in FilamentCollections.BAMBU_PLA_BASIC:
 ```
 
 See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md) for complete API reference and CLI documentation.
+
+### Array RGB to LAB Conversion
+
+Install the image extra to use the NumPy-based array APIs:
+
+```bash
+pip install "color-match-tools[image]"
+```
+
+`rgb_to_lab_array` accepts colors, palettes, and images shaped `(..., 3)` and preserves
+their shape. Its `float64` LAB output can be passed directly to `delta_e_2000_array`:
+
+```python
+import numpy as np
+
+from color_tools import delta_e_2000_array, rgb_to_lab_array
+
+rgb = np.array([[255, 0, 0], [0, 255, 0], [0, 0, 255]], dtype=np.uint8)
+lab = rgb_to_lab_array(rgb)
+distances_from_red = delta_e_2000_array(lab, lab[0])
+```
 
 ### Color Harmonies
 
