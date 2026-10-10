@@ -832,10 +832,14 @@ pip install color-match-tools[interactive]
 **Launch the Manager:**
 
 ```bash
-color-tools filament --manage
+color-tools filament --interactive
 # or
-python -m color_tools filament --manage
+python -m color_tools filament --interactive
 ```
+
+`filament --manage` remains available as an alias. This is separate from the
+top-level `color-tools --interactive` guided wizard for color, filament, and
+conversion searches.
 
 **Interface Overview:**
 
@@ -883,6 +887,9 @@ Press `f` to enter filter mode and narrow down the filament list:
 
 **Filter Mode Key Bindings:**
 
+All printable letters are entered as filter text in this mode, including letters
+used for manager actions such as `s` (save), `r` (revert), and `c` (clear).
+
 | Key | Action |
 | ----- | -------- |
 | **Type** | Enter text to filter (case-insensitive substring match) |
@@ -921,7 +928,7 @@ Total owned: 42 → 44
 
 **Browse and add filaments:**
 
-1. Launch manager: `color-tools filament --manage`
+1. Launch manager: `color-tools filament --interactive`
 2. Use arrow keys or Page Up/Down to browse
 3. Press Space to mark filaments as owned (checkboxes toggle)
 4. Press `s` to save changes
@@ -959,6 +966,52 @@ Total owned: 42 → 44
 - Press `c` to quickly clear all filters and see the full list again
 - The yellow asterisk (*) next to owned count reminds you of unsaved changes
 - Exit summary compares original state to final saved state (captures all saves during session)
+
+### PySide6 Desktop Filament Manager
+
+For a desktop manager with color swatches, live filters, ownership checkboxes,
+and save/revert controls, install the separate optional `[gui]` extra:
+
+```bash
+pip install color-match-tools[gui]
+color-tools filament --gui
+```
+
+The desktop manager shows each filament's effective color in a swatch, alongside
+its maker, type, finish, color name, TD value, and ID. Filter by maker, type,
+finish, and color name; check or uncheck filaments to edit your owned list. Select **Save
+changes** to persist edits or **Revert** to restore the last saved list. Closing
+with unsaved edits offers save, discard, or cancel.
+
+The **File** menu provides **Save**, **Reload**, **Export Owned...**, and
+**Exit**. Reload reads the owned list from disk and prompts about pending edits
+first. Export Owned... exports all currently owned filament records, regardless
+of the active view or filters. Its dialog provides editable Generic CSV,
+Generic JSON, AutoForge CSV, and Custom text templates, a file extension field,
+and a live preview. Templates use `<%=loop_start%>` and `<%=loop_end%>` to mark
+the repeated-record block and tags such as `<%=maker%>`, `<%=color%>`, and
+`<%=td_value%>` for record values. The tag selector and **Insert tag** button
+add the selected tag at the editor cursor, and template tags are colorized.
+Nested values support sequence indexes and object or mapping properties, for
+example `<%=rgb[0]%>`, `<%=rgb.r%>`, and `<%=metadata["key"]%>`. Bracketed
+mapping keys must be quoted; paths read values only and do not evaluate
+expressions or call methods. Add a Python format spec after a colon to control
+output, for example `<%=td_value:.3f%>` or `<%=maker:>24%>`. Formatting follows
+Python's standard format mini-language; for JSON, formatted numeric values stay
+numbers when the result is a valid JSON number, while other formatted values
+are emitted as strings. When a format spec is applied to a sequence, it is
+applied to each item; for example, `<%=lab:.3f%>` emits all LAB components as a
+formatted JSON array. You can edit a preset or change the extension to adapt it
+to another tool; JSON templates must produce valid JSON. The compact
+template editor uses a fixed-width font, inserts four spaces when you press
+Tab, and preserves the current line's indentation when you press Enter. The
+**View** menu switches between **Owned** and **All Filaments** without changing
+ownership.
+
+The terminal manager remains available with
+`color-tools filament --interactive` (or `--manage`) and requires the separate
+`[interactive]` extra. The top-level `color-tools --interactive` is the guided
+search wizard and is independent of both library managers.
 
 ### Interactive Wizard *(requires [interactive] extra)*
 

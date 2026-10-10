@@ -1,5 +1,4 @@
 # Development dependencies — defined in pyproject.toml [project.optional-dependencies]
 # Install with: pip install -r requirements-dev.txt
 # Installs the local package in editable mode with all extras.
--e .[fuzzy,image,interactive,logging,mcp,dev,docs]
-
+-e .[fuzzy,image,interactive,gui,logging,mcp,dev,docs]

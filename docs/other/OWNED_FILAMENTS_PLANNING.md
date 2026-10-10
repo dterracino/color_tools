@@ -1,8 +1,8 @@
 # Planning Document: Owned Filaments Management System
 
-**Document Purpose**: Explore approaches for implementing a system to track which filaments a user owns, allowing them to filter searches and queries to their personal inventory.
+**Document Purpose**: Historical exploration of approaches for tracking which filaments a user owns, allowing searches to be filtered to their personal inventory.
 
-**Status**: PLANNING ONLY - No implementation yet  
+**Status**: IMPLEMENTED - This document is retained as design history. The current file format and usage are documented in [Customization.md](../Customization.md#owned-filamentsjson---filament-ownership-tracking).
 **Date**: February 20, 2026
 
 ---
@@ -72,33 +72,20 @@ FilamentPalette.nearest_filaments(target_rgb, count=5, maker=..., ...)
 
 ### Concept
 
-Create a new file `owned-filaments.json` that contains a list of filament IDs.
+Use a separate `owned-filaments.json` file containing a list of filament IDs.
 
-### File Format Options
-
-#### Option A: Simple List
-
-```json
-[
-  "bambu-lab-pla-basic-black",
-  "polymaker-pla-matte-red",
-  "my-custom-filament-id"
-]
-```
-
-#### Option B: Structured
+### Implemented File Format
 
 ```json
 {
-  "owned_ids": [
-    "bambu-lab-pla-basic-black",
-    "polymaker-pla-matte-red"
-  ],
-  "notes": {
-    "bambu-lab-pla-basic-black": "Bought 2024-01-15, 2 spools left"
-  }
+  "owned_filaments": [
+    "bambu-lab_pla-matte_jet-black",
+    "polymaker_polyterra-pla_charcoal-black"
+  ]
 }
 ```
+
+The `owned_filaments` property is required and must be a list of filament ID strings. An empty list represents an empty inventory. The earlier `owned_ids` proposal is not accepted by the current loader; see the [Customization Guide](../Customization.md#owned-filamentsjson---filament-ownership-tracking) for the supported format and behavior.
 
 ### Pros
 

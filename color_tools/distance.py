@@ -21,18 +21,18 @@ Non-LAB metrics:
 
 Example:
     >>> from color_tools import rgb_to_lab, delta_e_2000
-    >>> 
+    >>>
     >>> # Compare two similar reds
     >>> red1 = rgb_to_lab((255, 0, 0))    # Pure red
     >>> red2 = rgb_to_lab((250, 5, 5))    # Slightly darker red
-    >>> 
+    >>>
     >>> # Calculate perceptual difference
     >>> distance = delta_e_2000(red1, red2)
     >>> print(f"ΔE2000: {distance:.2f}")
     ΔE2000: 2.85
-    >>> 
+    >>>
     >>> # ΔE < 1.0 = imperceptible
-    >>> # ΔE < 2.0 = barely noticeable  
+    >>> # ΔE < 2.0 = barely noticeable
     >>> # ΔE < 5.0 = noticeable but acceptable
     >>> if distance < 2.0:
     ...     print("Colors are nearly identical!")
@@ -61,7 +61,7 @@ from .constants import ColorConstants
 def euclidean(v1: Tuple[float, ...], v2: Tuple[float, ...]) -> float:
     """
     Simple Euclidean distance between two vectors.
-    
+
     The classic √((x₁-x₂)² + (y₁-y₂)² + (z₁-z₂)²) formula.
     Works for any dimensionality, not just colors!
     """
@@ -71,13 +71,13 @@ def euclidean(v1: Tuple[float, ...], v2: Tuple[float, ...]) -> float:
 def hue_diff_deg(h1: float, h2: float) -> float:
     """
     Calculate hue difference accounting for circular nature (0° = 360°).
-    
-    Hue is circular (like a clock), so the difference between 359° and 1° 
+
+    Hue is circular (like a clock), so the difference between 359° and 1°
     should be 2°, not 358°! This function finds the smallest angular difference.
-    
+
     Args:
         h1, h2: Hue angles in degrees
-    
+
     Returns:
         Smallest hue difference in degrees (0-180)
     """
@@ -88,7 +88,7 @@ def hue_diff_deg(h1: float, h2: float) -> float:
 def hsl_euclidean(hsl1: Tuple[float, float, float], hsl2: Tuple[float, float, float]) -> float:
     """
     Euclidean distance in HSL space (accounting for hue circularity).
-    
+
     Note: HSL distance doesn't match human perception well - LAB is better!
     This is here for compatibility with systems that work in HSL.
     """
@@ -105,19 +105,19 @@ def hsl_euclidean(hsl1: Tuple[float, float, float], hsl2: Tuple[float, float, fl
 def delta_e_76(lab1: Tuple[float, float, float], lab2: Tuple[float, float, float]) -> float:
     """
     Delta E 1976 (CIE76) - Simple Euclidean distance in LAB space.
-    
+
     The OG color difference formula! Just treats LAB like any other 3D space
     and measures straight-line distance.
-    
+
     **Pros:** Fast and simple
     **Cons:** Doesn't match human perception well, especially for saturated colors
-    
+
     A ΔE of 1.0 is supposedly the "just noticeable difference" but in reality
     it varies based on the colors involved.
-    
+
     Args:
         lab1, lab2: L*a*b* color tuples
-    
+
     Returns:
         Delta E 1976 value (lower = more similar)
     """
@@ -139,27 +139,27 @@ def delta_e_94(
 ) -> float:
     """
     Delta E 1994 (CIE94) - Improved perceptual uniformity.
-    
+
     CIE94 realized that humans are more sensitive to lightness differences
     than chroma differences, and more sensitive to chroma than hue. This
     formula weights things accordingly!
-    
+
     **Better than CIE76 but still has issues with saturated colors.**
-    
+
     Args:
         lab1, lab2: L*a*b* color tuples
         kL, kC, kH: Weighting factors (usually all 1.0)
         K1, K2: Chroma and hue weighting constants (use defaults if None)
-    
+
     Returns:
         Delta E 1994 value (lower = more similar)
     """
     k1_value = ColorConstants.DE94_K1 if K1 is None else K1
     k2_value = ColorConstants.DE94_K2 if K2 is None else K2
-        
+
     L1, a1, b1 = lab1
     L2, a2, b2 = lab2
-    
+
     # Calculate differences
     dL = L1 - L2
     C1 = math.hypot(a1, b1)  # Chroma of color 1
@@ -167,15 +167,15 @@ def delta_e_94(
     dC = C1 - C2
     da = a1 - a2
     db = b1 - b2
-    
+
     # Hue difference (derived from a, b differences)
     dH_sq = da*da + db*db - dC*dC
-    
+
     # Weighting functions (make the formula perceptually uniform)
     lightness_weight = ColorConstants.NORMALIZED_MAX
     chroma_weight = ColorConstants.NORMALIZED_MAX + k1_value * C1
     hue_weight = ColorConstants.NORMALIZED_MAX + k2_value * C1
-    
+
     return math.sqrt(
         (dL / (kL * lightness_weight)) ** 2
         + (dC / (kC * chroma_weight)) ** 2
@@ -203,7 +203,7 @@ def _hp(ap: float, b: float) -> float:
 def _mean_hue(h1: float, h2: float, C1p: float, C2p: float) -> float:
     """
     Helper for CIEDE2000 mean hue calculation.
-    
+
     Handles the tricky case of averaging hues near the 0°/360° boundary.
     You can't just average 10° and 350° to get 180° - that's wrong!
     The mean should be 0° (or 360°).
@@ -229,26 +229,26 @@ def delta_e_2000(
 ) -> float:
     """
     Delta E 2000 (CIEDE2000) - Current gold standard for color difference.
-    
+
     This is THE formula to use for color matching! After decades of research,
     CIEDE2000 finally handles all the edge cases that tripped up earlier formulas:
     - Neutral colors (low chroma)
     - Blue hues (which humans perceive differently)
     - Lightness differences at different brightness levels
-    
+
     The formula is... complex. It's got rotation terms, weighting functions,
     and special handling for different hue regions. But it WORKS!
-    
+
     **Fun fact:** A ΔE2000 of 1.0 is roughly the "just noticeable difference"
     for most colors. ΔE < 2 is considered imperceptible for most applications.
-    
+
     Args:
         lab1, lab2: L*a*b* color tuples
         kL, kC, kH: Weighting factors (usually all 1.0)
             - kL for lightness
             - kC for chroma
             - kH for hue
-    
+
     Returns:
         Delta E 2000 value (lower = more similar)
     """
@@ -263,7 +263,7 @@ def delta_e_2000(
     C_bar7 = C_bar ** 7
     pow7_term = ColorConstants.DE2000_POW7_BASE ** 7
     G = 0.5 * (1.0 - math.sqrt(C_bar7 / (C_bar7 + pow7_term)))
-    
+
     # a' (a-prime) - adjusted a values
     a1p = (1.0 + G) * a1
     a2p = (1.0 + G) * a2
@@ -277,7 +277,7 @@ def delta_e_2000(
     # Step 3: Calculate differences in L', C', and H'
     dLp = L2 - L1
     dCp = C2p - C1p
-    
+
     # Hue difference (accounting for circularity)
     if C1p * C2p == 0:
         dhp = 0.0
@@ -288,7 +288,7 @@ def delta_e_2000(
         elif dh < -ColorConstants.HUE_HALF_CIRCLE_DEGREES:
             dh += ColorConstants.HUE_CIRCLE_DEGREES
         dhp = dh
-    
+
     dHp = 2.0 * math.sqrt(C1p * C2p) * math.sin(math.radians(dhp * 0.5))
 
     # Step 4: Calculate mean values
@@ -305,24 +305,24 @@ def delta_e_2000(
         + ColorConstants.DE2000_HUE_WEIGHT_3 * math.cos(math.radians(ColorConstants.DE2000_HUE_MULT_3 * hp_bar + ColorConstants.DE2000_HUE_OFFSET_3))
         - ColorConstants.DE2000_HUE_WEIGHT_4 * math.cos(math.radians(ColorConstants.DE2000_HUE_MULT_4 * hp_bar - ColorConstants.DE2000_HUE_OFFSET_4))
     )
-    
+
     # d_ro: Rotation term for blue region
     d_ro = ColorConstants.DE2000_DRO_MULT * math.exp(-(((hp_bar - ColorConstants.DE2000_DRO_CENTER) / ColorConstants.DE2000_DRO_DIVISOR) ** 2))
-    
+
     # RC: Rotation function
     Cp_bar7 = Cp_bar ** 7
     RC = 2.0 * math.sqrt(Cp_bar7 / (Cp_bar7 + pow7_term))
-    
+
     # Lightness weighting
     L_diff = Lp_bar - ColorConstants.DE2000_L_OFFSET
     SL = ColorConstants.NORMALIZED_MAX + (ColorConstants.DE2000_L_WEIGHT * (L_diff ** 2)) / math.sqrt(ColorConstants.DE2000_L_DIVISOR + (L_diff ** 2))
-    
+
     # Chroma weighting
     SC = ColorConstants.NORMALIZED_MAX + ColorConstants.DE2000_C_WEIGHT * Cp_bar
-    
+
     # Hue weighting
     SH = ColorConstants.NORMALIZED_MAX + ColorConstants.DE2000_H_WEIGHT * Cp_bar * T
-    
+
     # Rotation term (interaction between chroma and hue)
     RT = -math.sin(math.radians(2.0 * d_ro)) * RC
 
@@ -335,7 +335,6 @@ def delta_e_2000(
         + RT * (dCp / (kC * SC)) * (dHp / (kH * SH))
     )
     return dE
-
 
 def delta_e_2000_array(
     lab1: ArrayLike,
@@ -452,7 +451,6 @@ def delta_e_2000_array(
         + RT * (dCp / (kC * SC)) * (dHp / (kH * SH))
     )
 
-
 # ============================================================================
 # Delta E CMC - Textile Industry Standard
 # ============================================================================
@@ -465,22 +463,22 @@ def delta_e_cmc(
 ) -> float:
     """
     Delta E CMC(l:c) - Color difference formula used in textile industry.
-    
+
     CMC was developed specifically for textile color matching, where the
     context matters (viewing conditions, material properties, etc.).
-    
+
     The l:c ratio lets you tune the formula for different use cases:
     - **CMC(2:1)** - "Acceptability" → Used to judge if colors match well enough
     - **CMC(1:1)** - "Perceptibility" → More strict, for detecting differences
-    
+
     **Why two ratios?** Turns out humans are more forgiving of color differences
     when deciding "is this acceptable?" vs "can I see a difference?"
-    
+
     Args:
         lab1, lab2: L*a*b* color tuples
         l: Lightness weight (2.0 for acceptability, 1.0 for perceptibility)
         c: Chroma weight (usually 1.0)
-    
+
     Returns:
         Delta E CMC value (lower = more similar)
     """
@@ -505,7 +503,7 @@ def delta_e_cmc(
         sl = ColorConstants.CMC_L_LOW
     else:
         sl = (ColorConstants.CMC_L_SCALE * L1) / (ColorConstants.NORMALIZED_MAX + ColorConstants.CMC_L_DIVISOR * L1)
-    
+
     # Chroma weight
     SC = ColorConstants.CMC_C_SCALE * C1 / (ColorConstants.NORMALIZED_MAX + ColorConstants.CMC_C_DIVISOR * C1) + ColorConstants.CMC_C_OFFSET
 

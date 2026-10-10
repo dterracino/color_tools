@@ -135,8 +135,12 @@ class InteractiveFilamentManager:
         """Build the prompt_toolkit UI layout."""
         # Create key bindings
         kb = KeyBindings()
+        from prompt_toolkit.filters import Condition
+
+        filter_mode = Condition(lambda: self.filter_mode)
+        normal_mode = ~filter_mode
         
-        @kb.add('q')
+        @kb.add('q', filter=normal_mode)
         def quit_app(event: KeyPressEvent) -> None:
             """Quit the application."""
             if self.changes_made:
@@ -146,7 +150,7 @@ class InteractiveFilamentManager:
             else:
                 event.app.exit()
         
-        @kb.add('y')
+        @kb.add('y', filter=normal_mode)
         def confirm_yes(event: KeyPressEvent) -> None:
             """Confirm save and quit."""
             if self.quit_confirm_mode:
@@ -154,7 +158,7 @@ class InteractiveFilamentManager:
                 self.palette.save_owned()
                 event.app.exit()
         
-        @kb.add('n')
+        @kb.add('n', filter=normal_mode)
         def confirm_no(event: KeyPressEvent) -> None:
             """Quit without saving."""
             if self.quit_confirm_mode:
@@ -243,7 +247,7 @@ class InteractiveFilamentManager:
                     self.scroll_offset = max(self.current_index, 0)
                 self._update_display()
         
-        @kb.add('s')
+        @kb.add('s', filter=normal_mode)
         def save_and_continue(event: KeyPressEvent) -> None:
             """Save changes."""
             if not self.filter_mode and not self.quit_confirm_mode:
@@ -252,7 +256,7 @@ class InteractiveFilamentManager:
                 self.changes_made = False
                 self._update_display()
         
-        @kb.add('r')
+        @kb.add('r', filter=normal_mode)
         def revert_changes(event: KeyPressEvent) -> None:
             """Revert unsaved ownership changes."""
             if not self.filter_mode and not self.quit_confirm_mode:
@@ -261,7 +265,7 @@ class InteractiveFilamentManager:
                 self.changes_made = False
                 self._update_display()
         
-        @kb.add('c')
+        @kb.add('c', filter=normal_mode)
         def clear_filters(event: KeyPressEvent) -> None:
             """Clear all filters."""
             if not self.filter_mode and not self.quit_confirm_mode:
@@ -272,7 +276,7 @@ class InteractiveFilamentManager:
                 self._apply_filters()
                 self._update_display()
         
-        @kb.add('f')
+        @kb.add('f', filter=normal_mode)
         def enter_filter_mode(event: KeyPressEvent) -> None:
             """Enter filter mode."""
             if not self.filter_mode and not self.quit_confirm_mode:
@@ -309,10 +313,8 @@ class InteractiveFilamentManager:
                 self._apply_filters()
                 self._update_display()
         
-        # Handle text input in filter mode (only catch specific keys that aren't bound)
-        from prompt_toolkit.filters import Condition
-        
-        @kb.add('<any>', filter=Condition(lambda: self.filter_mode))
+        # Route printable keys, including action letters, to the active filter.
+        @kb.add('<any>', filter=filter_mode)
         def handle_text_input(event: KeyPressEvent) -> None:
             """Handle text input in filter mode."""
             if event.data and len(event.data) == 1 and event.data.isprintable():

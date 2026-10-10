@@ -37,6 +37,11 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
         print("Error: exclusion filters require --nearest", file=sys.stderr)
         sys.exit(2)
 
+    if getattr(args, 'gui', False):
+        from ...filament_manager_gui import run_filament_manager_gui
+        run_filament_manager_gui(json_dir=json_path)
+        return
+
     # Handle --manage (interactive mode) early - doesn't need palette loaded yet
     if hasattr(args, 'manage') and args.manage:
         from ...interactive_manager import run_interactive_manager

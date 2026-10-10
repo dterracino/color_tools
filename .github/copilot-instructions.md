@@ -121,14 +121,16 @@ The project has **zero required external dependencies** (pure Python stdlib).
 **Optional extras** for additional functionality:
 - `[image]` - Image processing (requires Pillow >= 10.0.0)
 - `[interactive]` - Interactive filament library manager TUI (requires prompt_toolkit >= 3.0.0)
+- `[gui]` - PySide6 desktop filament library manager
 - `[mcp]` - Color Tools MCP server (requires MCP Python SDK >= 2.0.0)
-- `[all]` - All optional user-facing features (fuzzy + image + interactive + logging + MCP)
+- `[all]` - All optional user-facing features (fuzzy + image + interactive + gui + logging + MCP)
 
 **Installation:**
 ```bash
 pip install color-match-tools              # Base only
 pip install color-match-tools[image]       # + Image processing
 pip install color-match-tools[interactive] # + Interactive TUI
+pip install color-match-tools[gui]          # + PySide6 desktop manager
 pip install color-match-tools[mcp]         # + MCP agent integration
 pip install color-match-tools[all]         # Everything
 ```

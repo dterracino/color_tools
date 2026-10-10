@@ -18,7 +18,7 @@ import sys
 import unittest
 from unittest.mock import patch
 
-from color_tools.cli import main
+from color_tools.cli import build_parser, main
 
 
 class TestCliMain(unittest.TestCase):
@@ -92,6 +92,30 @@ class TestCliMain(unittest.TestCase):
         """filament --list-makers exits 0."""
         code, _, _ = self._run(['filament', '--list-makers'])
         self.assertEqual(code, 0)
+
+    def test_filament_interactive_aliases_manage(self):
+        """filament --interactive and --manage select the same manager option."""
+        parser = build_parser()
+        for option in ('--interactive', '--manage'):
+            with self.subTest(option=option):
+                args = parser.parse_args(['filament', option])
+                self.assertTrue(args.manage)
+
+    def test_filament_gui_option(self):
+        """filament --gui selects the optional desktop manager."""
+        args = build_parser().parse_args(['filament', '--gui'])
+        self.assertTrue(args.gui)
+
+    def test_filament_gui_dispatches_to_desktop_manager(self):
+        """filament --gui dispatches to the optional desktop manager."""
+        with patch(
+            'color_tools.filament_manager_gui.run_filament_manager_gui'
+        ) as run_gui:
+            with patch.object(sys, 'argv', ['color-tools', 'filament', '--gui']):
+                with patch('sys.stdout', io.StringIO()):
+                    main()
+
+        run_gui.assert_called_once_with(json_dir=None)
 
     def test_convert_hex_to_lab_exits_0(self):
         """convert --hex #FF0000 --to lab exits 0."""

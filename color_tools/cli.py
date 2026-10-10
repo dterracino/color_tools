@@ -432,8 +432,14 @@ Examples:
     )
     filament_parser.add_argument(
         "--manage",
+        "--interactive",
         action="store_true",
         help="Launch interactive filament library manager (requires [interactive] extra)"
+    )
+    filament_parser.add_argument(
+        "--gui",
+        action="store_true",
+        help="Launch the PySide6 desktop filament manager (requires [gui] extra)"
     )
     filament_parser.add_argument(
         "--all-filaments",

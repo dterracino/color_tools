@@ -1,0 +1,3 @@
+# PySide6 desktop filament manager — defined in pyproject.toml [project.optional-dependencies.gui]
+# Install with: pip install -r requirements-gui.txt
+-e .[gui]

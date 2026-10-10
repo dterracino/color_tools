@@ -8,6 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Fixed
+
+- **Template editing ergonomics** — use `<%=...%>` loop and field tags, with
+  an in-dialog tag selector and insert button. The compact editor puts its help
+  above the text area; tags are colorized, and nested sequence indexes and
+  object or mapping properties can be referenced without evaluating expressions.
+  Python format specs can control field output, including formatting all values
+  in a sequence. Tab inserts four spaces and Enter preserves indentation.
+- **Interactive filament filtering** — printable action-key letters are now entered
+  into the active filter instead of triggering manager shortcuts or being ignored.
+
+### Added
+
+- **Monospaced export templates** — use the system fixed-width font for the
+  export template editor and preview.
+- **Desktop filament TD column** — show transmission-distance values in the
+  filament manager table, leaving the cell blank when no value is available.
+- **Configurable desktop filament export** — added an editable whole-file
+  template dialog with a repeated-filament block, record placeholders, live
+  preview, and Generic CSV, Generic JSON, and AutoForge CSV presets.
+- **Desktop filament manager menus** — added File menu actions for saving,
+  reloading, exporting owned filaments, and exiting, plus a View menu switch
+  between owned filaments and the full catalog.
+- **PySide6 filament manager** — added the optional `[gui]` extra and
+  `filament --gui` desktop manager with live filters, color swatches, owned
+  checkboxes, save/revert controls, and close-time save confirmation.
+- **Filament manager interactive alias** — `color-tools filament --interactive`
+  now launches the owned-filament manager; the existing `--manage` option remains
+  supported.
+
 ### In Progress
 
 - **Image type detection and palette extraction** — added disabled work-in-progress modules for
@@ -31,6 +61,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   both invoke the same CLI as `python -m color_tools`.
 - **Universal shader preview palettes** — the palette shader demo can now feed
   any named `color_tools` palette or a custom palette strip to `palette_lut.frag`.
+- **Naive NES comparison baseline** — added `--naive` static-image processing
+  with exact 256×240 resampling, 25-bin median-cut source analysis, CIELAB and
+  CIEDE2000 mapping into a source-informed NES palette, and grid-aligned Bayer
+  dithering that alternates strictly between two allowed candidate colors.
 
 ### Changed
 
@@ -46,6 +80,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Generalized palette shader demo** — fragment shaders are discovered from the
   shader directory, image and video sources share one preview path, and shader
   switching and hot reload preserve the working program if compilation fails.
+- **Consolidated shader texture generation** — the demo batch generator now
+  delegates PNG LUT and optional GLSL output to the registered exporters,
+  removes its duplicate Pillow/NumPy serialization, and covers all bundled
+  palettes by default without changing the system-specific shaders.
+- **Resizable 4:3 shader preview** — the palette shader demo now opens on a
+  4:3 presentation surface, supports live window resizing, and letterboxes
+  source media without distorting its aspect ratio.
+- **Integer-scaled naive presentation** — naive NES frames use uniform integer
+  texel blocks, including exact 5×4 blocks at the default 1280×960 size, avoiding
+  fractional pixel shearing and mismatched attribute-grid counts.
 
 ### Fixed
 

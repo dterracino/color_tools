@@ -76,6 +76,9 @@ pip install color-match-tools[image]
 # With interactive filament library manager
 pip install color-match-tools[interactive]
 
+# With the PySide6 desktop filament manager
+pip install color-match-tools[gui]
+
 # With colorized console logging (Rich)
 pip install color-match-tools[logging]
 
@@ -197,6 +200,14 @@ elsewhere on `PATH`.
 # (requires: pip install color-match-tools[interactive])
 color-tools
 color-tools --interactive
+
+# Interactive filament library manager — manage owned filaments
+# (--manage is also supported)
+color-tools filament --interactive
+
+# PySide6 desktop manager with color swatches
+# (requires: pip install color-match-tools[gui])
+color-tools filament --gui
 
 # Find a CSS color by name
 color-tools color --name coral

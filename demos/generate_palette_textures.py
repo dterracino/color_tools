@@ -1,243 +1,138 @@
 #!/usr/bin/env python3
-"""
-generate_palette_textures.py
-============================
-Utility that reads color_tools palette JSON files and generates 1-D palette
-texture images (PNG strips) that can be loaded as GPU textures.
+"""Batch-export bundled palettes as shader-ready PNG lookup textures.
 
-Each output image is a 1×N (or N×1) strip of colours that can be sampled in
-a shader with a 1-D or 2-D texture lookup.  This provides an alternative
-rendering path to the hard-coded GLSL palette arrays in the shader files:
-a shader can simply do a nearest-sample lookup against the texture instead of
-iterating over all colours.
-
-Usage
------
-  # Generate all supported palettes
-  python generate_palette_textures.py
-
-  # Generate a specific palette
-  python generate_palette_textures.py --palette nes
-
-  # Specify custom output directory
-  python generate_palette_textures.py --output /tmp/palette_textures
-
-  # Also print GLSL snippet for each palette
-  python generate_palette_textures.py --glsl
-
-Output files
-------------
-  palette_textures/nes.png        – 54×1 pixel strip
-  palette_textures/gameboy.png    –  4×1 pixel strip
-  palette_textures/cga16.png      – 16×1 pixel strip
-  palette_textures/pico8.png      – 16×1 pixel strip
-  ...
-
-GLSL texture-lookup pattern
-----------------------------
-  // Bind the generated texture to unit 1
-  uniform sampler2D u_palette;
-  uniform int       u_palette_size;
-
-  vec3 nearest_palette(vec3 color) {
-      float best_dist = 1e9;
-      int   best_idx  = 0;
-      for (int i = 0; i < u_palette_size; i++) {
-          vec2  uv    = vec2((float(i) + 0.5) / float(u_palette_size), 0.5);
-          vec3  pal   = texture(u_palette, uv).rgb;
-          vec3  delta = color - pal;
-          float dist  = dot(delta, delta);
-          if (dist < best_dist) { best_dist = dist; best_idx = i; }
-      }
-      vec2 best_uv = vec2((float(best_idx) + 0.5) / float(u_palette_size), 0.5);
-      return texture(u_palette, best_uv).rgb;
-  }
-
-Where should shaders live in the library?
------------------------------------------
-  When the shader collection grows, a sensible home would be:
-
-    color_tools/shaders/
-      palette/
-        nes.frag
-        gameboy.frag
-        cga16.frag
-        pico8.frag
-        ...
-      common/
-        quad.vert
-        palette_lookup.glsl   (shared include / snippet)
-      README.md               (documents each shader)
-
-  This keeps them alongside the palette JSON data they are derived from and
-  makes it trivial to install with the package (add a MANIFEST.in glob).
-  For now all shaders live in demos/shaders/ as requested.
+This utility is intentionally a thin wrapper around the registered
+``palette_lut`` and ``glsl`` exporters. It contains no image encoding or GLSL
+generation logic of its own.
 """
 
 from __future__ import annotations
 
 import argparse
-import sys
 from pathlib import Path
+from typing import cast
 
-try:
-    from PIL import Image
-    import numpy as np
-except ImportError:
-    print("Pillow and numpy are required.  Run:  pip install -r requirements.txt")
-    sys.exit(1)
-
-try:
-    from color_tools import load_palette
-except ImportError:
-    print("color_tools is required.  Run:  pip install -r requirements.txt")
-    sys.exit(1)
-
-# ---------------------------------------------------------------------------
-# Paths
-# ---------------------------------------------------------------------------
-DEMO_DIR    = Path(__file__).parent
-REPO_ROOT   = DEMO_DIR.parent
-PALETTE_DIR = REPO_ROOT / "color_tools" / "data" / "palettes"
-
-# Palettes to generate by default
-DEFAULT_PALETTES = [
-    "nes",
-    "gameboy",
-    "cga16",
-    "pico8",
-    "commodore64",
-    "ega16",
-    "sms",
-    "apple2",
-]
+from color_tools import load_palette
+from color_tools.exporters import get_exporter
+from color_tools.exporters.glsl_exporter import GLSLExportOptions
 
 
-# ---------------------------------------------------------------------------
-# Core logic
-# ---------------------------------------------------------------------------
-
-def _palette_to_rgb_array(name: str) -> np.ndarray:
-    """Load a palette via color_tools and return a numpy uint8 array of shape (N, 3)."""
-    palette = load_palette(name)
-    return np.array([record.rgb for record in palette.records], dtype=np.uint8)
+DEMO_DIR = Path(__file__).resolve().parent
+PALETTE_DIR = DEMO_DIR.parent / "color_tools" / "data" / "palettes"
+DEFAULT_OUTPUT_DIR = DEMO_DIR / "palette_textures"
 
 
-def save_palette_texture(
+def _available_palette_names() -> list[str]:
+    """Return bundled palette names in deterministic order."""
+    return sorted(path.stem for path in PALETTE_DIR.glob("*.json"))
+
+
+def _export_palette(
     name: str,
     output_dir: Path,
     *,
-    height: int = 1,
-    verbose: bool = True,
-) -> Path:
-    """
-    Load a palette and save it as a 1-D texture PNG strip.
-
-    Args:
-        name:       Palette name (matches JSON filename without extension)
-        output_dir: Directory to write the PNG into
-        height:     Pixel height of the strip (default 1, can use >1 for preview)
-        verbose:    Print status
-
-    Returns:
-        Path of the written PNG file
-    """
-    colours = _palette_to_rgb_array(name)
-    n       = len(colours)
-
-    # Create a (height × N) image by repeating the strip vertically
-    strip = np.tile(colours[np.newaxis, :, :], (height, 1, 1))  # (H, N, 3)
-
-    output_dir.mkdir(parents=True, exist_ok=True)
-    out_path = output_dir / f"{name}.png"
-    Image.fromarray(strip, mode="RGB").save(out_path)
-
-    if verbose:
-        print(f"  {name:20s} → {out_path}  ({n} colours, {strip.shape[1]}×{strip.shape[0]}px)")
-    return out_path
-
-
-def print_glsl_snippet(name: str) -> None:
-    """Print the GLSL hard-coded palette array for the given palette."""
+    include_glsl: bool,
+) -> tuple[Path, Path | None]:
+    """Export one palette through the canonical LUT and GLSL exporters."""
     palette = load_palette(name)
-    records = palette.records
-    n       = len(records)
-    print(f"\n// {name.upper()} palette ({n} colours) — GLSL vec3 array")
-    print(f"const int   {name.upper()}_SIZE = {n};")
-    print(f"const vec3  {name.upper()}_PALETTE[{n}] = vec3[{n}](")
-    for i, record in enumerate(records):
-        r, g, b = [v / 255.0 for v in record.rgb]
-        comma   = "," if i < n - 1 else " "
-        print(f"    vec3({r:.4f}, {g:.4f}, {b:.4f}){comma}  // {record.name} {record.hex}")
-    print(");")
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    lut_path = Path(
+        get_exporter("palette_lut").export_colors(
+            palette.records,
+            output_dir / f"{name}.png",
+        )
+    )
+
+    glsl_path: Path | None = None
+    if include_glsl:
+        glsl_path = Path(
+            get_exporter("glsl").export_colors(
+                palette.records,
+                output_dir / f"{name}.glsl",
+                options=GLSLExportOptions(
+                    include_metadata=False,
+                    variable_name="PALETTE",
+                    precision=4,
+                ),
+            )
+        )
+
+    return lut_path, glsl_path
 
 
-# ---------------------------------------------------------------------------
-# CLI
-# ---------------------------------------------------------------------------
-
-def main() -> None:
+def _build_parser() -> argparse.ArgumentParser:
+    """Build the command-line parser."""
     parser = argparse.ArgumentParser(
-        description="Generate 1-D palette texture PNGs from color_tools JSON palettes",
-        formatter_class=argparse.RawDescriptionHelpFormatter,
-        epilog=__doc__,
+        description=(
+            "Export bundled color_tools palettes as Nx1 RGB PNG textures"
+        )
     )
     parser.add_argument(
         "--palette",
         nargs="+",
-        default=DEFAULT_PALETTES,
         metavar="NAME",
-        help="One or more palette names to generate (default: all common palettes)",
+        help="One or more palette names; defaults to every bundled palette",
     )
     parser.add_argument(
         "--output",
         type=Path,
-        default=DEMO_DIR / "palette_textures",
+        default=DEFAULT_OUTPUT_DIR,
         metavar="DIR",
-        help="Output directory for PNG textures (default: demos/palette_textures/)",
-    )
-    parser.add_argument(
-        "--height",
-        type=int,
-        default=16,
-        help="Strip height in pixels; use >1 for visible preview (default: 16)",
+        help="Output directory (default: demos/palette_textures)",
     )
     parser.add_argument(
         "--glsl",
         action="store_true",
-        help="Also print GLSL palette array snippet for each palette",
+        help="Also export each palette through the registered GLSL exporter",
     )
     parser.add_argument(
         "--list",
         action="store_true",
-        help="List all available palettes and exit",
+        help="List bundled palettes and exit",
     )
+    return parser
 
+
+def main() -> None:
+    """Parse arguments and batch-export the selected palettes."""
+    parser = _build_parser()
     args = parser.parse_args()
+    available_names = _available_palette_names()
 
-    if args.list:
-        palettes = sorted(p.stem for p in PALETTE_DIR.glob("*.json"))
+    if bool(args.list):
         print("Available palettes:")
-        for p in palettes:
-            palette = load_palette(p)
-            print(f"  {p:25s} ({len(palette.records)} colours)")
+        for name in available_names:
+            palette = load_palette(name)
+            print(f"  {name:25s} ({len(palette.records)} colors)")
         return
 
-    # Deduplicate while preserving order
-    palettes = list(dict.fromkeys(args.palette))
+    requested_names = cast(list[str] | None, args.palette)
+    names = list(dict.fromkeys(requested_names or available_names))
+    output_dir = cast(Path, args.output)
+    include_glsl = bool(args.glsl)
 
-    print(f"Generating {len(palettes)} palette texture(s) → {args.output}/\n")
-    for name in palettes:
+    print(f"Exporting {len(names)} palette texture(s) to {output_dir}")
+    failures: list[str] = []
+    for name in names:
         try:
-            save_palette_texture(name, args.output, height=args.height)
-            if args.glsl:
-                print_glsl_snippet(name)
-        except FileNotFoundError as exc:
-            print(f"  WARNING: {exc}")
-        except Exception as exc:
-            print(f"  ERROR generating {name}: {exc}")
+            lut_path, glsl_path = _export_palette(
+                name,
+                output_dir,
+                include_glsl=include_glsl,
+            )
+            extra = f" and {glsl_path.name}" if glsl_path is not None else ""
+            print(f"  {name:25s} -> {lut_path.name}{extra}")
+        except (FileNotFoundError, OSError, TypeError, ValueError) as exc:
+            failures.append(name)
+            print(f"  ERROR {name}: {exc}")
 
-    print(f"\nDone. {len(palettes)} texture(s) written to {args.output}/")
+    if failures:
+        parser.exit(
+            1,
+            f"Failed to export {len(failures)} palette(s): "
+            f"{', '.join(failures)}\n",
+        )
 
 
 if __name__ == "__main__":

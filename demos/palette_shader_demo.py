@@ -1,10 +1,8 @@
 #!/usr/bin/env python3
-"""Interactive image/video preview for the fragment shaders in ``demos/shaders``.
+"""Interactive image/video preview for the shaders in ``demos/shaders``.
 
-Every ``*.frag`` file is discovered automatically. Shaders may declare any of
-the standard uniforms documented in ``demos/README.md``; uniforms they omit are
-simply ignored. ``palette_lut.frag`` can use any named color_tools palette or a
-custom palette-strip image without requiring a generated file on disk.
+Shaders are discovered automatically and use the contract in ``demos/README.md``.
+The LUT shader accepts named color_tools palettes or custom palette strips.
 """
 
 from __future__ import annotations
@@ -16,6 +14,8 @@ from collections.abc import Callable
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol, cast
+
+from shader_demo_layout import fit_integer_viewport, fit_viewport, initial_window_size
 
 try:
     import cv2
@@ -253,18 +253,6 @@ def _open_source(path: Path) -> tuple[RGBFrame, VideoReader | None]:
     return frame, video
 
 
-def _window_size(frame: RGBFrame, scale: float) -> tuple[int, int]:
-    """Calculate an aspect-preserving window bounded to 1024 pixels per side."""
-    source_height, source_width = frame.shape[:2]
-    width = max(1, int(source_width * scale))
-    height = max(1, int(source_height * scale))
-    if max(width, height) > 1024:
-        fit = 1024 / max(width, height)
-        width = max(1, int(width * fit))
-        height = max(1, int(height * fit))
-    return width, height
-
-
 def run(
     source_path: Path,
     shader_name: str,
@@ -274,21 +262,36 @@ def run(
     *,
     lut_palette: str,
     lut_path: Path | None,
+    naive: bool = False,
 ) -> None:
     """Open an image or video and run the interactive shader preview."""
     shaders = discover_shaders()
     shader_by_name = {shader.name: shader for shader in shaders}
-    current_shader = shader_by_name[shader_name]
     frame, video = _open_source(source_path)
-    window_width, window_height = _window_size(frame, window_scale)
+    if naive:
+        if video is not None:
+            video.release()
+            raise ValueError("--naive supports static images only")
+        from naive_nes_processor import process_naive_nes
+
+        frame = process_naive_nes(frame, dither).frame
+        current_shader = shader_by_name["passthrough"]
+    else:
+        current_shader = shader_by_name[shader_name]
+    window_width, window_height = initial_window_size(window_scale, naive_nes=naive)
     source_height, source_width = (int(value) for value in frame.shape[:2])
+    layout_viewport = fit_integer_viewport if naive else fit_viewport
+    viewport = layout_viewport((window_width, window_height), (source_width, source_height))
 
     pygame.init()
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MAJOR_VERSION, 3)
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_MINOR_VERSION, 3)
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_PROFILE_MASK, pygame.GL_CONTEXT_PROFILE_CORE)
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, 1)
-    pygame.display.set_mode((window_width, window_height), pygame.OPENGL | pygame.DOUBLEBUF)
+    pygame.display.set_mode(
+        (window_width, window_height),
+        pygame.OPENGL | pygame.DOUBLEBUF | pygame.RESIZABLE,
+    )
     clock = pygame.time.Clock()
 
     ctx = moderngl.create_context()
@@ -297,7 +300,8 @@ def run(
     lut_texture, lut_size = _make_lut_texture(ctx, lut_palette, lut_path)
     lut_texture.use(1)
     resources = _create_program_resources(ctx, current_shader)
-    pixelate_value = pixelate if pixelate > 0 else current_shader.default_pixelate
+    pixelate_value = 1.0 if naive else (
+        pixelate if pixelate > 0 else current_shader.default_pixelate)
     dither_value = dither
     started_at = time.monotonic()
     frame_number = 0
@@ -309,13 +313,14 @@ def run(
         _set_uniform(program, "u_palette_size", lut_size)
         _set_uniform(program, "u_pixelate", pixelate_value)
         _set_uniform(program, "u_dither", dither_value)
-        _set_uniform(program, "u_resolution", (float(window_width), float(window_height)))
+        _set_uniform(program, "u_resolution", (float(viewport[2]), float(viewport[3])))
         _set_uniform(program, "u_source_resolution", (float(source_width), float(source_height)))
 
     def update_title() -> None:
         paused = " [PAUSED]" if video is not None and video.paused else ""
+        mode = "Naive NES – " if naive else "Palette Shader – "
         pygame.display.set_caption(
-            f"Palette Shader – {current_shader.label}  "
+            f"{mode}{current_shader.label}  "
             f"pixelate={pixelate_value:.0f}  dither={dither_value:.1f}{paused}"
         )
 
@@ -352,6 +357,13 @@ def run(
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     running = False
+                elif event.type in (pygame.VIDEORESIZE, pygame.WINDOWRESIZED):
+                    window_width, window_height = pygame.display.get_window_size()
+                    viewport = layout_viewport(
+                        (window_width, window_height),
+                        (source_width, source_height),
+                    )
+                    set_uniforms()
                 elif event.type == pygame.KEYDOWN:
                     key = int(event.key)
                     if key in (pygame.K_q, pygame.K_ESCAPE):
@@ -372,9 +384,12 @@ def run(
                         set_uniforms()
                         update_title()
                     elif key == pygame.K_d:
-                        dither_value = 0.0 if dither_value > 0 else 1.0
-                        set_uniforms()
-                        update_title()
+                        if naive:
+                            print("Naive dither is fixed during CPU preprocessing; restart with --dither")
+                        else:
+                            dither_value = 0.0 if dither_value > 0 else 1.0
+                            set_uniforms()
+                            update_title()
                     elif key == pygame.K_r:
                         try:
                             replace_shader(current_shader, reset_pixelate=False)
@@ -382,7 +397,8 @@ def run(
                             print(f"Shader reload failed; keeping current shader: {exc}")
                     elif key == pygame.K_s:
                         screenshot_count += 1
-                        output = DEMO_DIR / f"screenshot_{current_shader.name}_{screenshot_count:03d}.png"
+                        name = "naive_nes" if naive else current_shader.name
+                        output = DEMO_DIR / f"screenshot_{name}_{screenshot_count:03d}.png"
                         raw = ctx.screen.read(components=3)
                         image = Image.frombytes("RGB", (window_width, window_height), raw)
                         image.transpose(Image.Transpose.FLIP_TOP_BOTTOM).save(output)
@@ -399,7 +415,7 @@ def run(
 
             _set_uniform(resources.program, "u_time", time.monotonic() - started_at)
             _set_uniform(resources.program, "u_frame", frame_number)
-            ctx.viewport = (0, 0, window_width, window_height)
+            ctx.viewport = viewport
             ctx.clear(0.0, 0.0, 0.0)
             resources.vertex_array.render(moderngl.TRIANGLES)
             pygame.display.flip()
@@ -429,6 +445,9 @@ def _build_parser(shaders: tuple[ShaderDefinition, ...]) -> argparse.ArgumentPar
     parser.add_argument("--lut-palette", default="nes", metavar="NAME", help="color_tools palette for LUT shaders")
     parser.add_argument("--lut", type=Path, metavar="IMAGE", help="Custom horizontal palette strip for LUT shaders")
     parser.add_argument("--list-shaders", action="store_true", help="List discovered fragment shaders and exit")
+    parser.add_argument(
+        "--naive", action="store_true",
+        help="CPU-process a static image into a naive 256x240 NES baseline")
     return parser
 
 
@@ -449,6 +468,9 @@ def main() -> None:
         parser.error("source is required unless --list-shaders is used")
     if not source.is_file():
         parser.error(f"source file not found: {source}")
+    naive = bool(args.naive)
+    if naive and source.suffix.casefold() in VIDEO_SUFFIXES:
+        parser.error("--naive supports static images only")
     lut_path = cast(Path | None, args.lut)
     if lut_path is not None and not lut_path.is_file():
         parser.error(f"LUT image not found: {lut_path}")
@@ -470,6 +492,7 @@ def main() -> None:
         scale,
         lut_palette=str(args.lut_palette),
         lut_path=lut_path,
+        naive=naive,
     )
 
 

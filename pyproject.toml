@@ -53,6 +53,11 @@ interactive = [
     "prompt_toolkit>=3.0.0",
 ]
 
+# Desktop filament library management (PySide6)
+gui = [
+    "PySide6>=6.6.0",
+]
+
 # Colorized console logging (via Rich)
 logging = [
     "rich>=13.0.0",
@@ -84,6 +89,7 @@ all = [
     "color-match-tools[fuzzy]",
     "color-match-tools[image]",
     "color-match-tools[interactive]",
+    "color-match-tools[gui]",
     "color-match-tools[logging]",
     "color-match-tools[mcp]",
 ]

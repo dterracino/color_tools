@@ -40,6 +40,15 @@ pip install color-match-tools[interactive]
 
 Adds prompt_toolkit for a beautiful TUI interface to manage your owned filament library with autocomplete, filtering, and multi-select.
 
+**With the PySide6 desktop filament manager:**
+
+```bash
+pip install color-match-tools[gui]
+```
+
+Adds PySide6 for the desktop owned-filament manager, launched with
+`color-tools filament --gui`. This extra is independent of `[interactive]`.
+
 **With colorized console logging:**
 
 ```bash
@@ -63,7 +72,7 @@ Copilot and other MCP-compatible agents.
 pip install color-match-tools[all]
 ```
 
-Installs everything: fuzzy matching + image processing + interactive manager + logging + MCP.
+Installs everything: fuzzy matching + image processing + terminal and desktop filament managers + logging + MCP.
 
 All variants install `color-tools` as the canonical command and `color_tools` as
 a backward-compatible alias. Both commands invoke the same CLI as
@@ -87,7 +96,7 @@ pip install -e .
 This installs:
 
 - Base package in "editable" mode (modify code while using it)
-- All optional dependencies (fuzzy matching, image processing, interactive UI, logging, and MCP)
+- All optional dependencies (fuzzy matching, image processing, terminal and desktop UIs, logging, and MCP)
 - Development tools (coverage, pyright, build, twine)
 
 **Minimal development setup (base only):**
@@ -106,9 +115,10 @@ The core module uses **only Python standard library** - **zero external dependen
 - `[fuzzy]`: rapidfuzz >= 3.0.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
 - `[image]`: Pillow >= 10.0.0 for image processing features
 - `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
+- `[gui]`: PySide6 >= 6.6.0 for the desktop filament library manager
 - `[logging]`: Rich >= 13.0.0 for colorized console log output (plain StreamHandler used as fallback)
 - `[mcp]`: MCP >= 2.0.0 for typed agent tools over stdio
-- `[all]`: All of the above (fuzzy + image + interactive + logging + MCP)
+- `[all]`: All of the above (fuzzy + image + interactive + gui + logging + MCP)
 
 **Requirements files (for development/manual installation):**
 
@@ -116,6 +126,7 @@ The core module uses **only Python standard library** - **zero external dependen
 - `requirements-fuzzy.txt`: Base + RapidFuzz dependency
 - `requirements-image.txt`: Base + Pillow
 - `requirements-interactive.txt`: Base + prompt_toolkit
+- `requirements-gui.txt`: Base + PySide6
 - `requirements-mcp.txt`: Base + MCP SDK
 - `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
 
