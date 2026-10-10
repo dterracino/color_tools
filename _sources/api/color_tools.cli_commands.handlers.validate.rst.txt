@@ -1,0 +1,9 @@
+﻿color\_tools.cli\_commands.handlers.validate
+============================================
+
+.. currentmodule:: color_tools.cli_commands.handlers
+
+.. automodule:: color_tools.cli_commands.handlers.validate
+   :members:
+   :undoc-members:
+   :show-inheritance:
