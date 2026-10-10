@@ -11,7 +11,8 @@
 
 This plan covers shared RGB/hex validation and parsing, restoration of filament
 color handling, possible arbitrary-length multi-color support, configuration
-design, critical regression coverage, and new filament data imports. The
+design, critical regression coverage, new filament data imports, and alignment
+on a Python 3.12 minimum. The
 previously completed user-palette changes remain part of the release.
 
 ## Verified baseline
@@ -269,10 +270,99 @@ Verify the reported absence of existing IEMAI records before applying the import
 Do not modify scientific constants to make imported data fit. Retain original
 source files and a reviewable provenance trail.
 
+## Workstream 6: Python 3.12 minimum and reproducible type checking
+
+### Agreed direction and verified baseline
+
+The user approves raising the published 7.0.0 minimum from Python 3.10 to
+Python 3.12. Drop support for 3.10 and 3.11; declare `>=3.12` without an upper
+bound. Standardize the development baseline and analysis target on 3.12.
+This work is scheduled for the next implementation pass, not completed here.
+
+| Surface | Current declaration or observed state | Required alignment |
+| --- | --- | --- |
+| [pyproject.toml](../../pyproject.toml) | `requires-python = ">=3.10"`; classifiers for 3.10, 3.11, 3.12 | Raise the floor to 3.12; remove dropped classifiers |
+| [pyrightconfig.json](../../pyrightconfig.json) | Strict mode, Python 3.10 target, repository `.venv` | Keep strict checking and target Python 3.12 |
+| [.venv/pyvenv.cfg](../../.venv/pyvenv.cfg) | Python 3.12.9, no system site packages | Already meets the new floor; recreation is conditional |
+| [.vscode/settings.json](../../.vscode/settings.json) | Test discovery configured, no repository interpreter default | Provide a portable repository-venv default and document explicit interpreter selection |
+| [CI workflow](../../.github/workflows/ci.yml) | Tests on 3.10, 3.11, 3.12; installed-wheel typing checks on 3.12 | Change the test matrix to 3.12, 3.13, 3.14; retain 3.12 as the minimum-version baseline |
+| [Docs workflow](../../.github/workflows/docs.yml) | Builds on 3.11 | Build on 3.12 or a validated retained runtime |
+| [Exporter tests](../../tests/test_exporters_extended_formats.py) | Generated Pyright configuration targets 3.10 | Target 3.12, including generated-code compatibility tests |
+
+Editor environment discovery currently reports the repository `.venv` selected.
+The settings tool reports a basic/open-files editor analysis setting, while the
+repository Pyright file declares strict mode. These observations do not prove
+which final configuration the language server applies to every file. Investigate
+configuration discovery, overrides, interpreter selection, and analyzer versions
+before attributing inconsistent diagnostics solely to Python version differences.
+
+Using a 3.12 interpreter with a 3.10 analysis target is not inherently invalid:
+the target can intentionally enforce an older library compatibility floor.
+However, for the approved 3.12 floor those declarations should agree. Raising
+the floor alone does not guarantee deterministic strict diagnostics.
+
+### Implementation checklist
+
+- [ ] Inventory all active Python constraints, CI/build/deployment pins, tool
+  targets, classifiers, generated test configurations, and environment setup docs.
+- [ ] Update package metadata and Pyright's target to 3.12; retain strict mode.
+- [ ] Align VS Code/Pylance and command-line Pyright on the repository
+  configuration, environment, dependencies, and known analyzer versions.
+  Verify configuration-loading logs and actual diagnostics, not just settings.
+- [ ] Use a portable workspace-relative interpreter default, not an absolute
+  developer-machine path. Confirm the selected interpreter separately because
+  changing the default may not replace a previously saved editor selection.
+- [ ] Keep the existing 3.12 venv if healthy. If a runtime update or recreation is
+  necessary, inventory required extras, recreate safely with an approved 3.12
+  runtime, reinstall from repository manifests, and reselect it in VS Code.
+  Do not merely edit `pyvenv.cfg` or mutate system Python.
+- [ ] Update the GitHub Actions test matrix to quoted versions `"3.12"`,
+  `"3.13"`, and `"3.14"`, removing 3.10 and 3.11. Run tests and applicable
+  optional-feature coverage on all three versions; explicitly report dependency
+  incompatibilities rather than silently skipping coverage. Keep development
+  and Pyright's compatibility target at 3.12. Preserve or deliberately revise
+  version-conditional coverage upload and installed-wheel typing jobs.
+- [ ] Update the GitHub Actions docs build from 3.11 to 3.12; review other
+  build/release workflows and hosted API/deployment runtime support.
+  Report any platform unable to run 3.12 rather than assuming compatibility.
+- [ ] Update current support statements in README badges/text,
+  [Installation](../Installation.md), [CONTRIBUTING](../../CONTRIBUTING.md),
+  [SUPPORT](../../SUPPORT.md), [docs README](../README.md), repository
+  instructions, and tooling guidance where it shares this package's floor.
+  Preserve historical changelog entries and clearly historical review documents.
+- [ ] Record the 3.10/3.11 support removal in breaking-change release notes and
+  migration instructions; older runtimes must use an appropriate earlier release.
+- [ ] Review optional extras and dependency minimums for 3.12 compatibility.
+  Validate base, image, GUI, interactive, MCP, and docs environments as applicable.
+  Review `typing_extensions` uses/declarations before replacing them; do not
+  assume every backport is obsolete just because the floor increased.
+- [ ] Read the official
+  [Python 3.11 changes](https://docs.python.org/3.11/whatsnew/3.11.html) and
+  [Python 3.12 changes](https://docs.python.org/3.12/whatsnew/3.12.html).
+  Adopt newly guaranteed typing/stdlib features only where useful, preserving
+  behavior rather than performing unrelated syntax modernization.
+- [ ] Distinguish the 3.12 development baseline from the supported newer-version
+  range. Select and validate retained newer runtimes before adding classifiers
+  or claiming tested support; do not require all environments to use 3.12 forever.
+- [ ] Run full tests, strict repository Pyright, installed-wheel consumer checks,
+  `--verifytypes`, and package/docs builds on 3.12. Test the highest explicitly
+  supported runtime too; report unavailable environments and skipped extras.
+- [ ] Inspect built metadata for the correct `Requires-Python` and confirm no
+  source or generated output inadvertently requires a version above 3.12.
+- [ ] Check for accidental residual active 3.10/3.11 declarations and reproduce
+  consistent diagnostics after reopening the workspace.
+
+The known compatibility cost is intentional: 7.0.0 will no longer install on
+Python 3.10 or 3.11. No intrinsic library blocker was established in this planning
+pass; deployment compatibility, optional dependencies, and the exact source of
+editor/CLI diagnostic disagreement still require validation.
+
 ## Execution order and release gates
 
 1. Re-read this plan and current worktree; capture baseline tests and diagnostics.
 2. Finish caller/contract inventory and resolve the decision tables with the user.
+   Align the Python 3.12 baseline, metadata, and analysis configuration before
+   judging refactor typing results; retain pre-change validation evidence.
 3. Add failing regression tests for compound loading, `last`, and LAB mixing.
 4. Consolidate validation/parsing and restore filament behavior; migrate adapters.
 5. Implement only the approved multi-color/config changes and migration policy.
@@ -310,5 +400,9 @@ additions are required by this plan.
 - [ ] Regression tests catch each known failure, including actual database loading.
 - [ ] Imports have reviewed provenance, preserved identities, and idempotent results.
 - [ ] Documentation, migration notes, hashes, and version metadata are synchronized.
+- [ ] Python 3.12 package floor, analysis target, development environment, CI,
+  deployment/build runtimes, and current support documentation agree.
+- [ ] Editor and command-line strict checking are reproducible; installed-wheel
+  metadata and consumer typing checks pass on the declared minimum.
 - [ ] Full validation passes; no outstanding source/type/Markdown diagnostics.
 - [ ] No commit, push, or release performed by the assistant.
