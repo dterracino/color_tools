@@ -10,6 +10,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Bambu Lab synonym spelling** — corrected the documented and demonstrated
+  abbreviation from `BLL` to `BBL`; the core synonym data already used `BBL`.
 - **Template editing ergonomics** — use `<%=...%>` loop and field tags, with
   an in-dialog tag selector and insert button. The compact editor puts its help
   above the text area; tags are colorized, and nested sequence indexes and
@@ -2328,7 +2330,7 @@ This is a major version bump due to package restructuring. While the public API 
 
 - **Maker synonym support** for flexible filament searches
   - Search for "Bambu" automatically finds "Bambu Lab" filaments
-  - Search for "BLL" or "Paramount" uses synonym expansion
+  - Search for "BBL" or "Paramount" uses synonym expansion
   - Synonyms defined in `data/maker_synonyms.json`
 - `--version` flag to CLI to display version number
 - `load_maker_synonyms()` function in public API

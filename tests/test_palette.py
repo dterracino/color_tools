@@ -252,10 +252,15 @@ class TestFilamentPalette(unittest.TestCase):
         palette = FilamentPalette.load_default()
         # Try to find using "Bambu" which should map to "Bambu Lab"
         results_synonym = palette.find_by_maker("Bambu")
+        results_abbreviation = palette.find_by_maker("BBL")
+        # BLL was an incorrect historical spelling, not a supported alias.
+        results_obsolete_abbreviation = palette.find_by_maker("BLL")
         results_canonical = palette.find_by_maker("Bambu Lab")
         # Should return same results
         if results_canonical:  # Only test if Bambu Lab exists
             self.assertEqual(len(results_synonym), len(results_canonical))
+            self.assertEqual(len(results_abbreviation), len(results_canonical))
+        self.assertEqual(len(results_obsolete_abbreviation), 0)
     
     def test_find_by_type(self):
         """Test finding filaments by type."""

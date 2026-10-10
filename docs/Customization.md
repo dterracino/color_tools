@@ -100,7 +100,7 @@ Mapping of canonical maker names to common synonyms/abbreviations:
 
 ```json
 {
-  "Bambu Lab": ["Bambu", "BLL"],
+  "Bambu Lab": ["Bambu", "BBL"],
   "Paramount 3D": ["Paramount", "Paramount3D"]
 }
 ```

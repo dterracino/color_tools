@@ -497,7 +497,7 @@ Data is split into three separate JSON files in the `data/` directory:
 #### `maker_synonyms.json` - Maker Name Synonyms
 ```json
 {
-  "Bambu Lab": ["Bambu", "BLL"],
+  "Bambu Lab": ["Bambu", "BBL"],
   "Paramount 3D": ["Paramount", "Paramount3D"]
 }
 ```

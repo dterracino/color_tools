@@ -187,7 +187,7 @@ Maker synonyms allow you to search using common abbreviations or alternate names
 
 - "Bambu" → "Bambu Lab"
 - "Paramount" → "Paramount 3D"
-- "BLL" → "Bambu Lab"
+- "BBL" → "Bambu Lab"
 
 ### What are dual-color filaments?
 
@@ -269,7 +269,7 @@ Create `data/user/user-synonyms.json` to add or completely replace maker synonym
 }
 ```
 
-**Important**: User synonyms completely replace core synonyms for that maker. In the example above, "Bambu" and "BLL" (core synonyms) would no longer work - only "CustomBambu" and "CB".
+**Important**: User synonyms completely replace core synonyms for that maker. In the example above, "Bambu" and "BBL" (core synonyms) would no longer work - only "CustomBambu" and "CB".
 
 ### How can I see what user data is overriding core data?
 

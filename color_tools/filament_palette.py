@@ -621,8 +621,8 @@ class FilamentPalette:
         """
         Expand maker names to include synonyms.
         
-        For example, if "Bambu" is provided and "Bambu Lab" has synonyms ["Bambu", "BLL"],
-        this will return {"Bambu Lab", "Bambu", "BLL"}.
+        For example, if "Bambu" is provided and "Bambu Lab" has synonyms ["Bambu", "BBL"],
+        this will return {"Bambu Lab", "Bambu", "BBL"}.
         
         Args:
             makers: List of maker names or synonyms to expand

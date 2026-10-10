@@ -88,7 +88,7 @@ class TestUserOverrideSystem(unittest.TestCase):
         
         # Core synonyms
         core_synonyms = {
-            "Bambu Lab": ["Bambu", "BLL"],
+            "Bambu Lab": ["Bambu", "BBL"],
             "Test Maker": ["TM"]
         }
         
@@ -405,8 +405,8 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         bambu_old = palette.find_by_maker("Bambu")  # Core synonym
         self.assertEqual(len(bambu_old), 0)  # Should be empty
         
-        bll_old = palette.find_by_maker("BLL")  # Core synonym
-        self.assertEqual(len(bll_old), 0)  # Should be empty
+        bbl_old = palette.find_by_maker("BBL")  # Core synonym
+        self.assertEqual(len(bbl_old), 0)  # Should be empty
         
         # Canonical name should still work
         bambu_canonical = palette.find_by_maker("Bambu Lab")
@@ -425,7 +425,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         # Core synonyms should still exist
         self.assertIn("Bambu Lab", synonyms)
         self.assertIn("Bambu", synonyms["Bambu Lab"])
-        self.assertIn("BLL", synonyms["Bambu Lab"])
+        self.assertIn("BBL", synonyms["Bambu Lab"])
         
         # User synonyms should be added
         self.assertIn("New Company", synonyms)
@@ -464,7 +464,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         try:
             # Create override scenario
             user_synonyms = {
-                "Bambu Lab": ["CustomBambu"],  # Replaces ["Bambu", "BLL"]
+                "Bambu Lab": ["CustomBambu"],  # Replaces ["Bambu", "BBL"]
                 "New Maker": ["NM"]           # Addition, no conflict
             }
             self._create_user_synonyms(user_synonyms)

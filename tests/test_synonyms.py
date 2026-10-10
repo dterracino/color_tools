@@ -20,8 +20,8 @@ print(f"  Found {len(results)} filaments")
 if results:
     print(f"  First result: {results[0].maker} - {results[0].color}")
 
-print("\nTesting maker synonym 'BLL' (should find 'Bambu Lab'):")
-results = palette.find_by_maker("BLL")
+print("\nTesting maker synonym 'BBL' (should find 'Bambu Lab'):")
+results = palette.find_by_maker("BBL")
 print(f"  Found {len(results)} filaments")
 if results:
     print(f"  First result: {results[0].maker} - {results[0].color}")
