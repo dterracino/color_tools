@@ -392,24 +392,18 @@ Yes! Create custom palettes in `data/user/palettes/` with `user-` prefix:
 [
   {
     "name": "MyRed",
-    "hex": "#FF0000",
-    "rgb": [255, 0, 0],
-    "hsl": [0.0, 100.0, 50.0],
-    "lab": [53.24, 80.09, 67.20],
-    "lch": [53.24, 104.55, 40.0]
+    "hex": "#FF0000"
   },
   {
     "name": "MyBlue",
-    "hex": "#0000FF", 
-    "rgb": [0, 0, 255],
-    "hsl": [240.0, 100.0, 50.0],
-    "lab": [32.30, 79.19, -107.86],
-    "lch": [32.30, 133.81, 306.3]
+    "hex": "#0000FF"
   }
 ]
 ```
 
 **Important:** User palette files **must** start with `user-` prefix for security and clarity.
+
+Only `name` and `hex` are read for each palette color. RGB, HSL, LAB, and LCH values are calculated from hex when loaded, so they should not be added to the file. Files ending in `example.json` are ignored by palette discovery; copy or rename the example to a usable `user-<name>.json` filename.
 
 **Features:**
 

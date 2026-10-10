@@ -1,5 +1,14 @@
 # AGENTS.md
 
+## Next Work Session: Breaking Release Plan
+
+Before continuing color-input validation/parsing, filament color handling, data
+imports, or release preparation, read the
+[Color Input and Filament Release Plan](docs/other/COLOR_INPUT_AND_FILAMENT_RELEASE_PLAN.md).
+It records the known regressions, decisions still requiring user approval,
+critical test coverage, and pending Bambu Lab, Overture, and IEMAI imports.
+This is a planning document, not approval to implement unresolved design choices.
+
 ## Development Principles
 
 All new or modified code should follow these principles:

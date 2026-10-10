@@ -3,6 +3,14 @@
 > **Global rules** (git commits, virtual environments, problem reports, error handling, and general AI behavior)
 > are in `~/.copilot/instructions/global.instructions.md`. This file contains color_tools-specific rules only.
 
+## Next Work Session: Breaking Release Plan
+
+Before continuing color-input validation/parsing, filament color handling, data
+imports, or release preparation, read the
+[Color Input and Filament Release Plan](../docs/other/COLOR_INPUT_AND_FILAMENT_RELEASE_PLAN.md).
+Resolve its open design decisions with the user before implementation, and use
+its regression-test and import-review gates when completing the upcoming release.
+
 ## CRITICAL: Always Read the Source Before Using It
 
 **When writing code that calls into `color_tools` — including the API functions, CLI, tests, or any external consumer — you MUST read the actual source before referencing any attribute, method, or class.**

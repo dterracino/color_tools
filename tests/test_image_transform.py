@@ -324,6 +324,27 @@ class TestQuantizeImageToPalette(unittest.TestCase):
         self.assertIsInstance(result, PIL.Image.Image)
         self.assertEqual(result.size, (4, 4))
 
+    def test_user_palette_quantizes_to_its_color_from_custom_data_directory(self):
+        """The image API quantizes using a user palette in the supplied directory."""
+        from color_tools.image.basic import quantize_image_to_palette
+        import PIL.Image
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            palette_dir = Path(temp_dir) / "user" / "palettes"
+            palette_dir.mkdir(parents=True)
+            (palette_dir / "user-basic.json").write_text(
+                '[{"name":"Custom Ink","hex":"#112233"}]',
+                encoding="utf-8",
+            )
+            result = quantize_image_to_palette(
+                self._low_color_img(),
+                "user-basic",
+                json_path=temp_dir,
+            )
+
+        self.assertIsInstance(result, PIL.Image.Image)
+        self.assertEqual(set(result.convert("RGB").getdata()), {(17, 34, 51)})
+
     # --- k-means path (source colors > palette size) ---
 
     def test_high_color_kmeans_returns_pil_image(self):

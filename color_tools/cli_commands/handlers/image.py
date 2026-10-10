@@ -57,17 +57,15 @@ from ...palette import load_palette
 from ..reporting import get_available_palettes
 
 
-def handle_image_command(args: argparse.Namespace) -> None:
+def handle_image_command(
+    args: argparse.Namespace,
+    json_path: Path | str | None = None,
+) -> None:
     """Handle all image processing commands."""
-    if not IMAGE_AVAILABLE:
-        print("Error: Image processing requires Pillow", file=sys.stderr)
-        print("Install with: pip install color-match-tools[image]", file=sys.stderr)
-        sys.exit(1)
-    
-    # Handle --list-palettes first (doesn not require file)
+    # Palette discovery only reads JSON data and does not need the image extra.
     if args.list_palettes:
         try:
-            available_palettes = get_available_palettes()
+            available_palettes = get_available_palettes(json_path)
             if available_palettes:
                 print("Available retro palettes:")
                 for palette_name, color_count in available_palettes:
@@ -81,6 +79,11 @@ def handle_image_command(args: argparse.Namespace) -> None:
             print(f"Error listing palettes: {e}", file=sys.stderr)
             sys.exit(1)
         sys.exit(0)
+
+    if not IMAGE_AVAILABLE:
+        print("Error: Image processing requires Pillow", file=sys.stderr)
+        print("Install with: pip install color-match-tools[image]", file=sys.stderr)
+        sys.exit(1)
     
     # Check if file is provided and exists for operations that need it
     if not args.file:
@@ -171,7 +174,7 @@ def handle_image_command(args: argparse.Namespace) -> None:
             
             # Load palette info for reporting
             try:
-                palette_info = load_palette(args.quantize_palette)
+                palette_info = load_palette(args.quantize_palette, json_path)
                 print(f"Target palette: {len(palette_info.records)} colors")
             except Exception as e:
                 print(f"Warning: Could not load palette info: {e}", file=sys.stderr)
@@ -181,7 +184,8 @@ def handle_image_command(args: argparse.Namespace) -> None:
                 args.quantize_palette,
                 metric=args.metric,
                 dither=args.dither,
-                output_path=output_path
+                output_path=output_path,
+                json_path=json_path,
             )
             
             if output_path:

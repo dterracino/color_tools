@@ -5,7 +5,7 @@ import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
 
-from color_tools.palette import load_palette, Palette
+from color_tools.palette import load_palette
 from color_tools.cli_commands.reporting import get_available_palettes
 
 
@@ -38,10 +38,6 @@ class TestUserPalettes(unittest.TestCase):
             {
                 "name": "UserBlue",
                 "hex": "#0000FF",
-                "rgb": [0, 0, 255], 
-                "hsl": [240.0, 100.0, 50.0],
-                "lab": [32.30, 79.19, -107.86],
-                "lch": [32.30, 133.81, 306.3]
             }
         ]
         
@@ -50,16 +46,16 @@ class TestUserPalettes(unittest.TestCase):
             {
                 "name": "OverrideRed",
                 "hex": "#FF6600", 
-                "rgb": [255, 102, 0],
-                "hsl": [24.0, 100.0, 50.0],
-                "lab": [65.43, 54.01, 70.50],
-                "lch": [65.43, 89.16, 52.5]
             }
         ]
         
         # Write core palette
         core_file = self.test_data_dir / "palettes" / "test_core.json"
         with open(core_file, 'w', encoding='utf-8') as f:
+            json.dump(self.core_palette_data, f, indent=2)
+
+        core_example_file = self.test_data_dir / "palettes" / "test.example.json"
+        with open(core_example_file, 'w', encoding='utf-8') as f:
             json.dump(self.core_palette_data, f, indent=2)
         
         # Write user palette  
@@ -75,6 +71,12 @@ class TestUserPalettes(unittest.TestCase):
         # Write non-prefixed file (should be ignored)
         ignored_file = self.test_data_dir / "user" / "palettes" / "ignored_palette.json"
         with open(ignored_file, 'w', encoding='utf-8') as f:
+            json.dump(self.user_palette_data, f, indent=2)
+
+        example_file = (
+            self.test_data_dir / "user" / "palettes" / "user-palette.example.json"
+        )
+        with open(example_file, 'w', encoding='utf-8') as f:
             json.dump(self.user_palette_data, f, indent=2)
     
     def tearDown(self):
@@ -95,6 +97,8 @@ class TestUserPalettes(unittest.TestCase):
         
         # Should NOT include non-prefixed user palettes
         self.assertNotIn("ignored_palette", palette_names)
+        self.assertNotIn("user-palette.example", palette_names)
+        self.assertNotIn("test.example", palette_names)
         
         # Verify color counts are present
         for name, color_count in available:
@@ -111,13 +115,71 @@ class TestUserPalettes(unittest.TestCase):
         self.assertEqual(palette.records[0].hex, "#FF0000")
     
     def test_load_user_palette(self):
-        """Test loading user palette with user- prefix."""
+        """Load a name/hex-only palette and derive all other color spaces."""
         palette = load_palette("user-test_user", self.test_data_dir)
         
-        # Should load user palette
         self.assertEqual(len(palette.records), 1)
-        self.assertEqual(palette.records[0].name, "UserBlue")
-        self.assertEqual(palette.records[0].hex, "#0000FF")
+        record = palette.records[0]
+        self.assertEqual(record.name, "UserBlue")
+        self.assertEqual(record.hex, "#0000FF")
+        self.assertEqual(record.rgb, (0, 0, 255))
+        self.assertEqual(record.hsl, (240.0, 100.0, 50.0))
+        self.assertAlmostEqual(record.lab[0], 32.29701093285073)
+        self.assertAlmostEqual(record.lab[1], 79.18751984512221)
+        self.assertAlmostEqual(record.lab[2], -107.8601617541481)
+        self.assertAlmostEqual(record.lch[0], 32.29701093285073)
+        self.assertAlmostEqual(record.lch[1], 133.80761485376166)
+        self.assertAlmostEqual(record.lch[2], 306.2849380699878)
+
+    def test_user_palette_ignores_supplied_derived_fields(self):
+        """Legacy derived values do not override values calculated from hex."""
+        palette_path = (
+            self.test_data_dir / "user" / "palettes" / "user-test_user.json"
+        )
+        palette_path.write_text(
+            json.dumps([{
+                "name": "UserBlue",
+                "hex": "#0000FF",
+                "rgb": [1, 2, 3],
+                "hsl": ["invalid"],
+                "lab": None,
+                "lch": {"stale": True},
+            }]),
+            encoding="utf-8",
+        )
+        original_contents = palette_path.read_text(encoding="utf-8")
+
+        record = load_palette("user-test_user", self.test_data_dir).records[0]
+        self.assertEqual(record.rgb, (0, 0, 255))
+        self.assertEqual(record.hsl, (240.0, 100.0, 50.0))
+        self.assertAlmostEqual(record.lab[0], 32.29701093285073)
+        self.assertEqual(palette_path.read_text(encoding="utf-8"), original_contents)
+
+    def test_user_palette_requires_name_and_hex(self):
+        """User palette color entries require name and hex fields."""
+        palette_path = (
+            self.test_data_dir / "user" / "palettes" / "user-invalid-fields.json"
+        )
+        palette_path.write_text(
+            json.dumps([{"name": "MissingHex"}]),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(ValueError, "Missing or invalid 'hex'"):
+            load_palette("user-invalid-fields", self.test_data_dir)
+
+    def test_user_palette_rejects_invalid_hex(self):
+        """Malformed hex input raises an indexed palette validation error."""
+        palette_path = (
+            self.test_data_dir / "user" / "palettes" / "user-invalid-hex.json"
+        )
+        palette_path.write_text(
+            json.dumps([{"name": "Bad", "hex": "#nothex"}]),
+            encoding="utf-8",
+        )
+
+        with self.assertRaisesRegex(ValueError, "Invalid color data at index 0"):
+            load_palette("user-invalid-hex", self.test_data_dir)
     
     def test_user_palette_no_override(self):
         """Test that user palettes don't override core palettes (separate namespaces)."""

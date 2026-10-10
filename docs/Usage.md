@@ -73,7 +73,7 @@ cga = load_palette('cga4')  # Classic CGA 4-color palette
 color, distance = cga.nearest_color((128, 64, 200), space='rgb')
 print(f"Nearest CGA color: {color.name} ({color.hex})")
 
-# Available palettes: Use color-tools color --palette list to see all 20 core palettes
+# Available palettes: Use color-tools color --palette list to see built-in and user palettes
 ega = load_palette('ega16')     # Standard EGA 16-color palette
 vga = load_palette('vga')       # VGA 256-color palette (Mode 13h)
 web = load_palette('web')       # Web-safe 216-color palette
@@ -1161,6 +1161,8 @@ python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
 - `--list-palettes`: List all available retro palettes with color counts
 
 **Available Palettes:** Use `color-tools color --palette list` or `color-tools image --list-palettes` to see all 20 core palettes (including apple2, cga4, cga16, commodore64, crayola, ega16, ega64, gameboy variants, macintosh, nes, pico8, sms, tandy16, vga, virtualboy, web) plus any custom user palettes
+
+User palettes belong in `data/user/palettes/` and must have filenames beginning with `user-` (for example, `user-mycustom.json`, used as `user-mycustom`). Each entry needs only `name` and `hex`; other color values are calculated when loaded. Files ending in `example.json` are ignored during discovery. Both palette-list commands work without the optional image dependencies. The global `--json DIR` option also applies to image palette listing and quantization.
 
 ### Global Arguments
 

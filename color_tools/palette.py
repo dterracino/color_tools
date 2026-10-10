@@ -330,17 +330,65 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
     return records
 
 
+def _parse_user_palette_records(
+    data: list[object],
+    source_file: str,
+) -> List[ColorRecord]:
+    """Build user-palette records from their authoritative name and hex fields."""
+    records: List[ColorRecord] = []
+
+    for index, item in enumerate(data):
+        if not isinstance(item, dict):
+            raise ValueError(
+                f"Invalid color data at index {index} in {source_file}: "
+                "expected an object"
+            )
+
+        name = item.get("name")
+        hex_code = item.get("hex")
+        if not isinstance(name, str):
+            raise ValueError(
+                f"Missing or invalid 'name' in color at index {index} in {source_file}"
+            )
+        if not isinstance(hex_code, str):
+            raise ValueError(
+                f"Missing or invalid 'hex' in color at index {index} in {source_file}"
+            )
+
+        try:
+            records.append(
+                ColorRecord.from_hex(hex_code, name=name, source=source_file)
+            )
+        except ValueError as error:
+            raise ValueError(
+                f"Invalid color data at index {index} in {source_file}: {error}"
+            ) from error
+
+    return records
+
+
+def _get_palette_files(palette_dir: Path, pattern: str) -> list[Path]:
+    """Return discoverable palette files, excluding copyable examples."""
+    if not palette_dir.exists():
+        return []
+    return [
+        path
+        for path in palette_dir.glob(pattern)
+        if not path.name.endswith("example.json")
+    ]
+
 
 
 def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     """
     Load a named retro palette from the palettes directory.
     
-    Palettes are loaded from:
-    1. User palettes: data/user/palettes/{name}.json (if exists)  
-    2. Core palettes: data/palettes/{name}.json (built-in)
-    
-    User palettes override core palettes with the same name.
+    Built-in palettes are loaded from ``data/palettes/{name}.json``.
+    User palettes are loaded from ``data/user/palettes/user-{name}.json`` and
+    must be requested with the ``user-`` prefix. User palette records require
+    only ``name`` and ``hex``; all other color-space values are calculated from
+    the hex value when loaded. Files ending in ``example.json`` are excluded
+    from palette discovery.
     
     Common built-in palettes include:
     - cga4: CGA 4-color palette (Palette 1, high intensity) - classic gaming!
@@ -352,7 +400,7 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     - gameboy: Game Boy 4-shade green palette
     
     Args:
-        name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web', or custom user palette)
+        name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web', or 'user-mycustom')
         json_path: Optional custom data directory. If None, uses package default.
     
     Returns:
@@ -367,8 +415,8 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
         >>> color, dist = cga.nearest_color((128, 64, 200))
         >>> print(f"Nearest CGA color: {color.name}")
         
-        >>> # Load custom user palette
-        >>> custom = load_palette("my_custom_palette")
+        >>> # Load custom user palette from data/user/palettes/user-mycustom.json
+        >>> custom = load_palette("user-mycustom")
         >>> print(f"Loaded {len(custom.records)} colors from user palette")
     """
     # Determine data directory
@@ -397,14 +445,15 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
         
         # Core palettes
         core_palettes_dir = data_dir / "palettes"
-        if core_palettes_dir.exists():
-            available.extend([p.stem for p in core_palettes_dir.glob("*.json")])
+        available.extend(
+            path.stem for path in _get_palette_files(core_palettes_dir, "*.json")
+        )
         
         # User palettes (only user-*.json files)
         user_palettes_dir = data_dir / "user" / "palettes"
-        if user_palettes_dir.exists():
-            user_palettes = [p.stem for p in user_palettes_dir.glob("user-*.json")]
-            available.extend(user_palettes)
+        available.extend(
+            path.stem for path in _get_palette_files(user_palettes_dir, "user-*.json")
+        )
         
         available.sort()
         
@@ -428,11 +477,16 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     if not isinstance(data, list):
         raise ValueError(f"Expected array of colors at root level in {palette_file}")
     
-    # Parse color records using shared helper function
-    records = _parse_color_records(
-        cast(list[_ColorRecordData], data),
-        str(palette_file),
-    )
+    if name.startswith("user-"):
+        records = _parse_user_palette_records(
+            cast(list[object], data),
+            palette_file.name,
+        )
+    else:
+        records = _parse_color_records(
+            cast(list[_ColorRecordData], data),
+            str(palette_file),
+        )
     
     return Palette(records)
 

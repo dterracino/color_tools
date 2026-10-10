@@ -522,6 +522,26 @@ class TestHandleColorCommand(unittest.TestCase):
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
+    def test_user_palette_name_lookup_uses_custom_data_directory(self):
+        """The color CLI can look up a user palette record and its derived values."""
+        import tempfile
+        from pathlib import Path
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            palette_dir = Path(temp_dir) / "user" / "palettes"
+            palette_dir.mkdir(parents=True)
+            (palette_dir / "user-custom.json").write_text(
+                '[{"name":"Custom Blue","hex":"#0000FF"}]',
+                encoding="utf-8",
+            )
+            args = self._make_args(name="Custom Blue", palette="user-custom")
+            code, output = self._run_capture(args, json_path=temp_dir)
+
+        self.assertEqual(code, 0)
+        self.assertIn("Name: Custom Blue", output)
+        self.assertIn("RGB:  (0, 0, 255)", output)
+        self.assertIn("HSL:  (240.0°, 100.0%, 50.0%)", output)
+
     def test_no_operation_exits_2(self):
         """Exits 2 when no operation is specified."""
         args = self._make_args()
@@ -781,12 +801,12 @@ class TestHandleFilamentCommand(unittest.TestCase):
 class TestHandleImageCommand(unittest.TestCase):
     """Tests for handle_image_command."""
 
-    def _run_capture(self, args):
+    def _run_capture(self, args, json_path=None):
         from color_tools.cli_commands.handlers.image import handle_image_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
             with patch('sys.stdout', captured):
-                handle_image_command(args)
+                handle_image_command(args, json_path)
         return ctx.exception.code, captured.getvalue()
 
     def _make_args(self, **kwargs):
@@ -836,6 +856,35 @@ class TestHandleImageCommand(unittest.TestCase):
         args = self._make_args(list_palettes=True)
         _, output = self._run_capture(args)
         self.assertTrue(len(output.strip()) > 0)
+
+    def test_list_palettes_works_without_image_extra_and_uses_json_path(self):
+        """Palette listing is dependency-free and respects a custom data directory."""
+        import tempfile
+        from pathlib import Path
+        import color_tools.cli_commands.handlers.image as img_mod
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            palette_dir = Path(temp_dir) / "user" / "palettes"
+            palette_dir.mkdir(parents=True)
+            (palette_dir / "user-demo.json").write_text(
+                '[{"name":"Example","hex":"#000000","rgb":[0,0,0],'
+                '"hsl":[0,0,0],"lab":[0,0,0],"lch":[0,0,0]}]',
+                encoding="utf-8",
+            )
+            (palette_dir / "user-palette.example.json").write_text(
+                '[{"name":"Example","hex":"#FFFFFF"}]',
+                encoding="utf-8",
+            )
+            with patch.object(img_mod, "IMAGE_AVAILABLE", False):
+                code, output = self._run_capture(
+                    self._make_args(list_palettes=True),
+                    json_path=temp_dir,
+                )
+
+        self.assertEqual(code, 0)
+        self.assertIn("user-demo", output)
+        self.assertNotIn("user-palette.example", output)
+        self.assertIn("1 colors", output)
 
     def test_no_file_exits_1(self):
         """Exits 1 when --file is not provided (and not list-palettes)."""
@@ -890,7 +939,16 @@ def _image_handler_pil_available():
         return False
 
 
+def _image_handler_numpy_available():
+    try:
+        import numpy  # noqa: F401
+        return True
+    except ImportError:
+        return False
+
+
 _PIL_FOR_HANDLER = _image_handler_pil_available()
+_NUMPY_FOR_HANDLER = _image_handler_numpy_available()
 
 
 class TestHandleImageCommandOperations(unittest.TestCase):
@@ -944,12 +1002,12 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertEqual(ctx.exception.code, expected_code)
         return captured_out.getvalue(), captured_err.getvalue()
 
-    def _run_expect_return(self, args):
+    def _run_expect_return(self, args, json_path=None):
         """Run handler expecting normal return (no sys.exit); return stdout."""
         from color_tools.cli_commands.handlers.image import handle_image_command
         captured_out = io.StringIO()
         with patch('sys.stdout', captured_out):
-            handle_image_command(args)
+            handle_image_command(args, json_path)
         return captured_out.getvalue()
 
     def _make_args(self, **kwargs):
@@ -1001,6 +1059,59 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             out = self._run_expect_return(args)
         mock_image.save.assert_called_once()
         self.assertIn('protanopia_sim', out)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_palette_quantization_passes_json_path_to_image_api(self):
+        """Image palette quantization uses the selected custom data directory."""
+        from pathlib import Path
+        import color_tools.cli_commands.handlers.image as img_mod
+
+        data_dir = Path("custom-palette-data")
+        with patch.object(img_mod, "load_palette", return_value=MagicMock()), \
+             patch.object(img_mod, "quantize_image_to_palette", return_value=MagicMock()) as quantize:
+            args = self._make_args(
+                file=self._img_path,
+                output="output.png",
+                quantize_palette="user-example",
+            )
+            self._run_expect_return(args, json_path=data_dir)
+
+        quantize.assert_called_once()
+        self.assertEqual(quantize.call_args.kwargs["json_path"], data_dir)
+
+    @unittest.skipUnless(
+        _PIL_FOR_HANDLER and _NUMPY_FOR_HANDLER,
+        'Requires Pillow and numpy',
+    )
+    def test_user_palette_quantization_uses_custom_palette(self):
+        """Image CLI output uses the colors from the selected user palette."""
+        import tempfile
+        from pathlib import Path
+        from PIL import Image
+
+        with tempfile.TemporaryDirectory() as temp_dir:
+            data_dir = Path(temp_dir) / "data"
+            palette_dir = data_dir / "user" / "palettes"
+            palette_dir.mkdir(parents=True)
+            (palette_dir / "user-custom.json").write_text(
+                '[{"name":"Custom Ink","hex":"#112233"}]',
+                encoding="utf-8",
+            )
+            image_path = Path(temp_dir) / "source.png"
+            Image.new("RGB", (4, 4), (255, 0, 0)).save(image_path)
+            output_path = Path(temp_dir) / "quantized.png"
+
+            args = self._make_args(
+                file=str(image_path),
+                output=str(output_path),
+                quantize_palette="user-custom",
+            )
+            self._run_expect_return(args, json_path=data_dir)
+
+            with Image.open(output_path) as quantized:
+                output_colors = set(quantized.convert("RGB").getdata())
+
+        self.assertEqual(output_colors, {(17, 34, 51)})
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
     def test_cvd_simulate_with_output_does_not_call_save(self):

@@ -8,8 +8,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- **User palette file format** — user palette records now require only `name`
+  and `hex`; RGB, HSL, LAB, and LCH values are calculated from hex at load
+  time, and extra fields are ignored. Palette files ending in `example.json`
+  are excluded from discovery. This intentionally changes the previously
+  undocumented user-palette format and is a breaking change.
+
 ### Fixed
 
+- **User palette documentation and image CLI discovery** — documented the required
+  `user-` filename prefix and separate namespace, passed custom `--json` data
+  directories through image palette listing and quantization, and made
+  `image --list-palettes` available without the optional image dependencies.
 - **Bambu Lab synonym spelling** — corrected the documented and demonstrated
   abbreviation from `BLL` to `BBL`; the core synonym data already used `BBL`.
 - **Template editing ergonomics** — use `<%=...%>` loop and field tags, with

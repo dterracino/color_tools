@@ -15,7 +15,9 @@ from __future__ import annotations
 
 import io
 import sys
+import tempfile
 import unittest
+from pathlib import Path
 from unittest.mock import patch
 
 from color_tools.cli import build_parser, main
@@ -74,6 +76,22 @@ class TestCliMain(unittest.TestCase):
         """color --nearest --hex #FF0000 exits 0."""
         code, _, _ = self._run(['color', '--nearest', '--hex', '#FF0000'])
         self.assertEqual(code, 0)
+
+    def test_image_command_receives_custom_json_path(self):
+        """The global --json directory reaches the image command handler."""
+        with tempfile.TemporaryDirectory() as temp_dir:
+            with patch.object(
+                sys,
+                'argv',
+                ['color-tools', '--json', temp_dir, 'image', '--list-palettes'],
+            ):
+                with patch('sys.stdout', io.StringIO()):
+                    with patch('color_tools.cli.handle_image_command') as image_handler:
+                        with self.assertRaises(SystemExit) as ctx:
+                            main()
+
+        self.assertEqual(ctx.exception.code, 0)
+        self.assertEqual(image_handler.call_args.args[1], Path(temp_dir))
 
     def test_harmony_with_style_exits_0(self):
         """Top-level harmony command accepts mood and tone options."""

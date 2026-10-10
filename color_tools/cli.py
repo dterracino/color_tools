@@ -952,5 +952,5 @@ def main() -> None:
     
     # ==================== IMAGE COMMAND HANDLER ====================
     elif args.command == "image":
-        handle_image_command(args)
+        handle_image_command(args, json_path)
         sys.exit(0)

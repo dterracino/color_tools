@@ -343,19 +343,25 @@ print(f"Red color from: {red_color.source}")
 
 ## Custom Palettes
 
-Color Tools supports custom color palettes for retro graphics, pixel art, or specialized color matching. Palettes are stored in the `data/palettes/` directory.
+Color Tools supports custom palettes for retro graphics, pixel art, or specialized color matching. Built-in palettes live in `data/palettes/`; put personal palettes in `data/user/palettes/` so package data remains separate from user data.
 
 ### Using Custom Palettes
 
 **Via CLI:**
 
 ```bash
-# Find nearest color in a custom palette
+# Find nearest color in a built-in palette
 python -m color_tools color --palette cga4 --nearest --value 128 64 200 --space rgb
 
 # List all available palettes (both commands show the same information)
 color-tools color --palette list
 color-tools image --list-palettes
+
+# Use a user palette for image quantization
+color-tools image --file photo.jpg --quantize-palette user-mycustom
+
+# Use the same user palette from a custom data directory
+color-tools --json DIR image --file photo.jpg --quantize-palette user-mycustom
 ```
 
 **Via Python API:**
@@ -389,29 +395,19 @@ print(f"Nearest color: {nearest.name} ({nearest.hex})")
 | `gameboy_mgb` | 4 | Game Boy Pocket palette |
 | `commodore64` | 16 | Commodore 64 palette |
 
-### Creating Custom Palettes
+### Creating a User Palette
 
-To create a custom palette, add a JSON file to the `data/palettes/` directory:
-
-#### Example: my_palette.json
+Create a JSON array of color records in `data/user/palettes/`. User palette filenames must begin with `user-`; use the full filename stem when loading the palette. Each color entry requires only `name` and `hex`; RGB, HSL, LAB, and LCH values are calculated from the hex color when loaded. Any other fields in the file are ignored and are not written back. Files ending in `example.json` are skipped during palette discovery. For example, save this as `data/user/palettes/user-mycustom.json`:
 
 ```json
 [
   {
     "name": "Primary Red",
-    "hex": "#FF0000",
-    "rgb": [255, 0, 0],
-    "hsl": [0, 100, 50],
-    "lab": [53.23, 80.11, 67.22],
-    "lch": [53.23, 104.55, 40.0]
+    "hex": "#FF0000"
   },
   {
     "name": "Primary Green",
-    "hex": "#00FF00",
-    "rgb": [0, 255, 0],
-    "hsl": [120, 100, 50],
-    "lab": [87.74, -86.18, 83.18],
-    "lch": [87.74, 119.78, 136.02]
+    "hex": "#00FF00"
   }
 ]
 ```
@@ -419,9 +415,26 @@ To create a custom palette, add a JSON file to the `data/palettes/` directory:
 Then load it with:
 
 ```python
-# The palette name is the filename without .json extension
-my_palette = load_palette('my_palette')
+my_palette = load_palette('user-mycustom')
 ```
+
+User palettes are listed by `color-tools color --palette list` and `color-tools image --list-palettes`. They can also be used with `color --palette user-mycustom` and image quantization via `--quantize-palette user-mycustom`. The Python image API accepts the same optional data-directory path:
+
+```python
+from color_tools.image import quantize_image_to_palette
+
+quantized = quantize_image_to_palette(
+    "photo.jpg",
+    "user-mycustom",
+    json_path="path/to/data",
+)
+```
+
+The `user-` prefix keeps user palette names separate from built-in palette names: `user-gameboy` does not replace `gameboy`. When using a custom data directory with the global `--json DIR` option, keep the same layout beneath that directory (`DIR/palettes/` and `DIR/user/palettes/`).
+
+Example files named `*example.json` are ignored in the available-palette list. Copy or rename an example to `user-mycustom.json` before using it.
+
+Use `data/palettes/` only when adding or maintaining a built-in palette in the source distribution; those files are covered by the project's data-integrity checks.
 
 ---
 

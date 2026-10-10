@@ -1,0 +1,14 @@
+[
+  {
+    "name": "black",
+    "hex": "#000000"
+  },
+  {
+    "name": "blue",
+    "hex": "#0000ff"
+  },
+  {
+    "name": "white",
+    "hex": "#ffffff"
+  }
+]

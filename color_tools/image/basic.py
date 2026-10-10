@@ -960,7 +960,8 @@ def quantize_image_to_palette(
     palette_name: str,
     metric: str = 'de2000',
     dither: bool = False,
-    output_path: Path | str | None = None
+    output_path: Path | str | None = None,
+    json_path: Path | str | None = None,
 ) -> Image.Image:
     """
     Convert an image to use only colors from a specified palette.
@@ -984,6 +985,7 @@ def quantize_image_to_palette(
             - 'hsl_euclidean': HSL distance with hue wraparound
         dither: Apply Floyd-Steinberg dithering to reduce banding
         output_path: Optional path to save quantized image
+        json_path: Optional data directory containing the palette directories.
     
     Returns:
         PIL Image using only palette colors
@@ -1011,7 +1013,7 @@ def quantize_image_to_palette(
     
     # Load target palette
     try:
-        palette = load_palette(palette_name)
+        palette = load_palette(palette_name, json_path)
     except FileNotFoundError as e:
         raise ValueError(str(e)) from e
     

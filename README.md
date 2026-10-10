@@ -2,7 +2,7 @@
 
 A comprehensive Python library for color science operations, color space conversions, and color matching. This tool provides perceptually accurate color distance calculations, gamut checking, and extensive databases of CSS colors and 3D printing filament colors.
 
-[![Version](https://img.shields.io/badge/version-6.16.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
+[![Version](https://img.shields.io/badge/version-7.0.0-blue.svg)](https://github.com/dterracino/color_tools/blob/main/CHANGELOG.md)
 [![PyPI version](https://img.shields.io/pypi/v/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![Python versions](https://img.shields.io/pypi/pyversions/color-match-tools.svg)](https://pypi.org/project/color-match-tools/)
 [![CI](https://github.com/dterracino/color_tools/actions/workflows/ci.yml/badge.svg)](https://github.com/dterracino/color_tools/actions/workflows/ci.yml)
