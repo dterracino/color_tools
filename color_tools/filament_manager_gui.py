@@ -57,7 +57,7 @@ else:
     else:
         PYSIDE6_AVAILABLE = True
 
-from .filament_palette import FilamentPalette
+from .filament_palette import FilamentPalette, FilamentRecord
 
 __all__ = ["PYSIDE6_AVAILABLE", "run_filament_manager_gui"]
 
@@ -118,9 +118,9 @@ class FilamentManagerWindow(_QMainWindow):
         super().__init__()
         self.filament_palette = palette
         self.save_path = save_path
-        self.owned_ids = set(palette.owned_filaments)
-        self.original_owned_ids = self.owned_ids.copy()
-        self.records = sorted(
+        self.owned_ids: set[str] = set(palette.owned_filaments)
+        self.original_owned_ids: set[str] = self.owned_ids.copy()
+        self.records: list[FilamentRecord] = sorted(
             palette.records,
             key=lambda record: (
                 record.maker.casefold(),

@@ -466,11 +466,11 @@ class FilamentExportDialog(QDialog):
 
         layout = QVBoxLayout(self)
         form = QFormLayout()
-        self.template_selector = QComboBox(self)
+        self.template_selector: QComboBox = QComboBox(self)
         self.template_selector.addItems(
             [template.name for template in _TEMPLATES]
         )
-        self.extension_input = QLineEdit(self)
+        self.extension_input: QLineEdit = QLineEdit(self)
         form.addRow("Template:", self.template_selector)
         form.addRow("File extension:", self.extension_input)
         layout.addLayout(form)
@@ -483,7 +483,7 @@ class FilamentExportDialog(QDialog):
                 self,
             )
         )
-        self.tag_help = QLabel(
+        self.tag_help: QLabel = QLabel(
             "Field tags: "
             + ", ".join(f"<%={name}%>" for name in _FIELD_NAMES)
             + ". Nested fields can use .property, [index], or [\"key\"]. "
@@ -493,7 +493,7 @@ class FilamentExportDialog(QDialog):
         self.tag_help.setWordWrap(True)
         layout.addWidget(self.tag_help)
         tag_controls = QHBoxLayout()
-        self.tag_selector = QComboBox(self)
+        self.tag_selector: QComboBox = QComboBox(self)
         self.tag_selector.setObjectName("templateTagSelector")
         self.tag_selector.addItems(
             [
@@ -502,7 +502,7 @@ class FilamentExportDialog(QDialog):
             ]
         )
         tag_controls.addWidget(self.tag_selector)
-        self.insert_tag_button = QPushButton("Insert tag", self)
+        self.insert_tag_button: QPushButton = QPushButton("Insert tag", self)
         self.insert_tag_button.setObjectName("insertTemplateTagButton")
         self.insert_tag_button.clicked.connect(self._insert_selected_tag)
         tag_controls.addWidget(self.insert_tag_button)
@@ -512,15 +512,15 @@ class FilamentExportDialog(QDialog):
         template_font = QFontDatabase.systemFont(
             QFontDatabase.SystemFont.FixedFont
         )
-        self.template_editor = TemplateEditor(self)
+        self.template_editor: TemplateEditor = TemplateEditor(self)
         self.template_editor.setFont(template_font)
         self.template_editor.setTabChangesFocus(False)
         self.template_editor.setFixedHeight(210)
-        self.template_highlighter = TemplateTagHighlighter(
+        self.template_highlighter: TemplateTagHighlighter = TemplateTagHighlighter(
             self.template_editor.document()
         )
         layout.addWidget(self.template_editor)
-        self.preview = TemplateEditor(self)
+        self.preview: TemplateEditor = TemplateEditor(self)
         self.preview.setFont(template_font)
         self.preview.setReadOnly(True)
         self.preview.setTabChangesFocus(False)

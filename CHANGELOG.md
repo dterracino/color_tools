@@ -18,6 +18,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Desktop GUI public type annotations** — explicitly annotated export-dialog
+  widgets and filament-manager collections so installed-package type-completeness
+  checking can verify their public contracts.
 - **User palette documentation and image CLI discovery** — documented the required
   `user-` filename prefix and separate namespace, passed custom `--json` data
   directories through image palette listing and quantization, and made
