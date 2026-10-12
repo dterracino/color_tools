@@ -9,6 +9,7 @@ import sys
 import tempfile
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent
@@ -16,23 +17,34 @@ if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
 # Check for dependencies before running tests
+if TYPE_CHECKING:
+    from PIL import Image
+
 try:
     from PIL import Image
-    PILLOW_AVAILABLE = True
 except ImportError:
-    PILLOW_AVAILABLE = False
+    _pillow_available = False
+else:
+    _pillow_available = True
+PILLOW_AVAILABLE = _pillow_available
 
 try:
     import numpy as np
-    NUMPY_AVAILABLE = True
+    del np
 except ImportError:
-    NUMPY_AVAILABLE = False
+    _numpy_available = False
+else:
+    _numpy_available = True
+NUMPY_AVAILABLE = _numpy_available
 
 try:
     from skimage import restoration
-    SCIKIT_IMAGE_AVAILABLE = True
+    del restoration
 except ImportError:
-    SCIKIT_IMAGE_AVAILABLE = False
+    _scikit_image_available = False
+else:
+    _scikit_image_available = True
+SCIKIT_IMAGE_AVAILABLE = _scikit_image_available
 
 
 def create_solid_image(width: int, height: int, color: tuple[int, int, int]) -> str:
@@ -131,21 +143,21 @@ class TestCountUniqueColors(unittest.TestCase):
     """Test count_unique_colors function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import count_unique_colors
         cls.count_unique_colors = staticmethod(count_unique_colors)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_solid_color_image_returns_one(self):
+    def test_solid_color_image_returns_one(self) -> None:
         """Test that a solid color image has 1 unique color."""
         img_path = create_solid_image(50, 50, (255, 0, 0))
         self.test_files.append(img_path)
@@ -153,7 +165,7 @@ class TestCountUniqueColors(unittest.TestCase):
         count = self.count_unique_colors(img_path)
         self.assertEqual(count, 1)
     
-    def test_two_color_checkerboard(self):
+    def test_two_color_checkerboard(self) -> None:
         """Test that a checkerboard has 2 unique colors."""
         img_path = create_checkerboard_image(100, 100, cell_size=10)
         self.test_files.append(img_path)
@@ -161,7 +173,7 @@ class TestCountUniqueColors(unittest.TestCase):
         count = self.count_unique_colors(img_path)
         self.assertEqual(count, 2)
     
-    def test_gradient_has_many_colors(self):
+    def test_gradient_has_many_colors(self) -> None:
         """Test that a gradient has many unique colors."""
         img_path = create_gradient_image(256, 10)
         self.test_files.append(img_path)
@@ -169,7 +181,7 @@ class TestCountUniqueColors(unittest.TestCase):
         count = self.count_unique_colors(img_path)
         self.assertEqual(count, 256)  # Each gray level from 0 to 255
     
-    def test_multicolor_image(self):
+    def test_multicolor_image(self) -> None:
         """Test counting colors in a multi-color image."""
         colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 0), (128, 64, 32)]
         img_path = create_multicolor_image(colors)
@@ -178,12 +190,12 @@ class TestCountUniqueColors(unittest.TestCase):
         count = self.count_unique_colors(img_path)
         self.assertEqual(count, len(colors))
     
-    def test_nonexistent_file_raises_error(self):
+    def test_nonexistent_file_raises_error(self) -> None:
         """Test that nonexistent file raises error."""
         with self.assertRaises(FileNotFoundError):
             self.count_unique_colors("/nonexistent/path/image.png")
     
-    def test_returns_integer(self):
+    def test_returns_integer(self) -> None:
         """Test that function returns an integer."""
         img_path = create_solid_image(10, 10, (100, 100, 100))
         self.test_files.append(img_path)
@@ -191,7 +203,7 @@ class TestCountUniqueColors(unittest.TestCase):
         count = self.count_unique_colors(img_path)
         self.assertIsInstance(count, int)
     
-    def test_accepts_path_object(self):
+    def test_accepts_path_object(self) -> None:
         """Test that function accepts Path objects."""
         img_path = create_solid_image(10, 10, (50, 50, 50))
         self.test_files.append(img_path)
@@ -205,21 +217,21 @@ class TestIsIndexedMode(unittest.TestCase):
     """Test is_indexed_mode function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import is_indexed_mode
         cls.is_indexed_mode = staticmethod(is_indexed_mode)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_rgb_image_returns_false(self):
+    def test_rgb_image_returns_false(self) -> None:
         """Test that an RGB image is not indexed."""
         img_path = create_solid_image(50, 50, (255, 0, 0))
         self.test_files.append(img_path)
@@ -227,7 +239,7 @@ class TestIsIndexedMode(unittest.TestCase):
         result = self.is_indexed_mode(img_path)
         self.assertFalse(result)
     
-    def test_indexed_image_returns_true(self):
+    def test_indexed_image_returns_true(self) -> None:
         """Test that an indexed image returns True."""
         img_path = create_indexed_image(50, 50, (255, 0, 0))
         self.test_files.append(img_path)
@@ -235,12 +247,12 @@ class TestIsIndexedMode(unittest.TestCase):
         result = self.is_indexed_mode(img_path)
         self.assertTrue(result)
     
-    def test_nonexistent_file_raises_error(self):
+    def test_nonexistent_file_raises_error(self) -> None:
         """Test that nonexistent file raises error."""
         with self.assertRaises(FileNotFoundError):
             self.is_indexed_mode("/nonexistent/path/image.png")
     
-    def test_returns_boolean(self):
+    def test_returns_boolean(self) -> None:
         """Test that function returns a boolean."""
         img_path = create_solid_image(10, 10, (100, 100, 100))
         self.test_files.append(img_path)
@@ -254,21 +266,21 @@ class TestGetColorHistogram(unittest.TestCase):
     """Test get_color_histogram function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import get_color_histogram
         cls.get_color_histogram = staticmethod(get_color_histogram)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_solid_color_histogram(self):
+    def test_solid_color_histogram(self) -> None:
         """Test histogram of a solid color image."""
         color = (128, 64, 32)
         img_path = create_solid_image(10, 10, color)
@@ -280,7 +292,7 @@ class TestGetColorHistogram(unittest.TestCase):
         self.assertIn(color, histogram)
         self.assertEqual(histogram[color], 100)  # 10x10 = 100 pixels
     
-    def test_checkerboard_histogram(self):
+    def test_checkerboard_histogram(self) -> None:
         """Test histogram of a checkerboard image."""
         img_path = create_checkerboard_image(100, 100, cell_size=10)
         self.test_files.append(img_path)
@@ -293,7 +305,7 @@ class TestGetColorHistogram(unittest.TestCase):
         # Each color should have roughly half the pixels
         self.assertEqual(histogram[(255, 255, 255)] + histogram[(0, 0, 0)], 10000)
     
-    def test_histogram_keys_are_rgb_tuples(self):
+    def test_histogram_keys_are_rgb_tuples(self) -> None:
         """Test that histogram keys are RGB tuples."""
         img_path = create_solid_image(5, 5, (200, 150, 100))
         self.test_files.append(img_path)
@@ -306,7 +318,7 @@ class TestGetColorHistogram(unittest.TestCase):
             for component in color:
                 self.assertIsInstance(component, int)
     
-    def test_histogram_values_are_integers(self):
+    def test_histogram_values_are_integers(self) -> None:
         """Test that histogram values are integers."""
         img_path = create_gradient_image(10, 1)
         self.test_files.append(img_path)
@@ -317,7 +329,7 @@ class TestGetColorHistogram(unittest.TestCase):
             self.assertIsInstance(count, int)
             self.assertGreater(count, 0)
     
-    def test_nonexistent_file_raises_error(self):
+    def test_nonexistent_file_raises_error(self) -> None:
         """Test that nonexistent file raises error."""
         with self.assertRaises(FileNotFoundError):
             self.get_color_histogram("/nonexistent/path/image.png")
@@ -328,21 +340,21 @@ class TestGetDominantColor(unittest.TestCase):
     """Test get_dominant_color function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import get_dominant_color
         cls.get_dominant_color = staticmethod(get_dominant_color)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_solid_color_returns_that_color(self):
+    def test_solid_color_returns_that_color(self) -> None:
         """Test that a solid color image returns its color."""
         color = (255, 128, 64)
         img_path = create_solid_image(50, 50, color)
@@ -351,7 +363,7 @@ class TestGetDominantColor(unittest.TestCase):
         dominant = self.get_dominant_color(img_path)
         self.assertEqual(dominant, color)
     
-    def test_returns_rgb_tuple(self):
+    def test_returns_rgb_tuple(self) -> None:
         """Test that function returns an RGB tuple."""
         img_path = create_gradient_image(20, 20)
         self.test_files.append(img_path)
@@ -365,12 +377,12 @@ class TestGetDominantColor(unittest.TestCase):
             self.assertGreaterEqual(component, 0)
             self.assertLessEqual(component, 255)
     
-    def test_nonexistent_file_raises_error(self):
+    def test_nonexistent_file_raises_error(self) -> None:
         """Test that nonexistent file raises error."""
         with self.assertRaises(FileNotFoundError):
             self.get_dominant_color("/nonexistent/path/image.png")
     
-    def test_majority_color_is_dominant(self):
+    def test_majority_color_is_dominant(self) -> None:
         """Test that the color with most pixels is returned."""
         # Create image with 75% red, 25% blue
         width, height = 100, 100
@@ -396,21 +408,21 @@ class TestAnalyzeBrightness(unittest.TestCase):
     """Test analyze_brightness function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import analyze_brightness
         cls.analyze_brightness = staticmethod(analyze_brightness)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_dark_image_assessment(self):
+    def test_dark_image_assessment(self) -> None:
         """Test that a dark image is assessed as 'dark'."""
         img_path = create_dark_image(50, 50)
         self.test_files.append(img_path)
@@ -418,9 +430,12 @@ class TestAnalyzeBrightness(unittest.TestCase):
         result = self.analyze_brightness(img_path)
         
         self.assertEqual(result['assessment'], 'dark')
-        self.assertLess(result['mean_brightness'], 60)
+        brightness = result['mean_brightness']
+        if not isinstance(brightness, float):
+            self.fail("Mean brightness must be a float.")
+        self.assertLess(brightness, 60)
     
-    def test_bright_image_assessment(self):
+    def test_bright_image_assessment(self) -> None:
         """Test that a bright image is assessed as 'bright'."""
         img_path = create_bright_image(50, 50)
         self.test_files.append(img_path)
@@ -428,9 +443,12 @@ class TestAnalyzeBrightness(unittest.TestCase):
         result = self.analyze_brightness(img_path)
         
         self.assertEqual(result['assessment'], 'bright')
-        self.assertGreater(result['mean_brightness'], 195)
+        brightness = result['mean_brightness']
+        if not isinstance(brightness, float):
+            self.fail("Mean brightness must be a float.")
+        self.assertGreater(brightness, 195)
     
-    def test_normal_image_assessment(self):
+    def test_normal_image_assessment(self) -> None:
         """Test that a mid-tone image is assessed as 'normal'."""
         img_path = create_solid_image(50, 50, (128, 128, 128))
         self.test_files.append(img_path)
@@ -439,7 +457,7 @@ class TestAnalyzeBrightness(unittest.TestCase):
         
         self.assertEqual(result['assessment'], 'normal')
     
-    def test_returns_expected_keys(self):
+    def test_returns_expected_keys(self) -> None:
         """Test that function returns expected keys."""
         img_path = create_solid_image(10, 10, (100, 100, 100))
         self.test_files.append(img_path)
@@ -449,7 +467,7 @@ class TestAnalyzeBrightness(unittest.TestCase):
         self.assertIn('mean_brightness', result)
         self.assertIn('assessment', result)
     
-    def test_mean_brightness_is_float(self):
+    def test_mean_brightness_is_float(self) -> None:
         """Test that mean_brightness is a float."""
         img_path = create_gradient_image(50, 50)
         self.test_files.append(img_path)
@@ -458,7 +476,7 @@ class TestAnalyzeBrightness(unittest.TestCase):
         
         self.assertIsInstance(result['mean_brightness'], float)
     
-    def test_nonexistent_file_raises_error(self):
+    def test_nonexistent_file_raises_error(self) -> None:
         """Test that nonexistent file raises error."""
         with self.assertRaises(FileNotFoundError):
             self.analyze_brightness("/nonexistent/path/image.png")
@@ -469,21 +487,21 @@ class TestAnalyzeContrast(unittest.TestCase):
     """Test analyze_contrast function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import analyze_contrast
         cls.analyze_contrast = staticmethod(analyze_contrast)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_low_contrast_image_assessment(self):
+    def test_low_contrast_image_assessment(self) -> None:
         """Test that a uniform image has low contrast."""
         img_path = create_low_contrast_image(50, 50)
         self.test_files.append(img_path)
@@ -491,9 +509,12 @@ class TestAnalyzeContrast(unittest.TestCase):
         result = self.analyze_contrast(img_path)
         
         self.assertEqual(result['assessment'], 'low')
-        self.assertLess(result['contrast_std'], 40)
+        contrast = result['contrast_std']
+        if not isinstance(contrast, float):
+            self.fail("Contrast standard deviation must be a float.")
+        self.assertLess(contrast, 40)
     
-    def test_high_contrast_image_assessment(self):
+    def test_high_contrast_image_assessment(self) -> None:
         """Test that a high contrast image is assessed as 'normal'."""
         img_path = create_checkerboard_image(100, 100, cell_size=5)
         self.test_files.append(img_path)
@@ -501,9 +522,12 @@ class TestAnalyzeContrast(unittest.TestCase):
         result = self.analyze_contrast(img_path)
         
         self.assertEqual(result['assessment'], 'normal')
-        self.assertGreater(result['contrast_std'], 40)
+        contrast = result['contrast_std']
+        if not isinstance(contrast, float):
+            self.fail("Contrast standard deviation must be a float.")
+        self.assertGreater(contrast, 40)
     
-    def test_returns_expected_keys(self):
+    def test_returns_expected_keys(self) -> None:
         """Test that function returns expected keys."""
         img_path = create_solid_image(10, 10, (100, 100, 100))
         self.test_files.append(img_path)
@@ -513,7 +537,7 @@ class TestAnalyzeContrast(unittest.TestCase):
         self.assertIn('contrast_std', result)
         self.assertIn('assessment', result)
     
-    def test_contrast_std_is_float(self):
+    def test_contrast_std_is_float(self) -> None:
         """Test that contrast_std is a float."""
         img_path = create_gradient_image(50, 50)
         self.test_files.append(img_path)
@@ -522,14 +546,17 @@ class TestAnalyzeContrast(unittest.TestCase):
         
         self.assertIsInstance(result['contrast_std'], float)
     
-    def test_solid_color_has_zero_contrast(self):
+    def test_solid_color_has_zero_contrast(self) -> None:
         """Test that a solid color image has zero contrast."""
         img_path = create_solid_image(50, 50, (150, 150, 150))
         self.test_files.append(img_path)
         
         result = self.analyze_contrast(img_path)
         
-        self.assertAlmostEqual(result['contrast_std'], 0.0, places=2)
+        contrast = result['contrast_std']
+        if not isinstance(contrast, float):
+            self.fail("Contrast standard deviation must be a float.")
+        self.assertAlmostEqual(contrast, 0.0, places=2)
 
 
 @unittest.skipUnless(PILLOW_AVAILABLE and NUMPY_AVAILABLE and SCIKIT_IMAGE_AVAILABLE, 
@@ -538,21 +565,21 @@ class TestAnalyzeNoiseLevel(unittest.TestCase):
     """Test analyze_noise_level function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import analyze_noise_level
         cls.analyze_noise_level = staticmethod(analyze_noise_level)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_clean_image_assessment(self):
+    def test_clean_image_assessment(self) -> None:
         """Test that a solid color image is assessed as 'clean'."""
         img_path = create_solid_image(100, 100, (128, 128, 128))
         self.test_files.append(img_path)
@@ -561,7 +588,7 @@ class TestAnalyzeNoiseLevel(unittest.TestCase):
         
         self.assertEqual(result['assessment'], 'clean')
     
-    def test_returns_expected_keys(self):
+    def test_returns_expected_keys(self) -> None:
         """Test that function returns expected keys."""
         img_path = create_solid_image(100, 100, (100, 100, 100))
         self.test_files.append(img_path)
@@ -571,7 +598,7 @@ class TestAnalyzeNoiseLevel(unittest.TestCase):
         self.assertIn('noise_sigma', result)
         self.assertIn('assessment', result)
     
-    def test_noise_sigma_is_float(self):
+    def test_noise_sigma_is_float(self) -> None:
         """Test that noise_sigma is a float."""
         img_path = create_gradient_image(100, 100)
         self.test_files.append(img_path)
@@ -580,16 +607,19 @@ class TestAnalyzeNoiseLevel(unittest.TestCase):
         
         self.assertIsInstance(result['noise_sigma'], float)
     
-    def test_noise_sigma_is_non_negative(self):
+    def test_noise_sigma_is_non_negative(self) -> None:
         """Test that noise_sigma is non-negative."""
         img_path = create_checkerboard_image(100, 100)
         self.test_files.append(img_path)
         
         result = self.analyze_noise_level(img_path)
         
-        self.assertGreaterEqual(result['noise_sigma'], 0.0)
+        sigma = result['noise_sigma']
+        if not isinstance(sigma, float):
+            self.fail("Noise sigma must be a float.")
+        self.assertGreaterEqual(sigma, 0.0)
     
-    def test_custom_crop_size(self):
+    def test_custom_crop_size(self) -> None:
         """Test that custom crop_size is respected."""
         img_path = create_solid_image(200, 200, (100, 100, 100))
         self.test_files.append(img_path)
@@ -598,7 +628,7 @@ class TestAnalyzeNoiseLevel(unittest.TestCase):
         
         self.assertIn('noise_sigma', result)
     
-    def test_small_image_handled(self):
+    def test_small_image_handled(self) -> None:
         """Test that small images (smaller than crop_size) are handled."""
         img_path = create_solid_image(50, 50, (100, 100, 100))
         self.test_files.append(img_path)
@@ -614,21 +644,21 @@ class TestAnalyzeDynamicRange(unittest.TestCase):
     """Test analyze_dynamic_range function."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import analyze_dynamic_range
         cls.analyze_dynamic_range = staticmethod(analyze_dynamic_range)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_full_range_gradient(self):
+    def test_full_range_gradient(self) -> None:
         """Test that a full range gradient has 'full' assessment."""
         img_path = create_gradient_image(256, 10)
         self.test_files.append(img_path)
@@ -640,7 +670,7 @@ class TestAnalyzeDynamicRange(unittest.TestCase):
         self.assertEqual(result['range'], 255)
         self.assertEqual(result['range_assessment'], 'full')
     
-    def test_limited_range_image(self):
+    def test_limited_range_image(self) -> None:
         """Test that a limited range image has 'limited' assessment."""
         img_path = create_solid_image(50, 50, (128, 128, 128))
         self.test_files.append(img_path)
@@ -650,7 +680,7 @@ class TestAnalyzeDynamicRange(unittest.TestCase):
         self.assertEqual(result['range'], 0)
         self.assertEqual(result['range_assessment'], 'limited')
     
-    def test_returns_expected_keys(self):
+    def test_returns_expected_keys(self) -> None:
         """Test that function returns expected keys."""
         img_path = create_solid_image(10, 10, (100, 100, 100))
         self.test_files.append(img_path)
@@ -662,34 +692,43 @@ class TestAnalyzeDynamicRange(unittest.TestCase):
         for key in expected_keys:
             self.assertIn(key, result)
     
-    def test_dark_image_gamma_suggestion(self):
+    def test_dark_image_gamma_suggestion(self) -> None:
         """Test gamma suggestion for dark image."""
         img_path = create_dark_image(50, 50)
         self.test_files.append(img_path)
         
         result = self.analyze_dynamic_range(img_path)
         
-        self.assertIn('Decrease', result['gamma_suggestion'])
+        suggestion = result['gamma_suggestion']
+        if not isinstance(suggestion, str):
+            self.fail("Gamma suggestion must be a string.")
+        self.assertIn('Decrease', suggestion)
     
-    def test_bright_image_gamma_suggestion(self):
+    def test_bright_image_gamma_suggestion(self) -> None:
         """Test gamma suggestion for bright image."""
         img_path = create_bright_image(50, 50)
         self.test_files.append(img_path)
         
         result = self.analyze_dynamic_range(img_path)
         
-        self.assertIn('Increase', result['gamma_suggestion'])
+        suggestion = result['gamma_suggestion']
+        if not isinstance(suggestion, str):
+            self.fail("Gamma suggestion must be a string.")
+        self.assertIn('Increase', suggestion)
     
-    def test_normal_image_gamma_suggestion(self):
+    def test_normal_image_gamma_suggestion(self) -> None:
         """Test gamma suggestion for normal brightness image."""
         img_path = create_solid_image(50, 50, (128, 128, 128))
         self.test_files.append(img_path)
         
         result = self.analyze_dynamic_range(img_path)
         
-        self.assertIn('Normal', result['gamma_suggestion'])
+        suggestion = result['gamma_suggestion']
+        if not isinstance(suggestion, str):
+            self.fail("Gamma suggestion must be a string.")
+        self.assertIn('Normal', suggestion)
     
-    def test_min_max_values_are_integers(self):
+    def test_min_max_values_are_integers(self) -> None:
         """Test that min and max values are integers."""
         img_path = create_gradient_image(100, 100)
         self.test_files.append(img_path)
@@ -706,7 +745,7 @@ class TestBasicIntegration(unittest.TestCase):
     """Integration tests for the basic analysis module."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import (
             count_unique_colors,
             get_color_histogram,
@@ -722,17 +761,17 @@ class TestBasicIntegration(unittest.TestCase):
         cls.analyze_contrast = staticmethod(analyze_contrast)
         cls.analyze_dynamic_range = staticmethod(analyze_dynamic_range)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_all_functions_on_same_image(self):
+    def test_all_functions_on_same_image(self) -> None:
         """Test all analysis functions on the same image."""
         img_path = create_gradient_image(100, 100)
         self.test_files.append(img_path)
@@ -769,7 +808,7 @@ class TestEdgeCases(unittest.TestCase):
     """Test edge cases and error conditions."""
     
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image import (
             count_unique_colors,
             get_color_histogram,
@@ -779,17 +818,17 @@ class TestEdgeCases(unittest.TestCase):
         cls.get_color_histogram = staticmethod(get_color_histogram)
         cls.get_dominant_color = staticmethod(get_dominant_color)
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test files."""
         for filepath in self.test_files:
             if os.path.exists(filepath):
                 os.remove(filepath)
     
-    def test_single_pixel_image(self):
+    def test_single_pixel_image(self) -> None:
         """Test handling of a 1x1 image."""
         img_path = create_solid_image(1, 1, (255, 128, 64))
         self.test_files.append(img_path)
@@ -804,7 +843,7 @@ class TestEdgeCases(unittest.TestCase):
         dominant = self.get_dominant_color(img_path)
         self.assertEqual(dominant, (255, 128, 64))
     
-    def test_rgba_image_alpha_ignored(self):
+    def test_rgba_image_alpha_ignored(self) -> None:
         """Test that RGBA images have alpha channel ignored."""
         # Create RGBA image
         img = Image.new('RGBA', (10, 10), (255, 0, 0, 128))
@@ -819,7 +858,7 @@ class TestEdgeCases(unittest.TestCase):
         dominant = self.get_dominant_color(path)
         self.assertEqual(dominant, (255, 0, 0))
     
-    def test_grayscale_image_converted_to_rgb(self):
+    def test_grayscale_image_converted_to_rgb(self) -> None:
         """Test that grayscale images are handled correctly."""
         # Create grayscale image
         img = Image.new('L', (10, 10), 128)

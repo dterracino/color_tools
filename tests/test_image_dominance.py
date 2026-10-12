@@ -3,24 +3,36 @@
 from __future__ import annotations
 
 import unittest
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PIL import Image
 
 try:
     from PIL import Image
-    PILLOW_AVAILABLE = True
 except ImportError:
-    PILLOW_AVAILABLE = False
+    _pillow_available = False
+else:
+    _pillow_available = True
+PILLOW_AVAILABLE = _pillow_available
 
 try:
     import numpy as np
-    NUMPY_AVAILABLE = True
+    del np
 except ImportError:
-    NUMPY_AVAILABLE = False
+    _numpy_available = False
+else:
+    _numpy_available = True
+NUMPY_AVAILABLE = _numpy_available
 
 try:
     import sklearn  # noqa: F401
-    SKLEARN_AVAILABLE = True
+    del sklearn
 except ImportError:
-    SKLEARN_AVAILABLE = False
+    _sklearn_available = False
+else:
+    _sklearn_available = True
+SKLEARN_AVAILABLE = _sklearn_available
 
 
 DEPENDENCIES_AVAILABLE = (

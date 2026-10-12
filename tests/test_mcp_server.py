@@ -5,7 +5,7 @@ from __future__ import annotations
 import sys
 import unittest
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 from mcp.client import Client
 from mcp.client.stdio import StdioServerParameters, stdio_client
@@ -62,14 +62,16 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         self.assertTrue(all(not self._contains_array(tool.input_schema) for tool in result.tools))
 
     @classmethod
-    def _contains_array(cls, schema: Any) -> bool:
+    def _contains_array(cls, schema: object) -> bool:
         """Return whether a schema contains an array input unsupported by the VS Code adapter."""
         if isinstance(schema, dict):
-            if schema.get("type") == "array":
+            fields = cast(dict[object, object], schema)
+            if fields.get("type") == "array":
                 return True
-            return any(cls._contains_array(value) for value in schema.values())
+            return any(cls._contains_array(value) for value in fields.values())
         if isinstance(schema, list):
-            return any(cls._contains_array(value) for value in schema)
+            elements = cast(list[object], schema)
+            return any(cls._contains_array(value) for value in elements)
         return False
 
     async def test_analyze_color_returns_matches_and_coordinates(self) -> None:

@@ -8,13 +8,20 @@ import unittest
 from pathlib import Path
 import tempfile
 import shutil
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PIL import Image
+    from color_tools.image import convert_image, get_supported_formats
 
 try:
     from PIL import Image
     from color_tools.image import convert_image, get_supported_formats
-    PILLOW_AVAILABLE = True
 except ImportError:
-    PILLOW_AVAILABLE = False
+    _pillow_available = False
+else:
+    _pillow_available = True
+PILLOW_AVAILABLE = _pillow_available
 
 
 @unittest.skipUnless(PILLOW_AVAILABLE, "Pillow not installed")

@@ -8,6 +8,16 @@ The Genesis uses 3 bits per color channel (RGB), giving 8 levels per channel.
 
 import json
 from pathlib import Path
+from typing import TypedDict
+
+
+class _GenesisColorData(TypedDict):
+    name: str
+    hex: str
+    rgb: list[int]
+    hsl: list[float]
+    lab: list[float]
+    lch: list[float]
 
 
 def rgb_to_hex(r: int, g: int, b: int) -> str:
@@ -88,7 +98,7 @@ def lab_to_lch(l: float, a: float, b: float) -> tuple[float, float, float]:
     return round(l, 1), round(c, 1), round(h, 1)
 
 
-def generate_genesis_palette() -> list[dict]:
+def generate_genesis_palette() -> list[_GenesisColorData]:
     """
     Generate the full 512-color Genesis palette.
     
@@ -100,7 +110,7 @@ def generate_genesis_palette() -> list[dict]:
     Each 3-bit value is mapped to 8-bit RGB by multiplying by 36.428571...
     This gives us the range: 0, 36, 73, 109, 146, 182, 219, 255
     """
-    colors = []
+    colors: list[_GenesisColorData] = []
     
     # 3-bit to 8-bit conversion table
     # Genesis uses even spacing across the 0-255 range
@@ -142,7 +152,7 @@ def generate_genesis_palette() -> list[dict]:
                 elif r8 == 0 and g8 == 255 and b8 == 255:
                     color_name = "genesis_cyan"
                 
-                color_data = {
+                color_data: _GenesisColorData = {
                     "name": color_name,
                     "hex": hex_color,
                     "rgb": [r8, g8, b8],
@@ -156,7 +166,7 @@ def generate_genesis_palette() -> list[dict]:
     return colors
 
 
-def save_genesis_palette(colors: list[dict], output_path: Path) -> None:
+def save_genesis_palette(colors: list[_GenesisColorData], output_path: Path) -> None:
     """Save the Genesis palette to a JSON file."""
     with open(output_path, 'w') as f:
         json.dump(colors, f, indent=2)
@@ -175,7 +185,7 @@ def save_genesis_palette(colors: list[dict], output_path: Path) -> None:
     print(f"Total combinations: {len(unique_reds)} × {len(unique_greens)} × {len(unique_blues)} = {len(colors)}")
 
 
-def main():
+def main() -> None:
     """Generate the Sega Genesis palette file."""
     colors = generate_genesis_palette()
     

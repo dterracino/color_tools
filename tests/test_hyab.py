@@ -13,6 +13,10 @@ import sys
 import tempfile
 import unittest
 from pathlib import Path
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PIL import Image
 
 parent_dir = Path(__file__).parent.parent.parent
 if str(parent_dir) not in sys.path:
@@ -20,16 +24,18 @@ if str(parent_dir) not in sys.path:
 
 try:
     from PIL import Image
-    PILLOW_AVAILABLE = True
 except ImportError:
-    PILLOW_AVAILABLE = False
+    _pillow_available = False
+else:
+    _pillow_available = True
+PILLOW_AVAILABLE = _pillow_available
 
 
 # ---------------------------------------------------------------------------
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_image(colors: list, rows_per_color: int = 20) -> str:
+def _make_image(colors: list[tuple[int, int, int]], rows_per_color: int = 20) -> str:
     """Save a striped test PNG and return its path."""
     width = 50
     height = len(colors) * rows_per_color
@@ -353,7 +359,11 @@ class TestQuantizeImageHyAB(unittest.TestCase):
     def test_n_colors_reduces_palette_size(self):
         """Output uses at most n_colors unique colours."""
         result = self.fn(self.img_path, n_colors=2)
-        unique_colors = set(result.getdata())
+        unique_colors = {
+            result.getpixel((x, y))
+            for y in range(result.height)
+            for x in range(result.width)
+        }
         # Allow a small overcount due to LAB rounding; at most n_colors
         self.assertLessEqual(len(unique_colors), 4)  # 2 centroids but rounding may vary
 
@@ -381,6 +391,7 @@ class TestQuantizeImageHyAB(unittest.TestCase):
     def test_exported_from_image_package(self):
         """quantize_image_hyab is importable from color_tools.image."""
         from color_tools.image import quantize_image_hyab  # noqa: F401
+        self.assertIs(quantize_image_hyab, self.fn)
 
 
 if __name__ == "__main__":

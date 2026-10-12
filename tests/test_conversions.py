@@ -160,6 +160,8 @@ class TestHexRGBConversions(unittest.TestCase):
         colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFFFF", "#123456", "#ABCDEF"]
         for hex_color in colors:
             rgb = hex_to_rgb(hex_color)
+            if rgb is None:
+                self.fail(f"Valid hex color was not parsed: {hex_color}")
             result = rgb_to_hex(rgb)
             self.assertEqual(result, hex_color.upper())
 
@@ -446,7 +448,7 @@ class TestRGBWinHSL240Conversion(unittest.TestCase):
     def test_winhsl240_sl_components_in_range(self):
         """S and L must be in 0–240."""
         for rgb in [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255), (0, 0, 0), (128, 64, 192)]:
-            h, s, l = rgb_to_winhsl240(rgb)
+            _, s, l = rgb_to_winhsl240(rgb)
             self.assertGreaterEqual(s, 0)
             self.assertLessEqual(s, 240)
             self.assertGreaterEqual(l, 0)
@@ -500,7 +502,7 @@ class TestRGBWinHSL255Conversion(unittest.TestCase):
     def test_winhsl255_sl_components_in_range(self):
         """S and L must be in 0–255."""
         for rgb in [(255, 0, 0), (0, 255, 0), (0, 0, 255), (255, 255, 255), (0, 0, 0), (128, 64, 192)]:
-            h, s, l = rgb_to_winhsl255(rgb)
+            _, s, l = rgb_to_winhsl255(rgb)
             self.assertGreaterEqual(s, 0)
             self.assertLessEqual(s, 255)
             self.assertGreaterEqual(l, 0)
@@ -694,4 +696,3 @@ class TestRGBCMYKConversions(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
-

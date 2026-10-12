@@ -30,7 +30,7 @@ class TestInteractiveManagerFilterInput(unittest.TestCase):
                 text_binding = next(
                     binding
                     for binding in self.manager.kb.bindings
-                    if binding.handler.__name__ == "handle_text_input"
+                    if binding.handler.__name__ == "_handle_text_input"
                 )
 
                 self.assertFalse(action_binding.filter())
@@ -43,7 +43,7 @@ class TestInteractiveManagerFilterInput(unittest.TestCase):
         text_binding = next(
             binding
             for binding in self.manager.kb.bindings
-            if binding.handler.__name__ == "handle_text_input"
+            if binding.handler.__name__ == "_handle_text_input"
         )
 
         for letter in "basic":
@@ -62,7 +62,7 @@ class TestInteractiveManagerFilterInput(unittest.TestCase):
         text_binding = next(
             binding
             for binding in self.manager.kb.bindings
-            if binding.handler.__name__ == "handle_text_input"
+            if binding.handler.__name__ == "_handle_text_input"
         )
 
         self.assertTrue(action_binding.filter())

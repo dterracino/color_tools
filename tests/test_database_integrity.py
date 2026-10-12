@@ -50,7 +50,7 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
         # Should NOT contain: spaces, uppercase, special chars (except hyphen)
         slug_pattern = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
         
-        invalid_ids = []
+        invalid_ids: list[dict[str, str]] = []
         for filament in self.filaments:
             if not slug_pattern.match(filament.id):
                 invalid_ids.append({
@@ -81,26 +81,30 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
         """Test that all hex codes are valid and can be converted to RGB."""
         # The FilamentRecord.rgb property handles dual-color format,
         # so we just need to test that it returns valid RGB tuples
-        invalid_hex = []
+        invalid_hex: list[dict[str, object]] = []
         
         for filament in self.filaments:
             try:
                 rgb = filament.rgb
                 # Check it's a tuple of 3 integers in valid range
-                if not isinstance(rgb, tuple) or len(rgb) != 3:
+                self.assertIsInstance(rgb, tuple)
+                if len(rgb) != 3:
                     invalid_hex.append({
                         'id': filament.id,
                         'hex': filament.hex,
                         'rgb': rgb,
                         'reason': f'RGB is not a 3-tuple: {rgb}'
                     })
-                elif not all(isinstance(v, int) and 0 <= v <= 255 for v in rgb):
-                    invalid_hex.append({
-                        'id': filament.id,
-                        'hex': filament.hex,
-                        'rgb': rgb,
-                        'reason': f'RGB values out of range [0-255]: {rgb}'
-                    })
+                else:
+                    for component in rgb:
+                        self.assertIsInstance(component, int)
+                    if not all(0 <= v <= 255 for v in rgb):
+                        invalid_hex.append({
+                            'id': filament.id,
+                            'hex': filament.hex,
+                            'rgb': rgb,
+                            'reason': f'RGB values out of range [0-255]: {rgb}'
+                        })
             except Exception as e:
                 invalid_hex.append({
                     'id': filament.id,
@@ -119,7 +123,7 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
         # Dual-color format: #XXXXXX-#YYYYYY
         # Invalid format: #XXXXXX, #YYYYYY or #XXXXXX,#YYYYYY
         
-        invalid_format = []
+        invalid_format: list[dict[str, str]] = []
         for filament in self.filaments:
             if ',' in filament.hex:
                 invalid_format.append({
@@ -138,19 +142,13 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
         """Test that td_value is a valid number when present."""
         # TD values can be > 1.0 (they're not normalized percentages)
         # Just check they're reasonable positive numbers
-        invalid_td = []
+        invalid_td: list[dict[str, object]] = []
         
         for filament in self.filaments:
             if filament.td_value is not None:
                 # Check it's a number and not negative or absurdly large
-                if not isinstance(filament.td_value, (int, float)):
-                    invalid_td.append({
-                        'id': filament.id,
-                        'td_value': filament.td_value,
-                        'type': type(filament.td_value).__name__,
-                        'reason': 'not a number'
-                    })
-                elif filament.td_value < 0:
+                self.assertIsInstance(filament.td_value, (int, float))
+                if filament.td_value < 0:
                     invalid_td.append({
                         'id': filament.id,
                         'td_value': filament.td_value,
@@ -172,27 +170,17 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
     
     def test_other_names_format_if_present(self):
         """Test that other_names is a list of strings when present."""
-        invalid_other_names = []
+        invalid_other_names: list[dict[str, object]] = []
         
         for filament in self.filaments:
             if filament.other_names is not None:
                 # Should be a list
-                if not isinstance(filament.other_names, list):
-                    invalid_other_names.append({
-                        'id': filament.id,
-                        'other_names': filament.other_names,
-                        'type': type(filament.other_names).__name__,
-                        'reason': 'not a list'
-                    })
+                self.assertIsInstance(filament.other_names, list)
                 # Should be a list of strings
-                elif not all(isinstance(name, str) for name in filament.other_names):
-                    invalid_other_names.append({
-                        'id': filament.id,
-                        'other_names': filament.other_names,
-                        'reason': 'contains non-string values'
-                    })
+                for name in filament.other_names:
+                    self.assertIsInstance(name, str)
                 # Should not be empty
-                elif len(filament.other_names) == 0:
+                if len(filament.other_names) == 0:
                     invalid_other_names.append({
                         'id': filament.id,
                         'other_names': filament.other_names,
@@ -207,8 +195,8 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
     def test_no_exact_duplicates(self):
         """Test that there are no exact duplicate filament entries."""
         # Create signature of each filament (excluding ID)
-        seen = {}
-        duplicates = []
+        seen: dict[tuple[str, str, str | None, str, str], str] = {}
+        duplicates: list[dict[str, str]] = []
         
         for filament in self.filaments:
             # Signature: maker, type, finish, color, hex

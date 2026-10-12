@@ -98,7 +98,7 @@ class TestFuzzyMatchFallback(unittest.TestCase):
     
     def test_returns_best_match(self):
         """Test that best match is returned."""
-        match, score = _fuzzy_match_fallback("sky", self.choices)
+        match, _ = _fuzzy_match_fallback("sky", self.choices)
         self.assertEqual(match, "sky blue")
 
 

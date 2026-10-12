@@ -11,7 +11,6 @@ Test strategy:
   save()-to-file, to_bytes(), parent directory creation.
 """
 
-import io
 import os
 import struct
 import tempfile
@@ -33,7 +32,7 @@ def _read_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
     """
     assert data[:8] == b'\x89PNG\r\n\x1a\n', "Missing PNG signature"
     pos = 8
-    chunks = []
+    chunks: list[tuple[bytes, bytes]] = []
     while pos < len(data):
         length = struct.unpack(">I", data[pos:pos + 4])[0]
         chunk_type = data[pos + 4:pos + 8]
@@ -49,7 +48,7 @@ def _read_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
     return chunks
 
 
-def _parse_ihdr(ihdr_data: bytes) -> dict:
+def _parse_ihdr(ihdr_data: bytes) -> dict[str, int]:
     """Unpack IHDR chunk data into a dict."""
     w, h, bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
         ">IIBBBBB", ihdr_data
@@ -76,7 +75,7 @@ def _scanlines_to_pixels(raw: bytes, width: int, height: int) -> list[tuple[int,
     Assumes filter byte 0 (None) per row and 3-channel RGB.
     """
     row_bytes = 1 + width * 3  # 1 filter byte + 3 bytes per pixel
-    pixels = []
+    pixels: list[tuple[int, int, int]] = []
     for row_idx in range(height):
         start = row_idx * row_bytes
         assert raw[start] == 0, f"Expected filter byte 0 at row {row_idx}, got {raw[start]}"
@@ -140,7 +139,7 @@ class TestSimplePNGWriterConstructor(unittest.TestCase):
 class TestPNGStructure(unittest.TestCase):
     """Verify the raw PNG bytes conform to the PNG specification."""
 
-    def _bytes(self, colors, **kwargs):
+    def _bytes(self, colors: list[tuple[int, int, int]], **kwargs: int) -> bytes:
         return SimplePNGWriter(colors, **kwargs).to_bytes()
 
     def test_signature(self):
@@ -200,7 +199,12 @@ class TestPNGStructure(unittest.TestCase):
 class TestPixelData(unittest.TestCase):
     """Verify the decompressed pixel data matches the input colors."""
 
-    def _pixels(self, colors, swatch_width=1, swatch_height=1):
+    def _pixels(
+        self,
+        colors: list[tuple[int, int, int]],
+        swatch_width: int = 1,
+        swatch_height: int = 1,
+    ) -> list[tuple[int, int, int]]:
         data = SimplePNGWriter(colors, swatch_width=swatch_width, swatch_height=swatch_height).to_bytes()
         chunks = dict(_read_chunks(data))
         ihdr = _parse_ihdr(chunks[b"IHDR"])

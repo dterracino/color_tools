@@ -10,8 +10,6 @@ Covers:
 from __future__ import annotations
 
 import io
-import os
-import sys
 import tempfile
 import unittest
 from argparse import Namespace
@@ -95,8 +93,8 @@ class TestGetAvailablePalettes(unittest.TestCase):
 class TestHandleVerificationFlags(unittest.TestCase):
     """Tests for handle_verification_flags."""
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             verify_all=False,
             verify_constants=False,
             verify_data=False,
@@ -141,6 +139,7 @@ class TestHandleVerificationFlags(unittest.TestCase):
         with patch('sys.stdout', captured):
             result = handle_verification_flags(args)
         # After verify_all, individual flags should be set
+        self.assertFalse(result)
         self.assertTrue(args.verify_constants)
         self.assertTrue(args.verify_data)
         self.assertTrue(args.verify_matrices)

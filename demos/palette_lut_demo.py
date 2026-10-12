@@ -36,7 +36,7 @@ from __future__ import annotations
 import argparse
 import sys
 from pathlib import Path
-from typing import Optional
+from typing import TYPE_CHECKING, Optional, Protocol, cast
 
 # Third-party imports
 try:
@@ -64,11 +64,16 @@ except ImportError:
     sys.exit(1)
 
 # Optional: opencv for video
-try:
+if TYPE_CHECKING:
     import cv2
-    HAS_CV2 = True
-except ImportError:
-    HAS_CV2 = False
+    _has_cv2 = True
+else:
+    try:
+        import cv2
+        _has_cv2 = True
+    except ImportError:
+        _has_cv2 = False
+HAS_CV2 = _has_cv2
 
 import time
 
@@ -140,6 +145,14 @@ def load_image(path: Path) -> np.ndarray:
 # Fullscreen-quad VAO
 # ---------------------------------------------------------------------------
 
+class _QuadContext(Protocol):
+    def vertex_array(
+        self,
+        program: moderngl.Program,
+        content: list[tuple[moderngl.Buffer, str, str, str]],
+    ) -> moderngl.VertexArray: ...
+
+
 def make_quad_vao(ctx: moderngl.Context, program: moderngl.Program) -> moderngl.VertexArray:
     vertices = np.array([
         -1.0, -1.0,  0.0,  0.0,
@@ -150,7 +163,8 @@ def make_quad_vao(ctx: moderngl.Context, program: moderngl.Program) -> moderngl.
         -1.0,  1.0,  0.0,  1.0,
     ], dtype=np.float32)
     vbo = ctx.buffer(vertices.tobytes())
-    return ctx.vertex_array(program, [(vbo, "2f 2f", "in_position", "in_texcoord")])
+    quad_ctx = cast(_QuadContext, ctx)
+    return quad_ctx.vertex_array(program, [(vbo, "2f 2f", "in_position", "in_texcoord")])
 
 
 # ---------------------------------------------------------------------------
@@ -259,7 +273,7 @@ def run(
     )
     pygame.display.gl_set_attribute(pygame.GL_CONTEXT_FORWARD_COMPATIBLE_FLAG, 1)
 
-    screen = pygame.display.set_mode((win_w, win_h), pygame.OPENGL | pygame.DOUBLEBUF)
+    pygame.display.set_mode((win_w, win_h), pygame.OPENGL | pygame.DOUBLEBUF)
     clock  = pygame.time.Clock()
 
     ctx = moderngl.create_context()

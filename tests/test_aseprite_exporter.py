@@ -60,7 +60,7 @@ class TestAsepriteExporter(unittest.TestCase):
                 self.assertEqual(struct.unpack_from("<I", data, 140)[0], 4)
                 chunks: dict[int, bytes] = {}
                 position = 144
-                kinds = []
+                kinds: list[int] = []
                 for _ in range(4):
                     length, kind = struct.unpack_from("<IH", data, position)
                     self.assertGreaterEqual(length, 6)

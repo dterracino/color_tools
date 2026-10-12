@@ -2,9 +2,22 @@
 Internal utilities shared across palette modules.
 
 This module contains helper functions used by both Palette and FilamentPalette
-classes. These functions are private (prefixed with _) and not part of the
-public API.
+classes. This module is private and its helpers are not part of the public API.
 """
+
+from pathlib import Path
+
+
+def get_palette_files(palette_dir: Path, pattern: str) -> list[Path]:
+    """Return discoverable palette files, excluding copyable examples."""
+    if not palette_dir.exists():
+        return []
+    return [
+        path
+        for path in palette_dir.glob(pattern)
+        if not path.name.endswith("example.json")
+    ]
+
 
 def should_prefer_source(new_source: str, current_source: str) -> bool:
     """

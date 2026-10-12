@@ -14,7 +14,7 @@ from pathlib import Path
 class TestCLIBasics(unittest.TestCase):
     """Test basic CLI functionality and help output."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """
         Run CLI command and return (exit_code, stdout, stderr).
         
@@ -38,25 +38,25 @@ class TestCLIBasics(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_no_args_shows_help(self):
+    def test_no_args_shows_help(self) -> None:
         """Running with no arguments should show help and exit 0."""
-        exit_code, stdout, stderr = self.run_cli()
+        exit_code, stdout, _ = self.run_cli()
         self.assertEqual(exit_code, 0)
         self.assertIn("usage:", stdout.lower())
         self.assertIn("color", stdout)
         self.assertIn("filament", stdout)
         self.assertIn("convert", stdout)
     
-    def test_version_flag(self):
+    def test_version_flag(self) -> None:
         """--version should show version number and exit."""
-        exit_code, stdout, stderr = self.run_cli("--version")
+        exit_code, stdout, _ = self.run_cli("--version")
         self.assertEqual(exit_code, 0)
         # Should contain a version number (e.g., "5.5.0")
         self.assertRegex(stdout, r'\d+\.\d+\.\d+')
     
-    def test_help_flag(self):
+    def test_help_flag(self) -> None:
         """--help should show help text."""
-        exit_code, stdout, stderr = self.run_cli("--help")
+        exit_code, stdout, _ = self.run_cli("--help")
         self.assertEqual(exit_code, 0)
         self.assertIn("usage:", stdout.lower())
         self.assertIn("positional arguments:", stdout.lower())
@@ -65,7 +65,7 @@ class TestCLIBasics(unittest.TestCase):
 class TestColorCommand(unittest.TestCase):
     """Test color command routing and basic functionality."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -80,26 +80,26 @@ class TestColorCommand(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_color_by_name(self):
+    def test_color_by_name(self) -> None:
         """color --name should find CSS colors."""
-        exit_code, stdout, stderr = self.run_cli("color", "--name", "red")
+        exit_code, stdout, _ = self.run_cli("color", "--name", "red")
         self.assertEqual(exit_code, 0)
         self.assertIn("red", stdout.lower())
         self.assertIn("#FF0000", stdout)
         self.assertIn("RGB:", stdout)
     
-    def test_color_by_hex(self):
+    def test_color_by_hex(self) -> None:
         """color --nearest --hex should find nearest color."""
-        exit_code, stdout, stderr = self.run_cli("color", "--nearest", "--hex", "FF7F50")
+        exit_code, stdout, _ = self.run_cli("color", "--nearest", "--hex", "FF7F50")
         self.assertEqual(exit_code, 0)
         # Should find coral
         self.assertIn("coral", stdout.lower())
         # Should show distance
         self.assertIn("distance", stdout.lower())
     
-    def test_color_nearest_with_value(self):
+    def test_color_nearest_with_value(self) -> None:
         """color --nearest --value --space rgb should find closest color."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "color", "--nearest", "--value", "255", "0", "0", "--space", "rgb"
         )
         self.assertEqual(exit_code, 0)
@@ -107,9 +107,9 @@ class TestColorCommand(unittest.TestCase):
         # Should show distance
         self.assertIn("distance", stdout.lower())
     
-    def test_color_mutual_exclusivity(self):
+    def test_color_mutual_exclusivity(self) -> None:
         """color --name and --nearest can be used together (shows color details)."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "color", "--name", "red", "--nearest"
         )
         self.assertEqual(exit_code, 0)
@@ -119,7 +119,7 @@ class TestColorCommand(unittest.TestCase):
 class TestFilamentCommand(unittest.TestCase):
     """Test filament command routing and filtering."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -134,24 +134,24 @@ class TestFilamentCommand(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_filament_list_makers(self):
+    def test_filament_list_makers(self) -> None:
         """filament --list-makers should show all manufacturers."""
-        exit_code, stdout, stderr = self.run_cli("filament", "--list-makers")
+        exit_code, stdout, _ = self.run_cli("filament", "--list-makers")
         self.assertEqual(exit_code, 0)
         self.assertIn("Bambu Lab", stdout)
         # Should show count
         self.assertRegex(stdout, r'\(\d+ filaments\)')
     
-    def test_filament_list_types(self):
+    def test_filament_list_types(self) -> None:
         """filament --list-types should show all material types."""
-        exit_code, stdout, stderr = self.run_cli("filament", "--list-types")
+        exit_code, stdout, _ = self.run_cli("filament", "--list-types")
         self.assertEqual(exit_code, 0)
         self.assertIn("PLA", stdout)
         self.assertIn("PETG", stdout)
     
-    def test_filament_nearest_with_filter(self):
+    def test_filament_nearest_with_filter(self) -> None:
         """filament --nearest with --maker filter should work."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "filament", "--nearest", "--hex", "FF0000",
             "--maker", "Bambu Lab"
         )
@@ -160,9 +160,9 @@ class TestFilamentCommand(unittest.TestCase):
         # Distance shown in output
         self.assertIn("distance", stdout.lower())
     
-    def test_filament_multiple_results(self):
+    def test_filament_multiple_results(self) -> None:
         """filament --count should return multiple matches."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "filament", "--nearest", "--hex", "0000FF", "--count", "3"
         )
         self.assertEqual(exit_code, 0)
@@ -171,18 +171,18 @@ class TestFilamentCommand(unittest.TestCase):
         self.assertIn("2.", stdout)
         self.assertIn("3.", stdout)
 
-    def test_filament_nearest_with_color_filter(self):
+    def test_filament_nearest_with_color_filter(self) -> None:
         """filament --nearest should apply the existing color-name filter."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "filament", "--nearest", "--hex", "FF0000",
             "--color", "Red", "--all-filaments",
         )
         self.assertEqual(exit_code, 0)
         self.assertIn("Red", stdout)
 
-    def test_filament_nearest_with_exclusion(self):
+    def test_filament_nearest_with_exclusion(self) -> None:
         """filament --nearest should accept and apply exclusion flags."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "filament", "--nearest", "--hex", "FF0000",
             "--maker", "Bambu Lab", "--exclude-maker", "Bambu Lab",
             "--all-filaments", expect_error=True,
@@ -194,7 +194,7 @@ class TestFilamentCommand(unittest.TestCase):
 class TestConvertCommand(unittest.TestCase):
     """Test color space conversion command."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -209,9 +209,9 @@ class TestConvertCommand(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_rgb_to_lab(self):
+    def test_rgb_to_lab(self) -> None:
         """convert --from rgb --to lab should convert correctly."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "convert", "--from", "rgb", "--to", "lab",
             "--hex", "FF0000"
         )
@@ -220,17 +220,17 @@ class TestConvertCommand(unittest.TestCase):
         # Red should have high L and positive a
         self.assertIn("53.2", stdout)  # L value for red (rounded)
     
-    def test_hex_shorthand(self):
+    def test_hex_shorthand(self) -> None:
         """convert --hex should work with 3-digit shorthand."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "convert", "--hex", "F00", "--to", "hsl", "--from", "rgb"
         )
         self.assertEqual(exit_code, 0)
         self.assertIn("HSL(", stdout)
     
-    def test_gamut_check(self):
+    def test_gamut_check(self) -> None:
         """convert --check-gamut should report gamut status."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "convert", "--from", "lab", "--to", "rgb",
             "--value", "50", "100", "50", "--check-gamut"
         )
@@ -242,7 +242,7 @@ class TestConvertCommand(unittest.TestCase):
 class TestNameCommand(unittest.TestCase):
     """Test color name generation command."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -257,15 +257,15 @@ class TestNameCommand(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_name_exact_match(self):
+    def test_name_exact_match(self) -> None:
         """name should recognize exact CSS color matches."""
-        exit_code, stdout, stderr = self.run_cli("name", "--hex", "FF0000")
+        exit_code, stdout, _ = self.run_cli("name", "--hex", "FF0000")
         self.assertEqual(exit_code, 0)
         self.assertIn("red", stdout.lower())
     
-    def test_name_generated(self):
+    def test_name_generated(self) -> None:
         """name should generate descriptive names for non-CSS colors."""
-        exit_code, stdout, stderr = self.run_cli("name", "--hex", "804020")
+        exit_code, stdout, _ = self.run_cli("name", "--hex", "804020")
         self.assertEqual(exit_code, 0)
         # Should have some descriptive modifiers
         self.assertTrue(
@@ -276,7 +276,7 @@ class TestNameCommand(unittest.TestCase):
 class TestValidateCommand(unittest.TestCase):
     """Test color name validation command."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -292,15 +292,15 @@ class TestValidateCommand(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_validate_exact_match(self):
+    def test_validate_exact_match(self) -> None:
         """validate should confirm exact matches."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "validate", "--name", "red", "--hex", "FF0000"
         )
         self.assertEqual(exit_code, 0)
         self.assertIn("match", stdout.lower())
     
-    def test_validate_mismatch(self):
+    def test_validate_mismatch(self) -> None:
         """validate should detect mismatches."""
         exit_code, stdout, stderr = self.run_cli(
             "validate", "--name", "red", "--hex", "0000FF",
@@ -314,7 +314,7 @@ class TestValidateCommand(unittest.TestCase):
 class TestCVDCommand(unittest.TestCase):
     """Test color vision deficiency command."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -329,9 +329,9 @@ class TestCVDCommand(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_cvd_simulate(self):
+    def test_cvd_simulate(self) -> None:
         """cvd should simulate color vision deficiency."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "cvd", "--hex", "FF0000", "--type", "protanopia"
         )
         self.assertEqual(exit_code, 0)
@@ -339,9 +339,9 @@ class TestCVDCommand(unittest.TestCase):
         # Default mode is simulate
         self.assertIn("mode", stdout.lower())
     
-    def test_cvd_correct(self):
+    def test_cvd_correct(self) -> None:
         """cvd --mode correct should apply correction."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "cvd", "--hex", "FF0000", "--type", "deuteranopia", "--mode", "correct"
         )
         self.assertEqual(exit_code, 0)
@@ -352,7 +352,7 @@ class TestCVDCommand(unittest.TestCase):
 class TestVerificationFlags(unittest.TestCase):
     """Test verification and diagnostic flags."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -367,7 +367,7 @@ class TestVerificationFlags(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_verify_constants(self):
+    def test_verify_constants(self) -> None:
         """--verify-constants should check integrity and exit."""
         cmd = [sys.executable, "-m", "color_tools", "--verify-constants"]
         result = subprocess.run(
@@ -380,7 +380,7 @@ class TestVerificationFlags(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("integrity verified", result.stdout.lower())
     
-    def test_verify_data(self):
+    def test_verify_data(self) -> None:
         """--verify-data should check data files and exit."""
         cmd = [sys.executable, "-m", "color_tools", "--verify-data"]
         result = subprocess.run(
@@ -393,7 +393,7 @@ class TestVerificationFlags(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("integrity verified", result.stdout.lower())
     
-    def test_verify_matrices(self):
+    def test_verify_matrices(self) -> None:
         """--verify-matrices should check transformation matrices."""
         cmd = [sys.executable, "-m", "color_tools", "--verify-matrices"]
         result = subprocess.run(
@@ -406,7 +406,7 @@ class TestVerificationFlags(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("integrity verified", result.stdout.lower())
     
-    def test_verify_all(self):
+    def test_verify_all(self) -> None:
         """--verify-all should check everything."""
         cmd = [sys.executable, "-m", "color_tools", "--verify-all"]
         result = subprocess.run(
@@ -419,7 +419,7 @@ class TestVerificationFlags(unittest.TestCase):
         self.assertEqual(result.returncode, 0)
         self.assertIn("integrity verified", result.stdout.lower())
     
-    def test_verify_does_not_require_command(self):
+    def test_verify_does_not_require_command(self) -> None:
         """Verification flags should work without a subcommand."""
         cmd = [sys.executable, "-m", "color_tools", "--verify-constants"]
         result = subprocess.run(
@@ -436,7 +436,7 @@ class TestVerificationFlags(unittest.TestCase):
 class TestErrorHandling(unittest.TestCase):
     """Test error messages and exit codes."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -451,7 +451,7 @@ class TestErrorHandling(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_invalid_color_name(self):
+    def test_invalid_color_name(self) -> None:
         """Invalid color name should show helpful error."""
         exit_code, stdout, stderr = self.run_cli(
             "color", "--name", "notacolor123xyz",
@@ -462,7 +462,7 @@ class TestErrorHandling(unittest.TestCase):
         error_text = (stdout + stderr).lower()
         self.assertTrue("not found" in error_text or "error" in error_text)
     
-    def test_invalid_hex_format(self):
+    def test_invalid_hex_format(self) -> None:
         """Invalid hex format should show error."""
         exit_code, stdout, stderr = self.run_cli(
             "color", "--nearest", "--hex", "GGGGGG",
@@ -473,7 +473,7 @@ class TestErrorHandling(unittest.TestCase):
         error_text = (stdout + stderr).lower()
         self.assertTrue("hex" in error_text or "invalid" in error_text)
     
-    def test_rgb_out_of_range(self):
+    def test_rgb_out_of_range(self) -> None:
         """RGB values out of range should show error."""
         exit_code, stdout, stderr = self.run_cli(
             "convert", "--from", "rgb", "--to", "lab",
@@ -485,9 +485,9 @@ class TestErrorHandling(unittest.TestCase):
         error_text = (stdout + stderr).lower()
         self.assertTrue("hex" in error_text or "invalid" in error_text)
     
-    def test_missing_required_argument(self):
+    def test_missing_required_argument(self) -> None:
         """Missing required arguments should show error."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, _, _ = self.run_cli(
             "color", "--nearest",
             expect_error=True
         )
@@ -498,7 +498,7 @@ class TestErrorHandling(unittest.TestCase):
 class TestJSONOutput(unittest.TestCase):
     """Test JSON output mode for scripting."""
     
-    def run_cli(self, *args, expect_error=False):
+    def run_cli(self, *args: str, expect_error: bool = False) -> tuple[int, str, str]:
         """Helper to run CLI commands."""
         cmd = [sys.executable, "-m", "color_tools"] + list(args)
         result = subprocess.run(
@@ -513,9 +513,9 @@ class TestJSONOutput(unittest.TestCase):
         
         return result.returncode, result.stdout, result.stderr
     
-    def test_validate_json_output(self):
+    def test_validate_json_output(self) -> None:
         """validate --json-output should produce valid JSON."""
-        exit_code, stdout, stderr = self.run_cli(
+        exit_code, stdout, _ = self.run_cli(
             "validate", "--name", "red", "--hex", "#FF0000", "--json-output"
         )
         self.assertEqual(exit_code, 0)

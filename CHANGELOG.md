@@ -10,6 +10,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Repository strict CI gate** — run the configured repository-wide Pyright
+  check on Python 3.12 in a dedicated virtual environment with library,
+  documentation, and demo dependencies. Errors and warnings fail the job;
+  the existing runtime tests and installed-wheel checks remain in place.
+- **Private-helper test policy** — allow direct private-helper access only in
+  the Pyright `tests` execution environment to retain focused unit coverage.
+  Strict mode, other diagnostics, and production private-API checks remain
+  enabled.
 - **User palette file format** — user palette records now require only `name`
   and `hex`; RGB, HSL, LAB, and LCH values are calculated from hex at load
   time, and extra fields are ignored. Palette files ending in `example.json`
@@ -18,6 +26,51 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Remaining strict test and documentation typing** — preserve runtime
+  assertions and malformed-input coverage while typing schema traversal,
+  logging fixtures, and the external ASE parser boundary. Sphinx extension
+  callbacks now declare their application and exception types.
+- **Internal demo and tool typing** — annotate the standalone PNG writer and
+  palette conversion helpers, preserve optional OpenCV loading, and declare
+  the ModernGL quad-creation contract. Palette smoke tools now use the public
+  JSON loader and `Palette.records` instead of obsolete metadata wrappers and
+  a nonexistent attribute. Code-metrics test configuration accepts its
+  heterogeneous option values without weakening strict checking.
+- **Distribution contents** — explicitly exclude repository-only `demos`,
+  `samples`, `scripts`, `tooling`, and `tools` directories from source
+  distributions. Wheel package discovery remains limited to `color_tools`
+  and its subpackages; sample assets are not required by library runtime code.
+- **Strict library type checking** — typed Qt view callbacks and user-palette
+  input narrowing, moved shared palette discovery into the internal utilities,
+  and explicitly registered internal TUI callbacks. Image blend/basic tests
+  expose optional imports to static analysis without changing runtime skips.
+  Generated build output is excluded from repository type checking; strict
+  mode remains enabled.
+- **CLI handler test typing** — annotated shared argument builders, exit/output
+  helpers, and test methods; typed temporary-file tracking and RGB pixel
+  iteration, and removed unused bindings without reducing assertions.
+- **Distance, export, and image regression typing** — preserve optional
+  dependency skips while making imports visible to static analysis, type
+  striped-image fixtures and transform arguments, and count quantized colors
+  through pixel coordinates. Export tests now check returned paths and avoid
+  unbound cleanup paths when an export fails. Conversion tests explicitly
+  reject unexpected missing RGB results; binary chunk tracking is typed.
+- **Integration and image fixture typing** — typed CLI subprocess helpers,
+  preserved concrete return types through the generic user-override loader,
+  and annotated PNG parsers, image fixtures, and color-transform callbacks.
+  Removed unused imports and bindings while preserving all test assertions.
+- **Palette, database, and image-analysis test typing** — exercise malformed
+  palette fixtures through the public JSON loader instead of claiming they
+  satisfy validated record types. Preserve runtime field checks with explicit
+  unittest assertions, type diagnostic and temporary-file collections, and
+  expose optional image imports to static analysis without changing skips.
+  The empty-palette test now verifies the actual no-match result. The Genesis
+  generator declares its JSON record schema without changing generated data.
+- **Image and wizard test typing** — typed image fixtures, NumPy arrays, prompt
+  callbacks, and shared test helpers. Analysis-result and successful-input tests
+  now explicitly validate value types and reject unexpected cancellation.
+  Optional-dependency skips remain intact, and the wizard module is imported
+  directly so its concrete types survive the package's lazy import boundary.
 - **Desktop GUI public type annotations** — explicitly annotated export-dialog
   widgets and filament-manager collections so installed-package type-completeness
   checking can verify their public contracts.

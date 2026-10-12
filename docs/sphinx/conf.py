@@ -5,6 +5,10 @@
 import os
 import sys
 from datetime import date
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from sphinx.application import Sphinx
 
 # -- Path setup --------------------------------------------------------------
 # Add the parent directory to sys.path to import color_tools
@@ -132,12 +136,12 @@ html_css_files = [
 # Copy .nojekyll to build directory to prevent Jekyll processing
 html_extra_path = []
 
-def setup(app):
+def setup(app: "Sphinx") -> None:
     """Sphinx setup hook to copy .nojekyll file to build root."""
     import shutil
     from pathlib import Path
     
-    def copy_nojekyll(app, exception):
+    def copy_nojekyll(app: "Sphinx", exception: Exception | None) -> None:
         if exception is None and app.builder.format == 'html':
             build_dir = Path(app.outdir)
             nojekyll_src = Path(app.confdir) / '_static' / '.nojekyll'

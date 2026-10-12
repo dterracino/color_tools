@@ -14,32 +14,35 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
 
 # ---------------------------------------------------------------------------
 # Availability flags
 # ---------------------------------------------------------------------------
 
-def _pil_available():
+def _pil_available() -> bool:
     try:
         from PIL import Image  # noqa: F401
+        del Image
         return True
     except ImportError:
         return False
 
 
-def _numpy_available():
+def _numpy_available() -> bool:
     try:
         import numpy  # noqa: F401
+        del numpy
         return True
     except ImportError:
         return False
 
 
-def _skimage_available():
+def _skimage_available() -> bool:
     try:
         from skimage import restoration  # noqa: F401
+        del restoration
         return True
     except ImportError:
         return False
@@ -54,7 +57,10 @@ SKIMAGE_AVAILABLE = _skimage_available()
 # Helpers
 # ---------------------------------------------------------------------------
 
-def _make_temp_rgb_image(size=(8, 8), color=(100, 150, 200)) -> str:
+def _make_temp_rgb_image(
+    size: tuple[int, int] = (8, 8),
+    color: tuple[int, int, int] = (100, 150, 200),
+) -> str:
     """Create a temporary solid-colour RGB PNG and return its path."""
     from PIL import Image
     fd, path = tempfile.mkstemp(suffix='.png')
@@ -64,7 +70,7 @@ def _make_temp_rgb_image(size=(8, 8), color=(100, 150, 200)) -> str:
     return path
 
 
-def _make_temp_multicolor_image(size=(8, 8), seed=42) -> str:
+def _make_temp_multicolor_image(size: tuple[int, int] = (8, 8), seed: int = 42) -> str:
     """Create a temporary PNG with many distinct (random) pixel colors."""
     import random
     from PIL import Image
@@ -97,18 +103,23 @@ class TestTransformImage(unittest.TestCase):
             if os.path.exists(f):
                 os.remove(f)
 
-    def _tmp_path(self, suffix='.png') -> str:
+    def _tmp_path(self, suffix: str = '.png') -> str:
         fd, path = tempfile.mkstemp(suffix=suffix)
         os.close(fd)
         self._files.append(path)
         return path
 
-    def _img(self, **kw) -> str:
-        p = _make_temp_rgb_image(**kw)
+    def _img(
+        self,
+        *,
+        size: tuple[int, int] = (8, 8),
+        color: tuple[int, int, int] = (100, 150, 200),
+    ) -> str:
+        p = _make_temp_rgb_image(size=size, color=color)
         self._files.append(p)
         return p
 
-    def _identity(self, rgb):
+    def _identity(self, rgb: tuple[int, int, int]) -> tuple[int, int, int]:
         return rgb
 
     # --- basic behaviour ---
@@ -125,7 +136,7 @@ class TestTransformImage(unittest.TestCase):
         """A transform that inverts colours actually changes pixel values."""
         from color_tools.image.basic import transform_image
 
-        def invert(rgb):
+        def invert(rgb: tuple[int, int, int]) -> tuple[int, int, int]:
             return (255 - rgb[0], 255 - rgb[1], 255 - rgb[2])
 
         img_path = self._img(size=(4, 4), color=(100, 100, 100))
@@ -343,7 +354,13 @@ class TestQuantizeImageToPalette(unittest.TestCase):
             )
 
         self.assertIsInstance(result, PIL.Image.Image)
-        self.assertEqual(set(result.convert("RGB").getdata()), {(17, 34, 51)})
+        rgb_image = result.convert("RGB")
+        pixels = {
+            rgb_image.getpixel((x, y))
+            for y in range(rgb_image.height)
+            for x in range(rgb_image.width)
+        }
+        self.assertEqual(pixels, {(17, 34, 51)})
 
     # --- k-means path (source colors > palette size) ---
 
@@ -374,7 +391,13 @@ class TestQuantizeImageToPalette(unittest.TestCase):
         """de2000 quantization passes LAB tuples to the Delta E function."""
         from color_tools.image.basic import quantize_image_to_palette
 
-        def _assert_lab_inputs(lab1, lab2, kL=1.0, kC=1.0, kH=1.0):
+        def _assert_lab_inputs(
+            lab1: tuple[float, float, float],
+            lab2: tuple[float, float, float],
+            kL: float = 1.0,
+            kC: float = 1.0,
+            kH: float = 1.0,
+        ) -> float:
             self.assertTrue(all(isinstance(component, float) for component in lab1))
             self.assertTrue(all(isinstance(component, float) for component in lab2))
             return 0.0
@@ -494,7 +517,7 @@ class TestAnalyzeNoiseSigmaBranches(unittest.TestCase):
             if os.path.exists(f):
                 os.remove(f)
 
-    def _img(self, size=(16, 16)) -> str:
+    def _img(self, size: tuple[int, int] = (16, 16)) -> str:
         p = _make_temp_rgb_image(size=size)
         self._files.append(p)
         return p

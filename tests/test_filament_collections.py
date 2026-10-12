@@ -16,7 +16,8 @@ class TestFilamentCollections(unittest.TestCase):
 
         self.assertIsInstance(records, tuple)
         self.assertTrue(records)
-        self.assertTrue(all(isinstance(record, FilamentRecord) for record in records))
+        for record in records:
+            self.assertIsInstance(record, FilamentRecord)
         self.assertTrue(all(record.maker == "Bambu Lab" for record in records))
         self.assertTrue(all(record.type == "PLA" for record in records))
         self.assertTrue(all(record.finish == "Basic" for record in records))

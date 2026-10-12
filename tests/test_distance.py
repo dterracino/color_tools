@@ -3,11 +3,15 @@
 import unittest
 import sys
 from pathlib import Path
+from typing import TYPE_CHECKING
 
-try:
+if TYPE_CHECKING:
     import numpy as np
-except ImportError:  # pragma: no cover - optional dependency in some environments
-    np = None
+else:
+    try:
+        import numpy as np
+    except ImportError:  # pragma: no cover - optional dependency in some environments
+        np = None
 
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent

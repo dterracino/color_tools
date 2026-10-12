@@ -176,18 +176,14 @@ class FilamentManagerWindow(_QMainWindow):
 
         self.owned_view_action = QAction("&Owned", self)
         self.owned_view_action.setCheckable(True)
-        self.owned_view_action.toggled.connect(
-            lambda checked: self._set_owned_view(True) if checked else None
-        )
+        self.owned_view_action.toggled.connect(self._owned_view_toggled)
         view_group.addAction(self.owned_view_action)
         view_menu.addAction(self.owned_view_action)
 
         self.all_view_action = QAction("&All Filaments", self)
         self.all_view_action.setCheckable(True)
         self.all_view_action.setChecked(True)
-        self.all_view_action.toggled.connect(
-            lambda checked: self._set_owned_view(False) if checked else None
-        )
+        self.all_view_action.toggled.connect(self._all_view_toggled)
         view_group.addAction(self.all_view_action)
         view_menu.addAction(self.all_view_action)
 
@@ -330,6 +326,14 @@ class FilamentManagerWindow(_QMainWindow):
     def _set_owned_view(self, owned_only: bool) -> None:
         self._owned_view = owned_only
         self._apply_filters()
+
+    def _owned_view_toggled(self, checked: bool) -> None:
+        if checked:
+            self._set_owned_view(True)
+
+    def _all_view_toggled(self, checked: bool) -> None:
+        if checked:
+            self._set_owned_view(False)
 
     def _clear_filters(self) -> None:
         for field in self.filters.values():

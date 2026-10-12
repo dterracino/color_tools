@@ -10,7 +10,6 @@ import json
 import csv
 import tempfile
 from pathlib import Path
-from datetime import datetime
 
 from color_tools.export import (
     export_filaments,
@@ -62,7 +61,7 @@ class TestExportFormats(unittest.TestCase):
         self.assertIn('json', formats)
         
         # Check descriptions are strings
-        for name, desc in formats.items():
+        for desc in formats.values():
             self.assertIsInstance(desc, str)
             self.assertTrue(len(desc) > 0)
     
@@ -200,6 +199,7 @@ class TestFilamentExport(unittest.TestCase):
         
         try:
             result_path = export_filaments_csv(self.filaments, output_path)
+            self.assertEqual(result_path, output_path)
             
             # Read and verify content
             with open(output_path, 'r', encoding='utf-8') as f:
@@ -228,6 +228,7 @@ class TestFilamentExport(unittest.TestCase):
         
         try:
             result_path = export_filaments_json(self.filaments, output_path)
+            self.assertEqual(result_path, output_path)
             
             # Read and verify content
             with open(output_path, 'r', encoding='utf-8') as f:
@@ -252,12 +253,9 @@ class TestFilamentExport(unittest.TestCase):
     
     def test_export_filaments_auto_filename(self):
         """Test auto-generated filename for filaments."""
-        import tempfile
-        import os
-        
         # Export with auto-generated filename (in current directory)
+        output_path = export_filaments(self.filaments, 'autoforge')
         try:
-            output_path = export_filaments(self.filaments, 'autoforge')
             
             # Should exist
             self.assertTrue(Path(output_path).exists())
@@ -310,6 +308,7 @@ class TestColorExport(unittest.TestCase):
         
         try:
             result_path = export_colors_csv(self.colors, output_path)
+            self.assertEqual(result_path, output_path)
             
             # Read and verify content
             with open(output_path, 'r', encoding='utf-8') as f:
@@ -336,6 +335,7 @@ class TestColorExport(unittest.TestCase):
         
         try:
             result_path = export_colors_json(self.colors, output_path)
+            self.assertEqual(result_path, output_path)
             
             # Read and verify content
             with open(output_path, 'r', encoding='utf-8') as f:
@@ -356,8 +356,8 @@ class TestColorExport(unittest.TestCase):
     
     def test_export_colors_auto_filename(self):
         """Test auto-generated filename for colors."""
+        output_path = export_colors(self.colors, 'json')
         try:
-            output_path = export_colors(self.colors, 'json')
             
             # Should exist
             self.assertTrue(Path(output_path).exists())
@@ -399,6 +399,7 @@ class TestExportIntegration(unittest.TestCase):
         
         try:
             result_path = export_filaments_autoforge(bambu_basic, output_path)
+            self.assertEqual(result_path, output_path)
             
             # Verify file exists and has content
             with open(output_path, 'r', encoding='utf-8') as f:
@@ -432,6 +433,7 @@ class TestExportIntegration(unittest.TestCase):
         
         try:
             result_path = export_colors_json(palette.records, output_path)
+            self.assertEqual(result_path, output_path)
             
             # Verify file exists and has content
             with open(output_path, 'r', encoding='utf-8') as f:
@@ -638,6 +640,7 @@ class TestCSVExporter(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / 'filaments.csv'
             result_path = exporter.export_filaments(filaments, output_path)
+            self.assertEqual(Path(result_path), output_path)
             
             self.assertTrue(Path(output_path).exists())
             
@@ -703,6 +706,7 @@ class TestJSONExporter(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             output_path = Path(tmpdir) / 'colors.json'
             result_path = exporter.export_colors(colors, output_path)
+            self.assertEqual(Path(result_path), output_path)
             
             self.assertTrue(Path(output_path).exists())
             
@@ -827,9 +831,8 @@ class TestExporterErrorHandling(unittest.TestCase):
         
         exporter = get_exporter('csv')
         
+        result_path = exporter.export_colors(colors, None)
         try:
-            # Pass None for output_path
-            result_path = exporter.export_colors(colors, None)
             
             # Should have generated a filename
             self.assertTrue(Path(result_path).exists())

@@ -140,8 +140,7 @@ class InteractiveFilamentManager:
         filter_mode = Condition(lambda: self.filter_mode)
         normal_mode = ~filter_mode
         
-        @kb.add('q', filter=normal_mode)
-        def quit_app(event: KeyPressEvent) -> None:
+        def _quit_app(event: KeyPressEvent) -> None:
             """Quit the application."""
             if self.changes_made:
                 # Enter quit confirmation mode
@@ -150,22 +149,19 @@ class InteractiveFilamentManager:
             else:
                 event.app.exit()
         
-        @kb.add('y', filter=normal_mode)
-        def confirm_yes(event: KeyPressEvent) -> None:
+        def _confirm_yes(event: KeyPressEvent) -> None:
             """Confirm save and quit."""
             if self.quit_confirm_mode:
                 self.palette.owned_filaments = self.owned_ids
                 self.palette.save_owned()
                 event.app.exit()
         
-        @kb.add('n', filter=normal_mode)
-        def confirm_no(event: KeyPressEvent) -> None:
+        def _confirm_no(event: KeyPressEvent) -> None:
             """Quit without saving."""
             if self.quit_confirm_mode:
                 event.app.exit()
         
-        @kb.add('escape')
-        def escape_action(event: KeyPressEvent) -> None:
+        def _escape_action(event: KeyPressEvent) -> None:
             """Exit filter/confirm mode or quit application."""
             if self.filter_mode:
                 self.filter_mode = False
@@ -178,8 +174,7 @@ class InteractiveFilamentManager:
                 if not self.changes_made:
                     event.app.exit()
         
-        @kb.add('space')
-        def toggle_owned(event: KeyPressEvent) -> None:
+        def _toggle_owned(event: KeyPressEvent) -> None:
             """Toggle owned status of current filament."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 filament = self.filtered_filaments[self.current_index]
@@ -190,8 +185,7 @@ class InteractiveFilamentManager:
                 self.changes_made = True
                 self._update_display()
         
-        @kb.add('down')
-        def move_down(event: KeyPressEvent) -> None:
+        def _move_down(event: KeyPressEvent) -> None:
             """Move selection down."""
             if not self.filter_mode and not self.quit_confirm_mode and self.current_index < len(self.filtered_filaments) - 1:
                 self.current_index += 1
@@ -199,8 +193,7 @@ class InteractiveFilamentManager:
                     self.scroll_offset += 1
                 self._update_display()
         
-        @kb.add('up')
-        def move_up(event: KeyPressEvent) -> None:
+        def _move_up(event: KeyPressEvent) -> None:
             """Move selection up."""
             if not self.filter_mode and not self.quit_confirm_mode and self.current_index > 0:
                 self.current_index -= 1
@@ -208,16 +201,14 @@ class InteractiveFilamentManager:
                     self.scroll_offset -= 1
                 self._update_display()
         
-        @kb.add('home')
-        def jump_to_start(event: KeyPressEvent) -> None:
+        def _jump_to_start(event: KeyPressEvent) -> None:
             """Jump to first filament."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 self.current_index = 0
                 self.scroll_offset = 0
                 self._update_display()
         
-        @kb.add('end')
-        def jump_to_end(event: KeyPressEvent) -> None:
+        def _jump_to_end(event: KeyPressEvent) -> None:
             """Jump to last filament."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 max_index = len(self.filtered_filaments) - 1
@@ -226,8 +217,7 @@ class InteractiveFilamentManager:
                 self.scroll_offset = max(0, max_index - self.page_size + 1)
                 self._update_display()
         
-        @kb.add('pagedown')
-        def page_down(event: KeyPressEvent) -> None:
+        def _page_down(event: KeyPressEvent) -> None:
             """Move selection down by one page."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 max_index = len(self.filtered_filaments) - 1
@@ -237,8 +227,7 @@ class InteractiveFilamentManager:
                     self.scroll_offset = min(self.current_index - self.page_size + 1, max_index - self.page_size + 1)
                 self._update_display()
         
-        @kb.add('pageup')
-        def page_up(event: KeyPressEvent) -> None:
+        def _page_up(event: KeyPressEvent) -> None:
             """Move selection up by one page."""
             if not self.filter_mode and not self.quit_confirm_mode and self.filtered_filaments:
                 self.current_index = max(self.current_index - self.page_size, 0)
@@ -247,8 +236,7 @@ class InteractiveFilamentManager:
                     self.scroll_offset = max(self.current_index, 0)
                 self._update_display()
         
-        @kb.add('s', filter=normal_mode)
-        def save_and_continue(event: KeyPressEvent) -> None:
+        def _save_and_continue(event: KeyPressEvent) -> None:
             """Save changes."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 self.palette.owned_filaments = self.owned_ids
@@ -256,8 +244,7 @@ class InteractiveFilamentManager:
                 self.changes_made = False
                 self._update_display()
         
-        @kb.add('r', filter=normal_mode)
-        def revert_changes(event: KeyPressEvent) -> None:
+        def _revert_changes(event: KeyPressEvent) -> None:
             """Revert unsaved ownership changes."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 # Reload from saved state
@@ -265,8 +252,7 @@ class InteractiveFilamentManager:
                 self.changes_made = False
                 self._update_display()
         
-        @kb.add('c', filter=normal_mode)
-        def clear_filters(event: KeyPressEvent) -> None:
+        def _clear_filters(event: KeyPressEvent) -> None:
             """Clear all filters."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 self.filter_maker = ""
@@ -276,30 +262,26 @@ class InteractiveFilamentManager:
                 self._apply_filters()
                 self._update_display()
         
-        @kb.add('f', filter=normal_mode)
-        def enter_filter_mode(event: KeyPressEvent) -> None:
+        def _enter_filter_mode(event: KeyPressEvent) -> None:
             """Enter filter mode."""
             if not self.filter_mode and not self.quit_confirm_mode:
                 self.filter_mode = True
                 self.filter_field_index = 0
                 self._update_display()
         
-        @kb.add('tab')
-        def next_filter_field(event: KeyPressEvent) -> None:
+        def _next_filter_field(event: KeyPressEvent) -> None:
             """Move to next filter field."""
             if self.filter_mode:
                 self.filter_field_index = (self.filter_field_index + 1) % 4
                 self._update_display()
         
-        @kb.add('s-tab')  # Shift+Tab
-        def prev_filter_field(event: KeyPressEvent) -> None:
+        def _prev_filter_field(event: KeyPressEvent) -> None:
             """Move to previous filter field."""
             if self.filter_mode:
                 self.filter_field_index = (self.filter_field_index - 1) % 4
                 self._update_display()
         
-        @kb.add('backspace')
-        def backspace_filter(event: KeyPressEvent) -> None:
+        def _backspace_filter(event: KeyPressEvent) -> None:
             """Backspace in filter mode."""
             if self.filter_mode:
                 if self.filter_field_index == 0 and self.filter_maker:
@@ -314,8 +296,7 @@ class InteractiveFilamentManager:
                 self._update_display()
         
         # Route printable keys, including action letters, to the active filter.
-        @kb.add('<any>', filter=filter_mode)
-        def handle_text_input(event: KeyPressEvent) -> None:
+        def _handle_text_input(event: KeyPressEvent) -> None:
             """Handle text input in filter mode."""
             if event.data and len(event.data) == 1 and event.data.isprintable():
                 if self.filter_field_index == 0:
@@ -329,6 +310,25 @@ class InteractiveFilamentManager:
                 self._apply_filters()
                 self._update_display()
         
+        kb.add('q', filter=normal_mode)(_quit_app)
+        kb.add('y', filter=normal_mode)(_confirm_yes)
+        kb.add('n', filter=normal_mode)(_confirm_no)
+        kb.add('escape')(_escape_action)
+        kb.add('space')(_toggle_owned)
+        kb.add('down')(_move_down)
+        kb.add('up')(_move_up)
+        kb.add('home')(_jump_to_start)
+        kb.add('end')(_jump_to_end)
+        kb.add('pagedown')(_page_down)
+        kb.add('pageup')(_page_up)
+        kb.add('s', filter=normal_mode)(_save_and_continue)
+        kb.add('r', filter=normal_mode)(_revert_changes)
+        kb.add('c', filter=normal_mode)(_clear_filters)
+        kb.add('f', filter=normal_mode)(_enter_filter_mode)
+        kb.add('tab')(_next_filter_field)
+        kb.add('s-tab')(_prev_filter_field)
+        kb.add('backspace')(_backspace_filter)
+        kb.add('<any>', filter=filter_mode)(_handle_text_input)
         self.kb = kb
         
         # Create the main display control

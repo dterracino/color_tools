@@ -10,25 +10,25 @@ import unittest
 from pathlib import Path
 import tempfile
 import json
-import os
 import logging
+from typing import Callable, TypeVar
 
 from color_tools.palette import (
-    Palette, ColorRecord,
-    _parse_color_records,
+    Palette,
     load_colors,
 )
 from color_tools.filament_palette import (
-    FilamentPalette, FilamentRecord,
-    _parse_filament_records,
+    FilamentPalette,
     load_filaments, load_maker_synonyms
 )
+
+_LoadedData = TypeVar("_LoadedData")
 
 
 class TestUserOverrideSystem(unittest.TestCase):
     """Test the comprehensive user override system."""
     
-    def setUp(self):
+    def setUp(self) -> None:
         """Set up test environment with temporary directories."""
         self.temp_dir = tempfile.mkdtemp()
         self.data_dir = Path(self.temp_dir) / "data"
@@ -40,13 +40,13 @@ class TestUserOverrideSystem(unittest.TestCase):
         # Store original data directory for restoration
         self.original_data_dir = None
     
-    def tearDown(self):
+    def tearDown(self) -> None:
         """Clean up test environment."""
         # Clean up temporary directory
         import shutil
         shutil.rmtree(self.temp_dir)
     
-    def _create_core_data(self):
+    def _create_core_data(self) -> None:
         """Create core test data files."""
         # Core colors
         core_colors = [
@@ -102,36 +102,36 @@ class TestUserOverrideSystem(unittest.TestCase):
         with open(self.data_dir / "maker_synonyms.json", "w") as f:
             json.dump(core_synonyms, f, indent=2)
     
-    def _create_user_colors(self, colors_data):
+    def _create_user_colors(self, colors_data: object) -> None:
         """Create user/user-colors.json file with given data."""
         user_dir = self.data_dir / "user"
         user_dir.mkdir(exist_ok=True)
         with open(user_dir / "user-colors.json", "w") as f:
             json.dump(colors_data, f, indent=2)
     
-    def _create_user_filaments(self, filaments_data):
+    def _create_user_filaments(self, filaments_data: object) -> None:
         """Create user/user-filaments.json file with given data."""
         user_dir = self.data_dir / "user"
         user_dir.mkdir(exist_ok=True)
         with open(user_dir / "user-filaments.json", "w") as f:
             json.dump(filaments_data, f, indent=2)
     
-    def _create_user_synonyms(self, synonyms_data):
+    def _create_user_synonyms(self, synonyms_data: object) -> None:
         """Create user/user-synonyms.json file with given data."""
         user_dir = self.data_dir / "user"
         user_dir.mkdir(exist_ok=True)
         with open(user_dir / "user-synonyms.json", "w") as f:
             json.dump(synonyms_data, f, indent=2)
     
-    def _load_with_custom_dir(self, loader_func):
+    def _load_with_custom_dir(self, loader_func: Callable[[str], _LoadedData]) -> _LoadedData:
         """Load data using custom directory."""
-        return loader_func(json_path=str(self.data_dir))
+        return loader_func(str(self.data_dir))
 
 
 class TestColorOverrides(TestUserOverrideSystem):
     """Test color override behavior."""
     
-    def test_color_name_override(self):
+    def test_color_name_override(self) -> None:
         """Test that user colors override core colors by name."""
         # User color overrides core red with different RGB
         user_colors = [
@@ -171,7 +171,7 @@ class TestColorOverrides(TestUserOverrideSystem):
         self.assertEqual(user_red_rgb.name, "red")
         self.assertEqual(user_red_rgb.source, "user-colors.json")
     
-    def test_color_rgb_override(self):
+    def test_color_rgb_override(self) -> None:
         """Test that user colors override core colors by RGB."""
         # User color uses same RGB as core blue but different name
         user_colors = [
@@ -207,7 +207,7 @@ class TestColorOverrides(TestUserOverrideSystem):
         assert user_blue is not None  # Type assertion for Pylance
         self.assertEqual(user_blue.source, "user-colors.json")
     
-    def test_color_addition_no_conflict(self):
+    def test_color_addition_no_conflict(self) -> None:
         """Test that user colors can add new colors without conflicts."""
         user_colors = [
             {
@@ -241,7 +241,7 @@ class TestColorOverrides(TestUserOverrideSystem):
         assert green is not None  # Type assertion for Pylance
         self.assertEqual(green.source, "user-colors.json")
     
-    def test_color_nearest_color_priority(self):
+    def test_color_nearest_color_priority(self) -> None:
         """Test that nearest_color respects user overrides."""
         # User red overrides core red
         user_colors = [
@@ -270,7 +270,7 @@ class TestColorOverrides(TestUserOverrideSystem):
 class TestFilamentOverrides(TestUserOverrideSystem):
     """Test filament override behavior."""
     
-    def test_filament_rgb_override_priority(self):
+    def test_filament_rgb_override_priority(self) -> None:
         """Test that find_by_rgb prioritizes user filaments."""
         # User filament with same RGB as core but different attributes
         user_filaments = [
@@ -299,7 +299,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         self.assertEqual(first_result.type, "PETG")
         self.assertEqual(first_result.color, "Custom Red")
     
-    def test_filament_nearest_filament_priority(self):
+    def test_filament_nearest_filament_priority(self) -> None:
         """Test that nearest_filament prioritizes user filaments."""
         user_filaments = [
             {
@@ -322,7 +322,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         self.assertEqual(nearest.source, "user-filaments.json")
         self.assertEqual(nearest.maker, "User Maker")
     
-    def test_filament_maker_search_no_override(self):
+    def test_filament_maker_search_no_override(self) -> None:
         """Test that maker searches work normally with user additions."""
         # User adds new filament for existing maker
         user_filaments = [
@@ -349,7 +349,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         self.assertIn("filaments.json", sources)
         self.assertIn("user-filaments.json", sources)
     
-    def test_filament_addition_no_conflict(self):
+    def test_filament_addition_no_conflict(self) -> None:
         """Test user filaments can add new makers without conflicts."""
         user_filaments = [
             {
@@ -382,7 +382,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
 class TestSynonymOverrides(TestUserOverrideSystem):
     """Test synonym override behavior."""
     
-    def test_synonym_replacement_override(self):
+    def test_synonym_replacement_override(self) -> None:
         """Test that user synonyms completely replace core synonyms."""
         # User completely replaces Bambu Lab synonyms
         user_synonyms = {
@@ -412,7 +412,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         bambu_canonical = palette.find_by_maker("Bambu Lab")
         self.assertGreater(len(bambu_canonical), 0)
     
-    def test_synonym_addition_no_conflict(self):
+    def test_synonym_addition_no_conflict(self) -> None:
         """Test that user synonyms can add new makers without conflicts."""
         # User adds synonyms for new maker
         user_synonyms = {
@@ -432,7 +432,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         self.assertIn("NC", synonyms["New Company"])
         self.assertIn("NewCo", synonyms["New Company"])
     
-    def test_synonym_extension_vs_replacement_detection(self):
+    def test_synonym_extension_vs_replacement_detection(self) -> None:
         """Test detection of synonym extension vs replacement."""
         # Test replacement case (conflicting maker)
         user_synonyms_replace = {
@@ -446,13 +446,13 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         self.assertEqual(synonyms["Test Maker"], ["NewTM", "TestMakerNew"])
         self.assertNotIn("TM", synonyms["Test Maker"])
     
-    def test_synonym_override_detection_logging(self):
+    def test_synonym_override_detection_logging(self) -> None:
         """Test that synonym overrides are properly logged."""
         # Set up logging capture
-        log_stream = []
+        log_stream: list[str] = []
         
         class ListHandler(logging.Handler):
-            def emit(self, record):
+            def emit(self, record: logging.LogRecord) -> None:
                 log_stream.append(self.format(record))
         
         # Add handler to capture logs
@@ -470,7 +470,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
             self._create_user_synonyms(user_synonyms)
             
             # Load with overrides
-            synonyms = self._load_with_custom_dir(load_maker_synonyms)
+            self._load_with_custom_dir(load_maker_synonyms)
             
             # Check that override was logged
             log_messages = ' '.join(log_stream)
@@ -485,7 +485,7 @@ class TestSynonymOverrides(TestUserOverrideSystem):
 class TestOverrideReporting(TestUserOverrideSystem):
     """Test override detection and reporting."""
     
-    def test_color_override_detection(self):
+    def test_color_override_detection(self) -> None:
         """Test detection of color overrides."""
         # Create overrides
         user_colors = [
@@ -526,7 +526,7 @@ class TestOverrideReporting(TestUserOverrideSystem):
         rgb_overrides = color_overrides.get("rgb", {})
         self.assertIn("(0, 0, 255)", rgb_overrides)
     
-    def test_filament_override_detection(self):
+    def test_filament_override_detection(self) -> None:
         """Test detection of filament overrides.""" 
         user_filaments = [
             {
@@ -551,7 +551,7 @@ class TestOverrideReporting(TestUserOverrideSystem):
         rgb_overrides = filament_overrides.get("rgb", {})
         self.assertIn("(255, 0, 0)", rgb_overrides)
     
-    def test_synonym_override_detection(self):
+    def test_synonym_override_detection(self) -> None:
         """Test detection of synonym overrides."""
         user_synonyms = {
             "Bambu Lab": ["CustomBambu"],  # Replacement
@@ -574,7 +574,7 @@ class TestOverrideReporting(TestUserOverrideSystem):
         self.assertEqual(synonym_overrides["Bambu Lab"]["old"], ["BBL", "Bambu", "BambuLab"])
         self.assertEqual(synonym_overrides["Bambu Lab"]["new"], ["CustomBambu"])
     
-    def test_no_overrides_empty_report(self):
+    def test_no_overrides_empty_report(self) -> None:
         """Test that no overrides results in empty report."""
         # No user files - no overrides
         colors = self._load_with_custom_dir(load_colors)
@@ -592,7 +592,7 @@ class TestOverrideReporting(TestUserOverrideSystem):
 class TestOverrideIntegration(TestUserOverrideSystem):
     """Test end-to-end override system integration."""
     
-    def test_comprehensive_override_scenario(self):
+    def test_comprehensive_override_scenario(self) -> None:
         """Test complex scenario with all types of overrides."""
         # User colors override core colors
         user_colors = [
@@ -663,7 +663,7 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         assert len(custom_maker) > 0  # Type assertion for Pylance
         self.assertEqual(custom_maker[0].maker, "Custom Maker")
     
-    def test_override_transparency_and_logging(self):
+    def test_override_transparency_and_logging(self) -> None:
         """Test that all overrides are transparent and properly logged."""
         # Create scenario with all override types
         user_colors = [{"name": "red", "hex": "#DC143C", "rgb": [220, 20, 60], 

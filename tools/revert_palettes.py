@@ -3,15 +3,16 @@
 
 import json
 from pathlib import Path
+from typing import cast
 
-def revert_palette_file(filepath: Path):
+def revert_palette_file(filepath: Path) -> None:
     """Convert a metadata format palette back to simple array format"""
     with open(filepath, 'r') as f:
-        data = json.load(f)
+        data: object = json.load(f)
     
     # Extract just the palette array
     if isinstance(data, dict) and 'palette' in data:
-        palette_array = data['palette']
+        palette_array = cast(dict[str, object], data)['palette']
     elif isinstance(data, list):
         # Already in simple format
         return
@@ -25,7 +26,7 @@ def revert_palette_file(filepath: Path):
     
     print(f"✓ Reverted {filepath.name}")
 
-def main():
+def main() -> None:
     """Revert all palette files to simple format"""
     palettes_dir = Path("color_tools/data/palettes")
     

@@ -16,9 +16,11 @@ from __future__ import annotations
 
 import io
 import json
-import sys
 import unittest
 from argparse import Namespace
+from collections.abc import Iterable
+from pathlib import Path
+from typing import cast
 from unittest.mock import MagicMock, patch
 
 
@@ -29,13 +31,13 @@ from unittest.mock import MagicMock, patch
 class TestHandleCvdCommand(unittest.TestCase):
     """Tests for handle_cvd_command."""
 
-    def _run(self, args):
+    def _run(self, args: Namespace) -> str | int | None:
         from color_tools.cli_commands.handlers.cvd import handle_cvd_command
         with self.assertRaises(SystemExit) as ctx:
             handle_cvd_command(args)
         return ctx.exception.code
 
-    def _run_capture(self, args):
+    def _run_capture(self, args: Namespace) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.cvd import handle_cvd_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -43,76 +45,76 @@ class TestHandleCvdCommand(unittest.TestCase):
                 handle_cvd_command(args)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(value=None, hex=None, mode='simulate', type='protanopia')
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(value=None, hex=None, mode='simulate', type='protanopia')
         defaults.update(kwargs)
         return Namespace(**defaults)
 
     # --- success paths ---
 
-    def test_simulate_protanopia_by_value_exits_0(self):
+    def test_simulate_protanopia_by_value_exits_0(self) -> None:
         """Simulate protanopia with --value exits 0."""
         args = self._make_args(value=[255, 0, 0], mode='simulate', type='protanopia')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_simulate_deuteranopia_by_value_exits_0(self):
+    def test_simulate_deuteranopia_by_value_exits_0(self) -> None:
         """Simulate deuteranopia with --value exits 0."""
         args = self._make_args(value=[100, 200, 50], mode='simulate', type='deuteranopia')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_simulate_tritanopia_by_value_exits_0(self):
+    def test_simulate_tritanopia_by_value_exits_0(self) -> None:
         """Simulate tritanopia with --value exits 0."""
         args = self._make_args(value=[50, 150, 250], mode='simulate', type='tritanopia')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_correct_mode_by_hex_exits_0(self):
+    def test_correct_mode_by_hex_exits_0(self) -> None:
         """Correct mode with --hex exits 0."""
         args = self._make_args(hex='#FF0000', mode='correct', type='deuteranopia')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_short_alias_protan_exits_0(self):
+    def test_short_alias_protan_exits_0(self) -> None:
         """Short alias 'protan' works like 'protanopia'."""
         args = self._make_args(value=[255, 0, 0], mode='simulate', type='protan')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_short_alias_deutan_exits_0(self):
+    def test_short_alias_deutan_exits_0(self) -> None:
         """Short alias 'deutan' works like 'deuteranopia'."""
         args = self._make_args(value=[100, 200, 50], mode='simulate', type='deutan')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_short_alias_tritan_exits_0(self):
+    def test_short_alias_tritan_exits_0(self) -> None:
         """Short alias 'tritan' works like 'tritanopia'."""
         args = self._make_args(value=[50, 150, 250], mode='simulate', type='tritan')
         code = self._run(args)
         self.assertEqual(code, 0)
 
-    def test_output_contains_input_rgb(self):
+    def test_output_contains_input_rgb(self) -> None:
         """Output line 1 contains the input RGB tuple."""
         args = self._make_args(value=[255, 0, 0], mode='simulate', type='protanopia')
         _, output = self._run_capture(args)
         self.assertIn("Input RGB:", output)
         self.assertIn("255", output)
 
-    def test_output_contains_output_rgb(self):
+    def test_output_contains_output_rgb(self) -> None:
         """Output contains 'Output RGB:' line."""
         args = self._make_args(value=[255, 0, 0], mode='simulate', type='protanopia')
         _, output = self._run_capture(args)
         self.assertIn("Output RGB:", output)
 
-    def test_output_contains_mode(self):
+    def test_output_contains_mode(self) -> None:
         """Output contains 'Mode:' line."""
         args = self._make_args(value=[255, 0, 0], mode='simulate', type='protanopia')
         _, output = self._run_capture(args)
         self.assertIn("Mode:", output)
         self.assertIn("simulate", output)
 
-    def test_output_contains_type(self):
+    def test_output_contains_type(self) -> None:
         """Output contains 'Type:' line with full deficiency name."""
         args = self._make_args(value=[255, 0, 0], mode='simulate', type='protanopia')
         _, output = self._run_capture(args)
@@ -121,19 +123,19 @@ class TestHandleCvdCommand(unittest.TestCase):
 
     # --- error paths ---
 
-    def test_both_value_and_hex_exits_2(self):
+    def test_both_value_and_hex_exits_2(self) -> None:
         """Exits 2 when both --value and --hex are specified."""
         args = self._make_args(value=[255, 0, 0], hex='#FF0000')
         code = self._run(args)
         self.assertEqual(code, 2)
 
-    def test_neither_value_nor_hex_exits_2(self):
+    def test_neither_value_nor_hex_exits_2(self) -> None:
         """Exits 2 when neither --value nor --hex is provided."""
         args = self._make_args()
         code = self._run(args)
         self.assertEqual(code, 2)
 
-    def test_invalid_hex_exits_2(self):
+    def test_invalid_hex_exits_2(self) -> None:
         """Exits 2 with invalid hex string."""
         args = self._make_args(hex='GGGGGG')
         code = self._run(args)
@@ -147,7 +149,7 @@ class TestHandleCvdCommand(unittest.TestCase):
 class TestHandleNameCommand(unittest.TestCase):
     """Tests for handle_name_command."""
 
-    def _run_capture(self, args):
+    def _run_capture(self, args: Namespace) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.name import handle_name_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -155,31 +157,31 @@ class TestHandleNameCommand(unittest.TestCase):
                 handle_name_command(args)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(value=None, hex=None, threshold=25, show_type=False)
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(value=None, hex=None, threshold=25, show_type=False)
         defaults.update(kwargs)
         return Namespace(**defaults)
 
-    def test_name_from_value_exits_0(self):
+    def test_name_from_value_exits_0(self) -> None:
         """Generates name from --value, exits 0."""
         args = self._make_args(value=[255, 0, 0])
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_name_from_hex_exits_0(self):
+    def test_name_from_hex_exits_0(self) -> None:
         """Generates name from --hex, exits 0."""
         args = self._make_args(hex='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_output_contains_name(self):
+    def test_output_contains_name(self) -> None:
         """Output contains a non-empty color name."""
         args = self._make_args(value=[255, 0, 0])
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertTrue(len(output.strip()) > 0)
 
-    def test_show_type_includes_match_type(self):
+    def test_show_type_includes_match_type(self) -> None:
         """With show_type=True, output includes match type in parentheses."""
         args = self._make_args(value=[255, 0, 0], show_type=True)
         code, output = self._run_capture(args)
@@ -187,14 +189,14 @@ class TestHandleNameCommand(unittest.TestCase):
         self.assertIn('(', output)
         self.assertIn(')', output)
 
-    def test_no_show_type_has_no_parentheses(self):
+    def test_no_show_type_has_no_parentheses(self) -> None:
         """Without show_type, output has no parentheses."""
         args = self._make_args(value=[255, 0, 0], show_type=False)
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertNotIn('(', output)
 
-    def test_both_value_and_hex_exits_2(self):
+    def test_both_value_and_hex_exits_2(self) -> None:
         """Exits 2 when both --value and --hex are specified."""
         args = self._make_args(value=[255, 0, 0], hex='#FF0000')
         from color_tools.cli_commands.handlers.name import handle_name_command
@@ -202,7 +204,7 @@ class TestHandleNameCommand(unittest.TestCase):
             handle_name_command(args)
         self.assertEqual(ctx.exception.code, 2)
 
-    def test_neither_value_nor_hex_exits_2(self):
+    def test_neither_value_nor_hex_exits_2(self) -> None:
         """Exits 2 when neither --value nor --hex is provided."""
         args = self._make_args()
         from color_tools.cli_commands.handlers.name import handle_name_command
@@ -210,7 +212,7 @@ class TestHandleNameCommand(unittest.TestCase):
             handle_name_command(args)
         self.assertEqual(ctx.exception.code, 2)
 
-    def test_invalid_hex_exits_2(self):
+    def test_invalid_hex_exits_2(self) -> None:
         """Exits 2 with invalid hex string."""
         args = self._make_args(hex='GGGGGG')
         from color_tools.cli_commands.handlers.name import handle_name_command
@@ -226,7 +228,7 @@ class TestHandleNameCommand(unittest.TestCase):
 class TestHandleValidateCommand(unittest.TestCase):
     """Tests for handle_validate_command."""
 
-    def _run_capture(self, args):
+    def _run_capture(self, args: Namespace) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.validate import handle_validate_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -234,43 +236,43 @@ class TestHandleValidateCommand(unittest.TestCase):
                 handle_validate_command(args)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, name='red', hex_val='#FF0000', threshold=10.0, json_output=False):
+    def _make_args(self, name: str = 'red', hex_val: str = '#FF0000', threshold: float = 10.0, json_output: bool = False) -> Namespace:
         return Namespace(name=name, hex=hex_val, threshold=threshold, json_output=json_output)
 
-    def test_matching_color_exits_0(self):
+    def test_matching_color_exits_0(self) -> None:
         """Exact color match exits 0."""
         args = self._make_args(name='red', hex_val='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_non_matching_color_exits_1(self):
+    def test_non_matching_color_exits_1(self) -> None:
         """Non-matching color exits 1."""
         args = self._make_args(name='red', hex_val='#0000FF', threshold=1.0)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_match_output_contains_checkmark(self):
+    def test_match_output_contains_checkmark(self) -> None:
         """Match output contains checkmark symbol."""
         args = self._make_args(name='red', hex_val='#FF0000')
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertIn('✓', output)
 
-    def test_no_match_output_contains_cross(self):
+    def test_no_match_output_contains_cross(self) -> None:
         """No-match output contains cross symbol."""
         args = self._make_args(name='red', hex_val='#0000FF', threshold=1.0)
         code, output = self._run_capture(args)
         self.assertEqual(code, 1)
         self.assertIn('✗', output)
 
-    def test_json_output_is_valid_json(self):
+    def test_json_output_is_valid_json(self) -> None:
         """JSON output mode produces valid JSON."""
         args = self._make_args(name='red', hex_val='#FF0000', json_output=True)
-        code, output = self._run_capture(args)
+        _, output = self._run_capture(args)
         data = json.loads(output)
         self.assertIsInstance(data, dict)
 
-    def test_json_output_has_required_keys(self):
+    def test_json_output_has_required_keys(self) -> None:
         """JSON output has all required keys."""
         args = self._make_args(name='red', hex_val='#FF0000', json_output=True)
         _, output = self._run_capture(args)
@@ -279,14 +281,14 @@ class TestHandleValidateCommand(unittest.TestCase):
                          'suggested_hex', 'delta_e', 'message'}
         self.assertEqual(required_keys, set(data.keys()))
 
-    def test_json_output_is_match_true_for_exact(self):
+    def test_json_output_is_match_true_for_exact(self) -> None:
         """JSON is_match is True for exact match."""
         args = self._make_args(name='red', hex_val='#FF0000', json_output=True)
         _, output = self._run_capture(args)
         data = json.loads(output)
         self.assertTrue(data['is_match'])
 
-    def test_json_output_is_match_false_for_mismatch(self):
+    def test_json_output_is_match_false_for_mismatch(self) -> None:
         """JSON is_match is False for non-matching color."""
         args = self._make_args(name='red', hex_val='#0000FF', threshold=1.0, json_output=True)
         _, output = self._run_capture(args)
@@ -301,7 +303,7 @@ class TestHandleValidateCommand(unittest.TestCase):
 class TestHandleConvertCommand(unittest.TestCase):
     """Tests for handle_convert_command."""
 
-    def _run_capture(self, args):
+    def _run_capture(self, args: Namespace) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.convert import handle_convert_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -309,8 +311,8 @@ class TestHandleConvertCommand(unittest.TestCase):
                 handle_convert_command(args)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             value=None, hex=None,
             check_gamut=False, from_space=None, to_space=None,
         )
@@ -319,37 +321,37 @@ class TestHandleConvertCommand(unittest.TestCase):
 
     # --- --check-gamut branch ---
 
-    def test_check_gamut_by_hex_exits_0(self):
+    def test_check_gamut_by_hex_exits_0(self) -> None:
         """Gamut check with --hex exits 0."""
         args = self._make_args(hex='#FF0000', check_gamut=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_check_gamut_by_value_exits_0(self):
+    def test_check_gamut_by_value_exits_0(self) -> None:
         """Gamut check with --value (LAB space) exits 0."""
         args = self._make_args(value=[50.0, 0.0, 0.0], check_gamut=True, from_space='lab')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_check_gamut_output_contains_in_or_out(self):
+    def test_check_gamut_output_contains_in_or_out(self) -> None:
         """Gamut check output contains 'IN' or 'OUT OF'."""
         args = self._make_args(hex='#FF0000', check_gamut=True)
         _, output = self._run_capture(args)
         self.assertTrue('IN' in output or 'OUT OF' in output)
 
-    def test_check_gamut_both_inputs_exits_2(self):
+    def test_check_gamut_both_inputs_exits_2(self) -> None:
         """Gamut check with both --value and --hex exits 2."""
         args = self._make_args(value=[50.0, 0.0, 0.0], hex='#FF0000', check_gamut=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_check_gamut_no_input_exits_2(self):
+    def test_check_gamut_no_input_exits_2(self) -> None:
         """Gamut check with no --value or --hex exits 2."""
         args = self._make_args(check_gamut=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_check_gamut_lch_input_exits_0(self):
+    def test_check_gamut_lch_input_exits_0(self) -> None:
         """Gamut check with LCH space input exits 0."""
         args = self._make_args(value=[50.0, 30.0, 120.0], check_gamut=True, from_space='lch')
         code, _ = self._run_capture(args)
@@ -357,55 +359,55 @@ class TestHandleConvertCommand(unittest.TestCase):
 
     # --- --to (conversion) branch ---
 
-    def test_rgb_to_lab_conversion_exits_0(self):
+    def test_rgb_to_lab_conversion_exits_0(self) -> None:
         """RGB to LAB conversion exits 0."""
         args = self._make_args(hex='#FF0000', to_space='lab')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_rgb_to_hsl_conversion_exits_0(self):
+    def test_rgb_to_hsl_conversion_exits_0(self) -> None:
         """RGB to HSL conversion exits 0."""
         args = self._make_args(hex='#FF0000', to_space='hsl')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_rgb_to_lch_conversion_exits_0(self):
+    def test_rgb_to_lch_conversion_exits_0(self) -> None:
         """RGB to LCH conversion exits 0."""
         args = self._make_args(hex='#00FF00', to_space='lch')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_lab_to_rgb_conversion_exits_0(self):
+    def test_lab_to_rgb_conversion_exits_0(self) -> None:
         """LAB to RGB conversion exits 0."""
         args = self._make_args(value=[53.23, 80.1, 67.2], from_space='lab', to_space='rgb')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_conversion_output_contains_arrow(self):
+    def test_conversion_output_contains_arrow(self) -> None:
         """Conversion output contains '->' arrow."""
         args = self._make_args(hex='#FF0000', to_space='lab')
         _, output = self._run_capture(args)
         self.assertIn('->', output)
 
-    def test_conversion_value_requires_from_space(self):
+    def test_conversion_value_requires_from_space(self) -> None:
         """Conversion with --value and no --from exits 2."""
         args = self._make_args(value=[255.0, 0.0, 0.0], to_space='lab')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_conversion_both_inputs_exits_2(self):
+    def test_conversion_both_inputs_exits_2(self) -> None:
         """Conversion with both --value and --hex exits 2."""
         args = self._make_args(value=[255.0, 0.0, 0.0], hex='#FF0000', to_space='lab')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_no_operation_exits_2(self):
+    def test_no_operation_exits_2(self) -> None:
         """Exits 2 when neither --check-gamut nor --to is specified."""
         args = self._make_args(hex='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_hsl_to_rgb_by_value_exits_0(self):
+    def test_hsl_to_rgb_by_value_exits_0(self) -> None:
         """HSL to RGB conversion by --value exits 0."""
         args = self._make_args(value=[0.0, 100.0, 50.0], from_space='hsl', to_space='rgb')
         code, _ = self._run_capture(args)
@@ -419,7 +421,7 @@ class TestHandleConvertCommand(unittest.TestCase):
 class TestHandleColorCommand(unittest.TestCase):
     """Tests for handle_color_command."""
 
-    def _run_capture(self, args, json_path=None):
+    def _run_capture(self, args: Namespace, json_path: Path | str | None = None) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.color import handle_color_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -427,8 +429,8 @@ class TestHandleColorCommand(unittest.TestCase):
                 handle_color_command(args, json_path)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             value=None, hex=None,
             name=None, nearest=False, export=None, output=None,
             palette=None, list_export_formats=False,
@@ -438,91 +440,91 @@ class TestHandleColorCommand(unittest.TestCase):
         defaults.update(kwargs)
         return Namespace(**defaults)
 
-    def test_name_lookup_existing_exits_0(self):
+    def test_name_lookup_existing_exits_0(self) -> None:
         """Looking up an existing color by name exits 0."""
         args = self._make_args(name='red')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_name_lookup_output_contains_hex(self):
+    def test_name_lookup_output_contains_hex(self) -> None:
         """Name lookup output contains hex value."""
         args = self._make_args(name='red')
         _, output = self._run_capture(args)
         self.assertIn('Hex:', output)
 
-    def test_name_lookup_output_contains_rgb(self):
+    def test_name_lookup_output_contains_rgb(self) -> None:
         """Name lookup output contains RGB values."""
         args = self._make_args(name='red')
         _, output = self._run_capture(args)
         self.assertIn('RGB:', output)
 
-    def test_name_lookup_missing_color_exits_1(self):
+    def test_name_lookup_missing_color_exits_1(self) -> None:
         """Looking up a non-existent color name exits 1."""
         args = self._make_args(name='notacolorthatexists_xyz')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_nearest_by_hex_exits_0(self):
+    def test_nearest_by_hex_exits_0(self) -> None:
         """--nearest with --hex exits 0."""
         args = self._make_args(nearest=True, hex='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_nearest_by_value_exits_0(self):
+    def test_nearest_by_value_exits_0(self) -> None:
         """--nearest with --value exits 0."""
         args = self._make_args(nearest=True, value=[255, 0, 0])
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_nearest_output_contains_distance(self):
+    def test_nearest_output_contains_distance(self) -> None:
         """--nearest output contains 'distance='."""
         args = self._make_args(nearest=True, hex='#FF0000')
         _, output = self._run_capture(args)
         self.assertIn('distance=', output)
 
-    def test_nearest_no_input_exits_2(self):
+    def test_nearest_no_input_exits_2(self) -> None:
         """--nearest with no color input exits 2."""
         args = self._make_args(nearest=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_both_inputs_exits_2(self):
+    def test_nearest_both_inputs_exits_2(self) -> None:
         """--nearest with both --value and --hex exits 2."""
         args = self._make_args(nearest=True, value=[255, 0, 0], hex='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_out_of_range_lab_exits_2(self):
+    def test_nearest_out_of_range_lab_exits_2(self) -> None:
         """--nearest with out-of-range LAB values exits 2."""
         args = self._make_args(nearest=True, value=[200.0, 0.0, 0.0], space='lab')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_out_of_range_lch_exits_2(self):
+    def test_nearest_out_of_range_lch_exits_2(self) -> None:
         """--nearest with out-of-range LCH values exits 2."""
         args = self._make_args(nearest=True, value=[50.0, 50.0, 400.0], space='lch')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_list_export_formats_exits_0(self):
+    def test_list_export_formats_exits_0(self) -> None:
         """--list-export-formats exits 0."""
         args = self._make_args(list_export_formats=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_palette_list_exits_0(self):
+    def test_palette_list_exits_0(self) -> None:
         """--palette list exits 0."""
         args = self._make_args(palette='list')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_palette_invalid_exits_1(self):
+    def test_palette_invalid_exits_1(self) -> None:
         """--palette with non-existent palette name exits 1."""
         args = self._make_args(palette='notapalette_xyz')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_user_palette_name_lookup_uses_custom_data_directory(self):
+    def test_user_palette_name_lookup_uses_custom_data_directory(self) -> None:
         """The color CLI can look up a user palette record and its derived values."""
         import tempfile
         from pathlib import Path
@@ -542,13 +544,13 @@ class TestHandleColorCommand(unittest.TestCase):
         self.assertIn("RGB:  (0, 0, 255)", output)
         self.assertIn("HSL:  (240.0°, 100.0%, 50.0%)", output)
 
-    def test_no_operation_exits_2(self):
+    def test_no_operation_exits_2(self) -> None:
         """Exits 2 when no operation is specified."""
         args = self._make_args()
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_count_multiple_has_enumeration(self):
+    def test_nearest_count_multiple_has_enumeration(self) -> None:
         """--nearest with count>1 shows enumerated results."""
         args = self._make_args(nearest=True, hex='#FF0000', count=3)
         _, output = self._run_capture(args)
@@ -562,7 +564,7 @@ class TestHandleColorCommand(unittest.TestCase):
 class TestHandleHarmonyCommand(unittest.TestCase):
     """Tests for the top-level harmony command."""
 
-    def _run_capture(self, args):
+    def _run_capture(self, args: Namespace) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.harmony import handle_harmony_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -570,28 +572,28 @@ class TestHandleHarmonyCommand(unittest.TestCase):
                 handle_harmony_command(args)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             value=None, hex=None, scheme='triadic', space='rgb',
             mood=None, tone='normal', grade_base=False, no_gamut_map=False,
         )
         defaults.update(kwargs)
         return Namespace(**defaults)
 
-    def test_harmony_by_hex_exits_0(self):
+    def test_harmony_by_hex_exits_0(self) -> None:
         args = self._make_args(hex='#E0006B')
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertIn('Harmony: triadic', output)
         self.assertIn('3. Hue offset:', output)
 
-    def test_harmony_by_rgb_value_exits_0(self):
+    def test_harmony_by_rgb_value_exits_0(self) -> None:
         args = self._make_args(scheme='complementary', value=[224, 0, 107])
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertIn('2. Hue offset:', output)
 
-    def test_harmony_by_lch_value_exits_0(self):
+    def test_harmony_by_lch_value_exits_0(self) -> None:
         args = self._make_args(
             scheme='complementary',
             value=[48.15, 76.58, 4.77],
@@ -601,7 +603,7 @@ class TestHandleHarmonyCommand(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn('Base LCH: (48.15, 76.58, 4.8°)', output)
 
-    def test_harmony_reports_mood_tone_and_base_grading(self):
+    def test_harmony_reports_mood_tone_and_base_grading(self) -> None:
         args = self._make_args(
             hex='#E0006B',
             mood='calm',
@@ -614,7 +616,7 @@ class TestHandleHarmonyCommand(unittest.TestCase):
         self.assertIn('Tone: dark', output)
         self.assertIn('Base graded: yes', output)
 
-    def test_harmony_can_leave_color_unmapped(self):
+    def test_harmony_can_leave_color_unmapped(self) -> None:
         args = self._make_args(
             scheme='complementary',
             value=[50.0, 150.0, 20.0],
@@ -625,16 +627,16 @@ class TestHandleHarmonyCommand(unittest.TestCase):
         self.assertEqual(code, 0)
         self.assertIn('out of gamut (not mapped)', output)
 
-    def test_harmony_requires_input(self):
+    def test_harmony_requires_input(self) -> None:
         code, _ = self._run_capture(self._make_args())
         self.assertEqual(code, 2)
 
-    def test_harmony_rejects_both_inputs(self):
+    def test_harmony_rejects_both_inputs(self) -> None:
         args = self._make_args(value=[224, 0, 107], hex='#E0006B')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_harmony_rejects_non_integral_rgb(self):
+    def test_harmony_rejects_non_integral_rgb(self) -> None:
         args = self._make_args(value=[224.5, 0, 107])
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
@@ -647,7 +649,7 @@ class TestHandleHarmonyCommand(unittest.TestCase):
 class TestHandleFilamentCommand(unittest.TestCase):
     """Tests for handle_filament_command."""
 
-    def _run_capture(self, args, json_path=None):
+    def _run_capture(self, args: Namespace, json_path: Path | str | None = None) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.filament import handle_filament_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -655,8 +657,8 @@ class TestHandleFilamentCommand(unittest.TestCase):
                 handle_filament_command(args, json_path)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             value=None, hex=None,
             nearest=False, maker=None, type=None, finish=None, color=None,
             exclude_maker=None, exclude_type=None,
@@ -672,104 +674,104 @@ class TestHandleFilamentCommand(unittest.TestCase):
         defaults.update(kwargs)
         return Namespace(**defaults)
 
-    def test_list_makers_exits_0(self):
+    def test_list_makers_exits_0(self) -> None:
         """--list-makers exits 0."""
         args = self._make_args(list_makers=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_list_makers_output_has_makers(self):
+    def test_list_makers_output_has_makers(self) -> None:
         """--list-makers output lists maker names."""
         args = self._make_args(list_makers=True)
         _, output = self._run_capture(args)
         self.assertIn('Available makers', output)
 
-    def test_list_types_exits_0(self):
+    def test_list_types_exits_0(self) -> None:
         """--list-types exits 0."""
         args = self._make_args(list_types=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_list_finishes_exits_0(self):
+    def test_list_finishes_exits_0(self) -> None:
         """--list-finishes exits 0."""
         args = self._make_args(list_finishes=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_list_export_formats_exits_0(self):
+    def test_list_export_formats_exits_0(self) -> None:
         """--list-export-formats exits 0."""
         args = self._make_args(list_export_formats=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_nearest_by_hex_exits_0(self):
+    def test_nearest_by_hex_exits_0(self) -> None:
         """--nearest with --hex exits 0."""
         args = self._make_args(nearest=True, hex='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_nearest_by_value_exits_0(self):
+    def test_nearest_by_value_exits_0(self) -> None:
         """--nearest with --value exits 0."""
         args = self._make_args(nearest=True, value=[255, 0, 0])
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_nearest_output_contains_distance(self):
+    def test_nearest_output_contains_distance(self) -> None:
         """--nearest output contains 'distance='."""
         args = self._make_args(nearest=True, hex='#FF0000')
         _, output = self._run_capture(args)
         self.assertIn('distance=', output)
 
-    def test_nearest_no_input_exits_2(self):
+    def test_nearest_no_input_exits_2(self) -> None:
         """--nearest with no color input exits 2."""
         args = self._make_args(nearest=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_both_inputs_exits_2(self):
+    def test_nearest_both_inputs_exits_2(self) -> None:
         """--nearest with both --value and --hex exits 2."""
         args = self._make_args(nearest=True, value=[255, 0, 0], hex='#FF0000')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_filter_by_maker_pla_exits_0(self):
+    def test_filter_by_maker_pla_exits_0(self) -> None:
         """Filter by maker and type exits 0 when results exist."""
         args = self._make_args(maker='Bambu Lab', type='PLA')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_filter_no_results_exits_1(self):
+    def test_filter_no_results_exits_1(self) -> None:
         """Filter with impossible criteria exits 1."""
         args = self._make_args(maker='NonExistentMakerXYZ999')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_no_operation_exits_2(self):
+    def test_no_operation_exits_2(self) -> None:
         """Exits 2 when no operation is specified."""
         args = self._make_args()
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_multiple_results_exits_0(self):
+    def test_nearest_multiple_results_exits_0(self) -> None:
         """--nearest with count>1 exits 0."""
         args = self._make_args(nearest=True, hex='#FF0000', count=3)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_exclusions_require_nearest(self):
+    def test_exclusions_require_nearest(self) -> None:
         """Exclusion options are deliberately scoped to nearest searches."""
         args = self._make_args(exclude_finish=['Silk'])
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_honors_color_filter(self):
+    def test_nearest_honors_color_filter(self) -> None:
         """The existing color option now constrains nearest candidates."""
         args = self._make_args(nearest=True, hex='#FF0000', color='Red')
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertIn('Red', output)
 
-    def test_nearest_honors_exclusion_filter(self):
+    def test_nearest_honors_exclusion_filter(self) -> None:
         """Nearest searches exclude records matching all exclusion fields."""
         args = self._make_args(
             nearest=True,
@@ -781,13 +783,13 @@ class TestHandleFilamentCommand(unittest.TestCase):
         self.assertEqual(code, 1)
         self.assertIn('No filaments match', output)
 
-    def test_nearest_invalid_hex_exits_2(self):
+    def test_nearest_invalid_hex_exits_2(self) -> None:
         """--nearest with invalid hex exits 2."""
         args = self._make_args(nearest=True, hex='GGGGGG')
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_add_owned_invalid_id_exits_1(self):
+    def test_add_owned_invalid_id_exits_1(self) -> None:
         """--add-owned with invalid filament ID exits 1."""
         args = self._make_args(add_owned='nonexistent-filament-id-xyz')
         code, _ = self._run_capture(args)
@@ -801,7 +803,7 @@ class TestHandleFilamentCommand(unittest.TestCase):
 class TestHandleImageCommand(unittest.TestCase):
     """Tests for handle_image_command."""
 
-    def _run_capture(self, args, json_path=None):
+    def _run_capture(self, args: Namespace, json_path: Path | str | None = None) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.image import handle_image_command
         captured = io.StringIO()
         with self.assertRaises(SystemExit) as ctx:
@@ -809,8 +811,8 @@ class TestHandleImageCommand(unittest.TestCase):
                 handle_image_command(args, json_path)
         return ctx.exception.code, captured.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             file=None, output=None,
             list_palettes=False,
             redistribute_luminance=False,
@@ -826,15 +828,15 @@ class TestHandleImageCommand(unittest.TestCase):
         defaults.update(kwargs)
         return Namespace(**defaults)
 
-    def test_image_not_available_exits_1(self):
+    def test_image_not_available_exits_1(self) -> None:
         """Exits 1 with helpful message when Pillow is not installed."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'IMAGE_AVAILABLE', False):
             args = self._make_args()
-            code, output = self._run_capture(args)
+            code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_image_not_available_mentions_pillow(self):
+    def test_image_not_available_mentions_pillow(self) -> None:
         """Error message when Pillow missing mentions Pillow."""
         import color_tools.cli_commands.handlers.image as img_mod
         captured_err = io.StringIO()
@@ -845,19 +847,19 @@ class TestHandleImageCommand(unittest.TestCase):
                     img_mod.handle_image_command(args)
         self.assertIn('Pillow', captured_err.getvalue())
 
-    def test_list_palettes_exits_0(self):
+    def test_list_palettes_exits_0(self) -> None:
         """--list-palettes exits 0 without needing a file."""
         args = self._make_args(list_palettes=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
-    def test_list_palettes_output_has_palettes(self):
+    def test_list_palettes_output_has_palettes(self) -> None:
         """--list-palettes output lists palette names."""
         args = self._make_args(list_palettes=True)
         _, output = self._run_capture(args)
         self.assertTrue(len(output.strip()) > 0)
 
-    def test_list_palettes_works_without_image_extra_and_uses_json_path(self):
+    def test_list_palettes_works_without_image_extra_and_uses_json_path(self) -> None:
         """Palette listing is dependency-free and respects a custom data directory."""
         import tempfile
         from pathlib import Path
@@ -886,19 +888,19 @@ class TestHandleImageCommand(unittest.TestCase):
         self.assertNotIn("user-palette.example", output)
         self.assertIn("1 colors", output)
 
-    def test_no_file_exits_1(self):
+    def test_no_file_exits_1(self) -> None:
         """Exits 1 when --file is not provided (and not list-palettes)."""
         args = self._make_args(redistribute_luminance=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_file_not_found_exits_1(self):
+    def test_file_not_found_exits_1(self) -> None:
         """Exits 1 when the image file does not exist."""
         args = self._make_args(file='/nonexistent/image_xyz.png', redistribute_luminance=True)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 1)
 
-    def test_no_operation_exits_1(self):
+    def test_no_operation_exits_1(self) -> None:
         """Exits 1 when a file is given but no operation is specified."""
         import tempfile, os
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
@@ -910,7 +912,7 @@ class TestHandleImageCommand(unittest.TestCase):
         finally:
             os.unlink(tmp_path)
 
-    def test_multiple_operations_exits_1(self):
+    def test_multiple_operations_exits_1(self) -> None:
         """Exits 1 when more than one operation is specified."""
         import tempfile, os
         with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
@@ -931,17 +933,19 @@ class TestHandleImageCommand(unittest.TestCase):
 # Image handler — operation branches
 # ---------------------------------------------------------------------------
 
-def _image_handler_pil_available():
+def _image_handler_pil_available() -> bool:
     try:
         from PIL import Image  # noqa: F401
+        del Image
         return True
     except ImportError:
         return False
 
 
-def _image_handler_numpy_available():
+def _image_handler_numpy_available() -> bool:
     try:
         import numpy  # noqa: F401
+        del numpy
         return True
     except ImportError:
         return False
@@ -961,7 +965,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
     call sys.exit(1).  The helper accordingly either expects SystemExit or not.
     """
 
-    def setUp(self):
+    def setUp(self) -> None:
         import os
         import tempfile
         if _PIL_FOR_HANDLER:
@@ -973,9 +977,9 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             self._img_path = path
         else:
             self._img_path = None
-        self._extra_files = []
+        self._extra_files: list[str] = []
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         import gc
         import os
         gc.collect()  # Release any PIL file handles still open on Windows
@@ -991,7 +995,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             except PermissionError:
                 pass
 
-    def _run_expect_exit(self, args, expected_code=1):
+    def _run_expect_exit(self, args: Namespace, expected_code: int = 1) -> tuple[str, str]:
         """Run handler expecting a SystemExit; return (code, stdout, stderr)."""
         from color_tools.cli_commands.handlers.image import handle_image_command
         captured_out = io.StringIO()
@@ -1002,7 +1006,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertEqual(ctx.exception.code, expected_code)
         return captured_out.getvalue(), captured_err.getvalue()
 
-    def _run_expect_return(self, args, json_path=None):
+    def _run_expect_return(self, args: Namespace, json_path: Path | str | None = None) -> str:
         """Run handler expecting normal return (no sys.exit); return stdout."""
         from color_tools.cli_commands.handlers.image import handle_image_command
         captured_out = io.StringIO()
@@ -1010,8 +1014,8 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             handle_image_command(args, json_path)
         return captured_out.getvalue()
 
-    def _make_args(self, **kwargs):
-        defaults = dict(
+    def _make_args(self, **kwargs: object) -> Namespace:
+        defaults: dict[str, object] = dict(
             file=None, output=None,
             list_palettes=False,
             redistribute_luminance=False,
@@ -1038,7 +1042,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         return Namespace(**defaults)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_redistribute_luminance_prints_report(self):
+    def test_redistribute_luminance_prints_report(self) -> None:
         """--redistribute-luminance runs, prints the report, and returns normally."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_colors = [(255, 0, 0), (0, 255, 0)]
@@ -1050,7 +1054,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('THE REPORT', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_cvd_simulate_no_output_saves_default(self):
+    def test_cvd_simulate_no_output_saves_default(self) -> None:
         """--cvd-simulate without --output saves to a default filename."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_image = MagicMock()
@@ -1061,7 +1065,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('protanopia_sim', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_palette_quantization_passes_json_path_to_image_api(self):
+    def test_palette_quantization_passes_json_path_to_image_api(self) -> None:
         """Image palette quantization uses the selected custom data directory."""
         from pathlib import Path
         import color_tools.cli_commands.handlers.image as img_mod
@@ -1083,7 +1087,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         _PIL_FOR_HANDLER and _NUMPY_FOR_HANDLER,
         'Requires Pillow and numpy',
     )
-    def test_user_palette_quantization_uses_custom_palette(self):
+    def test_user_palette_quantization_uses_custom_palette(self) -> None:
         """Image CLI output uses the colors from the selected user palette."""
         import tempfile
         from pathlib import Path
@@ -1109,12 +1113,17 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             self._run_expect_return(args, json_path=data_dir)
 
             with Image.open(output_path) as quantized:
-                output_colors = set(quantized.convert("RGB").getdata())
+                output_colors = set(
+                    cast(
+                        Iterable[tuple[int, int, int]],
+                        quantized.convert("RGB").getdata(),
+                    )
+                )
 
         self.assertEqual(output_colors, {(17, 34, 51)})
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_cvd_simulate_with_output_does_not_call_save(self):
+    def test_cvd_simulate_with_output_does_not_call_save(self) -> None:
         """--cvd-simulate with explicit --output passes output_path to function."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_image = MagicMock()
@@ -1128,7 +1137,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('out_sim.png', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_cvd_correct_saves_default(self):
+    def test_cvd_correct_saves_default(self) -> None:
         """--cvd-correct saves to default filename."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_image = MagicMock()
@@ -1139,7 +1148,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('tritanopia_corrected', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_quantize_palette_saves_default(self):
+    def test_quantize_palette_saves_default(self) -> None:
         """--quantize-palette saves to default output."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_palette = MagicMock()
@@ -1152,7 +1161,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         mock_image.save.assert_called_once()
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_quantize_palette_with_explicit_output(self):
+    def test_quantize_palette_with_explicit_output(self) -> None:
         """--quantize-palette with --output does not call save() manually."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_palette = MagicMock()
@@ -1169,14 +1178,14 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('out_quant.png', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_no_source_exits_1(self):
+    def test_watermark_no_source_exits_1(self) -> None:
         """--watermark without any source (text/image/svg) exits 1."""
         args = self._make_args(file=self._img_path, watermark=True)
         _, err = self._run_expect_exit(args, expected_code=1)
         self.assertIn('Watermark requires', err)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_multiple_sources_exits_1(self):
+    def test_watermark_multiple_sources_exits_1(self) -> None:
         """--watermark with both --watermark-text and --watermark-image exits 1."""
         args = self._make_args(
             file=self._img_path, watermark=True,
@@ -1186,7 +1195,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('Only one watermark source', err)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_text_saves_default(self):
+    def test_watermark_text_saves_default(self) -> None:
         """--watermark-text adds watermark and returns normally."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_watermarked = MagicMock()
@@ -1201,7 +1210,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('watermarked', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_image_saves_default(self):
+    def test_watermark_image_saves_default(self) -> None:
         """--watermark-image adds watermark and returns normally."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_watermarked = MagicMock()
@@ -1211,11 +1220,11 @@ class TestHandleImageCommandOperations(unittest.TestCase):
                 file=self._img_path, watermark=True,
                 watermark_image='/some/wm.png',
             )
-            out = self._run_expect_return(args)
+            self._run_expect_return(args)
         mock_watermarked.save.assert_called_once()
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_convert_returns_normally(self):
+    def test_convert_returns_normally(self) -> None:
         """--convert jpg calls convert_image and prints result."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'convert_image', return_value='/tmp/out.jpg'):
@@ -1224,7 +1233,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('out.jpg', out)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_general_exception_exits_1(self):
+    def test_general_exception_exits_1(self) -> None:
         """An unexpected exception in the operation body exits 1 with message."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'simulate_cvd_image', side_effect=RuntimeError('boom')):
@@ -1234,7 +1243,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
 
     # --- list_palettes branch coverage ---
 
-    def test_list_palettes_with_error_entry_shows_error_loading(self):
+    def test_list_palettes_with_error_entry_shows_error_loading(self) -> None:
         """color_count < 0 shows '(error loading)' text."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'get_available_palettes',
@@ -1243,7 +1252,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             out, _ = self._run_expect_exit(args, expected_code=0)
         self.assertIn('error loading', out)
 
-    def test_list_palettes_empty_shows_no_palettes_found(self):
+    def test_list_palettes_empty_shows_no_palettes_found(self) -> None:
         """Empty palette list prints 'No palettes found'."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'get_available_palettes', return_value=[]):
@@ -1254,7 +1263,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
     # --- watermark additional path coverage ---
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_invalid_color_exits_1(self):
+    def test_watermark_invalid_color_exits_1(self) -> None:
         """An invalid --watermark-color value causes sys.exit(1)."""
         args = self._make_args(
             file=self._img_path, watermark=True,
@@ -1264,7 +1273,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertIn('watermark-color', err)
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_svg_succeeds(self):
+    def test_watermark_svg_succeeds(self) -> None:
         """--watermark-svg path returns normally when add_svg_watermark succeeds."""
         import color_tools.cli_commands.handlers.image as img_mod
         mock_wm = MagicMock()
@@ -1274,11 +1283,11 @@ class TestHandleImageCommandOperations(unittest.TestCase):
                 file=self._img_path, watermark=True,
                 watermark_svg='/some/test.svg',
             )
-            out = self._run_expect_return(args)
+            self._run_expect_return(args)
         mock_wm.save.assert_called_once()
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_watermark_svg_import_error_exits_1(self):
+    def test_watermark_svg_import_error_exits_1(self) -> None:
         """ImportError from add_svg_watermark exits 1."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'add_svg_watermark',
@@ -1293,7 +1302,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
     # --- convert additional path coverage ---
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_convert_webp_defaults_to_lossless(self):
+    def test_convert_webp_defaults_to_lossless(self) -> None:
         """--convert webp without --lossy uses lossless=True."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'convert_image', return_value='/tmp/out.webp') as mock_cv:
@@ -1303,7 +1312,7 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         self.assertTrue(call_kwargs.get('lossless'))
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
-    def test_convert_import_error_exits_1(self):
+    def test_convert_import_error_exits_1(self) -> None:
         """ImportError from convert_image exits 1 with HEIC hint."""
         import color_tools.cli_commands.handlers.image as img_mod
         with patch.object(img_mod, 'convert_image',

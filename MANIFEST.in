@@ -3,5 +3,10 @@ include README.md
 include pyproject.toml
 recursive-include color_tools *.py *.json
 recursive-exclude tests *
+prune demos
+prune samples
+prune scripts
+prune tooling
+prune tools
 global-exclude *.pyc __pycache__ .DS_Store
 exclude cvd_demo.png

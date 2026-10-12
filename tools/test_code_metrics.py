@@ -19,7 +19,7 @@ SPEC.loader.exec_module(code_metrics)
 
 
 def _scan_config(**changes: object):
-    values = {
+    values: dict[str, object] = {
         "target": ".",
         "use_default_exclusions": True,
         "excluded_directory_names": (".venv", ".pytest_cache", ".vercel", ".vscode", "build"),
@@ -230,4 +230,3 @@ def test_report_write_replaces_existing_file(tmp_path: Path) -> None:
 
     assert destination.read_text(encoding="utf-8") == "new\n"
     assert not list(destination.parent.glob("*.tmp"))
-

@@ -2,6 +2,8 @@
 
 import unittest
 import sys
+import json
+import tempfile
 from pathlib import Path
 
 # Add parent directory to path for imports
@@ -13,7 +15,7 @@ from color_tools.palette import (
     Palette,
     ColorRecord,
     load_palette,
-    _parse_color_records,
+    load_colors,
 )
 from color_tools.filament_palette import (
     FilamentPalette,
@@ -49,7 +51,7 @@ class TestColorRecord(unittest.TestCase):
             lch=(53.24, 104.55, 39.99)
         )
         with self.assertRaises(AttributeError):
-            color.name = "blue"
+            setattr(color, "name", "blue")
     
     def test_color_record_str(self):
         """Test ColorRecord string representation."""
@@ -102,7 +104,7 @@ class TestFilamentRecord(unittest.TestCase):
             td_value=0.5
         )
         with self.assertRaises(AttributeError):
-            filament.color = "Blue"
+            setattr(filament, "color", "Blue")
     
     def test_filament_record_str(self):
         """Test FilamentRecord string representation."""
@@ -148,7 +150,8 @@ class TestPalette(unittest.TestCase):
         result = palette.find_by_name("red")
         # May or may not find exact "red" depending on what's in the palette
         # Just test it returns the right type
-        self.assertTrue(result is None or isinstance(result, ColorRecord))
+        if result is not None:
+            self.assertIsInstance(result, ColorRecord)
     
     def test_find_by_name_case_insensitive(self):
         """Test that name search is case insensitive."""
@@ -173,6 +176,8 @@ class TestPalette(unittest.TestCase):
             # Search by its RGB
             result = palette.find_by_rgb(color.rgb)
             self.assertIsNotNone(result)
+            if result is None:
+                self.fail("An existing color must be found by RGB.")
             self.assertEqual(result.rgb, color.rgb)
     
     def test_find_by_lab(self):
@@ -184,7 +189,8 @@ class TestPalette(unittest.TestCase):
             # Search by its LAB (exact match may fail due to rounding)
             result = palette.find_by_lab(color.lab, rounding=1)
             # May or may not find depending on rounding
-            self.assertTrue(result is None or isinstance(result, ColorRecord))
+            if result is not None:
+                self.assertIsInstance(result, ColorRecord)
     
     def test_nearest_color_rgb(self):
         """Test finding nearest color by RGB."""
@@ -334,7 +340,7 @@ class TestFilamentPalette(unittest.TestCase):
         makers_list = palette.makers
         if makers_list:
             # Find nearest PLA from first maker (search all filaments, not just owned)
-            nearest, distance = palette.nearest_filament(
+            nearest, _ = palette.nearest_filament(
                 (180, 100, 200),
                 maker=makers_list[0],
                 type_name="PLA",
@@ -351,14 +357,9 @@ class TestPaletteEdgeCases(unittest.TestCase):
     def test_nearest_color_empty_palette(self):
         """Test nearest color on empty palette."""
         palette = Palette([])
-        # Should handle empty palette gracefully
-        try:
-            nearest, distance = palette.nearest_color((255, 0, 0))
-            # If it doesn't raise, it should return None
-            self.assertTrue(nearest is None or distance is None or distance == float('inf'))
-        except (ValueError, IndexError):
-            # Or it might raise an error, which is also acceptable
-            pass
+        nearest, distance = palette.nearest_color((255, 0, 0))
+        self.assertIsNone(nearest)
+        self.assertEqual(distance, float("inf"))
     
     def test_find_by_name_no_match(self):
         """Test finding color with no matches."""
@@ -376,7 +377,8 @@ class TestLoadPalette(unittest.TestCase):
         self.assertIsInstance(palette, Palette)
         self.assertEqual(len(palette.records), 4)
         # Verify it's a working Palette instance
-        self.assertGreater(len(palette._by_name), 0)
+        for color in palette.records:
+            self.assertEqual(palette.find_by_name(color.name), color)
     
     def test_load_cga16_palette(self):
         """Test loading CGA 16-color palette."""
@@ -463,7 +465,6 @@ class TestLoadPalette(unittest.TestCase):
     
     def test_palette_name_case_sensitivity(self):
         """Test case sensitivity of palette names."""
-        import platform
         
         # On case-insensitive file systems (Windows, macOS by default),
         # "CGA4" may match "cga4.json". On case-sensitive systems (Linux),
@@ -483,7 +484,6 @@ class TestLoadPalette(unittest.TestCase):
     def test_malformed_json_raises_value_error(self):
         """Test that malformed JSON file raises ValueError."""
         import tempfile
-        import os
         
         # Create a temporary directory with malformed JSON
         with tempfile.TemporaryDirectory() as tmpdir:
@@ -498,7 +498,7 @@ class TestLoadPalette(unittest.TestCase):
             # Since we can't easily override the hardcoded path, we'll test
             # by directly calling the underlying code
             import json
-            with self.assertRaises(ValueError) as context:
+            with self.assertRaises(ValueError):
                 with open(bad_file, 'r') as f:
                     json.load(f)
                 # This will raise JSONDecodeError which should be caught
@@ -528,7 +528,13 @@ class TestLoadPalette(unittest.TestCase):
 
 
 class TestParseColorRecords(unittest.TestCase):
-    """Test _parse_color_records() helper function."""
+    """Exercise color-record parsing through the public JSON file loader."""
+
+    def _load_records(self, data: object, source_file: str) -> list[ColorRecord]:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / source_file
+            path.write_text(json.dumps(data), encoding="utf-8")
+            return load_colors(path)
     
     def test_parse_single_color_record(self):
         """Test parsing a single color record."""
@@ -542,7 +548,7 @@ class TestParseColorRecords(unittest.TestCase):
                 "lch": [53.24, 104.55, 39.99]
             }
         ]
-        records = _parse_color_records(data, "test.json")
+        records = self._load_records(data, "test.json")
         
         self.assertEqual(len(records), 1)
         self.assertIsInstance(records[0], ColorRecord)
@@ -581,7 +587,7 @@ class TestParseColorRecords(unittest.TestCase):
                 "lch": [32.30, 133.81, 306.29]
             }
         ]
-        records = _parse_color_records(data, "test.json")
+        records = self._load_records(data, "test.json")
         
         self.assertEqual(len(records), 3)
         self.assertEqual(records[0].name, "Red")
@@ -590,8 +596,7 @@ class TestParseColorRecords(unittest.TestCase):
     
     def test_parse_empty_list(self):
         """Test parsing empty color list."""
-        data = []
-        records = _parse_color_records(data, "test.json")
+        records = self._load_records([], "test.json")
         self.assertEqual(len(records), 0)
         self.assertEqual(records, [])
     
@@ -608,7 +613,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("'name'", error_msg)
@@ -628,7 +633,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("'hex'", error_msg)
@@ -647,7 +652,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("'rgb'", error_msg)
@@ -665,7 +670,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("'hsl'", error_msg)
@@ -683,7 +688,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("'lab'", error_msg)
@@ -701,7 +706,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("'lch'", error_msg)
@@ -719,7 +724,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -738,7 +743,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -756,7 +761,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -774,7 +779,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -793,7 +798,7 @@ class TestParseColorRecords(unittest.TestCase):
         ]
         # RGB values are now validated early to provide better error messages
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -812,7 +817,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -830,7 +835,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         self.assertIn("index 0", error_msg)
@@ -864,7 +869,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test.json")
+            self._load_records(data, "test.json")
         
         error_msg = str(context.exception)
         # Should identify index 2 (third item, 0-indexed)
@@ -880,7 +885,7 @@ class TestParseColorRecords(unittest.TestCase):
             }
         ]
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "my_custom_palette.json")
+            self._load_records(data, "my_custom_palette.json")
         
         error_msg = str(context.exception)
         self.assertIn("my_custom_palette.json", error_msg)
@@ -897,7 +902,7 @@ class TestParseColorRecords(unittest.TestCase):
                 "lch": [53.24, 104.55, 39.99]
             }
         ]
-        records = _parse_color_records(data, "test.json")
+        records = self._load_records(data, "test.json")
         self.assertEqual(records[0].rgb, (255, 0, 0))
     
     def test_handles_float_hsl_values(self):
@@ -912,7 +917,7 @@ class TestParseColorRecords(unittest.TestCase):
                 "lch": [53.24, 104.55, 39.99]
             }
         ]
-        records = _parse_color_records(data, "test.json")
+        records = self._load_records(data, "test.json")
         self.assertEqual(records[0].hsl, (0.5, 99.9, 50.1))
     
     def test_rgb_validation_prevents_late_failure_in_nearest_color(self):
@@ -938,7 +943,7 @@ class TestParseColorRecords(unittest.TestCase):
         
         # Should fail early in _parse_color_records with context
         with self.assertRaises(ValueError) as context:
-            _parse_color_records(data, "test_colors.json")
+            self._load_records(data, "test_colors.json")
         
         # Error message should include file name and index
         error_msg = str(context.exception)
@@ -1000,12 +1005,16 @@ class TestUserOverrides(unittest.TestCase):
         # Name lookup should return user override
         red_color = palette.find_by_name("red")
         self.assertIsNotNone(red_color)
+        if red_color is None:
+            self.fail("The red override must exist.")
         self.assertEqual(red_color.source, "user-colors.json")
         self.assertEqual(red_color.rgb, (220, 20, 60))  # User's red, not core red
         
         # Core blue should still be accessible by name (no user override)
         blue_color = palette.find_by_name("blue") 
         self.assertIsNotNone(blue_color)
+        if blue_color is None:
+            self.fail("The core blue color must exist.")
         self.assertEqual(blue_color.source, "colors.json")
     
     def test_rgb_override_behavior(self):
@@ -1016,6 +1025,8 @@ class TestUserOverrides(unittest.TestCase):
         # RGB lookup should return user override
         blue_rgb = palette.find_by_rgb((0, 0, 255))
         self.assertIsNotNone(blue_rgb)
+        if blue_rgb is None:
+            self.fail("The blue override must exist.")
         self.assertEqual(blue_rgb.source, "user-colors.json")
         self.assertEqual(blue_rgb.name, "my_blue")  # User's name, not "blue"
     
@@ -1027,6 +1038,8 @@ class TestUserOverrides(unittest.TestCase):
         # Test RGB consistency - both should return user override
         rgb_result = palette.find_by_rgb((0, 0, 255))
         nearest_result, distance = palette.nearest_color((0, 0, 255), space="rgb")
+        if rgb_result is None:
+            self.fail("The blue override must exist.")
         
         self.assertEqual(rgb_result.name, nearest_result.name)
         self.assertEqual(rgb_result.source, nearest_result.source)
@@ -1035,21 +1048,21 @@ class TestUserOverrides(unittest.TestCase):
     
     def test_source_preference_helper(self):
         """Test the _should_prefer_source helper function."""
-        from color_tools.palette import _should_prefer_source
+        from color_tools._palette_utils import should_prefer_source
         
         # User files should override core files
-        self.assertTrue(_should_prefer_source("user-colors.json", "colors.json"))
-        self.assertFalse(_should_prefer_source("colors.json", "user-colors.json"))
+        self.assertTrue(should_prefer_source("user-colors.json", "colors.json"))
+        self.assertFalse(should_prefer_source("colors.json", "user-colors.json"))
         
         # Same type (both user) - no preference 
-        self.assertFalse(_should_prefer_source("user-colors.json", "user-filaments.json"))
+        self.assertFalse(should_prefer_source("user-colors.json", "user-filaments.json"))
         
         # Same type (both core) - no preference
-        self.assertFalse(_should_prefer_source("colors.json", "filaments.json"))
+        self.assertFalse(should_prefer_source("colors.json", "filaments.json"))
         
         # Custom palettes should override core
-        self.assertTrue(_should_prefer_source("cga4.json", "colors.json"))
-        self.assertFalse(_should_prefer_source("colors.json", "cga4.json"))
+        self.assertTrue(should_prefer_source("cga4.json", "colors.json"))
+        self.assertFalse(should_prefer_source("colors.json", "cga4.json"))
 
     def test_multiple_overrides(self):
         """Test behavior with multiple override scenarios."""
@@ -1072,16 +1085,22 @@ class TestUserOverrides(unittest.TestCase):
         
         # Name override: "red" should return user version
         red = palette.find_by_name("red")
+        if red is None:
+            self.fail("The red override must exist.")
         self.assertEqual(red.source, "user-colors.json")
         self.assertEqual(red.hex, "#DC143C")
         
         # RGB override: (0, 255, 0) should return user version
         green_rgb = palette.find_by_rgb((0, 255, 0))
+        if green_rgb is None:
+            self.fail("The green RGB override must exist.")
         self.assertEqual(green_rgb.source, "user-colors.json")
         self.assertEqual(green_rgb.name, "custom_green")
         
         # Core "green" should still be accessible by name (different RGB now)
         green_name = palette.find_by_name("green")
+        if green_name is None:
+            self.fail("The core green name must exist.")
         self.assertEqual(green_name.source, "colors.json")
 
     def test_filament_overrides(self):

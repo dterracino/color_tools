@@ -101,7 +101,7 @@ class TestUserPalettes(unittest.TestCase):
         self.assertNotIn("test.example", palette_names)
         
         # Verify color counts are present
-        for name, color_count in available:
+        for _, color_count in available:
             self.assertIsInstance(color_count, int)
             # Color count should be >= 0 (or -1 for error)
     

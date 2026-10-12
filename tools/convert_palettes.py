@@ -8,7 +8,7 @@ Converts existing palette files to new metadata format with compact formatting.
 import json
 import sys
 from pathlib import Path
-from typing import Any, Dict, List
+from typing import cast
 
 # Palette metadata definitions
 PALETTE_METADATA = {
@@ -223,7 +223,7 @@ def convert_palette_file(input_path: Path, output_path: Path | None = None) -> N
     
     # Handle both old format (array) and already converted format (dict)
     if isinstance(data, list):
-        colors = data
+        colors = cast(list[object], data)
     elif isinstance(data, dict) and 'palette' in data:
         print(f"  ⚠ File already converted, skipping...")
         return
@@ -246,13 +246,6 @@ def convert_palette_file(input_path: Path, output_path: Path | None = None) -> N
         "simultaneous_colors": len(colors),
         "tags": ["palette"]
     })
-    
-    # Create new structure
-    new_format = {
-        "format_version": "1.0",
-        "metadata": metadata,
-        "palette": colors
-    }
     
     # Write with compact formatting for colors, expanded for metadata
     with open(output_path, 'w') as f:
@@ -288,7 +281,7 @@ def convert_palette_file(input_path: Path, output_path: Path | None = None) -> N
     print(f"  ✓ Saved to {output_path}")
 
 
-def main():
+def main() -> None:
     """Convert all palette files or specific ones."""
     if len(sys.argv) > 1:
         # Convert specific files

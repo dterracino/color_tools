@@ -40,6 +40,13 @@ jobs:
           python -m coverage run -m unittest discover tests
           python -m coverage xml
 
+      - name: Check repository strict typing
+        if: matrix.python-version == '3.12'
+        run: |
+          python -m venv .venv
+          .venv/bin/python -m pip install -e ".[all,docs,dev]" pytest "pygame>=2.5.0" "moderngl>=5.10.0"
+          .venv/bin/pyright --project pyrightconfig.json --pythonpath .venv/bin/python --warnings
+
       - name: Verify installed-wheel type completeness
         if: matrix.python-version == '3.12'
         run: |

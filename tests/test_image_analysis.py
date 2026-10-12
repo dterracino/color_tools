@@ -9,7 +9,10 @@ import sys
 import tempfile
 import os
 from pathlib import Path
-from unittest.mock import patch
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from PIL import Image
 
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent
@@ -19,15 +22,20 @@ if str(parent_dir) not in sys.path:
 # Check for dependencies before running tests
 try:
     from PIL import Image
-    PILLOW_AVAILABLE = True
 except ImportError:
-    PILLOW_AVAILABLE = False
+    _pillow_available = False
+else:
+    _pillow_available = True
+PILLOW_AVAILABLE = _pillow_available
 
 try:
     import numpy as np
-    NUMPY_AVAILABLE = True
+    del np
 except ImportError:
-    NUMPY_AVAILABLE = False
+    _numpy_available = False
+else:
+    _numpy_available = True
+NUMPY_AVAILABLE = _numpy_available
 
 
 def create_test_image(width: int, height: int, color: tuple[int, int, int]) -> str:
@@ -207,7 +215,7 @@ class TestExtractColorClusters(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
     def tearDown(self):
         """Clean up test files."""
@@ -297,7 +305,7 @@ class TestExtractUniqueColors(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
     def tearDown(self):
         """Clean up test files."""
@@ -313,7 +321,8 @@ class TestExtractUniqueColors(unittest.TestCase):
         colors = self.extract_unique_colors(img_path, n_colors=3)
         
         self.assertEqual(len(colors), 3)
-        self.assertTrue(all(isinstance(c, tuple) for c in colors))
+        for color in colors:
+            self.assertIsInstance(color, tuple)
         self.assertTrue(all(len(c) == 3 for c in colors))
     
     def test_returns_rgb_tuples(self):
@@ -504,7 +513,7 @@ class TestAnalysisIntegration(unittest.TestCase):
     
     def setUp(self):
         """Set up test fixtures."""
-        self.test_files = []
+        self.test_files: list[str] = []
     
     def tearDown(self):
         """Clean up test files."""

@@ -47,6 +47,18 @@ This is a color science library for Python 3.10+ that provides:
 
 ## Code Style and Standards
 
+### Strict Pre-Commit Gate
+
+New and modified code must pass the repository's configured strict Pyright
+check before being considered ready for commit. Keep strict mode enabled;
+do not add type-checking suppressions. During the current cleanup, report
+remaining repository errors explicitly rather than claiming commit readiness.
+
+Tests may directly exercise private helpers where this preserves focused
+coverage. The `tests` execution environment disables only `reportPrivateUsage`;
+all other strict diagnostics remain enabled. Production code retains private
+API enforcement. Do not make helpers public solely to satisfy the checker.
+
 ### Standard Process for Code Changes
 
 Follow the global process in `~/.copilot/instructions/global.instructions.md`. In addition, for this project:

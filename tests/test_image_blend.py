@@ -9,23 +9,33 @@ import sys
 import tempfile
 import os
 from pathlib import Path
+from typing import TYPE_CHECKING
 
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent
 if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
+if TYPE_CHECKING:
+    from PIL import Image
+    import numpy as np
+    from numpy.typing import NDArray
+
 try:
     from PIL import Image
-    PILLOW_AVAILABLE = True
 except ImportError:
-    PILLOW_AVAILABLE = False
+    _pillow_available = False
+else:
+    _pillow_available = True
+PILLOW_AVAILABLE = _pillow_available
 
 try:
     import numpy as np
-    NUMPY_AVAILABLE = True
 except ImportError:
-    NUMPY_AVAILABLE = False
+    _numpy_available = False
+else:
+    _numpy_available = True
+NUMPY_AVAILABLE = _numpy_available
 
 DEPS_AVAILABLE = PILLOW_AVAILABLE and NUMPY_AVAILABLE
 
@@ -34,7 +44,12 @@ DEPS_AVAILABLE = PILLOW_AVAILABLE and NUMPY_AVAILABLE
 # Test helpers
 # ---------------------------------------------------------------------------
 
-def create_solid_image(w: int, h: int, color: tuple, mode: str = "RGB") -> str:
+def create_solid_image(
+    w: int,
+    h: int,
+    color: tuple[int, int, int] | tuple[int, int, int, int],
+    mode: str = "RGB",
+) -> str:
     """Create a solid-color PNG at a temp path and return that path."""
     img = Image.new(mode, (w, h), color)
     fd, path = tempfile.mkstemp(suffix=".png")
@@ -43,17 +58,17 @@ def create_solid_image(w: int, h: int, color: tuple, mode: str = "RGB") -> str:
     return path
 
 
-def _ones(h: int = 4, w: int = 4) -> "np.ndarray":
+def _ones(h: int = 4, w: int = 4) -> "NDArray[np.float32]":
     """Return float32 array of ones, shape (H, W, 3)."""
     return np.ones((h, w, 3), dtype=np.float32)
 
 
-def _scalar(v: float, h: int = 4, w: int = 4) -> "np.ndarray":
+def _scalar(v: float, h: int = 4, w: int = 4) -> "NDArray[np.float32]":
     """Return float32 array filled with scalar v, shape (H, W, 3)."""
     return np.full((h, w, 3), v, dtype=np.float32)
 
 
-def _img_to_float(img: "Image.Image") -> "np.ndarray":
+def _img_to_float(img: "Image.Image") -> "NDArray[np.float32]":
     """Convert PIL RGBA image to float32 numpy array in [0,1]."""
     return np.asarray(img, dtype=np.float32) / 255.0
 
@@ -77,26 +92,26 @@ class TestBlendModeRegistry(unittest.TestCase):
     }
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import BLEND_MODES
         cls.BLEND_MODES = BLEND_MODES
 
-    def test_registry_has_all_27_modes(self):
+    def test_registry_has_all_27_modes(self) -> None:
         """BLEND_MODES contains exactly 27 entries."""
         self.assertEqual(len(self.BLEND_MODES), 27)
 
-    def test_all_expected_names_present(self):
+    def test_all_expected_names_present(self) -> None:
         """Every expected mode name is a key in BLEND_MODES."""
         for name in self.EXPECTED_MODES:
             with self.subTest(mode=name):
                 self.assertIn(name, self.BLEND_MODES)
 
-    def test_no_unexpected_names(self):
+    def test_no_unexpected_names(self) -> None:
         """BLEND_MODES has no extra keys beyond the expected 27."""
         extra = set(self.BLEND_MODES.keys()) - self.EXPECTED_MODES
         self.assertEqual(extra, set(), f"Unexpected mode(s) found: {extra}")
 
-    def test_all_values_are_callable(self):
+    def test_all_values_are_callable(self) -> None:
         """Every value in BLEND_MODES is callable."""
         for name, fn in self.BLEND_MODES.items():
             with self.subTest(mode=name):
@@ -112,25 +127,25 @@ class TestBlendMathNormal(unittest.TestCase):
     """Tests for the normal() blend mode."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import normal
         cls.normal = staticmethod(normal)
 
-    def test_normal_returns_b(self):
+    def test_normal_returns_b(self) -> None:
         """normal(a, b) always returns b regardless of a."""
         a = _scalar(0.3)
         b = _scalar(0.7)
         result = self.normal(a, b)
         np.testing.assert_array_equal(result, b)
 
-    def test_normal_returns_b_with_arbitrary_values(self):
+    def test_normal_returns_b_with_arbitrary_values(self) -> None:
         """normal passes any b array straight through."""
         a = np.random.rand(8, 8, 3).astype(np.float32)
         b = np.random.rand(8, 8, 3).astype(np.float32)
         result = self.normal(a, b)
         np.testing.assert_array_equal(result, b)
 
-    def test_normal_ignores_a_completely(self):
+    def test_normal_ignores_a_completely(self) -> None:
         """Changing a does not change normal's output."""
         b = _scalar(0.5)
         result1 = self.normal(_scalar(0.0), b)
@@ -147,7 +162,7 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
     """Tests for the darken group: darken, multiply, color_burn, linear_burn, darker_color."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import (
             darken, multiply, color_burn, linear_burn, darker_color,
         )
@@ -159,24 +174,24 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
 
     # --- darken ---
 
-    def test_darken_picks_minimum_per_channel(self):
+    def test_darken_picks_minimum_per_channel(self) -> None:
         """darken(a, b) == np.minimum(a, b) channel-wise."""
         a = _scalar(0.6)
         b = _scalar(0.4)
         result = self.darken(a, b)
         np.testing.assert_allclose(result, _scalar(0.4), atol=1e-6)
 
-    def test_darken_white_white_is_white(self):
+    def test_darken_white_white_is_white(self) -> None:
         """darken of white on white stays white."""
         white = _ones()
         np.testing.assert_allclose(self.darken(white, white), white, atol=1e-6)
 
-    def test_darken_black_base_stays_black(self):
+    def test_darken_black_base_stays_black(self) -> None:
         """darken with black base always stays black."""
         black = _scalar(0.0)
         np.testing.assert_allclose(self.darken(black, _scalar(0.8)), black, atol=1e-6)
 
-    def test_darken_output_in_01(self):
+    def test_darken_output_in_01(self) -> None:
         """darken output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -185,24 +200,24 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
 
     # --- multiply ---
 
-    def test_multiply_half_half_gives_quarter(self):
+    def test_multiply_half_half_gives_quarter(self) -> None:
         """multiply(0.5, 0.5) == 0.25."""
         a = _scalar(0.5)
         b = _scalar(0.5)
         np.testing.assert_allclose(self.multiply(a, b), _scalar(0.25), atol=1e-6)
 
-    def test_multiply_white_identity(self):
+    def test_multiply_white_identity(self) -> None:
         """multiply(a, 1) == a (white blend is identity)."""
         a = _scalar(0.7)
         np.testing.assert_allclose(self.multiply(a, _ones()), a, atol=1e-6)
 
-    def test_multiply_black_stays_black(self):
+    def test_multiply_black_stays_black(self) -> None:
         """multiply with black base gives black."""
         np.testing.assert_allclose(
             self.multiply(_scalar(0.0), _scalar(0.8)), _scalar(0.0), atol=1e-6
         )
 
-    def test_multiply_output_in_01(self):
+    def test_multiply_output_in_01(self) -> None:
         """multiply output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -211,21 +226,21 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
 
     # --- color_burn ---
 
-    def test_color_burn_white_base_is_white(self):
+    def test_color_burn_white_base_is_white(self) -> None:
         """color_burn(1, b) == 1 for any non-zero b."""
         a = _ones()
         b = _scalar(0.5)
         result = self.color_burn(a, b)
         np.testing.assert_allclose(result, _ones(), atol=1e-5)
 
-    def test_color_burn_black_blend_gives_black(self):
+    def test_color_burn_black_blend_gives_black(self) -> None:
         """color_burn with very dark blend layer darkens strongly toward black."""
         a = _scalar(0.5)
         b = _scalar(0.0)
         result = self.color_burn(a, b)
         np.testing.assert_allclose(result, _scalar(0.0), atol=1e-5)
 
-    def test_color_burn_output_in_01(self):
+    def test_color_burn_output_in_01(self) -> None:
         """color_burn output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -234,19 +249,19 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
 
     # --- linear_burn ---
 
-    def test_linear_burn_adds_to_minus_one(self):
+    def test_linear_burn_adds_to_minus_one(self) -> None:
         """linear_burn(0.8, 0.8) == clip(0.8+0.8-1) == 0.6."""
         a = _scalar(0.8)
         b = _scalar(0.8)
         np.testing.assert_allclose(self.linear_burn(a, b), _scalar(0.6), atol=1e-5)
 
-    def test_linear_burn_dark_values_clamp_to_black(self):
+    def test_linear_burn_dark_values_clamp_to_black(self) -> None:
         """linear_burn(0.2, 0.2) == clip(-0.6) == 0."""
         np.testing.assert_allclose(
             self.linear_burn(_scalar(0.2), _scalar(0.2)), _scalar(0.0), atol=1e-5
         )
 
-    def test_linear_burn_output_in_01(self):
+    def test_linear_burn_output_in_01(self) -> None:
         """linear_burn output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -255,7 +270,7 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
 
     # --- darker_color ---
 
-    def test_darker_color_picks_lower_luminance_pixel(self):
+    def test_darker_color_picks_lower_luminance_pixel(self) -> None:
         """darker_color picks the whole pixel with lower BT.601 luminance."""
         # Pure red: lum ~ 0.299; pure blue: lum ~ 0.114
         a = np.zeros((1, 1, 3), dtype=np.float32)  # black (lum=0)
@@ -263,13 +278,13 @@ class TestBlendMathDarkenGroup(unittest.TestCase):
         result = self.darker_color(a, b)
         np.testing.assert_allclose(result, a, atol=1e-6)
 
-    def test_darker_color_same_luminance_keeps_a(self):
+    def test_darker_color_same_luminance_keeps_a(self) -> None:
         """darker_color keeps a when lum(a) == lum(b)."""
         a = _scalar(0.5)
         result = self.darker_color(a, a)
         np.testing.assert_allclose(result, a, atol=1e-6)
 
-    def test_darker_color_output_in_01(self):
+    def test_darker_color_output_in_01(self) -> None:
         """darker_color output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -286,7 +301,7 @@ class TestBlendMathLightenGroup(unittest.TestCase):
     """Tests for the lighten group: lighten, screen, color_dodge, linear_dodge, lighter_color."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import (
             lighten, screen, color_dodge, linear_dodge, lighter_color,
         )
@@ -298,22 +313,22 @@ class TestBlendMathLightenGroup(unittest.TestCase):
 
     # --- lighten ---
 
-    def test_lighten_picks_maximum_per_channel(self):
+    def test_lighten_picks_maximum_per_channel(self) -> None:
         """lighten(a, b) == np.maximum(a, b) channel-wise."""
         a = _scalar(0.3)
         b = _scalar(0.7)
         np.testing.assert_allclose(self.lighten(a, b), _scalar(0.7), atol=1e-6)
 
-    def test_lighten_white_blend_gives_white(self):
+    def test_lighten_white_blend_gives_white(self) -> None:
         """lighten(a, white) == white."""
         np.testing.assert_allclose(self.lighten(_scalar(0.4), _ones()), _ones(), atol=1e-6)
 
-    def test_lighten_black_blend_is_identity(self):
+    def test_lighten_black_blend_is_identity(self) -> None:
         """lighten(a, black) == a (black blend has no effect)."""
         a = _scalar(0.6)
         np.testing.assert_allclose(self.lighten(a, _scalar(0.0)), a, atol=1e-6)
 
-    def test_lighten_output_in_01(self):
+    def test_lighten_output_in_01(self) -> None:
         """lighten output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -322,22 +337,22 @@ class TestBlendMathLightenGroup(unittest.TestCase):
 
     # --- screen ---
 
-    def test_screen_half_half_is_three_quarters(self):
+    def test_screen_half_half_is_three_quarters(self) -> None:
         """screen(0.5, 0.5) == 1-(0.5*0.5) == 0.75."""
         np.testing.assert_allclose(
             self.screen(_scalar(0.5), _scalar(0.5)), _scalar(0.75), atol=1e-5
         )
 
-    def test_screen_white_gives_white(self):
+    def test_screen_white_gives_white(self) -> None:
         """screen(white, anything) == white."""
         np.testing.assert_allclose(self.screen(_ones(), _scalar(0.5)), _ones(), atol=1e-5)
 
-    def test_screen_black_is_identity(self):
+    def test_screen_black_is_identity(self) -> None:
         """screen(a, black) == a."""
         a = _scalar(0.6)
         np.testing.assert_allclose(self.screen(a, _scalar(0.0)), a, atol=1e-5)
 
-    def test_screen_output_in_01(self):
+    def test_screen_output_in_01(self) -> None:
         """screen output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -346,24 +361,24 @@ class TestBlendMathLightenGroup(unittest.TestCase):
 
     # --- linear_dodge ---
 
-    def test_linear_dodge_adds_values(self):
+    def test_linear_dodge_adds_values(self) -> None:
         """linear_dodge(0.4, 0.4) == clip(0.8) == 0.8."""
         np.testing.assert_allclose(
             self.linear_dodge(_scalar(0.4), _scalar(0.4)), _scalar(0.8), atol=1e-5
         )
 
-    def test_linear_dodge_clamps_above_one(self):
+    def test_linear_dodge_clamps_above_one(self) -> None:
         """linear_dodge(0.8, 0.8) == clip(1.6) == 1.0."""
         np.testing.assert_allclose(
             self.linear_dodge(_scalar(0.8), _scalar(0.8)), _ones(), atol=1e-5
         )
 
-    def test_linear_dodge_black_is_identity(self):
+    def test_linear_dodge_black_is_identity(self) -> None:
         """linear_dodge(a, black) == a."""
         a = _scalar(0.5)
         np.testing.assert_allclose(self.linear_dodge(a, _scalar(0.0)), a, atol=1e-5)
 
-    def test_linear_dodge_output_in_01(self):
+    def test_linear_dodge_output_in_01(self) -> None:
         """linear_dodge output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -372,14 +387,14 @@ class TestBlendMathLightenGroup(unittest.TestCase):
 
     # --- color_dodge ---
 
-    def test_color_dodge_divide_by_near_one_gives_base(self):
+    def test_color_dodge_divide_by_near_one_gives_base(self) -> None:
         """color_dodge(a, ~0) ≈ a (dividing by near-1 doesn't change much)."""
         a = _scalar(0.5)
         b = _scalar(0.0)  # 1-b≈1 → a/1 = a
         result = self.color_dodge(a, b)
         np.testing.assert_allclose(result, a, atol=1e-3)
 
-    def test_color_dodge_output_in_01(self):
+    def test_color_dodge_output_in_01(self) -> None:
         """color_dodge output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -388,20 +403,20 @@ class TestBlendMathLightenGroup(unittest.TestCase):
 
     # --- lighter_color ---
 
-    def test_lighter_color_picks_higher_luminance_pixel(self):
+    def test_lighter_color_picks_higher_luminance_pixel(self) -> None:
         """lighter_color picks the whole pixel with higher BT.601 luminance."""
         a = _scalar(0.0)   # black: lum=0
         b = _scalar(1.0)   # white: lum=1
         result = self.lighter_color(a, b)
         np.testing.assert_allclose(result, b, atol=1e-6)
 
-    def test_lighter_color_same_luminance_keeps_a(self):
+    def test_lighter_color_same_luminance_keeps_a(self) -> None:
         """lighter_color keeps a when lum(a) == lum(b)."""
         a = _scalar(0.5)
         result = self.lighter_color(a, a)
         np.testing.assert_allclose(result, a, atol=1e-6)
 
-    def test_lighter_color_output_in_01(self):
+    def test_lighter_color_output_in_01(self) -> None:
         """lighter_color output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -418,7 +433,7 @@ class TestBlendMathContrastGroup(unittest.TestCase):
     """Tests for overlay, hard_light, soft_light, vivid_light, linear_light, pin_light, hard_mix."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import (
             overlay, hard_light, soft_light, vivid_light,
             linear_light, pin_light, hard_mix,
@@ -433,26 +448,26 @@ class TestBlendMathContrastGroup(unittest.TestCase):
 
     # --- overlay ---
 
-    def test_overlay_dark_base_uses_multiply_branch(self):
+    def test_overlay_dark_base_uses_multiply_branch(self) -> None:
         """overlay(0.0, b) == 2*0*b == 0 (multiply branch)."""
         b = _scalar(0.6)
         result = self.overlay(_scalar(0.0), b)
         np.testing.assert_allclose(result, _scalar(0.0), atol=1e-5)
 
-    def test_overlay_light_base_uses_screen_branch(self):
+    def test_overlay_light_base_uses_screen_branch(self) -> None:
         """overlay(1.0, b) == 1 - 2*(0)*(1-b) == 1 (screen branch)."""
         b = _scalar(0.6)
         result = self.overlay(_scalar(1.0), b)
         np.testing.assert_allclose(result, _ones(), atol=1e-5)
 
-    def test_overlay_midtone_base_both_branches_agree(self):
+    def test_overlay_midtone_base_both_branches_agree(self) -> None:
         """At a=0.5, both branches give 2*0.5*b == b (multiply) or 1-2*0.5*(1-b) == b (screen)."""
         # Both branches yield b when a=0.5: multiply gives 2*0.5*b = b; screen gives 1-2*0.5*(1-b) = b
         b = _scalar(0.4)
         result = self.overlay(_scalar(0.5), b)
         np.testing.assert_allclose(result, b, atol=1e-5)
 
-    def test_overlay_output_in_01(self):
+    def test_overlay_output_in_01(self) -> None:
         """overlay output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -461,13 +476,13 @@ class TestBlendMathContrastGroup(unittest.TestCase):
 
     # --- hard_light ---
 
-    def test_hard_light_is_overlay_with_swapped_roles(self):
+    def test_hard_light_is_overlay_with_swapped_roles(self) -> None:
         """hard_light(a, b) == overlay(b, a) for arbitrary inputs."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         np.testing.assert_allclose(self.hard_light(a, b), self.overlay(b, a), atol=1e-5)
 
-    def test_hard_light_output_in_01(self):
+    def test_hard_light_output_in_01(self) -> None:
         """hard_light output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -476,14 +491,14 @@ class TestBlendMathContrastGroup(unittest.TestCase):
 
     # --- soft_light ---
 
-    def test_soft_light_neutral_blend_is_identity(self):
+    def test_soft_light_neutral_blend_is_identity(self) -> None:
         """soft_light(a, 0.5) == a for any a (b=0.5 is neutral)."""
         # When b=0.5: branch1 gives a - (1-1)*... = a; branch2 gives a + 0*... = a
         a = np.random.rand(4, 4, 3).astype(np.float32)
         result = self.soft_light(a, _scalar(0.5))
         np.testing.assert_allclose(result, a, atol=1e-5)
 
-    def test_soft_light_output_in_01(self):
+    def test_soft_light_output_in_01(self) -> None:
         """soft_light output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -492,32 +507,32 @@ class TestBlendMathContrastGroup(unittest.TestCase):
 
     # --- vivid_light ---
 
-    def test_vivid_light_output_in_01(self):
+    def test_vivid_light_output_in_01(self) -> None:
         """vivid_light output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         result = self.vivid_light(a, b)
         self.assertTrue(np.all(result >= 0.0) and np.all(result <= 1.0))
 
-    def test_vivid_light_white_base_light_blend(self):
+    def test_vivid_light_white_base_light_blend(self) -> None:
         """vivid_light with white base and light blend gives white (color_dodge branch)."""
         result = self.vivid_light(_ones(), _scalar(0.8))
         np.testing.assert_allclose(result, _ones(), atol=1e-4)
 
     # --- linear_light ---
 
-    def test_linear_light_known_value(self):
+    def test_linear_light_known_value(self) -> None:
         """linear_light(0.5, 0.75) == clip(0.5 + 2*0.75 - 1) == clip(1.0) == 1."""
         result = self.linear_light(_scalar(0.5), _scalar(0.75))
         np.testing.assert_allclose(result, _ones(), atol=1e-5)
 
-    def test_linear_light_midpoint_is_identity(self):
+    def test_linear_light_midpoint_is_identity(self) -> None:
         """linear_light(a, 0.5) == clip(a + 2*0.5 - 1) == clip(a) == a."""
         a = _scalar(0.4)
         result = self.linear_light(a, _scalar(0.5))
         np.testing.assert_allclose(result, a, atol=1e-5)
 
-    def test_linear_light_output_in_01(self):
+    def test_linear_light_output_in_01(self) -> None:
         """linear_light output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -526,26 +541,26 @@ class TestBlendMathContrastGroup(unittest.TestCase):
 
     # --- pin_light ---
 
-    def test_pin_light_output_in_01(self):
+    def test_pin_light_output_in_01(self) -> None:
         """pin_light output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         result = self.pin_light(a, b)
         self.assertTrue(np.all(result >= 0.0) and np.all(result <= 1.0))
 
-    def test_pin_light_dark_blend_uses_darken(self):
+    def test_pin_light_dark_blend_uses_darken(self) -> None:
         """pin_light(1.0, 0.3) uses darken branch: min(1.0, 2*0.3) == 0.6."""
         result = self.pin_light(_ones(), _scalar(0.3))
         np.testing.assert_allclose(result, _scalar(0.6), atol=1e-5)
 
-    def test_pin_light_light_blend_uses_lighten(self):
+    def test_pin_light_light_blend_uses_lighten(self) -> None:
         """pin_light(0.0, 0.8) uses lighten branch: max(0, 2*0.8-1) == 0.6."""
         result = self.pin_light(_scalar(0.0), _scalar(0.8))
         np.testing.assert_allclose(result, _scalar(0.6), atol=1e-5)
 
     # --- hard_mix ---
 
-    def test_hard_mix_output_is_binary(self):
+    def test_hard_mix_output_is_binary(self) -> None:
         """hard_mix output is exactly 0 or 1 — no intermediate values."""
         a = np.random.rand(8, 8, 3).astype(np.float32)
         b = np.random.rand(8, 8, 3).astype(np.float32)
@@ -554,7 +569,7 @@ class TestBlendMathContrastGroup(unittest.TestCase):
         for v in unique:
             self.assertIn(v, (0.0, 1.0), f"Unexpected value {v} in hard_mix output")
 
-    def test_hard_mix_known_values(self):
+    def test_hard_mix_known_values(self) -> None:
         """hard_mix(0.3, 0.3) == 0 (sum < 1); hard_mix(0.6, 0.6) == 1 (sum > 1)."""
         np.testing.assert_allclose(self.hard_mix(_scalar(0.3), _scalar(0.3)), _scalar(0.0), atol=1e-6)
         np.testing.assert_allclose(self.hard_mix(_scalar(0.6), _scalar(0.6)), _scalar(1.0), atol=1e-6)
@@ -569,7 +584,7 @@ class TestBlendMathComparativeGroup(unittest.TestCase):
     """Tests for difference, exclusion, subtract, divide."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import difference, exclusion, subtract, divide
         cls.difference = staticmethod(difference)
         cls.exclusion = staticmethod(exclusion)
@@ -578,24 +593,24 @@ class TestBlendMathComparativeGroup(unittest.TestCase):
 
     # --- difference ---
 
-    def test_difference_identical_layers_cancel(self):
+    def test_difference_identical_layers_cancel(self) -> None:
         """difference(x, x) == 0 for any x."""
         x = np.random.rand(4, 4, 3).astype(np.float32)
         np.testing.assert_allclose(self.difference(x, x), _scalar(0.0), atol=1e-6)
 
-    def test_difference_is_symmetric(self):
+    def test_difference_is_symmetric(self) -> None:
         """difference(a, b) == difference(b, a)."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         np.testing.assert_allclose(self.difference(a, b), self.difference(b, a), atol=1e-6)
 
-    def test_difference_known_value(self):
+    def test_difference_known_value(self) -> None:
         """difference(0.8, 0.3) == abs(0.8-0.3) == 0.5."""
         np.testing.assert_allclose(
             self.difference(_scalar(0.8), _scalar(0.3)), _scalar(0.5), atol=1e-5
         )
 
-    def test_difference_output_in_01(self):
+    def test_difference_output_in_01(self) -> None:
         """difference output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -604,25 +619,25 @@ class TestBlendMathComparativeGroup(unittest.TestCase):
 
     # --- exclusion ---
 
-    def test_exclusion_black_base_gives_blend(self):
+    def test_exclusion_black_base_gives_blend(self) -> None:
         """exclusion(0, b) == 0 + b - 0 == b."""
         b = _scalar(0.6)
         np.testing.assert_allclose(self.exclusion(_scalar(0.0), b), b, atol=1e-6)
 
-    def test_exclusion_white_base_gives_inverse(self):
+    def test_exclusion_white_base_gives_inverse(self) -> None:
         """exclusion(1, b) == 1 + b - 2b == 1 - b."""
         b = _scalar(0.6)
         np.testing.assert_allclose(
             self.exclusion(_ones(), b), _scalar(0.4), atol=1e-5
         )
 
-    def test_exclusion_identical_layers(self):
+    def test_exclusion_identical_layers(self) -> None:
         """exclusion(x, x) == x + x - 2x^2 == 2x(1-x)."""
         x = _scalar(0.5)
         expected = _scalar(0.5)  # 2*0.5*0.5 = 0.5
         np.testing.assert_allclose(self.exclusion(x, x), expected, atol=1e-5)
 
-    def test_exclusion_output_in_01(self):
+    def test_exclusion_output_in_01(self) -> None:
         """exclusion output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -631,24 +646,24 @@ class TestBlendMathComparativeGroup(unittest.TestCase):
 
     # --- subtract ---
 
-    def test_subtract_same_layer_gives_black(self):
+    def test_subtract_same_layer_gives_black(self) -> None:
         """subtract(a, a) == 0."""
         a = _scalar(0.7)
         np.testing.assert_allclose(self.subtract(a, a), _scalar(0.0), atol=1e-6)
 
-    def test_subtract_known_value(self):
+    def test_subtract_known_value(self) -> None:
         """subtract(0.8, 0.3) == clip(0.5) == 0.5."""
         np.testing.assert_allclose(
             self.subtract(_scalar(0.8), _scalar(0.3)), _scalar(0.5), atol=1e-5
         )
 
-    def test_subtract_clamps_to_black(self):
+    def test_subtract_clamps_to_black(self) -> None:
         """subtract(0.2, 0.8) == clip(-0.6) == 0."""
         np.testing.assert_allclose(
             self.subtract(_scalar(0.2), _scalar(0.8)), _scalar(0.0), atol=1e-5
         )
 
-    def test_subtract_output_in_01(self):
+    def test_subtract_output_in_01(self) -> None:
         """subtract output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -657,18 +672,18 @@ class TestBlendMathComparativeGroup(unittest.TestCase):
 
     # --- divide ---
 
-    def test_divide_by_white_is_identity(self):
+    def test_divide_by_white_is_identity(self) -> None:
         """divide(a, 1.0) == a (dividing by white = no change)."""
         a = _scalar(0.6)
         np.testing.assert_allclose(self.divide(a, _ones()), a, atol=1e-4)
 
-    def test_divide_identical_layers_approx_white(self):
+    def test_divide_identical_layers_approx_white(self) -> None:
         """divide(a, a) ≈ 1 for non-zero a (a/a==1)."""
         a = _scalar(0.5)
         result = self.divide(a, a)
         np.testing.assert_allclose(result, _ones(), atol=1e-4)
 
-    def test_divide_output_in_01(self):
+    def test_divide_output_in_01(self) -> None:
         """divide output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -685,7 +700,7 @@ class TestBlendMathComponentGroup(unittest.TestCase):
     """Tests for hue, saturation, color, luminosity blend modes."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import hue, saturation, color, luminosity, _lum
         cls.hue = staticmethod(hue)
         cls.saturation = staticmethod(saturation)
@@ -695,7 +710,7 @@ class TestBlendMathComponentGroup(unittest.TestCase):
 
     # --- color ---
 
-    def test_color_result_has_base_luminance(self):
+    def test_color_result_has_base_luminance(self) -> None:
         """color(a, b): luminance of result equals luminance of a (no clipping case)."""
         # Use a gray base and moderate blend so _set_lum won't clip.
         # color(a, b) = _set_lum(b, lum(a))
@@ -708,7 +723,7 @@ class TestBlendMathComponentGroup(unittest.TestCase):
         base_lum = self._lum(a)
         np.testing.assert_allclose(result_lum, base_lum, atol=1e-4)
 
-    def test_color_output_in_01(self):
+    def test_color_output_in_01(self) -> None:
         """color output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
@@ -717,7 +732,7 @@ class TestBlendMathComponentGroup(unittest.TestCase):
 
     # --- luminosity ---
 
-    def test_luminosity_result_has_blend_luminance(self):
+    def test_luminosity_result_has_blend_luminance(self) -> None:
         """luminosity(a, b): luminance of result equals luminance of b (no clipping case)."""
         # luminosity(a, b) = _set_lum(a, lum(b))
         # Use a=(0.3,0.4,0.5) lum≈0.3815 and b=gray(0.4) lum=0.4; delta≈+0.019 → no clipping
@@ -728,14 +743,14 @@ class TestBlendMathComponentGroup(unittest.TestCase):
         blend_lum = self._lum(b)
         np.testing.assert_allclose(result_lum, blend_lum, atol=1e-4)
 
-    def test_luminosity_output_in_01(self):
+    def test_luminosity_output_in_01(self) -> None:
         """luminosity output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         result = self.luminosity(a, b)
         self.assertTrue(np.all(result >= 0.0) and np.all(result <= 1.0))
 
-    def test_luminosity_grayscale_base_preserves_base_structure(self):
+    def test_luminosity_grayscale_base_preserves_base_structure(self) -> None:
         """luminosity on a grayscale base with colored blend has blend luminance."""
         gray = _scalar(0.3)  # uniform gray: lum=0.3
         colored = np.zeros((4, 4, 3), dtype=np.float32)
@@ -747,14 +762,14 @@ class TestBlendMathComponentGroup(unittest.TestCase):
 
     # --- hue ---
 
-    def test_hue_output_in_01(self):
+    def test_hue_output_in_01(self) -> None:
         """hue output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         result = self.hue(a, b)
         self.assertTrue(np.all(result >= 0.0) and np.all(result <= 1.0))
 
-    def test_hue_with_gray_base_gives_gray(self):
+    def test_hue_with_gray_base_gives_gray(self) -> None:
         """hue(gray, b): gray base has sat=0, so result stays gray (sat=0 → achromatic)."""
         gray = _scalar(0.5)
         b = np.zeros((4, 4, 3), dtype=np.float32)
@@ -766,14 +781,14 @@ class TestBlendMathComponentGroup(unittest.TestCase):
 
     # --- saturation ---
 
-    def test_saturation_output_in_01(self):
+    def test_saturation_output_in_01(self) -> None:
         """saturation output is always in [0, 1]."""
         a = np.random.rand(4, 4, 3).astype(np.float32)
         b = np.random.rand(4, 4, 3).astype(np.float32)
         result = self.saturation(a, b)
         self.assertTrue(np.all(result >= 0.0) and np.all(result <= 1.0))
 
-    def test_saturation_with_gray_blend_gives_gray_result(self):
+    def test_saturation_with_gray_blend_gives_gray_result(self) -> None:
         """saturation(a, gray): gray blend has sat=0, so result has sat=0 (achromatic)."""
         a = np.zeros((4, 4, 3), dtype=np.float32)
         a[..., 0] = 1.0  # pure red base
@@ -793,7 +808,7 @@ class TestHelpers(unittest.TestCase):
     """Tests for internal helper functions: _clip01, _lum, _sat, _set_lum, _set_sat."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import _clip01, _lum, _sat, _set_lum, _set_sat
         cls._clip01 = staticmethod(_clip01)
         cls._lum = staticmethod(_lum)
@@ -803,19 +818,19 @@ class TestHelpers(unittest.TestCase):
 
     # --- _clip01 ---
 
-    def test_clip01_values_above_one_become_one(self):
+    def test_clip01_values_above_one_become_one(self) -> None:
         """Values > 1 are clipped to 1."""
         x = np.array([[[1.5, 2.0, 100.0]]], dtype=np.float32)
         result = self._clip01(x)
         np.testing.assert_allclose(result, np.array([[[1.0, 1.0, 1.0]]]), atol=1e-6)
 
-    def test_clip01_values_below_zero_become_zero(self):
+    def test_clip01_values_below_zero_become_zero(self) -> None:
         """Values < 0 are clipped to 0."""
         x = np.array([[[-0.1, -1.0, -50.0]]], dtype=np.float32)
         result = self._clip01(x)
         np.testing.assert_allclose(result, np.array([[[0.0, 0.0, 0.0]]]), atol=1e-6)
 
-    def test_clip01_values_inside_range_unchanged(self):
+    def test_clip01_values_inside_range_unchanged(self) -> None:
         """Values in [0, 1] are unchanged."""
         x = np.array([[[0.0, 0.5, 1.0]]], dtype=np.float32)
         result = self._clip01(x)
@@ -823,74 +838,74 @@ class TestHelpers(unittest.TestCase):
 
     # --- _lum ---
 
-    def test_lum_pure_red(self):
+    def test_lum_pure_red(self) -> None:
         """BT.601 luminance of pure red (1,0,0) == 0.299."""
         red = np.array([[[1.0, 0.0, 0.0]]], dtype=np.float32)
         np.testing.assert_allclose(self._lum(red), np.array([[0.299]]), atol=1e-4)
 
-    def test_lum_pure_green(self):
+    def test_lum_pure_green(self) -> None:
         """BT.601 luminance of pure green (0,1,0) == 0.587."""
         green = np.array([[[0.0, 1.0, 0.0]]], dtype=np.float32)
         np.testing.assert_allclose(self._lum(green), np.array([[0.587]]), atol=1e-4)
 
-    def test_lum_pure_blue(self):
+    def test_lum_pure_blue(self) -> None:
         """BT.601 luminance of pure blue (0,0,1) == 0.114."""
         blue = np.array([[[0.0, 0.0, 1.0]]], dtype=np.float32)
         np.testing.assert_allclose(self._lum(blue), np.array([[0.114]]), atol=1e-4)
 
-    def test_lum_gray_equals_itself(self):
+    def test_lum_gray_equals_itself(self) -> None:
         """Luminance of a gray (v, v, v) equals v."""
         for v in [0.0, 0.25, 0.5, 0.75, 1.0]:
             with self.subTest(v=v):
                 gray = np.array([[[v, v, v]]], dtype=np.float32)
                 np.testing.assert_allclose(self._lum(gray), np.array([[v]]), atol=1e-5)
 
-    def test_lum_white_is_one(self):
+    def test_lum_white_is_one(self) -> None:
         """Luminance of pure white (1,1,1) == 1."""
         white = np.array([[[1.0, 1.0, 1.0]]], dtype=np.float32)
         np.testing.assert_allclose(self._lum(white), np.array([[1.0]]), atol=1e-5)
 
-    def test_lum_black_is_zero(self):
+    def test_lum_black_is_zero(self) -> None:
         """Luminance of pure black (0,0,0) == 0."""
         black = np.array([[[0.0, 0.0, 0.0]]], dtype=np.float32)
         np.testing.assert_allclose(self._lum(black), np.array([[0.0]]), atol=1e-5)
 
     # --- _sat ---
 
-    def test_sat_pure_red_is_one(self):
+    def test_sat_pure_red_is_one(self) -> None:
         """Saturation of pure red (1,0,0) == max-min == 1.0."""
         red = np.array([[[1.0, 0.0, 0.0]]], dtype=np.float32)
         np.testing.assert_allclose(self._sat(red), np.array([[1.0]]), atol=1e-5)
 
-    def test_sat_gray_is_zero(self):
+    def test_sat_gray_is_zero(self) -> None:
         """Saturation of a neutral gray (v, v, v) == 0."""
         for v in [0.0, 0.5, 1.0]:
             with self.subTest(v=v):
                 gray = np.array([[[v, v, v]]], dtype=np.float32)
                 np.testing.assert_allclose(self._sat(gray), np.array([[0.0]]), atol=1e-5)
 
-    def test_sat_known_value(self):
+    def test_sat_known_value(self) -> None:
         """Saturation of (0.2, 0.5, 0.8) == 0.8 - 0.2 == 0.6."""
         c = np.array([[[0.2, 0.5, 0.8]]], dtype=np.float32)
         np.testing.assert_allclose(self._sat(c), np.array([[0.6]]), atol=1e-5)
 
     # --- _set_lum ---
 
-    def test_set_lum_gray_to_same_gives_gray(self):
+    def test_set_lum_gray_to_same_gives_gray(self) -> None:
         """Setting luminance of (v,v,v) to v gives back (v,v,v)."""
         gray = np.array([[[0.5, 0.5, 0.5]]], dtype=np.float32)
         target = np.array([[0.5]], dtype=np.float32)
         result = self._set_lum(gray, target)
         np.testing.assert_allclose(result, gray, atol=1e-5)
 
-    def test_set_lum_output_in_01(self):
+    def test_set_lum_output_in_01(self) -> None:
         """_set_lum result is always clipped to [0, 1]."""
         c = np.random.rand(4, 4, 3).astype(np.float32)
         target = np.random.rand(4, 4).astype(np.float32)
         result = self._set_lum(c, target)
         self.assertTrue(np.all(result >= 0.0) and np.all(result <= 1.0))
 
-    def test_set_lum_changes_luminance(self):
+    def test_set_lum_changes_luminance(self) -> None:
         """_set_lum achieves target luminance when no channel clipping occurs."""
         from color_tools.image.blend import _lum
         # Use (0.3, 0.3, 0.5): lum≈0.3228; target=0.35; delta≈+0.027 → no clipping
@@ -902,7 +917,7 @@ class TestHelpers(unittest.TestCase):
 
     # --- _set_sat ---
 
-    def test_set_sat_gray_to_zero_stays_gray(self):
+    def test_set_sat_gray_to_zero_stays_gray(self) -> None:
         """Setting saturation of a gray pixel to 0 keeps it gray (all channels equal)."""
         gray = np.array([[[0.5, 0.5, 0.5]]], dtype=np.float32)
         target = np.array([[0.0]], dtype=np.float32)
@@ -910,7 +925,7 @@ class TestHelpers(unittest.TestCase):
         np.testing.assert_allclose(result[..., 0], result[..., 1], atol=1e-5)
         np.testing.assert_allclose(result[..., 1], result[..., 2], atol=1e-5)
 
-    def test_set_sat_colored_pixel_to_zero_gives_gray(self):
+    def test_set_sat_colored_pixel_to_zero_gives_gray(self) -> None:
         """Setting saturation to 0 on a colored pixel gives an achromatic result."""
         red = np.zeros((1, 1, 3), dtype=np.float32)
         red[..., 0] = 1.0  # pure red, sat=1
@@ -919,7 +934,7 @@ class TestHelpers(unittest.TestCase):
         np.testing.assert_allclose(result[..., 0], result[..., 1], atol=1e-5)
         np.testing.assert_allclose(result[..., 1], result[..., 2], atol=1e-5)
 
-    def test_set_sat_changes_saturation_on_colored_pixel(self):
+    def test_set_sat_changes_saturation_on_colored_pixel(self) -> None:
         """_set_sat correctly sets saturation on a pixel with existing hue."""
         # _set_sat on a gray (span=0) cannot add saturation (no hue direction).
         # Use a clearly non-gray pixel: (0.1, 0.5, 0.9), sat=0.8; target=0.5
@@ -932,7 +947,7 @@ class TestHelpers(unittest.TestCase):
         result_sat = _sat(result)
         np.testing.assert_allclose(result_sat, target, atol=1e-5)
 
-    def test_set_sat_output_in_01(self):
+    def test_set_sat_output_in_01(self) -> None:
         """_set_sat result is always in [0, 1]."""
         c = np.random.rand(4, 4, 3).astype(np.float32)
         target = np.random.rand(4, 4).astype(np.float32)
@@ -949,39 +964,45 @@ class TestBlendImagesIO(unittest.TestCase):
     """Tests for blend_images() I/O behavior using actual image files."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import blend_images, BLEND_MODES
         cls.blend_images = staticmethod(blend_images)
         cls.BLEND_MODES = BLEND_MODES
 
-    def setUp(self):
-        self.test_files = []
+    def setUp(self) -> None:
+        self.test_files: list[str] = []
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for f in self.test_files:
             if os.path.exists(f):
                 os.remove(f)
 
-    def _make(self, w, h, color, mode="RGB"):
+    def _make(
+        self,
+        w: int,
+        h: int,
+        color: tuple[int, int, int] | tuple[int, int, int, int],
+        mode: str = "RGB",
+    ) -> str:
         path = create_solid_image(w, h, color, mode)
         self.test_files.append(path)
         return path
 
-    def test_returns_pil_image(self):
+    def test_returns_pil_image(self) -> None:
         """blend_images() returns a PIL Image object."""
         base = self._make(8, 8, (100, 150, 200))
         blend = self._make(8, 8, (200, 100, 50))
         result = self.blend_images(base, blend)
         self.assertIsInstance(result, Image.Image)
 
-    def test_returns_rgba_mode(self):
+    def test_returns_rgba_mode(self) -> None:
         """blend_images() always returns an image in RGBA mode."""
         base = self._make(8, 8, (100, 150, 200))
         blend = self._make(8, 8, (50, 100, 150))
         result = self.blend_images(base, blend)
         self.assertEqual(result.mode, "RGBA")
 
-    def test_normal_full_opacity_result_equals_blend_layer(self):
+    def test_normal_full_opacity_result_equals_blend_layer(self) -> None:
         """normal mode + opacity=1.0: output RGB matches the blend layer colors."""
         base = self._make(8, 8, (255, 0, 0))     # red
         blend = self._make(8, 8, (0, 255, 0))    # green
@@ -992,7 +1013,7 @@ class TestBlendImagesIO(unittest.TestCase):
         np.testing.assert_allclose(arr[..., 1], 255, atol=2)
         np.testing.assert_allclose(arr[..., 2], 0,   atol=2)
 
-    def test_normal_zero_opacity_result_equals_base_layer(self):
+    def test_normal_zero_opacity_result_equals_base_layer(self) -> None:
         """normal mode + opacity=0.0: output RGB matches the base layer colors."""
         base = self._make(8, 8, (255, 0, 0))   # red
         blend = self._make(8, 8, (0, 255, 0))  # green
@@ -1002,7 +1023,7 @@ class TestBlendImagesIO(unittest.TestCase):
         np.testing.assert_allclose(arr[..., 1], 0,   atol=2)
         np.testing.assert_allclose(arr[..., 2], 0,   atol=2)
 
-    def test_multiply_black_base_gives_black(self):
+    def test_multiply_black_base_gives_black(self) -> None:
         """multiply mode: black base × anything == black."""
         base = self._make(8, 8, (0, 0, 0))          # black
         blend = self._make(8, 8, (200, 150, 100))
@@ -1010,7 +1031,7 @@ class TestBlendImagesIO(unittest.TestCase):
         arr = np.asarray(result, dtype=np.uint8)
         np.testing.assert_allclose(arr[..., :3], 0, atol=2)
 
-    def test_multiply_white_white_gives_white(self):
+    def test_multiply_white_white_gives_white(self) -> None:
         """multiply mode: white × white == white."""
         base = self._make(8, 8, (255, 255, 255))
         blend = self._make(8, 8, (255, 255, 255))
@@ -1018,21 +1039,21 @@ class TestBlendImagesIO(unittest.TestCase):
         arr = np.asarray(result, dtype=np.uint8)
         np.testing.assert_allclose(arr[..., :3], 255, atol=2)
 
-    def test_result_size_matches_base_image(self):
+    def test_result_size_matches_base_image(self) -> None:
         """Output image has same dimensions as base image."""
         base = self._make(20, 30, (100, 100, 100))
         blend = self._make(20, 30, (200, 200, 200))
         result = self.blend_images(base, blend)
         self.assertEqual(result.size, (20, 30))
 
-    def test_blend_layer_resized_when_sizes_differ(self):
+    def test_blend_layer_resized_when_sizes_differ(self) -> None:
         """Blend layer is resized to match base; output matches base dimensions."""
         base = self._make(32, 32, (100, 100, 100))
         blend = self._make(16, 16, (200, 200, 200))  # different size
         result = self.blend_images(base, blend)
         self.assertEqual(result.size, (32, 32))
 
-    def test_output_path_saves_file_to_disk(self):
+    def test_output_path_saves_file_to_disk(self) -> None:
         """blend_images saves result to output_path when provided."""
         base = self._make(8, 8, (100, 100, 100))
         blend = self._make(8, 8, (200, 200, 200))
@@ -1044,7 +1065,7 @@ class TestBlendImagesIO(unittest.TestCase):
         saved = Image.open(out_path)
         self.assertEqual(saved.mode, "RGBA")
 
-    def test_all_27_modes_run_without_error(self):
+    def test_all_27_modes_run_without_error(self) -> None:
         """Smoke test: every blend mode runs without raising an exception."""
         base = self._make(8, 8, (120, 80, 160))
         blend = self._make(8, 8, (200, 120, 40))
@@ -1054,7 +1075,7 @@ class TestBlendImagesIO(unittest.TestCase):
                 self.assertIsInstance(result, Image.Image)
                 self.assertEqual(result.mode, "RGBA")
 
-    def test_accepts_path_objects(self):
+    def test_accepts_path_objects(self) -> None:
         """blend_images accepts pathlib.Path objects as input paths."""
         base = self._make(8, 8, (100, 150, 100))
         blend = self._make(8, 8, (50, 100, 200))
@@ -1071,24 +1092,27 @@ class TestBlendImagesValidation(unittest.TestCase):
     """Tests for blend_images() input validation."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import blend_images
         cls.blend_images = staticmethod(blend_images)
 
-    def setUp(self):
-        self.test_files = []
+    def setUp(self) -> None:
+        self.test_files: list[str] = []
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for f in self.test_files:
             if os.path.exists(f):
                 os.remove(f)
 
-    def _make(self, w=8, h=8, color=(128, 128, 128)):
+    def _make(
+        self, w: int = 8, h: int = 8,
+        color: tuple[int, int, int] = (128, 128, 128),
+    ) -> str:
         path = create_solid_image(w, h, color)
         self.test_files.append(path)
         return path
 
-    def test_unknown_mode_raises_value_error(self):
+    def test_unknown_mode_raises_value_error(self) -> None:
         """blend_images raises ValueError for an unknown blend mode."""
         base = self._make()
         blend = self._make()
@@ -1096,21 +1120,21 @@ class TestBlendImagesValidation(unittest.TestCase):
             self.blend_images(base, blend, mode="not_a_real_mode")
         self.assertIn("not_a_real_mode", str(ctx.exception))
 
-    def test_opacity_below_zero_raises_value_error(self):
+    def test_opacity_below_zero_raises_value_error(self) -> None:
         """blend_images raises ValueError for opacity < 0."""
         base = self._make()
         blend = self._make()
         with self.assertRaises(ValueError):
             self.blend_images(base, blend, opacity=-0.01)
 
-    def test_opacity_above_one_raises_value_error(self):
+    def test_opacity_above_one_raises_value_error(self) -> None:
         """blend_images raises ValueError for opacity > 1."""
         base = self._make()
         blend = self._make()
         with self.assertRaises(ValueError):
             self.blend_images(base, blend, opacity=1.01)
 
-    def test_opacity_at_boundaries_does_not_raise(self):
+    def test_opacity_at_boundaries_does_not_raise(self) -> None:
         """blend_images accepts opacity=0.0 and opacity=1.0 without error."""
         base = self._make()
         blend = self._make()
@@ -1119,7 +1143,7 @@ class TestBlendImagesValidation(unittest.TestCase):
                 result = self.blend_images(base, blend, opacity=opacity)
                 self.assertIsInstance(result, Image.Image)
 
-    def test_half_opacity_produces_intermediate_result(self):
+    def test_half_opacity_produces_intermediate_result(self) -> None:
         """opacity=0.5 with normal mode produces RGB between base and blend."""
         base = self._make(8, 8, (0, 0, 0))       # black
         blend = self._make(8, 8, (200, 200, 200))  # near-white
@@ -1139,29 +1163,29 @@ class TestBlendImagesAlpha(unittest.TestCase):
     """Tests for alpha compositing behavior in blend_images()."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import blend_images
         cls.blend_images = staticmethod(blend_images)
 
-    def setUp(self):
-        self.test_files = []
+    def setUp(self) -> None:
+        self.test_files: list[str] = []
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for f in self.test_files:
             if os.path.exists(f):
                 os.remove(f)
 
-    def _make_rgba(self, w, h, color_rgba: tuple):
+    def _make_rgba(self, w: int, h: int, color_rgba: tuple[int, int, int, int]) -> str:
         path = create_solid_image(w, h, color_rgba, mode="RGBA")
         self.test_files.append(path)
         return path
 
-    def _make_rgb(self, w, h, color_rgb: tuple):
+    def _make_rgb(self, w: int, h: int, color_rgb: tuple[int, int, int]) -> str:
         path = create_solid_image(w, h, color_rgb, mode="RGB")
         self.test_files.append(path)
         return path
 
-    def test_transparent_blend_layer_alpha_preserves_base_alpha(self):
+    def test_transparent_blend_layer_alpha_preserves_base_alpha(self) -> None:
         """Fully transparent blend (alpha=0) at opacity=1.0: out_alpha == base_alpha via src-over."""
         # out_alpha = blend_alpha * opacity + base_alpha * (1 - blend_alpha * opacity)
         #           = 0 * 1.0 + base_alpha * (1 - 0) = base_alpha
@@ -1172,7 +1196,7 @@ class TestBlendImagesAlpha(unittest.TestCase):
         expected_alpha = 200 / 255.0
         np.testing.assert_allclose(arr[..., 3], expected_alpha, atol=0.01)
 
-    def test_opaque_blend_at_full_opacity_alpha_driven_by_blend(self):
+    def test_opaque_blend_at_full_opacity_alpha_driven_by_blend(self) -> None:
         """Fully opaque blend (alpha=255) at opacity=1 → out_alpha = blend_alpha."""
         base = self._make_rgba(8, 8, (100, 100, 100, 128))    # semi-transparent base
         blend = self._make_rgba(8, 8, (200, 200, 200, 255))   # opaque blend
@@ -1181,7 +1205,7 @@ class TestBlendImagesAlpha(unittest.TestCase):
         # out_alpha = blend_alpha*1 + base_alpha*(1 - blend_alpha*1) = 1 + 0.5*0 = 1
         np.testing.assert_allclose(arr[..., 3], 1.0, atol=0.01)
 
-    def test_opacity_scales_blend_alpha_contribution(self):
+    def test_opacity_scales_blend_alpha_contribution(self) -> None:
         """Reducing opacity reduces the blend layer's alpha contribution."""
         base = self._make_rgba(8, 8, (0, 0, 0, 255))         # opaque black base
         blend = self._make_rgba(8, 8, (255, 255, 255, 255))  # opaque white blend
@@ -1194,7 +1218,7 @@ class TestBlendImagesAlpha(unittest.TestCase):
         # The half-opacity result should have lower RGB than full-opacity normal blend
         self.assertTrue(np.mean(arr_half[..., :3]) < np.mean(arr_full[..., :3]))
 
-    def test_rgba_base_and_rgba_blend_composited_correctly(self):
+    def test_rgba_base_and_rgba_blend_composited_correctly(self) -> None:
         """RGBA base + RGBA blend: src-over formula applies with opacity=1."""
         # base_alpha = 0.5, blend_alpha = 0.8, opacity = 1.0
         # out_alpha = 0.8*1 + 0.5*(1 - 0.8*1) = 0.8 + 0.5*0.2 = 0.9
@@ -1216,25 +1240,25 @@ class TestDissolveMode(unittest.TestCase):
     """Tests for the dissolve blend mode's opacity-as-threshold behavior."""
 
     @classmethod
-    def setUpClass(cls):
+    def setUpClass(cls) -> None:
         from color_tools.image.blend import blend_images, dissolve
         cls.blend_images = staticmethod(blend_images)
         cls.dissolve = staticmethod(dissolve)
 
-    def setUp(self):
-        self.test_files = []
+    def setUp(self) -> None:
+        self.test_files: list[str] = []
 
-    def tearDown(self):
+    def tearDown(self) -> None:
         for f in self.test_files:
             if os.path.exists(f):
                 os.remove(f)
 
-    def _make(self, color, w=32, h=32):
+    def _make(self, color: tuple[int, int, int], w: int = 32, h: int = 32) -> str:
         path = create_solid_image(w, h, color)
         self.test_files.append(path)
         return path
 
-    def test_dissolve_full_opacity_all_pixels_from_blend(self):
+    def test_dissolve_full_opacity_all_pixels_from_blend(self) -> None:
         """dissolve at opacity=1.0: all pixels come from blend layer."""
         base = self._make((0, 0, 0))         # black
         blend = self._make((255, 255, 255))  # white
@@ -1243,7 +1267,7 @@ class TestDissolveMode(unittest.TestCase):
         # All pixels should be white (from blend)
         np.testing.assert_allclose(arr[..., :3], 255, atol=2)
 
-    def test_dissolve_zero_opacity_all_pixels_from_base(self):
+    def test_dissolve_zero_opacity_all_pixels_from_base(self) -> None:
         """dissolve at opacity=0.0: all pixels come from base layer."""
         base = self._make((0, 0, 0))         # black
         blend = self._make((255, 255, 255))  # white
@@ -1252,7 +1276,7 @@ class TestDissolveMode(unittest.TestCase):
         # All pixels should be black (from base)
         np.testing.assert_allclose(arr[..., :3], 0, atol=2)
 
-    def test_dissolve_intermediate_opacity_is_stochastic_mix(self):
+    def test_dissolve_intermediate_opacity_is_stochastic_mix(self) -> None:
         """dissolve at 0.5 opacity: each pixel is either from base or blend."""
         base_color = (0, 0, 0)
         blend_color = (255, 255, 255)
@@ -1261,21 +1285,22 @@ class TestDissolveMode(unittest.TestCase):
         result = self.blend_images(base, blend, mode="dissolve", opacity=0.5)
         arr = np.asarray(result, dtype=np.uint8)[..., :3]
         # Each pixel must be exactly one of the two colors (not a blend)
-        for r, g, b in arr.reshape(-1, 3):
-            is_base = (int(r), int(g), int(b)) == base_color
-            is_blend = (int(r), int(g), int(b)) == blend_color
-            self.assertTrue(is_base or is_blend, f"Unexpected pixel color: ({r},{g},{b})")
+        for row in arr:
+            for r, g, b in row:
+                is_base = (int(r), int(g), int(b)) == base_color
+                is_blend = (int(r), int(g), int(b)) == blend_color
+                self.assertTrue(is_base or is_blend, f"Unexpected pixel color: ({r},{g},{b})")
 
-    def test_dissolve_function_returns_either_a_or_b(self):
+    def test_dissolve_function_returns_either_a_or_b(self) -> None:
         """Low-level dissolve(): each pixel is exactly a or b, nothing in between."""
         a = np.zeros((8, 8, 3), dtype=np.float32)   # black
         b = np.ones((8, 8, 3), dtype=np.float32)    # white
         result = self.dissolve(a, b)
-        flat = result.reshape(-1, 3)
-        for pixel in flat:
-            is_a = np.allclose(pixel, 0.0, atol=1e-6)
-            is_b = np.allclose(pixel, 1.0, atol=1e-6)
-            self.assertTrue(is_a or is_b, f"Pixel {pixel} is neither a nor b")
+        for row in result:
+            for pixel in row:
+                is_a = np.allclose(pixel, 0.0, atol=1e-6)
+                is_b = np.allclose(pixel, 1.0, atol=1e-6)
+                self.assertTrue(is_a or is_b, f"Pixel {pixel} is neither a nor b")
 
 
 if __name__ == "__main__":

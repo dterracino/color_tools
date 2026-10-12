@@ -3,6 +3,7 @@ import struct
 import json
 import argparse
 from enum import IntEnum
+from pathlib import Path
 
 # The 16-color palette data (with some transparency added to show off!)
 COLORS_DATA = """
@@ -33,8 +34,8 @@ class SimplePNGWriter:
     INTERLACE_NONE = 0
     PNG_SIGNATURE = b'\x89PNG\r\n\x1a\n'
 
-    def __init__(self, colors_json, px_width=1, px_height=1):
-        self.colors = json.loads(colors_json)
+    def __init__(self, colors_json: str, px_width: int = 1, px_height: int = 1) -> None:
+        self.colors: list[dict[str, int]] = json.loads(colors_json)
         self.px_per_color_width = px_width
         self.px_per_color_height = px_height
         
@@ -47,13 +48,13 @@ class SimplePNGWriter:
         self.width = len(self.colors) * self.px_per_color_width
         self.height = self.px_per_color_height
 
-    def _make_chunk(self, chunk_type, data):
+    def _make_chunk(self, chunk_type: bytes, data: bytes) -> bytes:
         """Internal helper to package data into PNG chunks: length + type + data + crc"""
         length = struct.pack('>I', len(data))
         crc = struct.pack('>I', zlib.crc32(chunk_type + data) & 0xffffffff)
         return length + chunk_type + data + crc
 
-    def _build_ihdr(self):
+    def _build_ihdr(self) -> bytes:
         """Builds the Image Header (IHDR) chunk."""
         ihdr_data = struct.pack(
             '>IIBBBBB', 
@@ -67,7 +68,7 @@ class SimplePNGWriter:
         )
         return self._make_chunk(b'IHDR', ihdr_data)
 
-    def _build_idat(self):
+    def _build_idat(self) -> bytes:
         """Builds the Image Data (IDAT) chunk with scaled pixels."""
         row_data = bytearray()
         for color in self.colors:
@@ -87,11 +88,11 @@ class SimplePNGWriter:
         compressed_data = zlib.compress(full_image_data)
         return self._make_chunk(b'IDAT', compressed_data)
 
-    def _build_iend(self):
+    def _build_iend(self) -> bytes:
         """Builds the Image End (IEND) chunk."""
         return self._make_chunk(b'IEND', b'')
 
-    def save(self, filename):
+    def save(self, filename: str | Path) -> None:
         """Assembles the chunks and writes the PNG file."""
         with open(filename, 'wb') as f:
             f.write(self.PNG_SIGNATURE)
@@ -100,7 +101,7 @@ class SimplePNGWriter:
             f.write(self._build_iend())
         print(f"Success! {filename} saved ({self.width}x{self.height}) using {self.color_type.name} mode. 🚀")
 
-def run_generator():
+def run_generator() -> None:
     """Handles argument parsing and triggers the PNG generation."""
     parser = argparse.ArgumentParser(description="Generate a PNG color strip from JSON data.")
     

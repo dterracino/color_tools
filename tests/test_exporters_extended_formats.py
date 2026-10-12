@@ -15,7 +15,7 @@ import zipfile
 from ast import literal_eval
 from dataclasses import replace
 from pathlib import Path
-from typing import Any
+from typing import Any, Protocol, cast
 
 from color_tools.exporters import (
     GLSLExportOptions,
@@ -29,6 +29,10 @@ from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
 from color_tools.exporters.swatch_image_exporter import SwatchImageOptions
 from tests.test_exporters_palette_formats import _make_test_colors
+
+
+class _SwatchParser(Protocol):
+    def parse(self, filename: str) -> list[dict[str, object]]: ...
 
 
 class ExtendedExporterTestCase(unittest.TestCase):
@@ -722,7 +726,9 @@ class TestASEExporterDependency(ExtendedExporterTestCase):
         )
 
         get_exporter("ase").export_palette(palette, path)
-        parsed: Any = swatch.parse(str(path))
+        # swatch 0.4's parser accepts a filename and returns heterogeneous dictionaries.
+        parser = cast(_SwatchParser, swatch)
+        parsed: Any = parser.parse(str(path))
 
         self.assertEqual(parsed[0]["name"], "Primary Colors")
         self.assertEqual(parsed[0]["type"], "Color Group")

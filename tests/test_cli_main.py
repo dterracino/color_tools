@@ -54,7 +54,7 @@ class TestCliMain(unittest.TestCase):
 
     def test_version_flag_exits_0(self):
         """--version exits 0."""
-        code, out, _ = self._run(['--version'])
+        code, _, _ = self._run(['--version'])
         self.assertEqual(code, 0)
 
     def test_version_flag_is_string_type(self):
@@ -64,7 +64,7 @@ class TestCliMain(unittest.TestCase):
 
     def test_verify_constants_standalone_exits_cleanly(self):
         """--verify-constants alone exits cleanly (returns 0 on success, or 1 on failure)."""
-        code, out, _ = self._run(['--verify-constants'])
+        code, _, _ = self._run(['--verify-constants'])
         self.assertIn(code, (0, 1))  # 0 if ok, 1 if corrupted
 
     def test_color_name_lookup_exits_0(self):

@@ -49,7 +49,7 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "owned-filaments.json"
             
-            data = {"owned_filaments": []}
+            data: dict[str, list[str]] = {"owned_filaments": []}
             with open(path, 'w') as f:
                 json.dump(data, f)
             
@@ -376,7 +376,7 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
         palette = FilamentPalette(self.filaments, owned_filaments=self.owned)
         
         # Black color - should find owned Jet Black
-        result, distance = palette.nearest_filament((10, 10, 10), owned=None)
+        result, _ = palette.nearest_filament((10, 10, 10), owned=None)
         self.assertEqual(result.id, "bambu-lab_pla-matte_jet-black")
     
     def test_nearest_filament_owned_false_override(self):
@@ -384,7 +384,7 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
         palette = FilamentPalette(self.filaments, owned_filaments=self.owned)
         
         # White color - should find White even though not owned
-        result, distance = palette.nearest_filament((255, 255, 255), owned=False)
+        result, _ = palette.nearest_filament((255, 255, 255), owned=False)
         self.assertEqual(result.id, "bambu-lab_pla-matte_white")
     
     def test_nearest_filaments_owned_filtering(self):

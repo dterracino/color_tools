@@ -188,7 +188,7 @@ class TestSanitizingFilter(unittest.TestCase):
     def test_plain_string_args_are_sanitized(self):
         """A bare string passed as record.args is also sanitized."""
         r = self._record("msg")
-        r.args = "bad\narg"
+        setattr(r, "args", "bad\narg")
         self.f.filter(r)
         self.assertEqual(r.args, "bad arg")
 

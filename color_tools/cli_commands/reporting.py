@@ -12,9 +12,9 @@ from logging import LogRecord
 from pathlib import Path
 
 from ..constants import ColorConstants
+from .._palette_utils import get_palette_files
 from ..palette import (
     Palette,
-    _get_palette_files,
     load_colors,
     load_palette,
 )
@@ -203,13 +203,13 @@ def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[st
     # Core palettes
     core_palettes_dir = data_dir / "palettes"
     palette_names.extend(
-        path.stem for path in _get_palette_files(core_palettes_dir, "*.json")
+        path.stem for path in get_palette_files(core_palettes_dir, "*.json")
     )
     
     # User palettes (only user-*.json files)
     user_palettes_dir = data_dir / "user" / "palettes"
     palette_names.extend(
-        path.stem for path in _get_palette_files(user_palettes_dir, "user-*.json")
+        path.stem for path in get_palette_files(user_palettes_dir, "user-*.json")
     )
     
     # Load each palette and count colors

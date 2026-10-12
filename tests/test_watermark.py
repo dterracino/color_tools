@@ -13,7 +13,15 @@ import unittest
 import tempfile
 import shutil
 from pathlib import Path
+from typing import TYPE_CHECKING
 from PIL import Image, ImageDraw
+
+if TYPE_CHECKING:
+    from color_tools.image import (
+        add_text_watermark,
+        add_image_watermark,
+        add_svg_watermark,
+    )
 
 # Try importing watermark functions
 try:
@@ -23,20 +31,24 @@ try:
         add_svg_watermark,
         IMAGE_AVAILABLE
     )
-    WATERMARK_AVAILABLE = IMAGE_AVAILABLE
 except ImportError:
-    WATERMARK_AVAILABLE = False
+    _watermark_available = False
+else:
+    _watermark_available = IMAGE_AVAILABLE
+WATERMARK_AVAILABLE = _watermark_available
 
 # Try importing cairosvg for SVG tests
 # Note: On Windows, cairosvg requires GTK+ runtime libraries
 # If this fails, SVG tests will be skipped automatically
-SVG_AVAILABLE = False
 try:
     import cairosvg
-    SVG_AVAILABLE = True
+    del cairosvg
 except (ImportError, OSError):
     # OSError is raised when Cairo C libraries are not installed
-    pass
+    _svg_available = False
+else:
+    _svg_available = True
+SVG_AVAILABLE = _svg_available
 
 
 @unittest.skipUnless(WATERMARK_AVAILABLE, "Watermarking requires Pillow")

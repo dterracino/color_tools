@@ -178,7 +178,8 @@ class TestParseHexOrExit(unittest.TestCase):
         result = parse_hex_or_exit("#AABBCC")
         self.assertIsInstance(result, tuple)
         self.assertEqual(len(result), 3)
-        self.assertTrue(all(isinstance(v, int) for v in result))
+        for component in result:
+            self.assertIsInstance(component, int)
 
 
 class TestIsValidLab(unittest.TestCase):

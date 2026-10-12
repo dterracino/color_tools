@@ -46,11 +46,12 @@ from collections.abc import Iterable
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, rgb_to_hsl, rgb_to_hex, lab_to_lch
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
-from color_tools._palette_utils import rounded_key, should_prefer_source
+from color_tools._palette_utils import get_palette_files, rounded_key, should_prefer_source
 from color_tools._color_utils import parse_hex, validate_rgb
 
 # Compatibility alias retained for callers that imported the historical helper.
 _should_prefer_source = should_prefer_source
+_get_palette_files = get_palette_files
 
 # Set up logger for override tracking
 logger: logging.Logger = logging.getLogger(__name__)
@@ -344,8 +345,9 @@ def _parse_user_palette_records(
                 "expected an object"
             )
 
-        name = item.get("name")
-        hex_code = item.get("hex")
+        fields = cast(dict[object, object], item)
+        name = fields.get("name")
+        hex_code = fields.get("hex")
         if not isinstance(name, str):
             raise ValueError(
                 f"Missing or invalid 'name' in color at index {index} in {source_file}"
@@ -365,18 +367,6 @@ def _parse_user_palette_records(
             ) from error
 
     return records
-
-
-def _get_palette_files(palette_dir: Path, pattern: str) -> list[Path]:
-    """Return discoverable palette files, excluding copyable examples."""
-    if not palette_dir.exists():
-        return []
-    return [
-        path
-        for path in palette_dir.glob(pattern)
-        if not path.name.endswith("example.json")
-    ]
-
 
 
 def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
@@ -446,13 +436,13 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
         # Core palettes
         core_palettes_dir = data_dir / "palettes"
         available.extend(
-            path.stem for path in _get_palette_files(core_palettes_dir, "*.json")
+            path.stem for path in get_palette_files(core_palettes_dir, "*.json")
         )
         
         # User palettes (only user-*.json files)
         user_palettes_dir = data_dir / "user" / "palettes"
         available.extend(
-            path.stem for path in _get_palette_files(user_palettes_dir, "user-*.json")
+            path.stem for path in get_palette_files(user_palettes_dir, "user-*.json")
         )
         
         available.sort()
