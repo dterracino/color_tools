@@ -59,7 +59,11 @@ Compound JSON parsing is now implemented through the shared parser.
   Final LAB is derived from effective RGB. Other modes remain unimplemented.
 - Generic CSV/JSON and MCP include source hex, components, and effective hex.
   AutoForge, filament-of-day SVG, and GUI swatches use the effective color.
-- `_color_utils.py` owns validation/parsing/formatting without importing conversions.
+- `_color_utils.py` owns strict scalar RGB validation and hex
+  parsing/formatting without importing conversions. `normalize_hex` composes
+  the canonical parser and formatter; `rgb_to_normalized` validates before
+  scaling encoded sRGB channels to 0.0-1.0. Private transfer-curve primitives
+  remain unclipped so gamut calculations can retain extended values.
   Palette factories/JSON loaders, CLI adapters, harmony, importers, PNG output, semantic
   validation, MCP, image result formatting, and generator tooling reuse it.
   Keep PDF-source text extraction and format-specific ARGB/packed output as
@@ -110,6 +114,9 @@ decoding, regex grammars, prefix handling, compound splitting, and formatting.
   invalid field. PDF newline cleanup remains a source-format adapter.
 - Crayola generation now validates source RGB and normalizes source hex
   through the canonical single-color helpers.
+- Legacy Python palette generators now delegate RGB, HSL, LAB, and LCH work to
+  the production conversion APIs instead of carrying independent transfer
+  curves and conversion matrices. No palette data was regenerated.
 - Python hex exports and color-of-the-day SVG fills use `rgb_to_hex` rather
   than source hex, preserving solid RGB semantics when source text has alpha.
 - Remaining format grammars, numeric CLI/MCP adapters, scientific float/array
@@ -118,6 +125,10 @@ decoding, regex grammars, prefix handling, compound splitting, and formatting.
   The standalone HTML TG16 generator formats browser-generated colors in
   JavaScript; it cannot directly call Python helpers. Historical review and
   proposal documents retain their original illustrative snippets.
+- Future TODO: define a library-wide structural LAB validation contract before
+  moving the gamut module's finite three-component check into a shared helper.
+  Keep structural validity, CIELAB lightness policy, and sRGB gamut membership
+  as separate concerns; no generic LAB text parser/formatter is currently needed.
 - `.\.venv\Scripts\python.exe -m unittest discover tests`: passed, 1,438 tests,
   three skipped. Added seven regression tests covering watermark bounds,
   source adapters, solid SVG output, and Python hex exports. PDF extraction
@@ -211,6 +222,26 @@ signatures.
   Validation passed: 46 focused watermark tests; 1,444 full-suite tests with
   two expected optional-feature skips; zero strict Pyright errors or warnings;
   warning-as-error Sphinx HTML build; module doctest; and `git diff --check`.
+
+### Canonical normalization follow-up
+
+On 2026-10-12, completed the scalar normalization and sRGB transfer review.
+
+- Added public `normalize_hex` for canonical uppercase `#RRGGBB` output and
+  `rgb_to_normalized` for validated gamma-encoded sRGB floats in 0.0-1.0.
+- Routed matching integer-only conversion, color-deficiency, exporter,
+  interactive, and generator paths through the canonical helpers. Preserved
+  floating-point RGB-to-XYZ, array, format-adapter, and output-clipping
+  contracts. No palette data was regenerated.
+- Kept the scalar sRGB transfer primitives private and unclipped for extended
+  gamut calculations. Added direct endpoint, reference-value, breakpoint,
+  round-trip, and extended-range coverage.
+- Deferred shared LAB validation until structural validity, lightness policy,
+  and gamut membership have separately approved contracts.
+- Validation passed: 1,450 full-suite tests with two expected optional-feature
+  skips; zero strict Pyright errors or warnings; 33 module doctests;
+  warning-as-error Sphinx HTML build; package data verification; both legacy
+  512-color generator smoke checks; and `git diff --check`.
 
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later

@@ -56,7 +56,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, cast
 
-from color_tools.conversions import rgb_to_hex
+from color_tools.conversions import rgb_to_hex, rgb_to_normalized
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -706,8 +706,8 @@ class PythonExporter(PaletteExporter):
         """Format RGB or RGBA as a Python tuple."""
         if options.normalized:
             values: list[str] = [
-                f"{channel / 255.0:.{options.precision}f}"
-                for channel in rgb
+                f"{channel:.{options.precision}f}"
+                for channel in rgb_to_normalized(rgb)
             ]
 
             if options.include_alpha:

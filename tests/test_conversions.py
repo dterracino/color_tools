@@ -3,6 +3,7 @@
 import unittest
 import sys
 from pathlib import Path
+from typing import cast
 
 try:
     import numpy as np
@@ -15,7 +16,7 @@ if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
 from color_tools.conversions import (
-    hex_to_rgb, rgb_to_hex,
+    hex_to_rgb, normalize_hex, rgb_to_hex, rgb_to_normalized,
     rgb_to_lab, rgb_to_lab_array, lab_to_rgb,
     rgb_to_lch, lch_to_rgb,
     lab_to_lch, lch_to_lab,
@@ -27,6 +28,7 @@ from color_tools.conversions import (
     rgb_to_winhsl,
     rgb_to_cmy, cmy_to_rgb,
     rgb_to_cmyk, cmyk_to_rgb,
+    _linear_to_srgb, _srgb_to_linear,
 )
 
 
@@ -156,6 +158,43 @@ class TestHexRGBConversions(unittest.TestCase):
             rgb = hex_to_rgb(hex_color)
             result = rgb_to_hex(rgb)
             self.assertEqual(result, hex_color.upper())
+
+    def test_normalized_helpers(self):
+        """Canonical normalization preserves encoded sRGB values."""
+        self.assertEqual(normalize_hex("#AbC8"), "#AABBCC")
+        self.assertEqual(rgb_to_normalized((0, 128, 255)), (0.0, 128 / 255, 1.0))
+
+    def test_integer_rgb_conversions_share_strict_normalization(self):
+        """Integer-only normalized conversions reject invalid RGB consistently."""
+        for converter in (rgb_to_hsl, rgb_to_cmy, rgb_to_cmyk):
+            for rgb in ((0, 0, 256), (0.0, 0, 0), (False, 0, 0)):
+                with self.subTest(converter=converter.__name__, rgb=rgb):
+                    with self.assertRaises(ValueError):
+                        converter(cast(tuple[int, int, int], rgb))
+
+
+class TestSRGBTransferFunctions(unittest.TestCase):
+    """Test the unclipped normalized-sRGB transfer curve primitives."""
+
+    def test_reference_values_and_endpoints(self):
+        self.assertEqual(_srgb_to_linear(0.0), 0.0)
+        self.assertEqual(_srgb_to_linear(1.0), 1.0)
+        self.assertEqual(_linear_to_srgb(0.0), 0.0)
+        self.assertAlmostEqual(_linear_to_srgb(1.0), 1.0)
+        self.assertAlmostEqual(_srgb_to_linear(0.5), 0.21404114048223255)
+        self.assertAlmostEqual(_linear_to_srgb(0.21404114048223255), 0.5)
+
+    def test_piecewise_breakpoints(self):
+        self.assertAlmostEqual(_srgb_to_linear(0.04045), 0.0031308049535603713)
+        self.assertAlmostEqual(_linear_to_srgb(0.0031308), 0.040449936)
+
+    def test_extended_values_roundtrip_without_clipping(self):
+        for encoded in (-0.25, 0.0, 0.02, 0.5, 1.0, 1.25):
+            with self.subTest(encoded=encoded):
+                self.assertAlmostEqual(
+                    _linear_to_srgb(_srgb_to_linear(encoded)),
+                    encoded,
+                )
 
 
 class TestRGBLABConversions(unittest.TestCase):

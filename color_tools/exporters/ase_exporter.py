@@ -20,6 +20,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING, Any, Protocol, cast
 
+from color_tools.conversions import rgb_to_normalized
 from color_tools.exporters.base import (
     ExporterDependency,
     ExporterMetadata,
@@ -200,7 +201,7 @@ class ASEExporter(PaletteExporter):
         Returns:
             ASE Process swatch dictionary.
         """
-        r, g, b = color.rgb
+        r, g, b = rgb_to_normalized(color.rgb)
 
         return {
             "name": color.name or color.hex,
@@ -208,9 +209,9 @@ class ASEExporter(PaletteExporter):
             "data": {
                 "mode": "RGB",
                 "values": [
-                    r / 255.0,
-                    g / 255.0,
-                    b / 255.0,
+                    r,
+                    g,
+                    b,
                 ],
             },
         }

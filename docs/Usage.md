@@ -154,6 +154,8 @@ gameboy_image.save("gameboy_style.png")
 - `rgb_to_winhsl255()` - RGB → winHSL255: Microsoft Office colour picker — H: 0–254, S/L: 0–255
 - `rgb_to_winhsl()` - Alias for `rgb_to_winhsl240()` (backward compatibility)
 - `hex_to_rgb()`, `rgb_to_hex()` - Strict hex ↔ RGB conversion; invalid input raises `ValueError`
+- `normalize_hex()` - Canonical uppercase `#RRGGBB` output from a valid single color
+- `rgb_to_normalized()` - Strict 8-bit encoded sRGB scaled to encoded floats in `[0.0, 1.0]`
 - `parse_hex_colors()` - Ordered compound hex components with validated, discarded alpha
 - `validate_rgb()` - Check a tuple/list of three built-in 8-bit integers without coercion
 - `xyz_to_rgb_float()` - Unrounded, unclipped RGB for precision-sensitive calculations

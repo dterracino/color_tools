@@ -28,6 +28,7 @@ from color_tools.matrices import (
     get_correction_matrix
 )
 from color_tools.constants import ColorConstants
+from color_tools.conversions import rgb_to_normalized
 
 
 def _apply_cvd_transform(
@@ -46,8 +47,7 @@ def _apply_cvd_transform(
     Returns:
         Transformed RGB color tuple (0-255)
     """
-    # Normalize RGB to 0-1 range
-    r, g, b = [v / ColorConstants.RGB_MAX for v in rgb]
+    r, g, b = rgb_to_normalized(rgb)
 
     # Simulation is always needed (both for 'simulate' and as the first step of 'correct')
     sim_matrix = get_simulation_matrix(deficiency_type)

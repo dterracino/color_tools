@@ -7,16 +7,15 @@ LCH is computed from LAB using:
   H = atan2(b, a) in degrees, normalized to 0-360
 """
 import json
-import math
 import os
+from collections.abc import Sequence
 
-def lab_to_lch(lab):
-    L, a, b = lab
-    C = math.sqrt(a * a + b * b)
-    h = math.degrees(math.atan2(b, a))
-    if h < 0:
-        h += 360.0
-    return [round(L, 4), round(C, 4), round(h, 4)]
+from color_tools.conversions import lab_to_lch as _lab_to_lch
+
+
+def lab_to_lch(lab: Sequence[float]) -> list[float]:
+    canonical_lab = (lab[0], lab[1], lab[2])
+    return [round(value, 4) for value in _lab_to_lch(canonical_lab)]
 
 def add_lch_to_colors(input_path):
     with open(input_path, 'r', encoding='utf-8') as f:

@@ -1,4 +1,10 @@
-"""Private helpers for strict RGB validation and hex parsing."""
+"""Canonical strict RGB validation, hex parsing, and hex formatting.
+
+Library code that uses these contracts must delegate to this module instead of
+reimplementing them. Format-specific boundary adapters may still parse transport
+syntax or present errors differently; output clipping, array processing, and
+color-space conversion are separate responsibilities.
+"""
 
 from __future__ import annotations
 
@@ -105,3 +111,25 @@ def format_hex(rgb: tuple[int, int, int] | list[int]) -> str:
     """Return normalized #RRGGBB after strict validation, without clipping."""
     validate_rgb(rgb)
     return "#{:02X}{:02X}{:02X}".format(*rgb)
+
+
+def normalize_hex(hex_code: str) -> str:
+    """Return a validated single color in canonical uppercase ``#RRGGBB`` form.
+
+    Short forms are expanded and valid CSS/PNG alpha-last components are
+    discarded according to :func:`parse_hex`'s contract.
+
+    Args:
+        hex_code: RGB, RGBA, RRGGBB, or RRGGBBAA with an optional leading ``#``.
+
+    Returns:
+        The parsed RGB color formatted as uppercase ``#RRGGBB``.
+
+    Raises:
+        ValueError: If the input type or syntax is invalid.
+
+    Example:
+        >>> normalize_hex("#a1c8")
+        '#AA11CC'
+    """
+    return format_hex(parse_hex(hex_code))

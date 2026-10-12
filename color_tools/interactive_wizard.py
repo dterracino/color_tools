@@ -35,7 +35,7 @@ else:
         pass  # PROMPT_TOOLKIT_AVAILABLE handles the guard
 
 from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
-from .conversions import hex_to_rgb, rgb_to_hex, validate_rgb
+from .conversions import normalize_hex, validate_rgb
 
 __all__ = [
     "run_interactive_wizard",
@@ -167,7 +167,7 @@ def _ask_color_input(label: str = "color to match") -> tuple[list[str], str] | N
             if raw.lower() in ("q", "quit", "exit"):
                 return None
             try:
-                normalized = rgb_to_hex(hex_to_rgb(raw))
+                normalized = normalize_hex(raw)
             except ValueError as error:
                 print(f"  Not a valid hex code: {error}")
                 continue

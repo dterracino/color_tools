@@ -14,6 +14,7 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_normalized
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -105,11 +106,11 @@ class SketchPaletteExporter(PaletteExporter):
         Returns:
             SketchPalette color dictionary.
         """
-        r, g, b = color.rgb
+        r, g, b = rgb_to_normalized(color.rgb)
 
         return {
-            "red": r / 255.0,
-            "green": g / 255.0,
-            "blue": b / 255.0,
+            "red": r,
+            "green": g,
+            "blue": b,
             "alpha": 1.0,
         }

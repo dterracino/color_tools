@@ -73,7 +73,9 @@ __version__ = "7.0.0"
 from .conversions import (
     # Hex ↔ RGB (basic web colors)
     hex_to_rgb,
+    normalize_hex,
     rgb_to_hex,
+    rgb_to_normalized,
     parse_hex_colors,
     validate_rgb,
     
@@ -312,9 +314,11 @@ __all__ = [
     
     # Conversion functions (most commonly used)
     "hex_to_rgb",
+    "normalize_hex",
     "parse_hex_colors",
     "validate_rgb",
     "rgb_to_hex",
+    "rgb_to_normalized",
     "rgb_to_lab",
     "rgb_to_lab_array",
     "lab_to_rgb",

@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Canonical color normalization** — document `_color_utils` as the sole
+  implementation of strict scalar RGB validation and hex parsing/formatting.
+  Add public `normalize_hex` for canonical uppercase `#RRGGBB` output and
+  `rgb_to_normalized` for validated encoded-sRGB floats in the 0.0-1.0 range.
+  Clarify that the private sRGB transfer functions operate on normalized
+  channels without clipping, and cover their reference values, breakpoints,
+  round trips, and extended-range behavior directly. Route scalar exporters,
+  color-deficiency processing, interactive/tooling normalization, and legacy
+  palette generators through the canonical implementations where their input
+  contracts match.
 - **Lazy image-package exports** — load each public image symbol from its
   owning submodule on first access instead of importing the complete optional
   image stack. Remove success-shaped fallback functions, empty registries, and

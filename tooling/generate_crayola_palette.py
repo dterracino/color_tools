@@ -18,7 +18,7 @@ from typing import Any
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from color_tools.conversions import (
-    hex_to_rgb, rgb_to_hex, rgb_to_hsl, rgb_to_lab, rgb_to_lch, validate_rgb,
+    normalize_hex, rgb_to_hsl, rgb_to_lab, rgb_to_lch, validate_rgb,
 )
 
 
@@ -41,7 +41,7 @@ def process_crayola_colors() -> list[dict[str, Any]]:
         name = color["name"]
         validate_rgb(color["rgb"])
         rgb = tuple(color["rgb"])
-        hex_color = rgb_to_hex(hex_to_rgb(color["hex"]))
+        hex_color = normalize_hex(color["hex"])
         
         # Compute color spaces using color_tools
         hsl = rgb_to_hsl(rgb)

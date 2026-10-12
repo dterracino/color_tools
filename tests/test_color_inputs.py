@@ -10,7 +10,15 @@ import tempfile
 from typing import cast
 import unittest
 
-from color_tools import config_context, hex_to_rgb, parse_hex_colors, rgb_to_hex, validate_rgb
+from color_tools import (
+    config_context,
+    hex_to_rgb,
+    normalize_hex,
+    parse_hex_colors,
+    rgb_to_hex,
+    rgb_to_normalized,
+    validate_rgb,
+)
 from color_tools.conversions import rgb_to_lab
 from color_tools.exporters.autoforge_exporter import AutoForgeExporter
 from color_tools.exporters.csv_exporter import CSVExporter
@@ -65,6 +73,22 @@ class TestColorInputs(unittest.TestCase):
         self.assertEqual(record.rgb, (0, 128, 255))
         self.assertEqual(palette.records[0].rgb, record.rgb)
         self.assertEqual(rgb_to_hex(record.rgb), "#0080FF")
+
+    def test_single_color_normalization(self) -> None:
+        self.assertEqual(normalize_hex("abc"), "#AABBCC")
+        self.assertEqual(normalize_hex("#12ab34"), "#12AB34")
+        self.assertEqual(normalize_hex("#11223380"), "#112233")
+        self.assertEqual(
+            rgb_to_normalized([0, 128, 255]),
+            (0.0, 128 / 255, 1.0),
+        )
+
+        for value in (" abc", "#abcdz", None):
+            with self.subTest(hex=value), self.assertRaises(ValueError):
+                normalize_hex(cast(str, value))
+        for value in ((0, 0), (0, 0, 256), (0.0, 0, 0), (False, 0, 0)):
+            with self.subTest(rgb=value), self.assertRaises(ValueError):
+                rgb_to_normalized(cast(tuple[int, int, int], value))
 
     def test_compound_separators_and_duplicates(self) -> None:
         expected = ((255, 0, 0), (0, 255, 0), (255, 0, 0))

@@ -9,7 +9,12 @@ The Genesis uses 3 bits per color channel (RGB), giving 8 levels per channel.
 import json
 from pathlib import Path
 from typing import TypedDict
-from color_tools.conversions import rgb_to_hex as _rgb_to_hex
+from color_tools.conversions import (
+    lab_to_lch,
+    rgb_to_hex as _rgb_to_hex,
+    rgb_to_hsl,
+    rgb_to_lab,
+)
 
 
 class _GenesisColorData(TypedDict):
@@ -24,79 +29,6 @@ class _GenesisColorData(TypedDict):
 def rgb_to_hex(r: int, g: int, b: int) -> str:
     """Convert RGB values to hex string."""
     return _rgb_to_hex((r, g, b)).lower()
-
-
-def rgb_to_hsl(r: int, g: int, b: int) -> tuple[float, float, float]:
-    """Convert RGB to HSL."""
-    r_norm, g_norm, b_norm = r/255.0, g/255.0, b/255.0
-    
-    max_val = max(r, g, b)
-    min_val = min(r, g, b)
-    diff = max_val - min_val
-    
-    # Lightness
-    l = (max_val + min_val) / 2.0
-    
-    if diff == 0:
-        h = s = 0  # Achromatic
-    else:
-        # Saturation
-        s = diff / (2 - max_val - min_val) if l > 0.5 else diff / (max_val + min_val)
-        
-        # Hue
-        if max_val == r_norm:
-            h = (g_norm - b_norm) / diff + (6 if g_norm < b_norm else 0)
-        elif max_val == g_norm:
-            h = (b_norm - r_norm) / diff + 2
-        else:
-            h = (r_norm - g_norm) / diff + 4
-        h /= 6
-    
-    return round(h * 360, 1), round(s * 100, 1), round(l * 100, 1)
-
-
-def rgb_to_lab(r: int, g: int, b: int) -> tuple[float, float, float]:
-    """Convert RGB to LAB (simplified conversion)."""
-    # Normalize RGB
-    r_norm, g_norm, b_norm = r/255.0, g/255.0, b/255.0
-    
-    # Apply gamma correction
-    r_linear = ((r_norm + 0.055) / 1.055) ** 2.4 if r_norm > 0.04045 else r_norm / 12.92
-    g_linear = ((g_norm + 0.055) / 1.055) ** 2.4 if g_norm > 0.04045 else g_norm / 12.92
-    b_linear = ((b_norm + 0.055) / 1.055) ** 2.4 if b_norm > 0.04045 else b_norm / 12.92
-    
-    # Convert to XYZ (sRGB D65)
-    x = r_linear * 0.4124564 + g_linear * 0.3575761 + b_linear * 0.1804375
-    y = r_linear * 0.2126729 + g_linear * 0.7151522 + b_linear * 0.0721750
-    z = r_linear * 0.0193339 + g_linear * 0.1191920 + b_linear * 0.9503041
-    
-    # Normalize for D65 illuminant
-    x /= 0.95047
-    y /= 1.00000
-    z /= 1.08883
-    
-    # Convert to LAB
-    fx = x**(1/3) if x > 0.008856 else (7.787 * x + 16/116)
-    fy = y**(1/3) if y > 0.008856 else (7.787 * y + 16/116)
-    fz = z**(1/3) if z > 0.008856 else (7.787 * z + 16/116)
-    
-    l = 116 * fy - 16
-    a = 500 * (fx - fy)
-    b_val = 200 * (fy - fz)
-    
-    return round(l, 1), round(a, 1), round(b_val, 1)
-
-
-def lab_to_lch(l: float, a: float, b: float) -> tuple[float, float, float]:
-    """Convert LAB to LCH."""
-    import math
-    
-    c = math.sqrt(a*a + b*b)
-    h = math.atan2(b, a) * 180 / math.pi
-    if h < 0:
-        h += 360
-    
-    return round(l, 1), round(c, 1), round(h, 1)
 
 
 def generate_genesis_palette() -> list[_GenesisColorData]:
@@ -127,9 +59,25 @@ def generate_genesis_palette() -> list[_GenesisColorData]:
                 
                 # Convert to other color spaces
                 hex_color = rgb_to_hex(r8, g8, b8)
-                hsl = rgb_to_hsl(r8, g8, b8)
-                lab = rgb_to_lab(r8, g8, b8)
-                lch = lab_to_lch(lab[0], lab[1], lab[2])
+                rgb = (r8, g8, b8)
+                raw_hsl = rgb_to_hsl(rgb)
+                hsl = (
+                    round(raw_hsl[0], 1),
+                    round(raw_hsl[1], 1),
+                    round(raw_hsl[2], 1),
+                )
+                raw_lab = rgb_to_lab(rgb)
+                lab = (
+                    round(raw_lab[0], 1),
+                    round(raw_lab[1], 1),
+                    round(raw_lab[2], 1),
+                )
+                raw_lch = lab_to_lch(lab)
+                lch = (
+                    round(raw_lch[0], 1),
+                    round(raw_lch[1], 1),
+                    round(raw_lch[2], 1),
+                )
                 
                 # Create descriptive name
                 color_index = (r3 << 6) | (g3 << 3) | b3  # 9-bit color value

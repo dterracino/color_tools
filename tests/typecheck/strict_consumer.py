@@ -17,8 +17,10 @@ from color_tools import (
     delta_e_2000,
     delta_e_2000_array,
     generate_color_names,
+    normalize_hex,
     rgb_to_lab,
     rgb_to_lab_array,
+    rgb_to_normalized,
 )
 from color_tools.exporters import GLSLExportOptions, PaletteExporter, get_exporter
 from color_tools.image import simulate_cvd_image
@@ -29,6 +31,8 @@ from color_tools.naming import MatchType
 lab = rgb_to_lab((255, 128, 64))
 assert_type(lab, tuple[float, float, float])
 assert_type(delta_e_2000(lab, lab), float)
+assert_type(normalize_hex("#f80"), str)
+assert_type(rgb_to_normalized((255, 128, 0)), tuple[float, float, float])
 
 palette = Palette.load_default()
 color, color_distance = palette.nearest_color(lab)

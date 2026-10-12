@@ -17,12 +17,12 @@ Example:
     >>> # To LAB for perceptual analysis
     >>> lab = rgb_to_lab(orange_rgb)
     >>> print(f"LAB: L={lab[0]:.1f} a={lab[1]:.1f} b={lab[2]:.1f}")
-    LAB: L=67.8 a=43.4 b=78.0
+    LAB: L=67.1 a=42.8 b=74.0
     >>> 
     >>> # To LCH for hue/chroma work
     >>> lch = lab_to_lch(lab)
     >>> print(f"LCH: L={lch[0]:.1f} C={lch[1]:.1f} H={lch[2]:.1f}°")
-    LCH: L=67.8 C=88.6 H=60.9°
+    LCH: L=67.1 C=85.5 H=59.9°
     >>> 
     >>> # To HSL for web design
     >>> hsl = rgb_to_hsl(orange_rgb)
@@ -37,7 +37,11 @@ import colorsys
 
 from .constants import ColorConstants
 from ._color_utils import format_hex, parse_hex
-from ._color_utils import parse_hex_colors as parse_hex_colors, validate_rgb as validate_rgb
+from ._color_utils import (
+    normalize_hex as normalize_hex,
+    parse_hex_colors as parse_hex_colors,
+    validate_rgb as validate_rgb,
+)
 
 if TYPE_CHECKING:
     import numpy as np
@@ -81,16 +85,43 @@ def rgb_to_hex(rgb: Tuple[int, int, int] | list[int]) -> str:
     """
     return format_hex(rgb)
 
+
+def rgb_to_normalized(
+    rgb: tuple[int, int, int] | list[int],
+) -> tuple[float, float, float]:
+    """Convert strict 8-bit encoded sRGB channels to the ``[0.0, 1.0]`` range.
+
+    This scales gamma-encoded sRGB values; it does not convert them to linear
+    light. Values are validated without coercion or clipping before scaling.
+
+    Args:
+        rgb: Three built-in integer channels in the inclusive 0-255 range.
+
+    Returns:
+        Three encoded sRGB channels in the inclusive 0.0-1.0 range.
+
+    Raises:
+        ValueError: If ``rgb`` does not satisfy :func:`validate_rgb`.
+
+    Example:
+        >>> rgb_to_normalized((0, 128, 255))
+        (0.0, 0.5019607843137255, 1.0)
+    """
+    validate_rgb(rgb)
+    return (
+        rgb[0] / ColorConstants.RGB_MAX,
+        rgb[1] / ColorConstants.RGB_MAX,
+        rgb[2] / ColorConstants.RGB_MAX,
+    )
+
 # ============================================================================
 # Forward Conversions (RGB → LAB)
 # ============================================================================
 
 def _srgb_to_linear(c: float) -> float:
-    """
-    Convert sRGB value to linear RGB (gamma correction removal).
-    
-    sRGB uses a piecewise function to approximate gamma 2.2 encoding.
-    This function reverses that to get linear light values.
+    """Decode one normalized sRGB channel to linear light without clipping.
+
+    Extended values outside 0.0-1.0 are retained for out-of-gamut calculations.
     """
     if c <= ColorConstants.SRGB_GAMMA_THRESHOLD:
         return c / ColorConstants.SRGB_GAMMA_LINEAR_SCALE
@@ -258,11 +289,9 @@ def lab_to_xyz(lab: Tuple[float, float, float]) -> Tuple[float, float, float]:
 
 
 def _linear_to_srgb(c: float) -> float:
-    """
-    Convert linear RGB to sRGB (inverse gamma correction).
-    
-    This applies the sRGB gamma curve to convert from linear light
-    back to the nonlinear sRGB encoding.
+    """Encode one linear-light channel as normalized sRGB without clipping.
+
+    Extended values outside 0.0-1.0 are retained for out-of-gamut calculations.
     """
     if c <= ColorConstants.SRGB_INV_GAMMA_THRESHOLD:
         return ColorConstants.SRGB_GAMMA_LINEAR_SCALE * c
@@ -402,7 +431,7 @@ def _rgb_to_rawhsl(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     
     Uses Python's colorsys module for the conversion.
     """
-    r, g, b = [v / ColorConstants.RGB_MAX for v in rgb]
+    r, g, b = rgb_to_normalized(rgb)
     h, l, s = colorsys.rgb_to_hls(r, g, b)
     return (h, s, l)
 
@@ -550,10 +579,10 @@ def rgb_to_cmy(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
         >>> rgb_to_cmy((255, 255, 255))   # white
         (0.0, 0.0, 0.0)
     """
-    r, g, b = rgb
-    c = (1.0 - r / ColorConstants.RGB_MAX) * ColorConstants.XYZ_SCALE_FACTOR
-    m = (1.0 - g / ColorConstants.RGB_MAX) * ColorConstants.XYZ_SCALE_FACTOR
-    y = (1.0 - b / ColorConstants.RGB_MAX) * ColorConstants.XYZ_SCALE_FACTOR
+    r, g, b = rgb_to_normalized(rgb)
+    c = (1.0 - r) * ColorConstants.XYZ_SCALE_FACTOR
+    m = (1.0 - g) * ColorConstants.XYZ_SCALE_FACTOR
+    y = (1.0 - b) * ColorConstants.XYZ_SCALE_FACTOR
     return (round(c, 4), round(m, 4), round(y, 4))
 
 
@@ -629,10 +658,7 @@ def rgb_to_cmyk(rgb: Tuple[int, int, int]) -> Tuple[float, float, float, float]:
         >>> rgb_to_cmyk((128, 64, 192))
         (33.3333, 66.6667, 0.0, 24.7059)
     """
-    r, g, b = rgb
-    r_norm = r / ColorConstants.RGB_MAX
-    g_norm = g / ColorConstants.RGB_MAX
-    b_norm = b / ColorConstants.RGB_MAX
+    r_norm, g_norm, b_norm = rgb_to_normalized(rgb)
 
     k_norm = 1.0 - max(r_norm, g_norm, b_norm)
 

@@ -101,6 +101,8 @@ RGB/RGBA short and long forms; alpha is validated and discarded.
 
 .. autofunction:: color_tools.conversions.parse_hex_colors
 
+.. autofunction:: color_tools.conversions.normalize_hex
+
 The implementation module is also documented for maintainers:
 
 .. autosummary::
