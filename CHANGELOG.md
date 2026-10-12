@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Lazy image-package exports** — load each public image symbol from its
+  owning submodule on first access instead of importing the complete optional
+  image stack. Remove success-shaped fallback functions, empty registries, and
+  fake result classes; preserve precise missing-dependency causes and unrelated
+  import failures. Keep all three watermark functions public, define
+  `IMAGE_AVAILABLE` narrowly as Pillow discovery, and correct package examples
+  to use the real watermark API.
 - **PNG writer moved to the base package** — replace the image-module writer
   with `color_tools.png_writer.SimplePNGWriter`; remove the old module and
   image-package export. Retain `save()` parent-directory creation and migrate

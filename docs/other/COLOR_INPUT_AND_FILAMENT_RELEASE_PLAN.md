@@ -4,8 +4,9 @@
 
 - Created: 2026-10-10.
 - Updated: 2026-10-12.
-- Status: configuration, canonical color inputs, multi-color records, and
-  gamut precision are implemented. Swatches and additional modes remain
+- Status: configuration, canonical color inputs, multi-color records, gamut
+  precision, and lazy image-package initialization are implemented. Swatches,
+  additional modes, and the separate watermark implementation cleanup remain
   planned. Python 3.12 migration is locally validated on 3.12, 3.13, and 3.14;
   confirmation from the next GitHub CI run remains pending.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
@@ -133,7 +134,8 @@ from the old implementation, reused canonical RGB validation, and retained
 the new immutable color storage, sRGB chunk, and PNG dimension limits.
 Swatch dimensions now require positive built-in integers. Migrated LUT export
 and removed the old module and image-package export without a compatibility
-alias. Broader image initialization cleanup remains a separate task.
+alias. The broader image initialization cleanup was completed in the subsequent
+stage recorded below.
 
 - Consolidated both test suites into `tests/test_png_writer.py`: 38 tests
   passed, including independent PNG decoding/CRCs, Pillow cross-checks,
@@ -150,6 +152,41 @@ alias. Broader image initialization cleanup remains a separate task.
   both the wheel and installation. Removed one stale generated build copy
   before rebuilding. Installed-writer type completeness is 100%.
 - No protected data/constants changed; no commit, push, or release performed.
+
+### Image package initialization cleanup
+
+On 2026-10-12, replaced eager all-or-nothing initialization in
+`color_tools.image` with per-symbol lazy loading. A private export table maps
+each public name to its owning submodule; `__getattr__` imports and caches only
+the requested symbol, while `__dir__` preserves interactive discovery. Strict
+Pyright requires explicit static re-exports and a literal `__all__`, so a
+focused drift test enforces agreement among those declarations and the runtime
+table.
+
+- Removed generic fallback functions, the empty `BLEND_MODES`, and fake result
+  classes. Real dependency-free types and registries remain usable when their
+  owning modules support that behavior.
+- Missing known top-level optional dependencies now produce a precise, chained
+  error naming the requested export. Unexpected internal `ImportError` failures
+  propagate unchanged rather than being mislabeled as missing Pillow.
+- Retained `IMAGE_AVAILABLE` for compatibility with the narrow documented
+  meaning that Pillow is discoverable. It does not claim every optional image
+  dependency or feature is usable.
+- Public watermark exports are `add_text_watermark`, `add_image_watermark`, and
+  `add_svg_watermark`. Corrected the package examples to use their real Pillow
+  image input/return contract. `SimplePNGWriter` remains a base-package API and
+  is not restored under `color_tools.image`.
+- Added twelve focused initialization tests covering import laziness, caching,
+  export drift, missing Pillow/OpenCV behavior, unrelated import failures,
+  unknown attributes, and the absence of fake exports.
+- Validation passed: 339 focused image tests with one expected optional skip;
+  1,444 full-suite tests with three expected skips; zero strict Pyright errors
+  or warnings; warning-as-error Sphinx HTML build; module doctest; and
+  `git diff --check`.
+
+The related `watermark.py` implementation cleanup remains separate: Cairo
+native-load reporting, exception chaining, shared compositing helpers, argument
+validation, position errors, and its local examples have not been changed yet.
 
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later
