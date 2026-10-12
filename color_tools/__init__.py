@@ -261,8 +261,12 @@ from .color_deficiency import (
 # ============================================================================
 
 from .config import (
-    set_dual_color_mode,
-    get_dual_color_mode,
+    ColorConfig,
+    MultiColorMode,
+    get_config,
+    set_config,
+    reset_config,
+    config_context,
 )
 
 # ============================================================================
@@ -404,8 +408,12 @@ __all__ = [
     "correct_all_cvd",
     
     # Config functions
-    "set_dual_color_mode",
-    "get_dual_color_mode",
+    "ColorConfig",
+    "MultiColorMode",
+    "get_config",
+    "set_config",
+    "reset_config",
+    "config_context",
 
     # Logging
     "setup_logging",

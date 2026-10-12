@@ -6,15 +6,42 @@ import sys
 import unittest
 from pathlib import Path
 from typing import Any, cast
+from unittest.mock import patch
 
 from mcp.client import Client
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
-from color_tools.mcp.server import mcp
+from color_tools.config import config_context
+from color_tools.filament_palette import FilamentPalette, FilamentRecord
+from color_tools.mcp.server import mcp, _filament_palette, _filament_palette_for_mode
 
 
 class TestMCPServer(unittest.IsolatedAsyncioTestCase):
     """Exercise tools through the MCP client rather than direct function calls."""
+
+    def test_filament_cache_distinguishes_modes(self) -> None:
+        def load() -> FilamentPalette:
+            return FilamentPalette([
+                FilamentRecord(
+                    id="probe", maker="probe", type="PLA", finish=None,
+                    color="probe", hex="#FF0000", hex2="#0000FF",
+                )
+            ])
+
+        _filament_palette_for_mode.cache_clear()
+        try:
+            with patch.object(FilamentPalette, "load_default", side_effect=load) as loader:
+                with config_context(multi_color_mode="first"):
+                    first = _filament_palette()
+                with config_context(multi_color_mode="last"):
+                    last = _filament_palette()
+                self.assertEqual(first.records[0].rgb, (255, 0, 0))
+                self.assertEqual(last.records[0].rgb, (0, 0, 255))
+                with config_context(multi_color_mode="first"):
+                    self.assertIs(_filament_palette(), first)
+                self.assertEqual(loader.call_count, 2)
+        finally:
+            _filament_palette_for_mode.cache_clear()
 
     async def call_tool(self, name: str, arguments: dict[str, Any]) -> dict[str, Any]:
         """Call one tool and return its validated structured content."""

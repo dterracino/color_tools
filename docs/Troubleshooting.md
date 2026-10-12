@@ -237,22 +237,23 @@ All constants include integrity verification via SHA-256 hashing.
 
 ### Thread Safety
 
-Runtime configuration (like dual-color mode) uses `threading.local()` for thread-safe operation in multi-threaded applications.
+Runtime settings use `ContextVar`. Set overrides in each worker or explicitly
+propagate context. New asyncio tasks inherit settings without sharing later
+updates. Scoped overrides restore settings on normal exit and exceptions.
 
 ```python
 import threading
-from color_tools import set_dual_color_mode, get_dual_color_mode, FilamentPalette
+from color_tools import config_context, FilamentPalette
 
 def worker_thread(mode):
-    set_dual_color_mode(mode)  # Thread-local setting
-    palette = FilamentPalette.load_default()
-    # Each thread can have its own configuration
-    filament, _ = palette.nearest_filament((255, 100, 100))
-    print(f"Thread ({mode}): {filament.color}")
+    with config_context(multi_color_mode=mode):
+        palette = FilamentPalette.load_default()
+        filament, _ = palette.nearest_filament((255, 100, 100))
+        print(f"Thread ({mode}): {filament.color}")
 
 # Different threads can use different configurations
 t1 = threading.Thread(target=worker_thread, args=('first',))
-t2 = threading.Thread(target=worker_thread, args=('mix',))
+t2 = threading.Thread(target=worker_thread, args=('srgb_mean',))
 t1.start()
 t2.start()
 ```

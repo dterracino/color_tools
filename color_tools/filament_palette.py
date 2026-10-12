@@ -25,7 +25,7 @@ from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, U
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, hex_to_rgb, lab_to_lch
 from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
-from color_tools.config import get_dual_color_mode
+from color_tools.config import get_config
 from color_tools._palette_utils import ensure_list, should_prefer_source
 from color_tools.filament_filter_criteria import FilamentFilterCriteria
 
@@ -103,12 +103,11 @@ class FilamentRecord:
     
     def __post_init__(self) -> None:
         """Compute derived color representations in all color spaces."""
-        # Choose which hex to use based on dual-color mode
-        mode = get_dual_color_mode()
+        mode = get_config().multi_color_mode
         
-        if mode == "second" and self.hex2 is not None:
+        if mode == "last" and self.hex2 is not None:
             hex_to_use = self.hex2
-        elif mode == "mix" and self.hex2 is not None:
+        elif mode == "srgb_mean" and self.hex2 is not None:
             # Mix the two colors by averaging their RGB values
             rgb1 = hex_to_rgb(self.hex)
             rgb2 = hex_to_rgb(self.hex2)
@@ -118,9 +117,9 @@ class FilamentRecord:
                 rgb1 = rgb1 or (0, 0, 0)
                 rgb2 = rgb2 or (0, 0, 0)
             mixed_rgb = (
-                (rgb1[0] + rgb2[0]) // 2,
-                (rgb1[1] + rgb2[1]) // 2,
-                (rgb1[2] + rgb2[2]) // 2
+                round((rgb1[0] + rgb2[0]) / 2),
+                round((rgb1[1] + rgb2[1]) / 2),
+                round((rgb1[2] + rgb2[2]) / 2)
             )
             object.__setattr__(self, 'rgb', mixed_rgb)
             object.__setattr__(self, 'lab', rgb_to_lab(mixed_rgb))

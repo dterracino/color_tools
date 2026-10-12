@@ -238,6 +238,13 @@ color-tools image --file photo.jpg --quantize-palette cga4 --dither
 
 ### Library Usage
 
+Runtime settings use frozen, context-local snapshots through `get_config()`,
+`set_config()`, `reset_config()`, and `config_context()`. Version 7 removes the
+old individual configuration setters and `--dual-color-mode`; use
+`--multi-color-mode` with `first`, `last`, or `srgb_mean`. See the
+[configuration guide](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md)
+for scope, migration, and the remaining compound-filament parsing work.
+
 ```python
 from color_tools import (
     FilamentCollections,

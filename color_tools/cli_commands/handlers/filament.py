@@ -5,13 +5,19 @@ from argparse import Namespace
 from pathlib import Path
 
 from ..utils import parse_hex_or_exit
-from ...config import set_dual_color_mode
+from ...config import config_context
 from ...filament_filter_criteria import FilamentFilterCriteria
 from ...filament_palette import FilamentPalette
 from ...export import export_filaments, list_export_formats
 
 
 def handle_filament_command(args: Namespace, json_path: "Path | str | None" = None) -> None:
+    """Run a filament command with a scoped multi-color configuration."""
+    with config_context(multi_color_mode=getattr(args, "multi_color_mode", None)):
+        _handle_filament_command(args, json_path)
+
+
+def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = None) -> None:
     """
     Handle the 'filament' command - search and query 3D printing filaments.
     
@@ -47,11 +53,6 @@ def handle_filament_command(args: Namespace, json_path: "Path | str | None" = No
         from ...interactive_manager import run_interactive_manager
         run_interactive_manager(json_dir=json_path)
         return  # run_interactive_manager handles exit
-    
-    # Set dual-color mode BEFORE loading any filaments
-    # This is CRITICAL - the mode affects how FilamentRecord.rgb works!
-    if hasattr(args, 'dual_color_mode'):
-        set_dual_color_mode(args.dual_color_mode)
     
     # Load filament palette with maker synonyms and owned filaments
     filament_palette = FilamentPalette.load_default()

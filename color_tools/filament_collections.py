@@ -9,13 +9,15 @@ and is then shared by every predefined collection.
 from functools import lru_cache
 from typing import Optional
 
+from .config import MultiColorMode, config_context, get_config
 from .filament_palette import FilamentPalette, FilamentRecord
 
 
-@lru_cache(maxsize=1)
-def _default_palette() -> FilamentPalette:
+@lru_cache(maxsize=3)
+def _default_palette(mode: MultiColorMode) -> FilamentPalette:
     """Return the shared default palette used by predefined collections."""
-    return FilamentPalette.load_default()
+    with config_context(multi_color_mode=mode):
+        return FilamentPalette.load_default()
 
 
 @lru_cache(maxsize=None)
@@ -23,10 +25,11 @@ def _resolve_collection(
     maker: Optional[str],
     type_name: Optional[str],
     finishes: tuple[str, ...],
+    mode: MultiColorMode,
 ) -> tuple[FilamentRecord, ...]:
     """Resolve and cache one immutable predefined collection."""
     finish = list(finishes) if finishes else None
-    records = _default_palette().filter(
+    records = _default_palette(mode).filter(
         maker=maker,
         type_name=type_name,
         finish=finish,
@@ -54,7 +57,9 @@ class _CollectionDescriptor:
         instance: object,
         owner: type[object],
     ) -> tuple[FilamentRecord, ...]:
-        return _resolve_collection(self._maker, self._type_name, self._finishes)
+        return _resolve_collection(
+            self._maker, self._type_name, self._finishes, get_config().multi_color_mode
+        )
 
 
 class FilamentCollections:

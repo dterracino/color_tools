@@ -266,8 +266,10 @@ does not load the palette until its first input is requested.
 
 #### Configuration
 
-- `set_dual_color_mode()` - Set how dual-color filaments are handled
-- `get_dual_color_mode()` - Get current dual-color mode
+- `get_config()` - Return the current frozen configuration snapshot
+- `set_config()` - Update settings in the current execution context
+- `reset_config()` - Restore built-in defaults in the current context
+- `config_context()` - Temporarily override settings with automatic restoration
 
 #### Validation
 
@@ -675,13 +677,13 @@ Some filaments have two colors (e.g., "#333333-#666666"). Control how these are 
 
 ```bash
 # Use first color (default)
-python -m color_tools filament --nearest --value 255 0 0 --dual-color-mode first
+python -m color_tools filament --nearest --value 255 0 0 --multi-color-mode first
 
-# Use second color
-python -m color_tools filament --nearest --value 255 0 0 --dual-color-mode last
+# Use last color
+python -m color_tools filament --nearest --value 255 0 0 --multi-color-mode last
 
-# Perceptually blend both colors in LAB space
-python -m color_tools filament --nearest --value 255 0 0 --dual-color-mode mix
+# Average encoded sRGB channels
+python -m color_tools filament --nearest --value 255 0 0 --multi-color-mode srgb_mean
 ```
 
 #### List and Filter Filaments
@@ -726,7 +728,9 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--count N`: Return top N nearest filaments instead of just one (default: 1, max: 50)
 - `--max-hue-delta DEGREES`: Restrict results to filaments within DEGREES of the target hue (LCH hue angle, 0-180). Useful when the best perceptual match changes hue (e.g., blue→purple). Achromatic colors are unaffected.
-- `--dual-color-mode {first,last,mix}`: Handle dual-color filaments (default: first)
+- `--multi-color-mode {first,last,srgb_mean}`: Override the current-context mode
+  (built-in default: first). Compound-record parsing is a subsequent step;
+  configuration replacement alone does not fix bundled multi-color data.
 
 **Filtering and Listing:**
 

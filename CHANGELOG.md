@@ -10,6 +10,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking configuration replacement** — remove the thread-local mutable
+  configuration and all individual getters/setters without aliases. Add frozen
+  `ColorConfig` snapshots and context-local `get_config`, `set_config`,
+  `reset_config`, and nested exception-safe `config_context`. Rename the CLI
+  override to `--multi-color-mode`; currently accept `first`, `last`, and
+  `srgb_mean` only. Capture settings at record construction and distinguish
+  modes in filament caches. Compound parsing/component storage and additional
+  modes remain subsequent work.
+- **Gamut configuration validation** — reject invalid tolerance and iteration
+  values, capture settings consistently for a mapping operation, and stop
+  searching when floating-point bounds no longer advance.
 - **Python minimum raised to 3.12** — version 7.0.0 drops Python 3.10 and
   3.11 support. Package metadata, strict analysis, generated-code checks,
   documentation builds, and installation guidance now use the 3.12 floor.

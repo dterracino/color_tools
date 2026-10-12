@@ -16,7 +16,7 @@ from typing import Tuple
 
 from .constants import ColorConstants
 from .conversions import lab_to_rgb, lab_to_lch, lch_to_lab
-from .config import get_gamut_tolerance, get_gamut_max_iterations
+from .config import ColorConfig, get_config
 
 
 def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = None) -> bool:
@@ -42,7 +42,7 @@ def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = 
     Args:
         lab: L*a*b* color tuple
         tolerance: How close to 0/255 boundaries before considering out-of-gamut.
-                   If None, uses the global config value (default 0.01).
+                   If None, uses the current context value (default 0.01).
     
     Returns:
         True if the color can be represented in sRGB, False if it would clip
@@ -54,7 +54,8 @@ def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = 
         False
     """
     if tolerance is None:
-        tolerance = get_gamut_tolerance()
+        tolerance = get_config().gamut_tolerance
+    ColorConfig(gamut_tolerance=tolerance)
         
     try:
         # Convert without clamping to see the "true" values
@@ -96,7 +97,7 @@ def find_nearest_in_gamut(lab: Tuple[float, float, float],
     Args:
         lab: Potentially out-of-gamut L*a*b* color
         max_iterations: Maximum desaturation steps (binary search iterations).
-                       If None, uses global config value (default 20).
+                       If None, uses current context value (default 20).
     
     Returns:
         In-gamut L*a*b* color (closest match that can be displayed)
@@ -109,11 +110,13 @@ def find_nearest_in_gamut(lab: Tuple[float, float, float],
         >>> is_in_srgb_gamut(displayable)
         True
     """
+    config = get_config()
     if max_iterations is None:
-        max_iterations = get_gamut_max_iterations()
+        max_iterations = config.gamut_max_iterations
+    ColorConfig(gamut_max_iterations=max_iterations)
         
     # If already in gamut, we're done!
-    if is_in_srgb_gamut(lab):
+    if is_in_srgb_gamut(lab, tolerance=config.gamut_tolerance):
         return lab
     
     # Convert to LCH for easier chroma manipulation
@@ -129,9 +132,11 @@ def find_nearest_in_gamut(lab: Tuple[float, float, float],
     for _ in range(max_iterations):
         # Try the midpoint
         test_c = (min_c + max_c) / 2.0
+        if test_c == min_c or test_c == max_c:
+            break
         test_lab = lch_to_lab((L, test_c, h))
         
-        if is_in_srgb_gamut(test_lab):
+        if is_in_srgb_gamut(test_lab, tolerance=config.gamut_tolerance):
             # This chroma works! Can we go higher?
             min_c = test_c  # New lower bound
         else:

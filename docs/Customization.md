@@ -440,60 +440,69 @@ Use `data/palettes/` only when adding or maintaining a built-in palette in the s
 
 ## Configuration Options
 
-### Dual-Color Mode
+### Multi-Color Configuration
 
-Some filaments have two colors (e.g., silk filaments with different appearances from different angles). The dual-color mode controls how these are handled during color matching:
+The configuration interface accepts `first` (default), `last`, and `srgb_mean`.
+Other planned selection and averaging modes are not accepted yet.
+Compound-source parsing and component retention are the next implementation
+step; the configuration update alone does not repair bundled compound records.
 
 **Via CLI:**
 
 ```bash
 # Use first color (default)
-python -m color_tools filament --nearest --value 255 0 0 --dual-color-mode first
+python -m color_tools filament --nearest --value 255 0 0 --multi-color-mode first
 
-# Use second color
-python -m color_tools filament --nearest --value 255 0 0 --dual-color-mode last
+# Use last color
+python -m color_tools filament --nearest --value 255 0 0 --multi-color-mode last
 
-# Perceptually blend both colors in LAB space
-python -m color_tools filament --nearest --value 255 0 0 --dual-color-mode mix
+# Average encoded sRGB channels
+python -m color_tools filament --nearest --value 255 0 0 --multi-color-mode srgb_mean
 ```
 
 **Via Python API:**
 
 ```python
-from color_tools import set_dual_color_mode, get_dual_color_mode
+from color_tools import config_context, get_config, reset_config, set_config
 
-# Set mode before loading FilamentPalette
-set_dual_color_mode('first')  # Use first color (default)
-set_dual_color_mode('last')   # Use second color
-set_dual_color_mode('mix')    # Blend colors in LAB space
-
-# Check current mode
-print(get_dual_color_mode())
+set_config(multi_color_mode="last")
+snapshot = get_config()  # Current frozen ColorConfig instance, not a copy
+with config_context(multi_color_mode="srgb_mean"):
+    print(get_config().multi_color_mode)
+assert get_config() is snapshot
+reset_config()
 ```
 
-### Thread-Safe Configuration
+### Configuration Scope and Validation
 
-Runtime configuration (like dual-color mode) uses `threading.local()` for thread-safe operation in multi-threaded applications. Each thread can have its own configuration without affecting others.
+Settings use `ContextVar`, not a mutable process-wide singleton. New asyncio
+tasks inherit their creation context; later updates in sibling tasks are
+isolated. Independent threads do not automatically inherit overrides. Set
+configuration inside the worker, or explicitly propagate `copy_context()`.
+Worker contexts can retain updates across jobs; prefer `config_context` for
+temporary overrides.
 
-```python
-import threading
-from color_tools import set_dual_color_mode, get_dual_color_mode
+Nested contexts restore the exact previous instance even after exceptions,
+including changes made by `set_config` or `reset_config` inside the block.
+Filament records capture settings at construction; existing records do not
+change afterward. Palette caches distinguish modes. CLI overrides are scoped
+to the command, including GUI/TUI entry points.
 
-def thread_with_first_mode():
-    set_dual_color_mode('first')
-    # This thread uses 'first' mode
-    print(f"Thread 1: {get_dual_color_mode()}")
+`set_config` accepts keyword arguments; `None` leaves a setting unchanged.
+Updates validate atomically. Invalid types raise `TypeError`, invalid values
+raise `ValueError`:
 
-def thread_with_mix_mode():
-    set_dual_color_mode('mix')
-    # This thread uses 'mix' mode
-    print(f"Thread 2: {get_dual_color_mode()}")
+- `gamut_tolerance`: finite number >= 0, excluding booleans; default 0.01 in
+  0-255 RGB channel units.
+- `gamut_max_iterations`: integer >= 1, excluding booleans; default 20.
+  Larger limits are allowed, but numerical convergence stops the search early.
 
-t1 = threading.Thread(target=thread_with_first_mode)
-t2 = threading.Thread(target=thread_with_mix_mode)
-t1.start()
-t2.start()
-```
+Version 7.0.0 removes all former individual getters/setters and
+`--dual-color-mode`, without compatibility aliases. Replace `mix` with
+`srgb_mean` only if an encoded RGB mean is intended; it is not a LAB blend.
+The planned `lab_mean` is not available yet. The unrounded gamut-check fix is
+also a subsequent step; current integer conversion still limits tolerance
+precision.
 
 ### Custom Data Directory
 

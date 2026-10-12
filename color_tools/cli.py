@@ -495,10 +495,10 @@ Examples:
         help="With --nearest, exclude a matching color name"
     )
     filament_parser.add_argument(
-        "--dual-color-mode",
-        choices=["first", "last", "mix"],
-        default="first",
-        help="How to handle dual-color filaments: 'first' (default), 'last', or 'mix' (perceptual blend)"
+        "--multi-color-mode",
+        choices=["first", "last", "srgb_mean"],
+        default=None,
+        help="Override the filament color mode: first (built-in default), last, or srgb_mean"
     )
     
     # Export operations

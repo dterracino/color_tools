@@ -649,6 +649,41 @@ class TestHandleHarmonyCommand(unittest.TestCase):
 class TestHandleFilamentCommand(unittest.TestCase):
     """Tests for handle_filament_command."""
 
+    def test_mode_override_restores_after_exit(self) -> None:
+        from color_tools import config_context, get_config
+
+        def fail_load() -> None:
+            self.assertEqual(get_config().multi_color_mode, "last")
+            raise RuntimeError("stop")
+
+        with config_context(multi_color_mode="srgb_mean"):
+            original = get_config()
+            with patch(
+                "color_tools.cli_commands.handlers.filament.FilamentPalette.load_default",
+                side_effect=fail_load,
+            ) as load:
+                with self.assertRaisesRegex(RuntimeError, "stop"):
+                    from color_tools.cli_commands.handlers.filament import handle_filament_command
+                    handle_filament_command(self._make_args(multi_color_mode="last"))
+                load.assert_called_once_with()
+            self.assertIs(get_config(), original)
+            self._run_capture(self._make_args(list_makers=True, multi_color_mode="last"))
+            self.assertIs(get_config(), original)
+
+    def test_mode_override_scopes_interactive_dispatch(self) -> None:
+        from color_tools import config_context, get_config
+        from color_tools.cli_commands.handlers.filament import handle_filament_command
+
+        def launch(*, json_dir: Path | str | None) -> None:
+            self.assertIsNone(json_dir)
+            self.assertEqual(get_config().multi_color_mode, "last")
+
+        with config_context(multi_color_mode="srgb_mean"):
+            original = get_config()
+            with patch("color_tools.interactive_manager.run_interactive_manager", side_effect=launch):
+                handle_filament_command(self._make_args(manage=True, multi_color_mode="last"))
+            self.assertIs(get_config(), original)
+
     def _run_capture(self, args: Namespace, json_path: Path | str | None = None) -> tuple[str | int | None, str]:
         from color_tools.cli_commands.handlers.filament import handle_filament_command
         captured = io.StringIO()
@@ -667,7 +702,7 @@ class TestHandleFilamentCommand(unittest.TestCase):
             list_export_formats=False, export=None, output=None,
             metric='de2000', count=1, cmc_l=2.0, cmc_c=1.0,
             all_filaments=True,   # Always search all to avoid owned-file side effects
-            dual_color_mode='first',
+            multi_color_mode='first',
             manage=False,
             list_owned=False, add_owned=None, remove_owned=None,
         )

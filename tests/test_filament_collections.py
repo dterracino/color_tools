@@ -4,12 +4,39 @@ import unittest
 from unittest.mock import patch
 
 from color_tools import FilamentCollections
+from color_tools.config import config_context
 from color_tools.filament_collections import _default_palette, _resolve_collection
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
 
 
 class TestFilamentCollections(unittest.TestCase):
     """Verify predefined collection contents and lazy-loading behavior."""
+
+    def test_collection_cache_distinguishes_modes(self) -> None:
+        def load() -> FilamentPalette:
+            return FilamentPalette([
+                FilamentRecord(
+                    id="probe", maker="Bambu Lab", type="PLA", finish="Basic",
+                    color="probe", hex="#FF0000", hex2="#0000FF",
+                )
+            ])
+
+        _resolve_collection.cache_clear()
+        _default_palette.cache_clear()
+        try:
+            with patch.object(FilamentPalette, "load_default", side_effect=load) as loader:
+                with config_context(multi_color_mode="first"):
+                    first = FilamentCollections.BAMBU_PLA_BASIC
+                with config_context(multi_color_mode="last"):
+                    last = FilamentCollections.BAMBU_PLA_BASIC
+                self.assertEqual(first[0].rgb, (255, 0, 0))
+                self.assertEqual(last[0].rgb, (0, 0, 255))
+                with config_context(multi_color_mode="first"):
+                    self.assertIs(FilamentCollections.BAMBU_PLA_BASIC, first)
+                self.assertEqual(loader.call_count, 2)
+        finally:
+            _resolve_collection.cache_clear()
+            _default_palette.cache_clear()
 
     def test_bambu_pla_basic_collection(self) -> None:
         records = FilamentCollections.BAMBU_PLA_BASIC

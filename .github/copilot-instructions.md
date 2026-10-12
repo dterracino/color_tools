@@ -267,9 +267,12 @@ class GPLExporter(PaletteExporter):
 - Available modules: `math`, `colorsys`, `json`, `hashlib`, `threading`, `argparse`, `dataclasses`, `typing`
 - If you need functionality, implement it from scratch using standard library
 
-### Thread Safety
-- Runtime configuration uses `threading.local()` for thread-safe per-thread settings
-- Example: dual-color mode for filaments must be thread-local
+### Configuration Scope
+- Runtime settings use `ContextVar` with frozen `ColorConfig` snapshots.
+- Use `get_config`, `set_config`, `reset_config`, and `config_context`; no legacy individual setters.
+- Async tasks inherit their creation context; independent threads need explicit propagation.
+- Filament records capture `multi_color_mode` at construction; cache keys must include it.
+- Supported modes are currently `first`, `last`, and `srgb_mean`; other planned modes are not accepted.
 
 ### Performance Considerations
 - Use indexed lookups (O(1)) for name/RGB searches in palettes

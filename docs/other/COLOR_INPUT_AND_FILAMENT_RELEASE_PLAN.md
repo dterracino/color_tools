@@ -3,8 +3,10 @@
 ## Status and next-session entry point
 
 - Created: 2026-10-10.
-- Status: color-input and filament work remains planned; Python 3.12 minimum
-  migration is implemented and undergoing retained-runtime validation.
+- Updated: 2026-10-12.
+- Status: configuration, color-input, multi-color, and swatch work remains
+  planned. Python 3.12 migration is locally validated on 3.12, 3.13, and 3.14;
+  confirmation from the next GitHub CI run remains pending.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
 - Read this document before the next color-input, filament, or release work.
 - Preserve the existing user-palette work and unrelated worktree changes.
@@ -15,6 +17,260 @@ color handling, possible arbitrary-length multi-color support, configuration
 design, critical regression coverage, new filament data imports, and alignment
 on a Python 3.12 minimum. The
 previously completed user-palette changes remain part of the release.
+
+## Current implementation checklist
+
+### Approved configuration-first sequence
+
+Replace configuration first, then consolidate RGB validation/hex parsing and
+change filament representation. Remove the old system completely; no aliases
+or backwards-compatibility implementation. Implement only `first`, `last`,
+and `srgb_mean` now, defaulting to `first`. Describe other modes as future work
+in docstrings and reject them until implemented.
+
+`get_config()` returns the current frozen `ColorConfig` instance itself, with
+no copy/live mutable view. `reset_config()` restores defaults in the current
+context; context exit still restores the enclosing snapshot.
+
+The next record step preserves original `hex`, stores ordered immutable
+`rgb_components`, removes `hex2`, and exposes computed `effective_hex` for
+single-color consumers. Audit all source/effective hex consumers before edits.
+Configuration replacement alone does not repair compound JSON parsing.
+
+This section consolidates the subsequent design discussion and is the working
+execution checklist. It supersedes conflicting initial recommendations later
+in this document. The verified baseline and import-source inventory below remain
+useful evidence, not proof that the proposed implementation already exists.
+
+No configuration, mixing, gamut, or swatch implementation is authorized merely
+by a proposal appearing here. Resolve the marked decisions before implementing
+the affected contract.
+
+### Phase 1: inventory and contract decisions
+
+- [ ] Capture the current worktree, diagnostics, and relevant regression baseline.
+- [ ] Trace configuration consumers, object construction, caches, async callers,
+  and worker boundaries. Record where settings are read versus captured.
+- [ ] Locate **all RGB input validation and hex conversion code throughout the
+  repository**, including library modules, CLI, MCP, GUI/TUI, exporters,
+  importers, tests, demos, scripts, tooling, and tools.
+- [ ] Build a caller/contract inventory rather than searching only for known
+  helper names. Include channel checks, regexes, integer parsing, prefix removal,
+  short-hex expansion, formatting, coercion, and invalid-input fallbacks.
+- [ ] Route applicable production and internal-consumer code through the new
+  canonical helpers. Retain small format/error-presentation adapters, not
+  duplicate conversion implementations. Tests may retain independent reference
+  calculations and intentionally malformed inputs.
+- [ ] Distinguish input validation from output clipping, alpha handling,
+  floating-coordinate conversions, and gamut checks. Do not narrow legitimate
+  scalar or array conversion inputs to strict 8-bit palette inputs.
+- [ ] Choose a canonical helper location and dependency direction without
+  creating a conversions/utilities import cycle.
+- [ ] Approve hex grammar: prefixes, lengths, ASCII characters, whitespace,
+  alpha policy, invalid types, and error contract.
+- [ ] Approve strict RGB input types, containers, bounds, booleans, integer
+  subclasses, floats, and coercion/mutation policy.
+- [ ] Decide whether public `hex_to_rgb` keeps its optional-return contract or
+  changes to exceptions in 7.0.0.
+- [ ] Decide compound syntax, compatibility for separate `hex2`, and handling
+  when both compound `hex` and `hex2` are supplied.
+- [ ] Decide whether component counts are arbitrary or limited to four.
+  Two, three, and four must be supported without adding `hex3`/`hex4` fields.
+- [x] Decide deprecation aliases versus removal for old dual-color API names,
+  CLI options, and `mix` (historically intended to mean LAB averaging).
+
+#### Inspect the purpose of validation.py
+
+[validation.py](../../color_tools/validation.py) is currently **color-name
+plausibility checking**, not the canonical low-level RGB/hex validator.
+It matches a supplied name against the loaded CSS palette using optional
+RapidFuzz or a standard-library fallback, compares the supplied hex color with
+the matched palette color using CIEDE2000, and returns a structured
+`ColorValidationRecord`. Its default distance threshold is 20.0.
+
+- [ ] Trace its public exports, CLI/MCP routes, import-tool usage, and tests.
+- [ ] Review name-match confidence versus color-distance acceptance, threshold
+  validation, invalid-hex reporting, optional-dependency parity, and its
+  import-time palette snapshot.
+- [ ] Preserve the distinction between semantic name plausibility and strict
+  input validity. Thread its hex parsing through the canonical implementation
+  without silently changing its structured reporting contract.
+- [ ] Record any independently discovered behavior issues; obtain scope
+  approval before broadening this work into a name-matching redesign.
+
+### Phase 2: configuration interface and scope
+
+Preferred design: familiar inspection/set/context APIs, immutable internal
+settings, and `ContextVar` storage. Most callers continue using defaults.
+This is not a claim that pandas or scikit-learn use the same storage mechanism.
+
+- [x] Finalize typed `get_config`, keyword-based `set_config`, and
+  `config_context` signatures and public exports.
+- [x] Implement nested overrides with exception-safe restoration.
+- [x] Validate updates atomically; invalid updates must not partially change
+  settings. Return an immutable value or detached snapshot from `get_config`.
+- [x] Define `set_config` as changing the current execution context, not all
+  application threads. Document async context inheritance and explicitly
+  verify propagation or isolation at actual worker boundaries.
+- [x] Filament records capture their effective mode at construction. Later
+  overrides must not mutate existing RGB/LAB or invalidate palette indexes.
+- [x] Gamut operations capture effective settings once and use that snapshot
+  consistently for all internal checks.
+- [ ] Retain useful explicit per-call overrides with defined precedence:
+  explicit argument, effective context configuration, built-in default.
+- [x] Make caches whose contents depend on mode respect that mode; review the
+  MCP cached filament palette specifically.
+- [x] Update CLI, GUI/TUI, and MCP boundaries to use the chosen scope without
+  settings leaking into subsequent unrelated work.
+
+### Phase 3: gamut precision and shared validation
+
+- [ ] Add regression tests showing that current gamut checks round RGB before
+  applying tolerance. Preserve public integer-returning conversion APIs.
+- [ ] Extract/reuse a floating-point conversion path for gamut calculations;
+  do not duplicate transfer curves or scientific matrices.
+- [ ] Reuse and correct
+  [find_nearest_in_gamut](../../color_tools/gamut.py), rather than introducing a
+  second mapper for filament blending.
+- [ ] Validate tolerance as a finite number >= 0, excluding booleans; retain
+  default 0.01 in RGB channel units on the 0-255 scale.
+- [ ] Validate iterations as an integer >= 1, excluding booleans; retain
+  default 20. Proposed policy has no arbitrary upper cap.
+- [ ] Terminate binary search when floating-point progress stops.
+- [ ] Verify boundary handling, attainable neutral endpoints, invalid LAB
+  inputs, and mapped-output guarantees. Define explicit failures where
+  preserving lightness cannot produce an in-gamut result.
+- [ ] Describe the mapper as chroma reduction at constant LCH hue/lightness,
+  not a guarantee of the globally nearest color.
+- [ ] Consolidate parsing/validation using the inventory from Phase 1.
+  Remove silent black substitution and discarded malformed components.
+- [ ] Preserve contextual loader errors identifying the source and entry.
+
+### Phase 4: multi-color representation and modes
+
+- [ ] Rename configuration terminology to `multi_color_mode`.
+- [ ] Retain an immutable ordered tuple of validated source components in each
+  filament record, separately from its resolved RGB/LAB.
+- [ ] Preserve component repetition, source order, stable IDs, owned
+  references, and original source information.
+- [ ] Validate every component even when only one will be selected.
+- [ ] Keep `first` as the default. Single-component inputs should resolve to
+  that component under every mode.
+- [ ] Implement shared color selection/blending outside CLI/UI adapters.
+
+| Mode | Definition | Decision status |
+| --- | --- | --- |
+| `first` | First defined component | Planned |
+| `last` | Final defined component | Planned |
+| `representative` | Centrality, then chroma, then source order | User-defined algorithm |
+| `lightest` | Highest LAB L* | Proposed; confirm |
+| `darkest` | Lowest LAB L* | Proposed; confirm |
+| `most_chromatic` | Highest LAB C* | Proposed; confirm |
+| `least_chromatic` | Lowest LAB C* | Proposed; confirm |
+| `srgb_mean` | Equal arithmetic mean of encoded sRGB channels | Planned |
+| `linear_rgb_mean` | Decode sRGB, mean linear channels, encode to sRGB | Planned |
+| `lab_mean` | Equal arithmetic mean of D65 LAB coordinates | Planned |
+
+For `representative`:
+
+1. Convert all components to CIELAB with D65.
+2. Sum each component's CIEDE2000 distances to every other component.
+3. Retain totals <= minimum total + distance-score tolerance.
+4. Among survivors, compute `C* = sqrt(a* squared + b* squared)`.
+5. Retain chroma >= surviving maximum chroma - chroma tolerance.
+6. Select the earliest surviving component unchanged.
+
+Use independently named internal constants, initially 1.0 each. Both bands
+compare against the best score, not pairwise candidate chains. They are
+practical tie bands, not merely floating-point protection or proof that the
+candidates are visually indistinguishable. Two-component distance totals tie;
+identical inputs choose the first. Similar grays choose the first only when
+the score/chroma bands admit them.
+
+- [ ] Confirm exact-score/source-order ties for the four proposed extrema
+  modes; do not automatically reuse representative-mode tolerance bands.
+- [ ] Keep all mean calculations floating-point until final RGB output.
+- [ ] Reuse corrected gamut mapping for out-of-gamut LAB means.
+- [ ] Clamp residual numerical overshoot and round once to integer RGB.
+  Proposed rounding is Python nearest-even, not floor, ceiling, or ties-up.
+- [ ] Derive stored LAB from final RGB so matching, indexes, and swatches
+  describe the same resolved color.
+- [ ] Document means as alternative empirical models for printed/melted
+  co-extruded filament. Users may test and choose a mode; none predicts
+  pigment mixing from RGB alone. Equal component weights are the assumption.
+
+### Phase 5: dependency-free record swatches
+
+- [ ] Add consistent swatch conveniences to color and filament records.
+- [ ] Return complete PNG `bytes`, never a type conditional on Pillow being
+  installed. Add an explicit save convenience returning a `Path`.
+- [ ] Reuse [SimplePNGWriter](../../color_tools/image/png_writer.py) and shared
+  rendering logic; do not add another PNG encoder or a new image abstraction.
+- [ ] Validate RGB without bit-mask wrapping and validate positive integer
+  dimensions excluding booleans.
+- [ ] Decide method names, default dimensions, output-size/resource limits,
+  and undersized-image behavior before implementation.
+
+| Swatch mode | Rendering |
+| --- | --- |
+| `solid` (default) | Record's already-resolved RGB |
+| `blocks` | All original components in source-order vertical sections |
+| `gradient` | Equally spaced original component stops, sRGB interpolation |
+
+- [ ] Single-color records render solid under every swatch mode.
+- [ ] Partition block pixels deterministically with widths differing by at
+  most one pixel; do not silently omit components when width is insufficient.
+- [ ] Four-color gradient stops are 0%, 33 1/3%, 66 2/3%, 100%.
+  Preserve first/last endpoint pixels and define narrow-gradient behavior.
+- [ ] Use encoded sRGB interpolation only; no interpolation-space setting.
+- [ ] Do not reread ambient mixing configuration during rendering.
+- [ ] Document blocks/gradients as component illustrations, not extrusion
+  geometry or additional physical blending predictions.
+- [ ] Keep the Pillow-based labeled swatch-sheet exporter distinct.
+
+### Phase 6: integration and regression gates
+
+- [ ] Wire library loaders/direct constructors, public exports, CLI modes and
+  errors, MCP schemas/caches, GUI/TUI swatches/tooltips, search/hue filters,
+  CSV/JSON exports, template tags, and AutoForge's single-color output.
+- [ ] Decide serialized component fields and compatibility explicitly;
+  dataclass serialization must not accidentally change the export schema.
+- [ ] Add failing tests for compound parsing, `last`, LAB blending, early
+  rounding, and invalid-input black fallback before fixing each behavior.
+- [ ] Test all supported component counts/modes, order, repetition, invalid
+  unselected components, and RGB/LAB/index consistency.
+- [ ] Test representative band boundaries, two-color ties, chroma selection,
+  and first-in-order tie resolution using independent expectations.
+- [ ] Test nested configuration contexts, exception restoration, invalid
+  updates, task/thread scope, existing-record lifetime, and cache behavior.
+- [ ] Validate decoded PNG dimensions and exact pixels for solid/blocks/
+  gradients, deterministic remainders, endpoints, and invalid dimensions.
+- [ ] Verify swatches in an isolated base-only installation without Pillow.
+- [ ] Exercise real bundled compounds and independently audit every database
+  component/result. Retain the mutation checks specified in Workstream 4.
+
+### Phase 7: imports and release completion
+
+- [ ] Execute the Bambu, Overture, and IEMAI reconciliation described in
+  Workstream 5 only after shared color contracts are tested.
+- [ ] Obtain approval for approximate IEMAI values and provenance policy.
+- [ ] Review dry-run reports; preserve IDs/owned references and demonstrate
+  deterministic, idempotent imports.
+- [ ] Regenerate protected hashes after data changes.
+- [ ] Update API/CLI examples, configuration instructions, migration notes,
+  optional-dependency guidance, and changelog.
+- [ ] Run focused tests, full regression suites, strict repository typing,
+  installed-wheel consumers/completeness, integrity checks, Problems-panel
+  checks, package/docs builds, and whitespace checks.
+- [ ] Preserve all five internal-directory distribution exclusions.
+- [ ] Confirm GitHub CI after the user's push and review the complete release
+  diff before publication. Do not commit, push, or release automatically.
+
+Python support migration is already locally validated: 1,401 tests with three
+skips on each of Python 3.12, 3.13, and 3.14; zero repository strict errors/
+warnings in existing and fresh dependency environments; installed-wheel
+completeness 100%; consumer and package/docs builds passed. This evidence does
+not replace validation after the changes above, nor establish a remote CI pass.
 
 ## Verified baseline
 

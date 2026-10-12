@@ -40,6 +40,7 @@ from color_tools.distance import (
     euclidean,
 )
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
+from color_tools.config import MultiColorMode, config_context, get_config
 from color_tools.gamut import find_nearest_in_gamut, is_in_srgb_gamut
 from color_tools.naming import generate_color_name
 from color_tools.palette import ColorRecord, Palette, load_palette
@@ -126,9 +127,14 @@ def _css_palette() -> Palette:
     return Palette.load_default()
 
 
-@lru_cache(maxsize=1)
 def _filament_palette() -> FilamentPalette:
-    return FilamentPalette.load_default()
+    return _filament_palette_for_mode(get_config().multi_color_mode)
+
+
+@lru_cache(maxsize=3)
+def _filament_palette_for_mode(mode: MultiColorMode) -> FilamentPalette:
+    with config_context(multi_color_mode=mode):
+        return FilamentPalette.load_default()
 
 
 def _named_match(record: ColorRecord, distance: float, metric: str) -> NamedColorMatch:
