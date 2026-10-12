@@ -5,10 +5,10 @@
 - Created: 2026-10-10.
 - Updated: 2026-10-12.
 - Status: configuration, canonical color inputs, multi-color records, gamut
-  precision, and lazy image-package initialization are implemented. Swatches,
-  additional modes, and the separate watermark implementation cleanup remain
-  planned. Python 3.12 migration is locally validated on 3.12, 3.13, and 3.14;
-  confirmation from the next GitHub CI run remains pending.
+  precision, lazy image-package initialization, and watermark cleanup are
+  implemented. Swatches and additional modes remain planned. Python 3.12
+  migration is locally validated on 3.12, 3.13, and 3.14; confirmation from
+  the next GitHub CI run remains pending.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
 - Read this document before the next color-input, filament, or release work.
 - For the current implementation/worktree snapshot and remaining tasks, read
@@ -184,9 +184,33 @@ table.
   or warnings; warning-as-error Sphinx HTML build; module doctest; and
   `git diff --check`.
 
-The related `watermark.py` implementation cleanup remains separate: Cairo
-native-load reporting, exception chaining, shared compositing helpers, argument
-validation, position errors, and its local examples have not been changed yet.
+### Watermark implementation cleanup
+
+On 2026-10-12, completed the related focused cleanup in
+`color_tools.image.watermark` without changing the three public function
+signatures.
+
+- Catch both `ImportError` and native-library `OSError` while importing
+  CairoSVG, report the image-extra installation route, and chain the original
+  exception. A missing byte result from `svg2png` now raises an explicit
+  `RuntimeError` rather than relying on an assertion removed by optimized mode.
+- Validate finite opacity on the inclusive 0.0-1.0 interval and positive finite
+  image/SVG scale factors. Raster scales that round either dimension to zero
+  fail before Pillow resizing. Unknown named positions raise `ValueError` and
+  enumerate the accepted presets.
+- Share image/SVG alpha scaling and positioned compositing helpers. Source
+  raster and converted SVG images are copied into RGBA storage and closed
+  promptly. Font-loading failures retain their causes, and the redundant
+  default-font retry was removed.
+- Corrected examples to use skipped filesystem doctests and save RGBA watermark
+  output as PNG. Added regression coverage for validation boundaries, CairoSVG
+  and native Cairo failures, missing SVG output, position errors, and font-error
+  chaining.
+- Split helper/error coverage into a focused companion test module so both
+  watermark test files remain under the repository's 500-line guideline.
+  Validation passed: 46 focused watermark tests; 1,444 full-suite tests with
+  two expected optional-feature skips; zero strict Pyright errors or warnings;
+  warning-as-error Sphinx HTML build; module doctest; and `git diff --check`.
 
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later

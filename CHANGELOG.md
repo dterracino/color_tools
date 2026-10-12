@@ -81,6 +81,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Watermark validation and optional dependency reporting** — validate finite
+  opacity and positive finite image/SVG scale values, reject scales that round
+  raster watermarks to an empty size, and report invalid position names with
+  the accepted presets. Preserve font-loading causes, report both missing
+  CairoSVG and native Cairo failures with exception chaining, and replace the
+  optimized-away SVG output assertion with an explicit runtime error. Share
+  raster/SVG opacity and compositing helpers, close source images promptly, and
+  correct watermark examples to save RGBA results as PNG.
 - **Color-input audit follow-up** — watermark CLI text/stroke colors now use
   canonical RGB validation, including channel bounds. Panchroma, Polymaker,
   and Bambu source importers validate complete compound hex fields instead

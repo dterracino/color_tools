@@ -12,12 +12,12 @@ Functions:
     
 Example:
 --------
-    >>> from color_tools.image import add_text_watermark
-    >>> from PIL import Image
-    >>> 
+    >>> from color_tools.image import add_text_watermark  # doctest: +SKIP
+    >>> from PIL import Image  # doctest: +SKIP
+
     >>> # Add simple text watermark
-    >>> img = Image.open("photo.jpg")
-    >>> result = add_text_watermark(
+    >>> img = Image.open("photo.jpg")  # doctest: +SKIP
+    >>> result = add_text_watermark(  # doctest: +SKIP
     ...     img, 
     ...     text="© 2025 My Brand",
     ...     position="bottom-right",
@@ -25,10 +25,10 @@ Example:
     ...     color=(255, 255, 255),
     ...     opacity=0.8
     ... )
-    >>> result.save("watermarked.jpg")
-    >>> 
+    >>> result.save("watermarked.png")  # doctest: +SKIP
+
     >>> # Add text with stroke outline
-    >>> result = add_text_watermark(
+    >>> result = add_text_watermark(  # doctest: +SKIP
     ...     img,
     ...     text="SAMPLE",
     ...     position="center",
@@ -38,10 +38,10 @@ Example:
     ...     stroke_width=3,
     ...     opacity=0.5
     ... )
-    >>> 
+
     >>> # Add logo watermark from SVG
-    >>> from color_tools.image import add_svg_watermark
-    >>> result = add_svg_watermark(
+    >>> from color_tools.image import add_svg_watermark  # doctest: +SKIP
+    >>> result = add_svg_watermark(  # doctest: +SKIP
     ...     img,
     ...     svg_path="logo.svg",
     ...     position="top-left",
@@ -53,6 +53,7 @@ Example:
 from __future__ import annotations
 
 import io
+import math
 from pathlib import Path
 from typing import Literal, Protocol, cast
 
@@ -121,28 +122,27 @@ def _load_font(
         
         try:
             return ImageFont.truetype(str(font_path), size)
-        except Exception as e:
-            raise ValueError(f"Failed to load font file {font_path}: {e}")
+        except Exception as exc:
+            raise ValueError(
+                f"Failed to load font file {font_path}: {exc}"
+            ) from exc
     
     # Load system font by name
     if font_name:
         try:
             return ImageFont.truetype(font_name, size)
-        except Exception:
+        except Exception as initial_error:
             # Try with common font file extensions
             for ext in ['.ttf', '.otf', '.TTF', '.OTF']:
                 try:
                     return ImageFont.truetype(font_name + ext, size)
                 except Exception:
                     continue
-            raise ValueError(f"Could not find system font: {font_name}")
+            raise ValueError(
+                f"Could not find system font: {font_name}"
+            ) from initial_error
     
-    # Fall back to default font
-    try:
-        return ImageFont.load_default()
-    except Exception:
-        # Ultimate fallback for older PIL versions
-        return ImageFont.load_default()
+    return ImageFont.load_default()
 
 
 def _calculate_position(
@@ -162,6 +162,9 @@ def _calculate_position(
         
     Returns:
         (x, y) coordinates for top-left corner of watermark
+
+    Raises:
+        ValueError: If a named position is not one of the supported presets
     """
     img_w, img_h = image_size
     mark_w, mark_h = watermark_size
@@ -183,7 +186,54 @@ def _calculate_position(
         "bottom-right": (img_w - mark_w - margin, img_h - mark_h - margin),
     }
     
+    if position not in positions_map:
+        valid_positions = ", ".join(positions_map)
+        raise ValueError(
+            f"Unknown watermark position {position!r}. "
+            f"Expected one of: {valid_positions}"
+        )
+
     return positions_map[position]
+
+
+def _validate_opacity(opacity: float) -> None:
+    """Validate a watermark opacity on the inclusive unit interval."""
+    if not math.isfinite(opacity) or not 0.0 <= opacity <= 1.0:
+        raise ValueError(f"opacity must be between 0.0 and 1.0, got {opacity}")
+
+
+def _validate_scale(scale: float) -> None:
+    """Validate a positive watermark scale factor."""
+    if not math.isfinite(scale) or not scale > 0.0:
+        raise ValueError(f"scale must be greater than 0.0, got {scale}")
+
+
+def _apply_opacity(watermark: Image.Image, opacity: float) -> Image.Image:
+    """Return an RGBA watermark with its alpha channel scaled by opacity."""
+    if opacity == 1.0:
+        return watermark
+
+    red, green, blue, alpha = watermark.split()
+    scaled_alpha = alpha.point(lambda value: int(value * opacity))
+    return Image.merge("RGBA", (red, green, blue, scaled_alpha))
+
+
+def _composite_at(
+    image: Image.Image,
+    watermark: Image.Image,
+    position: Position | tuple[int, int],
+    margin: int,
+) -> Image.Image:
+    """Composite an RGBA watermark onto an RGBA image at a chosen position."""
+    coordinates = _calculate_position(
+        image.size,
+        watermark.size,
+        position,
+        margin,
+    )
+    overlay = Image.new("RGBA", image.size, (0, 0, 0, 0))
+    overlay.paste(watermark, coordinates, watermark)
+    return Image.alpha_composite(image, overlay)
 
 
 def add_text_watermark(
@@ -217,10 +267,14 @@ def add_text_watermark(
         
     Returns:
         New image with watermark applied
+
+    Raises:
+        ValueError: If opacity is outside 0.0 through 1.0, the named position
+            is invalid, or the requested font cannot be loaded
         
     Example:
-        >>> img = Image.open("photo.jpg")
-        >>> result = add_text_watermark(
+        >>> img = Image.open("photo.jpg")  # doctest: +SKIP
+        >>> result = add_text_watermark(  # doctest: +SKIP
         ...     img,
         ...     text="© 2025",
         ...     position="bottom-right",
@@ -232,6 +286,8 @@ def add_text_watermark(
         ...     opacity=0.7
         ... )
     """
+    _validate_opacity(opacity)
+
     # Ensure image is in RGBA mode for transparency
     if image.mode != 'RGBA':
         image = image.convert('RGBA')
@@ -310,10 +366,14 @@ def add_image_watermark(
         
     Returns:
         New image with watermark applied
+
+    Raises:
+        ValueError: If opacity or scale is outside its accepted range, scale
+            produces an empty raster size, or the named position is invalid
         
     Example:
-        >>> img = Image.open("photo.jpg")
-        >>> result = add_image_watermark(
+        >>> img = Image.open("photo.jpg")  # doctest: +SKIP
+        >>> result = add_image_watermark(  # doctest: +SKIP
         ...     img,
         ...     watermark_path="logo.png",
         ...     position="top-left",
@@ -321,16 +381,16 @@ def add_image_watermark(
         ...     opacity=0.7
         ... )
     """
+    _validate_opacity(opacity)
+    _validate_scale(scale)
+
     # Ensure image is in RGBA mode
     if image.mode != 'RGBA':
         image = image.convert('RGBA')
     
-    # Load watermark image
-    watermark = Image.open(watermark_path)
-    
-    # Ensure watermark has alpha channel
-    if watermark.mode != 'RGBA':
-        watermark = watermark.convert('RGBA')
+    # Load a detached RGBA copy so the source file is closed immediately.
+    with Image.open(watermark_path) as source:
+        watermark = source.convert("RGBA").copy()
     
     # Scale watermark if needed
     if scale != 1.0:
@@ -338,31 +398,14 @@ def add_image_watermark(
             int(watermark.width * scale),
             int(watermark.height * scale)
         )
+        if new_size[0] < 1 or new_size[1] < 1:
+            raise ValueError(
+                f"scale {scale} produces an empty watermark size {new_size}"
+            )
         watermark = watermark.resize(new_size, Image.Resampling.LANCZOS)
     
-    # Apply opacity
-    if opacity < 1.0:
-        # Split into channels and adjust alpha
-        r, g, b, a = watermark.split()
-        a = a.point(lambda x: int(x * opacity))
-        watermark = Image.merge('RGBA', (r, g, b, a))
-    
-    # Calculate position
-    x, y = _calculate_position(
-        image.size,
-        watermark.size,
-        position,
-        margin
-    )
-    
-    # Create overlay and paste watermark
-    overlay = Image.new('RGBA', image.size, (0, 0, 0, 0))
-    overlay.paste(watermark, (x, y), watermark)
-    
-    # Composite overlay onto original image
-    watermarked = Image.alpha_composite(image, overlay)
-    
-    return watermarked
+    watermark = _apply_opacity(watermark, opacity)
+    return _composite_at(image, watermark, position, margin)
 
 
 def add_svg_watermark(
@@ -395,11 +438,12 @@ def add_svg_watermark(
         New image with watermark applied
         
     Raises:
-        ImportError: If cairosvg is not installed
+        ImportError: If CairoSVG or its native Cairo library is unavailable
+        ValueError: If opacity or scale is outside its accepted range
         
     Example:
-        >>> img = Image.open("photo.jpg")
-        >>> result = add_svg_watermark(
+        >>> img = Image.open("photo.jpg")  # doctest: +SKIP
+        >>> result = add_svg_watermark(  # doctest: +SKIP
         ...     img,
         ...     svg_path="logo.svg",
         ...     position="top-right",
@@ -407,13 +451,17 @@ def add_svg_watermark(
         ...     opacity=0.6
         ... )
     """
+    _validate_opacity(opacity)
+    _validate_scale(scale)
+
     try:
         import cairosvg
-    except ImportError:
+    except (ImportError, OSError) as exc:
         raise ImportError(
-            "cairosvg is required for SVG watermarks. "
+            "CairoSVG and its native Cairo library are required for SVG "
+            "watermarks. "
             "Install with: pip install color-match-tools[image]"
-        )
+        ) from exc
     
     # Convert SVG to PNG in memory
     svg_to_png = cast(_SVGToPNG, getattr(cairosvg, "svg2png"))
@@ -424,39 +472,18 @@ def add_svg_watermark(
         scale=scale if (width is None and height is None) else 1.0,
     )
     
-    # Load PNG into PIL Image
-    assert png_data is not None, "cairosvg.svg2png returned None"
-    watermark = Image.open(io.BytesIO(png_data))
-    
-    # Ensure watermark has alpha channel
-    if watermark.mode != 'RGBA':
-        watermark = watermark.convert('RGBA')
-    
-    # Apply opacity
-    if opacity < 1.0:
-        r, g, b, a = watermark.split()
-        a = a.point(lambda x: int(x * opacity))
-        watermark = Image.merge('RGBA', (r, g, b, a))
-    
-    # Calculate position
-    x, y = _calculate_position(
-        image.size,
-        watermark.size,
-        position,
-        margin
-    )
+    if png_data is None:
+        raise RuntimeError("cairosvg.svg2png returned no PNG data")
+
+    with Image.open(io.BytesIO(png_data)) as source:
+        watermark = source.convert("RGBA").copy()
+
+    watermark = _apply_opacity(watermark, opacity)
     
     # Ensure base image is in RGBA mode
     if image.mode != 'RGBA':
         image = image.convert('RGBA')
     
-    # Create overlay and paste watermark
-    overlay = Image.new('RGBA', image.size, (0, 0, 0, 0))
-    overlay.paste(watermark, (x, y), watermark)
-    
-    # Composite overlay onto original image
-    watermarked = Image.alpha_composite(image, overlay)
-    
-    return watermarked
+    return _composite_at(image, watermark, position, margin)
 
 
