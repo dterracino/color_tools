@@ -264,8 +264,8 @@ class TestExtractColorClustersHyAB(unittest.TestCase):
         """Sum of pixel_counts equals total image pixels."""
         clusters = self.fn(self.img_path, n_colors=4, distance_metric="hyab")
         total = sum(c.pixel_count for c in clusters)
-        img = Image.open(self.img_path)
-        self.assertEqual(total, img.width * img.height)
+        with Image.open(self.img_path) as image:
+            self.assertEqual(total, image.width * image.height)
 
     def test_l_weight_accepted(self):
         """l_weight parameter is accepted without error."""
@@ -347,9 +347,10 @@ class TestQuantizeImageHyAB(unittest.TestCase):
 
     def test_output_size_matches_input(self):
         """Output image has the same dimensions as the input."""
-        input_img = Image.open(self.img_path)
-        result = self.fn(self.img_path, n_colors=4)
-        self.assertEqual(result.size, input_img.size)
+        with Image.open(self.img_path) as input_image:
+            expected_size = input_image.size
+        with self.fn(self.img_path, n_colors=4) as result:
+            self.assertEqual(result.size, expected_size)
 
     def test_output_mode_is_rgb(self):
         """Output image is in RGB mode."""

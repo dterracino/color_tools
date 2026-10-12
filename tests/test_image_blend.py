@@ -1062,8 +1062,8 @@ class TestBlendImagesIO(unittest.TestCase):
         self.test_files.append(out_path)
         self.blend_images(base, blend, output_path=out_path)
         self.assertTrue(os.path.exists(out_path))
-        saved = Image.open(out_path)
-        self.assertEqual(saved.mode, "RGBA")
+        with Image.open(out_path) as saved:
+            self.assertEqual(saved.mode, "RGBA")
 
     def test_all_27_modes_run_without_error(self) -> None:
         """Smoke test: every blend mode runs without raising an exception."""

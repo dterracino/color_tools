@@ -198,8 +198,12 @@ def setup_logging(
     library_logger.setLevel(logging.DEBUG)   # Handlers perform their own filtering.
     library_logger.propagate = False          # Don't double-log via the root logger.
 
-    # Replace any handlers from a previous setup_logging() call (idempotency).
+    # Replace and close handlers from a previous setup_logging() call. Removing
+    # a FileHandler does not close its stream, so clearing alone leaks the file.
+    previous_handlers = library_logger.handlers[:]
     library_logger.handlers.clear()
+    for handler in previous_handlers:
+        handler.close()
     library_logger.filters.clear()
 
     # Attach the injection-prevention filter once at the logger level so that

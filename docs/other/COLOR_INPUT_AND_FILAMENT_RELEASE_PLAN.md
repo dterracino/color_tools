@@ -239,9 +239,10 @@ On 2026-10-12, completed the scalar normalization and sRGB transfer review.
 - Deferred shared LAB validation until structural validity, lightness policy,
   and gamut membership have separately approved contracts.
 - Validation passed: 1,450 full-suite tests with two expected optional-feature
-  skips; zero strict Pyright errors or warnings; 33 module doctests;
-  warning-as-error Sphinx HTML build; package data verification; both legacy
-  512-color generator smoke checks; and `git diff --check`.
+  skips and forced `ResourceWarning` reporting; zero strict Pyright errors or
+  warnings; 33 module doctests; warning-as-error Sphinx HTML build; package
+  data verification; both legacy 512-color generator smoke checks; and
+  `git diff --check`.
 
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later

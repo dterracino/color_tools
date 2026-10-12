@@ -91,6 +91,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Test resource cleanup** — close Pillow images opened by HyAB and blend
+  output tests. Close superseded logging handlers during repeated
+  `setup_logging` calls instead of only detaching them, and verify the previous
+  rotating file stream is released. The full suite now runs cleanly with
+  `ResourceWarning` reporting forced on.
 - **Watermark validation and optional dependency reporting** — validate finite
   opacity and positive finite image/SVG scale values, reject scales that round
   raster watermarks to an empty size, and report invalid position names with

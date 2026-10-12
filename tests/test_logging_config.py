@@ -277,9 +277,14 @@ class TestSetupLogging(unittest.TestCase):
     def test_repeated_file_setup_does_not_accumulate_handlers(self):
         log_path = self.tmpdir / "test.log"
         setup_logging(log_file=log_path)
-        setup_logging(log_file=log_path)
         logger = logging.getLogger(_LIBRARY_LOGGER_NAME)
+        previous_file_handler = next(
+            handler for handler in logger.handlers
+            if isinstance(handler, logging.handlers.RotatingFileHandler)
+        )
+        setup_logging(log_file=log_path)
         self.assertEqual(len(logger.handlers), 2)
+        self.assertIsNone(previous_file_handler.stream)
 
     # ── level parameters ──────────────────────────────────────────────────────
 
