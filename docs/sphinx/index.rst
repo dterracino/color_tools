@@ -64,7 +64,7 @@ Data Classes
 The library uses immutable dataclasses (frozen) to represent colors, filaments, and results:
 
 * **ColorRecord** - CSS colors with precomputed values in all color spaces
-* **FilamentRecord** - 3D printing filaments with intelligent dual-color handling
+* **FilamentRecord** - 3D printing filaments retaining source RGB components and an effective color
 * **ColorValidationRecord** - Color name/hex validation results with fuzzy matching
 * **ColorCluster** - Image color clusters from k-means analysis *(requires [image] extra)*
 * **ColorChange** - Luminance redistribution results for HueForge *(requires [image] extra)*
@@ -89,6 +89,38 @@ Color Science
    color_tools.constants
    color_tools.matrices
    color_tools.config
+
+Color Input Contracts
+~~~~~~~~~~~~~~~~~~~~~
+
+The public helpers below share one canonical implementation. RGB validation
+requires exactly three built-in integer channels in 0-255. Hex parsing accepts
+RGB/RGBA short and long forms; alpha is validated and discarded.
+
+.. autofunction:: color_tools.conversions.validate_rgb
+
+.. autofunction:: color_tools.conversions.parse_hex_colors
+
+The implementation module is also documented for maintainers:
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools._color_utils
+
+Dependency-Free PNG Writing
+~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+``from color_tools.png_writer import SimplePNGWriter`` writes sRGB-tagged
+8-bit RGB swatch strips without Pillow or NumPy. It is part of the base package,
+not ``color_tools.image``.
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.png_writer
 
 Color & Filament Data
 ~~~~~~~~~~~~~~~~~~~~~

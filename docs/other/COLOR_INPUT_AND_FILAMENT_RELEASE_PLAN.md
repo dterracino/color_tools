@@ -10,6 +10,8 @@
   confirmation from the next GitHub CI run remains pending.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
 - Read this document before the next color-input, filament, or release work.
+- For the current implementation/worktree snapshot and remaining tasks, read
+  [the Codex handoff](CODEX_HANDOFF_2026-10-12.md).
 - Preserve the existing user-palette work and unrelated worktree changes.
 - Do not publish the release until the gates below are satisfied.
 
@@ -122,6 +124,32 @@ decoding, regex grammars, prefix handling, compound splitting, and formatting.
   the actual field parsing and validation run through the production scripts.
 - `.\.venv\Scripts\python.exe -m pyright`: zero errors/warnings. The Problems
   panel is clear. No protected data or constants were modified.
+
+### Base-package PNG writer replacement
+
+On 2026-10-12, replaced the image-module writer with
+`color_tools.png_writer.SimplePNGWriter`. Restored parent-directory creation
+from the old implementation, reused canonical RGB validation, and retained
+the new immutable color storage, sRGB chunk, and PNG dimension limits.
+Swatch dimensions now require positive built-in integers. Migrated LUT export
+and removed the old module and image-package export without a compatibility
+alias. Broader image initialization cleanup remains a separate task.
+
+- Consolidated both test suites into `tests/test_png_writer.py`: 38 tests
+  passed, including independent PNG decoding/CRCs, Pillow cross-checks,
+  input isolation, filesystem behavior, and dependency-free import/export.
+- `.\.venv\Scripts\python.exe -m unittest discover tests`: passed, 1,432 tests,
+  three skipped. The lower total reflects removal of redundant PNG tests.
+- Repository-wide strict Pyright and explicit checks of every changed Python
+  file passed with zero errors/warnings; the Problems panel is clear.
+- Warning-as-error Sphinx HTML build passed. Added the base PNG module and
+  canonical input implementation to autosummary, and explicitly documented
+  public helper re-exports that automodule would otherwise omit.
+- Built and installed the wheel into a session-only environment with no
+  Pillow/NumPy. Verified PNG/LUT output and absence of the old module from
+  both the wheel and installation. Removed one stale generated build copy
+  before rebuilding. Installed-writer type completeness is 100%.
+- No protected data/constants changed; no commit, push, or release performed.
 
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later
@@ -290,7 +318,7 @@ the score/chroma bands admit them.
 - [ ] Add consistent swatch conveniences to color and filament records.
 - [ ] Return complete PNG `bytes`, never a type conditional on Pillow being
   installed. Add an explicit save convenience returning a `Path`.
-- [ ] Reuse [SimplePNGWriter](../../color_tools/image/png_writer.py) and shared
+- [ ] Reuse [SimplePNGWriter](../../color_tools/png_writer.py) and shared
   rendering logic; do not add another PNG encoder or a new image abstraction.
 - [ ] Validate RGB without bit-mask wrapping and validate positive integer
   dimensions excluding booleans.

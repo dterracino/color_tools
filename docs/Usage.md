@@ -306,10 +306,10 @@ unavailable; pass `available_only=False` to list every registered format.
 
 #### PNG Writing (stdlib, no Pillow)
 
-- `from color_tools.image import SimplePNGWriter` — write RGB color strips as PNG without Pillow
+- `from color_tools.png_writer import SimplePNGWriter` — write RGB color strips as PNG without Pillow
 
 ```python
-from color_tools.image import SimplePNGWriter
+from color_tools.png_writer import SimplePNGWriter
 from color_tools import load_palette
 
 # Write a 1×N LUT strip (for GLSL shaders)
@@ -323,6 +323,13 @@ SimplePNGWriter(colors, swatch_width=32, swatch_height=32).save("nes_preview.png
 # Get raw bytes without writing a file
 png_bytes = SimplePNGWriter(colors).to_bytes()
 ```
+
+The writer is part of the base package and does not import the optional image
+module. It stores an immutable copy of RGB tuple/list colors, uses canonical
+strict RGB validation, and writes an sRGB-tagged 8-bit RGB PNG without alpha.
+Swatch dimensions must be positive built-in integers; total width and height
+must not exceed `2**31 - 1`. `save()` creates missing parent directories and
+overwrites existing files. The former image-package import has been removed.
 
 #### Exporting a Custom RGB Palette
 

@@ -1,376 +1,340 @@
-"""Unit tests for color_tools.image.png_writer.SimplePNGWriter.
+"""
+Tests for color_tools.png_writer.SimplePNGWriter.
 
-Verifies that the pure-stdlib PNG writer produces valid, correctly-structured
-PNG files without requiring Pillow or any other external dependency.
-
-Test strategy:
-- Parse the raw PNG bytes directly using struct/zlib rather than relying on
-  Pillow to read them back, so the tests remain dependency-free.
-- Cover: constructor validation, dimension calculations, PNG signature,
-  IHDR/IDAT/IEND chunks, pixel data correctness, swatch sizing,
-  save()-to-file, to_bytes(), parent directory creation.
+Standard-library only (unittest), apart from an optional cross-check against
+Pillow that is skipped when Pillow is not installed. Includes a tiny independent
+PNG decoder so the round trip does not rely on the writer's own code paths.
 """
 
-import os
+from __future__ import annotations
+
+import io
 import struct
+import subprocess
+import sys
 import tempfile
 import unittest
 import zlib
 from pathlib import Path
-from typing import cast
+from typing import TYPE_CHECKING, cast
 
-from color_tools.image.png_writer import SimplePNGWriter
+from color_tools.png_writer import RGB, SimplePNGWriter
+
+if TYPE_CHECKING:
+    from PIL import Image
+
+    _have_pillow = True
+else:
+    try:
+        from PIL import Image
+    except ImportError:
+        _have_pillow = False
+    else:
+        _have_pillow = True
+HAVE_PILLOW = _have_pillow
+
+SIGNATURE = b"\x89PNG\r\n\x1a\n"
 
 
-# ---------------------------------------------------------------------------
-# Minimal PNG parser (stdlib only)
-# ---------------------------------------------------------------------------
-
-def _read_chunks(data: bytes) -> list[tuple[bytes, bytes]]:
-    """Parse PNG bytes into a list of (chunk_type, chunk_data) tuples.
-
-    Skips the 8-byte PNG signature.  Raises AssertionError on CRC mismatch.
-    """
-    assert data[:8] == b'\x89PNG\r\n\x1a\n', "Missing PNG signature"
-    pos = 8
+def parse_chunks(png: bytes) -> list[tuple[bytes, bytes]]:
+    """Split a PNG into (type, data) chunks, verifying every CRC along the way."""
+    assert png[:8] == SIGNATURE, "bad signature"
     chunks: list[tuple[bytes, bytes]] = []
-    while pos < len(data):
-        length = struct.unpack(">I", data[pos:pos + 4])[0]
-        chunk_type = data[pos + 4:pos + 8]
-        chunk_data = data[pos + 8:pos + 8 + length]
-        stored_crc = struct.unpack(">I", data[pos + 8 + length:pos + 12 + length])[0]
-        computed_crc = zlib.crc32(chunk_type + chunk_data) & 0xFFFFFFFF
-        assert stored_crc == computed_crc, (
-            f"CRC mismatch in chunk {chunk_type}: "
-            f"stored={stored_crc:#010x}, computed={computed_crc:#010x}"
-        )
-        chunks.append((chunk_type, chunk_data))
+    pos = 8
+    while pos < len(png):
+        (length,) = struct.unpack(">I", png[pos : pos + 4])
+        chunk_type = png[pos + 4 : pos + 8]
+        data = png[pos + 8 : pos + 8 + length]
+        (crc,) = struct.unpack(">I", png[pos + 8 + length : pos + 12 + length])
+        assert crc == zlib.crc32(chunk_type + data), f"bad CRC in {chunk_type!r}"
+        chunks.append((chunk_type, data))
         pos += 12 + length
+    assert pos == len(png), "trailing bytes after last chunk"
     return chunks
 
 
-def _parse_ihdr(ihdr_data: bytes) -> dict[str, int]:
-    """Unpack IHDR chunk data into a dict."""
-    w, h, bit_depth, color_type, compression, filter_method, interlace = struct.unpack(
-        ">IIBBBBB", ihdr_data
+def decode_pixels(png: bytes) -> list[list[tuple[int, int, int]]]:
+    """Decode an 8-bit RGB, non-interlaced, filter-type-0 PNG into rows of pixels."""
+    chunks = parse_chunks(png)
+    ihdr = dict(chunks)[b"IHDR"]
+    width, height, depth, color_type, comp, filt, interlace = struct.unpack(
+        ">IIBBBBB", ihdr
     )
-    return {
-        "width": w,
-        "height": h,
-        "bit_depth": bit_depth,
-        "color_type": color_type,
-        "compression": compression,
-        "filter_method": filter_method,
-        "interlace": interlace,
-    }
+    assert (depth, color_type, comp, filt, interlace) == (8, 2, 0, 0, 0)
+    raw = zlib.decompress(b"".join(d for t, d in chunks if t == b"IDAT"))
+    stride = 1 + width * 3
+    assert len(raw) == stride * height, "unexpected decompressed size"
+    rows: list[list[RGB]] = []
+    for y in range(height):
+        row = raw[y * stride : (y + 1) * stride]
+        assert row[0] == 0, "expected scanline filter type None"
+        rows.append([
+            (row[1 + x * 3], row[2 + x * 3], row[3 + x * 3])
+            for x in range(width)
+        ])
+    return rows
 
 
-def _decompress_idat(idat_data: bytes) -> bytes:
-    """Decompress raw IDAT chunk data."""
-    return zlib.decompress(idat_data)
+RED, GREEN, BLUE = (255, 0, 0), (0, 255, 0), (0, 0, 255)
 
 
-def _scanlines_to_pixels(raw: bytes, width: int, height: int) -> list[tuple[int, int, int]]:
-    """Convert decompressed PNG scanline bytes to a flat list of (R,G,B) tuples.
+class TestStructure(unittest.TestCase):
+    def setUp(self) -> None:
+        self.png = SimplePNGWriter([RED, GREEN, BLUE], 4, 2).to_bytes()
 
-    Assumes filter byte 0 (None) per row and 3-channel RGB.
-    """
-    row_bytes = 1 + width * 3  # 1 filter byte + 3 bytes per pixel
-    pixels: list[tuple[int, int, int]] = []
-    for row_idx in range(height):
-        start = row_idx * row_bytes
-        assert raw[start] == 0, f"Expected filter byte 0 at row {row_idx}, got {raw[start]}"
-        for col in range(width):
-            offset = start + 1 + col * 3
-            pixels.append((raw[offset], raw[offset + 1], raw[offset + 2]))
-    return pixels
+    def test_signature(self) -> None:
+        self.assertEqual(self.png[:8], SIGNATURE)
+
+    def test_chunk_order(self) -> None:
+        types = [t for t, _ in parse_chunks(self.png)]
+        self.assertEqual(types, [b"IHDR", b"sRGB", b"IDAT", b"IEND"])
+
+    def test_crcs_valid(self) -> None:
+        parse_chunks(self.png)  # asserts on any bad CRC
+
+    def test_ihdr_fields(self) -> None:
+        ihdr = dict(parse_chunks(self.png))[b"IHDR"]
+        self.assertEqual(struct.unpack(">IIBBBBB", ihdr), (12, 2, 8, 2, 0, 0, 0))
+
+    def test_srgb_intent_is_perceptual(self) -> None:
+        self.assertEqual(dict(parse_chunks(self.png))[b"sRGB"], b"\x00")
+
+    def test_iend_is_empty(self) -> None:
+        self.assertEqual(dict(parse_chunks(self.png))[b"IEND"], b"")
+
+    def test_deterministic(self) -> None:
+        w = SimplePNGWriter([RED, GREEN], 3, 3)
+        self.assertEqual(w.to_bytes(), w.to_bytes())
 
 
-# ---------------------------------------------------------------------------
-# Tests
-# ---------------------------------------------------------------------------
+class TestPixels(unittest.TestCase):
+    def test_default_1x1_swatches(self) -> None:
+        rows = decode_pixels(SimplePNGWriter([RED, GREEN, BLUE]).to_bytes())
+        self.assertEqual(rows, [[RED, GREEN, BLUE]])
 
-class TestSimplePNGWriterConstructor(unittest.TestCase):
-    """Constructor validation and computed properties."""
+    def test_wide_and_tall_swatches(self) -> None:
+        writer = SimplePNGWriter([RED, GREEN, BLUE], swatch_width=3, swatch_height=2)
+        rows = decode_pixels(writer.to_bytes())
+        expected_row = [RED] * 3 + [GREEN] * 3 + [BLUE] * 3
+        self.assertEqual(rows, [expected_row, expected_row])
 
-    def test_basic_construction(self):
-        w = SimplePNGWriter([(255, 0, 0)])
-        self.assertEqual(w.colors, [(255, 0, 0)])
-        self.assertEqual(w.swatch_width, 1)
-        self.assertEqual(w.swatch_height, 1)
+    def test_single_color(self) -> None:
+        rows = decode_pixels(SimplePNGWriter([(12, 34, 56)], 2, 2).to_bytes())
+        self.assertEqual(rows, [[(12, 34, 56)] * 2] * 2)
 
-    def test_computed_dimensions_single_color(self):
-        w = SimplePNGWriter([(0, 0, 0)], swatch_width=1, swatch_height=1)
-        self.assertEqual(w.width, 1)
-        self.assertEqual(w.height, 1)
+    def test_channel_extremes(self) -> None:
+        colors = [(0, 0, 0), (255, 255, 255), (0, 128, 255)]
+        rows = decode_pixels(SimplePNGWriter(colors).to_bytes())
+        self.assertEqual(rows, [colors])
 
-    def test_computed_dimensions_multiple_colors(self):
-        colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
-        w = SimplePNGWriter(colors, swatch_width=1, swatch_height=1)
-        self.assertEqual(w.width, 3)
-        self.assertEqual(w.height, 1)
+    def test_dimensions_attributes(self) -> None:
+        writer = SimplePNGWriter([RED, GREEN, BLUE], swatch_width=5, swatch_height=7)
+        self.assertEqual((writer.width, writer.height), (15, 7))
 
-    def test_computed_dimensions_with_swatch_size(self):
-        colors = [(255, 0, 0), (0, 255, 0)]  # 2 colors
-        w = SimplePNGWriter(colors, swatch_width=16, swatch_height=32)
-        self.assertEqual(w.width, 32)   # 2 × 16
-        self.assertEqual(w.height, 32)  # swatch_height
+    def test_accepts_lists_as_colors(self) -> None:
+        rows = decode_pixels(SimplePNGWriter([[1, 2, 3], [4, 5, 6]]).to_bytes())
+        self.assertEqual(rows, [[(1, 2, 3), (4, 5, 6)]])
 
-    def test_empty_colors_raises(self):
-        with self.assertRaises(ValueError):
-            SimplePNGWriter([])
+    def test_constructor_attributes(self) -> None:
+        writer = SimplePNGWriter([RED])
+        self.assertEqual(writer.colors, (RED,))
+        self.assertEqual((writer.swatch_width, writer.swatch_height), (1, 1))
+        self.assertEqual((writer.width, writer.height), (1, 1))
 
-    def test_invalid_channels_are_rejected_not_wrapped(self) -> None:
-        for color in ((-1, 0, 0), (256, 0, 0), (True, 0, 0), (1.0, 0, 0), (1, 2)):
-            with self.subTest(color=color), self.assertRaises(ValueError):
-                SimplePNGWriter([cast(tuple[int, int, int], color)])
+    def test_large_palette(self) -> None:
+        colors = [(i * 4, i * 3, i * 2) for i in range(54)]
+        self.assertEqual(decode_pixels(SimplePNGWriter(colors).to_bytes()), [colors])
 
-    def test_color_mutation_is_validated_at_encoding(self) -> None:
-        writer = SimplePNGWriter([(1, 2, 3)])
-        writer.colors[0] = (256, 0, 0)
-        with self.assertRaises(ValueError):
-            writer.to_bytes()
 
-    def test_caller_list_changes_do_not_change_pixels(self) -> None:
-        colors = [(1, 2, 3)]
+class TestInputIsolation(unittest.TestCase):
+    def test_mutating_input_after_init_has_no_effect(self) -> None:
+        colors = [RED, GREEN]
         writer = SimplePNGWriter(colors)
         before = writer.to_bytes()
-        colors[0] = (4, 5, 6)
+        colors.append(BLUE)
+        colors[0] = (1, 1, 1)
         self.assertEqual(writer.to_bytes(), before)
+        self.assertEqual(writer.colors, (RED, GREEN))
 
-    def test_swatch_width_zero_raises(self):
-        with self.assertRaises(ValueError):
-            SimplePNGWriter([(0, 0, 0)], swatch_width=0)
-
-    def test_swatch_height_zero_raises(self):
-        with self.assertRaises(ValueError):
-            SimplePNGWriter([(0, 0, 0)], swatch_height=0)
-
-    def test_swatch_width_negative_raises(self):
-        with self.assertRaises(ValueError):
-            SimplePNGWriter([(0, 0, 0)], swatch_width=-1)
-
-    def test_swatch_height_negative_raises(self):
-        with self.assertRaises(ValueError):
-            SimplePNGWriter([(0, 0, 0)], swatch_height=-1)
-
-
-class TestPNGStructure(unittest.TestCase):
-    """Verify the raw PNG bytes conform to the PNG specification."""
-
-    def _bytes(self, colors: list[tuple[int, int, int]], **kwargs: int) -> bytes:
-        return SimplePNGWriter(colors, **kwargs).to_bytes()
-
-    def test_signature(self):
-        data = self._bytes([(255, 0, 0)])
-        self.assertEqual(data[:8], b'\x89PNG\r\n\x1a\n')
-
-    def test_chunk_order(self):
-        data = self._bytes([(255, 0, 0)])
-        chunks = _read_chunks(data)
-        types = [t for t, _ in chunks]
-        self.assertEqual(types[0], b"IHDR")
-        self.assertEqual(types[-1], b"IEND")
-        self.assertIn(b"IDAT", types)
-
-    def test_chunk_crcs_are_valid(self):
-        # _read_chunks asserts on bad CRC; if it doesn't raise, all CRCs are good
-        data = self._bytes([(10, 20, 30), (40, 50, 60), (70, 80, 90)])
-        _read_chunks(data)  # will raise AssertionError on any bad CRC
-
-    def test_ihdr_width(self):
-        colors = [(0, 0, 0)] * 5
-        data = self._bytes(colors, swatch_width=1, swatch_height=1)
-        ihdr = _parse_ihdr(dict(_read_chunks(data))[b"IHDR"])
-        self.assertEqual(ihdr["width"], 5)
-
-    def test_ihdr_height_lut(self):
-        data = self._bytes([(0, 0, 0)], swatch_width=1, swatch_height=1)
-        ihdr = _parse_ihdr(dict(_read_chunks(data))[b"IHDR"])
-        self.assertEqual(ihdr["height"], 1)
-
-    def test_ihdr_height_swatch(self):
-        data = self._bytes([(0, 0, 0)], swatch_width=4, swatch_height=8)
-        ihdr = _parse_ihdr(dict(_read_chunks(data))[b"IHDR"])
-        self.assertEqual(ihdr["height"], 8)
-
-    def test_ihdr_bit_depth_is_8(self):
-        data = self._bytes([(0, 0, 0)])
-        ihdr = _parse_ihdr(dict(_read_chunks(data))[b"IHDR"])
-        self.assertEqual(ihdr["bit_depth"], 8)
-
-    def test_ihdr_color_type_is_rgb(self):
-        data = self._bytes([(0, 0, 0)])
-        ihdr = _parse_ihdr(dict(_read_chunks(data))[b"IHDR"])
-        self.assertEqual(ihdr["color_type"], 2)  # 2 = RGB
-
-    def test_ihdr_no_interlace(self):
-        data = self._bytes([(0, 0, 0)])
-        ihdr = _parse_ihdr(dict(_read_chunks(data))[b"IHDR"])
-        self.assertEqual(ihdr["interlace"], 0)
-
-    def test_iend_is_empty(self):
-        data = self._bytes([(0, 0, 0)])
-        chunks = dict(_read_chunks(data))
-        self.assertEqual(chunks[b"IEND"], b"")
-
-
-class TestPixelData(unittest.TestCase):
-    """Verify the decompressed pixel data matches the input colors."""
-
-    def _pixels(
-        self,
-        colors: list[tuple[int, int, int]],
-        swatch_width: int = 1,
-        swatch_height: int = 1,
-    ) -> list[tuple[int, int, int]]:
-        data = SimplePNGWriter(colors, swatch_width=swatch_width, swatch_height=swatch_height).to_bytes()
-        chunks = dict(_read_chunks(data))
-        ihdr = _parse_ihdr(chunks[b"IHDR"])
-        raw = _decompress_idat(chunks[b"IDAT"])
-        return _scanlines_to_pixels(raw, ihdr["width"], ihdr["height"])
-
-    def test_single_red_pixel(self):
-        pixels = self._pixels([(255, 0, 0)])
-        self.assertEqual(pixels, [(255, 0, 0)])
-
-    def test_single_green_pixel(self):
-        pixels = self._pixels([(0, 255, 0)])
-        self.assertEqual(pixels, [(0, 255, 0)])
-
-    def test_single_blue_pixel(self):
-        pixels = self._pixels([(0, 0, 255)])
-        self.assertEqual(pixels, [(0, 0, 255)])
-
-    def test_black_and_white(self):
-        pixels = self._pixels([(0, 0, 0), (255, 255, 255)])
-        self.assertEqual(pixels, [(0, 0, 0), (255, 255, 255)])
-
-    def test_color_order_preserved(self):
-        colors = [(255, 0, 0), (0, 255, 0), (0, 0, 255)]
-        pixels = self._pixels(colors)
-        self.assertEqual(pixels, colors)
-
-    def test_arbitrary_color_values(self):
-        colors = [(10, 20, 30), (100, 150, 200), (55, 128, 77)]
-        pixels = self._pixels(colors)
-        self.assertEqual(pixels, colors)
-
-    def test_swatch_width_repeats_pixels(self):
-        # swatch_width=3 → each color appears 3 times per row
-        colors = [(255, 0, 0), (0, 0, 255)]
-        pixels = self._pixels(colors, swatch_width=3, swatch_height=1)
-        self.assertEqual(pixels, [
-            (255, 0, 0), (255, 0, 0), (255, 0, 0),
-            (0, 0, 255), (0, 0, 255), (0, 0, 255),
-        ])
-
-    def test_swatch_height_repeats_rows(self):
-        # swatch_height=3 → all 3 rows must be identical
-        colors = [(10, 20, 30), (40, 50, 60)]
-        pixels = self._pixels(colors, swatch_width=1, swatch_height=3)
-        row = [(10, 20, 30), (40, 50, 60)]
-        self.assertEqual(pixels, row * 3)
-
-    def test_large_palette(self):
-        # 54-color NES-like palette
-        colors = [(i * 4, i * 3, i * 2) for i in range(54)]
-        pixels = self._pixels(colors)
-        self.assertEqual(pixels, colors)
-
-    def test_channel_clamping_255(self):
-        # Values at max boundary
-        pixels = self._pixels([(255, 255, 255)])
-        self.assertEqual(pixels, [(255, 255, 255)])
-
-    def test_channel_clamping_0(self):
-        pixels = self._pixels([(0, 0, 0)])
-        self.assertEqual(pixels, [(0, 0, 0)])
-
-
-class TestToBytes(unittest.TestCase):
-    """to_bytes() returns the same bytes as save() writes to disk."""
-
-    def test_to_bytes_returns_bytes(self):
-        result = SimplePNGWriter([(255, 0, 0)]).to_bytes()
-        self.assertIsInstance(result, bytes)
-
-    def test_to_bytes_starts_with_png_signature(self):
-        result = SimplePNGWriter([(0, 128, 255)]).to_bytes()
-        self.assertEqual(result[:8], b'\x89PNG\r\n\x1a\n')
-
-    def test_to_bytes_matches_save(self):
-        colors = [(10, 20, 30), (40, 50, 60)]
+    def test_nested_input_mutation_has_no_effect(self) -> None:
+        colors = [[1, 2, 3], [4, 5, 6]]
         writer = SimplePNGWriter(colors)
-        in_memory = writer.to_bytes()
+        before = writer.to_bytes()
+        colors[0][0] = 256
+        colors.append([7, 8, 9])
+        self.assertEqual(writer.to_bytes(), before)
+        self.assertEqual(writer.colors, ((1, 2, 3), (4, 5, 6)))
 
-        with tempfile.NamedTemporaryFile(suffix='.png', delete=False) as f:
-            tmp = f.name
-        try:
-            writer.save(tmp)
-            with open(tmp, 'rb') as f:
-                from_file = f.read()
-        finally:
-            os.unlink(tmp)
-
-        self.assertEqual(in_memory, from_file)
-
-    def test_to_bytes_is_idempotent(self):
-        writer = SimplePNGWriter([(1, 2, 3)])
-        self.assertEqual(writer.to_bytes(), writer.to_bytes())
+    def test_color_storage_is_immutable(self) -> None:
+        writer = SimplePNGWriter([RED])
+        with self.assertRaises(TypeError):
+            cast(list[RGB], writer.colors)[0] = BLUE
 
 
 class TestSave(unittest.TestCase):
-    """save() writes a valid file to disk."""
+    def test_save_writes_exact_bytes(self) -> None:
+        writer = SimplePNGWriter([RED, GREEN, BLUE], 2, 2)
+        with tempfile.TemporaryDirectory() as tmp:
+            for target in (Path(tmp) / "a.png", str(Path(tmp) / "b.png")):
+                writer.save(target)
+                self.assertEqual(Path(target).read_bytes(), writer.to_bytes())
 
-    def test_save_creates_file(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = Path(tmpdir) / "out.png"
-            SimplePNGWriter([(255, 0, 0)]).save(path)
-            self.assertTrue(path.exists())
+    def test_save_creates_parent_directories(self) -> None:
+        writer = SimplePNGWriter([BLUE])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "subdir" / "nested" / "out.png"
+            writer.save(path)
+            self.assertEqual(path.read_bytes(), writer.to_bytes())
 
-    def test_save_file_is_nonzero(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = Path(tmpdir) / "out.png"
-            SimplePNGWriter([(0, 0, 0)]).save(path)
-            self.assertGreater(path.stat().st_size, 0)
+    def test_save_overwrites_existing_file(self) -> None:
+        writer = SimplePNGWriter([GREEN, BLUE])
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "out.png"
+            path.write_bytes(b"old content" * 100)
+            writer.save(path)
+            self.assertEqual(path.read_bytes(), writer.to_bytes())
 
-    def test_save_accepts_string_path(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = str(Path(tmpdir) / "out.png")
-            SimplePNGWriter([(0, 255, 0)]).save(path)
-            self.assertTrue(Path(path).exists())
+    def test_save_propagates_io_errors(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            with self.assertRaises(OSError):
+                SimplePNGWriter([RED]).save(Path(directory))
 
-    def test_save_creates_parent_directories(self):
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = Path(tmpdir) / "subdir" / "nested" / "out.png"
-            SimplePNGWriter([(0, 0, 255)]).save(path)
-            self.assertTrue(path.exists())
 
-    def test_save_overwrites_existing_file(self):
-        colors_a = [(255, 0, 0)]
-        colors_b = [(0, 255, 0), (0, 0, 255)]
-        with tempfile.TemporaryDirectory() as tmpdir:
-            path = Path(tmpdir) / "out.png"
-            SimplePNGWriter(colors_a).save(path)
-            size_a = path.stat().st_size
-            SimplePNGWriter(colors_b).save(path)
-            size_b = path.stat().st_size
-            # Two-color file must be larger than one-color file
-            self.assertGreater(size_b, size_a)
+class TestValidation(unittest.TestCase):
+    def test_empty_colors(self) -> None:
+        with self.assertRaisesRegex(ValueError, "colors must not be empty"):
+            SimplePNGWriter([])
+
+    def test_bad_swatch_width(self) -> None:
+        for bad in (0, -1):
+            with self.assertRaisesRegex(ValueError, "swatch_width"):
+                SimplePNGWriter([RED], swatch_width=bad)
+
+    def test_bad_swatch_height(self) -> None:
+        for bad in (0, -1):
+            with self.assertRaisesRegex(ValueError, "swatch_height"):
+                SimplePNGWriter([RED], swatch_height=bad)
+
+    def test_bad_color_shapes(self) -> None:
+        for bad in [(1, 2), (1, 2, 3, 4), (), 5, None, "red"]:
+            with self.subTest(bad=bad):
+                with self.assertRaisesRegex(ValueError, r"colors\[1\]"):
+                    SimplePNGWriter([RED, cast(RGB, bad)])
+
+    def test_bad_channel_values(self) -> None:
+        for bad in [(256, 0, 0), (0, -1, 0), (0, 0, 1.0), (0, 0, "9"), (True, 0, 0)]:
+            with self.subTest(bad=bad):
+                with self.assertRaisesRegex(ValueError, r"colors\[2\]"):
+                    SimplePNGWriter([RED, GREEN, cast(RGB, bad)])
+
+    def test_rejects_integer_subclass_channels(self) -> None:
+        class Integer(int):
+            pass
+
+        with self.assertRaisesRegex(ValueError, r"colors\[0\]"):
+            SimplePNGWriter([(Integer(1), 2, 3)])
+
+    def test_dimension_types_are_strict(self) -> None:
+        class Integer(int):
+            pass
+
+        for bad in (True, False, 1.0, 1.5, "1", None, Integer(1)):
+            for dimension in ("swatch_width", "swatch_height"):
+                with self.subTest(value=bad, dimension=dimension):
+                    with self.assertRaisesRegex(ValueError, dimension):
+                        SimplePNGWriter([RED], **{dimension: cast(int, bad)})
+
+    def test_error_reports_offending_index(self) -> None:
+        with self.assertRaisesRegex(ValueError, r"colors\[3\]"):
+            SimplePNGWriter([RED, GREEN, BLUE, (0, 0, 300)])
+
+    def test_width_over_png_limit(self) -> None:
+        with self.assertRaisesRegex(ValueError, "width"):
+            SimplePNGWriter([RED], swatch_width=2**31)
+
+    def test_height_over_png_limit(self) -> None:
+        with self.assertRaisesRegex(ValueError, "height"):
+            SimplePNGWriter([RED], swatch_height=2**31)
+
+    def test_combined_width_over_png_limit(self) -> None:
+        with self.assertRaisesRegex(ValueError, "width"):
+            SimplePNGWriter([RED, BLUE], swatch_width=2**30)
+
+    def test_largest_allowed_dimension_accepted_by_validation(self) -> None:
+        # Construct only; encoding that many pixels would be absurd.
+        writer = SimplePNGWriter([RED], swatch_width=2**31 - 1)
+        self.assertEqual(writer.width, 2**31 - 1)
+        writer = SimplePNGWriter([RED], swatch_height=2**31 - 1)
+        self.assertEqual(writer.height, 2**31 - 1)
 
 
 class TestImport(unittest.TestCase):
-    """SimplePNGWriter is importable from the public image package."""
+    """PNG writing and LUT exporting do not load optional image dependencies."""
 
-    def test_importable_from_image_package(self):
-        from color_tools.image import SimplePNGWriter as SPW
-        self.assertIs(SPW, SimplePNGWriter)
+    def test_base_import_and_lut_export_without_optional_dependencies(self) -> None:
+        code = """
+import importlib.abc
+import sys
+from pathlib import Path
+from tempfile import TemporaryDirectory
 
-    def test_in_image_all(self):
-        import color_tools.image as img
-        self.assertIn('SimplePNGWriter', img.__all__)
+class BlockOptionalImages(importlib.abc.MetaPathFinder):
+    def find_spec(self, fullname, path=None, target=None):
+        if fullname == 'color_tools.image' or fullname.startswith('color_tools.image.'):
+            raise ImportError(fullname)
+        return None
+
+sys.modules['PIL'] = None
+sys.modules['numpy'] = None
+sys.meta_path.insert(0, BlockOptionalImages())
+from color_tools.png_writer import SimplePNGWriter
+from color_tools.exporters import get_exporter
+from color_tools.palette import ColorRecord
+
+with TemporaryDirectory() as directory:
+    path = Path(directory) / 'lut.png'
+    get_exporter('palette_lut').export_colors([ColorRecord.from_rgb((1, 2, 3))], path)
+    assert path.read_bytes() == SimplePNGWriter([(1, 2, 3)]).to_bytes()
+assert sys.modules['PIL'] is None
+assert sys.modules['numpy'] is None
+assert 'color_tools.image' not in sys.modules
+"""
+        result = subprocess.run(
+            [sys.executable, "-c", code], capture_output=True, text=True,
+            cwd=Path(__file__).resolve().parents[1], timeout=30, check=False,
+        )
+        self.assertEqual(result.returncode, 0, result.stdout + result.stderr)
+
+    def test_removed_from_image_exports(self) -> None:
+        import color_tools.image as image
+
+        self.assertNotIn("SimplePNGWriter", image.__all__)
+        self.assertFalse(hasattr(image, "SimplePNGWriter"))
 
 
-if __name__ == '__main__':
+@unittest.skipUnless(HAVE_PILLOW, "Pillow not installed")
+class TestPillowCrossCheck(unittest.TestCase):
+    """An independent, widely used decoder must agree with our output."""
+
+    def test_pillow_opens_and_reads_pixels(self) -> None:
+        colors = [RED, GREEN, BLUE, (12, 34, 56)]
+        png = SimplePNGWriter(colors, swatch_width=3, swatch_height=2).to_bytes()
+        img = Image.open(io.BytesIO(png))
+        img.load()
+        self.assertEqual(img.format, "PNG")
+        self.assertEqual(img.mode, "RGB")
+        self.assertEqual(img.size, (12, 2))
+        for i, color in enumerate(colors):
+            for x in range(i * 3, i * 3 + 3):
+                for y in range(2):
+                    self.assertEqual(img.getpixel((x, y)), color)
+
+    def test_pillow_verify_and_srgb_flag(self) -> None:
+        png = SimplePNGWriter([RED, GREEN]).to_bytes()
+        Image.open(io.BytesIO(png)).verify()
+        img = Image.open(io.BytesIO(png))
+        self.assertEqual(img.info.get("srgb"), 0)
+
+
+if __name__ == "__main__":
     unittest.main()

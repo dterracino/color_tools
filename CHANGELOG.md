@@ -10,6 +10,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **PNG writer moved to the base package** — replace the image-module writer
+  with `color_tools.png_writer.SimplePNGWriter`; remove the old module and
+  image-package export. Retain `save()` parent-directory creation and migrate
+  palette LUT export without loading optional image dependencies. Store colors
+  as immutable tuples, reuse canonical RGB validation with offending-index
+  errors, enforce positive built-in integer dimensions and PNG size limits,
+  and tag output with perceptual sRGB intent. Consolidate both PNG test suites
+  with independent decoding, CRC, Pillow, input-isolation, filesystem, and
+  dependency-free import coverage. Add Sphinx API coverage for the writer and
+  shared color-input implementation/public helpers.
 - **Breaking RGB/hex contracts** — canonical strict parsing and validation
   now serve palette factories, CLI, harmony, importers, PNG output, MCP, and
   internal tooling. `hex_to_rgb` raises `ValueError` rather than returning

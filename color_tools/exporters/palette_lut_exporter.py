@@ -40,7 +40,7 @@ from color_tools.exporters.base import (
     PaletteExporter,
 )
 from color_tools.exporters.registry import register_exporter
-from color_tools.image.png_writer import SimplePNGWriter
+from color_tools.png_writer import SimplePNGWriter
 
 if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
