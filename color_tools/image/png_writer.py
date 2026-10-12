@@ -29,6 +29,7 @@ from __future__ import annotations
 import struct
 import zlib
 from pathlib import Path
+from color_tools._color_utils import validate_rgb
 
 
 class SimplePNGWriter:
@@ -72,12 +73,14 @@ class SimplePNGWriter:
     ) -> None:
         if not colors:
             raise ValueError("colors must not be empty")
+        for color in colors:
+            validate_rgb(color)
         if swatch_width < 1:
             raise ValueError("swatch_width must be >= 1")
         if swatch_height < 1:
             raise ValueError("swatch_height must be >= 1")
 
-        self.colors       = colors
+        self.colors: list[tuple[int, int, int]] = list(colors)
         self.swatch_width = swatch_width
         self.swatch_height = swatch_height
         self.width: int = len(colors) * swatch_width
@@ -135,8 +138,9 @@ class SimplePNGWriter:
     def _idat(self) -> bytes:
         # Build one scanline: filter byte 0 + pixel data
         row = bytearray()
-        for r, g, b in self.colors:
-            pixel = bytes([r & 0xFF, g & 0xFF, b & 0xFF])
+        for color in self.colors:
+            validate_rgb(color)
+            pixel = bytes(color)
             row.extend(pixel * self.swatch_width)
 
         scanline = bytes([0]) + bytes(row)   # filter byte 0 = None

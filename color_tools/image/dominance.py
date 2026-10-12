@@ -36,6 +36,7 @@ from sklearn.cluster import KMeans
 from color_tools.conversions import (
     lab_to_rgb,
     rgb_to_lab,
+    rgb_to_hex,
 )
 from color_tools.distance import delta_e_2000_array
 from color_tools.palette import ColorRecord
@@ -130,7 +131,7 @@ class DominantColor:
     @property
     def hex(self) -> str:
         """Return the representative color as #RRGGBB."""
-        return "#{:02X}{:02X}{:02X}".format(*self.rgb)
+        return rgb_to_hex(self.rgb)
 
 
 @dataclass(frozen=True)
@@ -177,7 +178,7 @@ class DominantColorDiagnostic:
     @property
     def hex(self) -> str:
         """Return the representative color as #RRGGBB."""
-        return "#{:02X}{:02X}{:02X}".format(*self.rgb)
+        return rgb_to_hex(self.rgb)
 
 
 @dataclass(frozen=True)

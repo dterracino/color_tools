@@ -4,7 +4,7 @@ import sys
 from argparse import Namespace
 from pathlib import Path
 
-from ..utils import parse_hex_or_exit
+from ..utils import get_rgb_from_args
 from ...config import config_context
 from ...filament_filter_criteria import FilamentFilterCriteria
 from ...filament_palette import FilamentPalette
@@ -143,17 +143,7 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
             print("Error: --nearest requires either --value or --hex", file=sys.stderr)
             sys.exit(2)
         
-        # Handle hex input
-        if hex_value is not None:
-            try:
-                rgb_val = parse_hex_or_exit(hex_value)
-            except ValueError as e:
-                print(f"Error: {e}", file=sys.stderr)
-                sys.exit(2)
-        else:
-            # Handle --value input (RGB values)
-            assert value is not None
-            rgb_val = tuple(value)
+        rgb_val = get_rgb_from_args(args)
         
         try:
             # Omitted fields and the established "*" wildcard are unconstrained.

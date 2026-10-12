@@ -11,6 +11,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import ExporterMetadata, PaletteExporter
 from color_tools.exporters.export_options_base import ExportOptionsBase
 from color_tools.exporters.registry import register_exporter
@@ -108,7 +109,7 @@ class PaintNetExporter(PaletteExporter):
             file.write(f"; Colors: {len(colors)}\n")
 
             for color in colors:
-                hex_code = color.hex.removeprefix("#").upper()
+                hex_code = rgb_to_hex(color.rgb).removeprefix("#")
                 file.write(f"FF{hex_code}\n")
 
             if pad_to_96:

@@ -19,6 +19,7 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -84,10 +85,7 @@ class CSSExporter(PaletteExporter):
                     used_names,
                 )
 
-                hex_code = (
-                    "#"
-                    + color.hex.removeprefix("#").upper()
-                )
+                hex_code = rgb_to_hex(color.rgb)
 
                 file.write(f"    --{name}: {hex_code};\n")
 

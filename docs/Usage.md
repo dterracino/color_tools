@@ -48,6 +48,7 @@ from color_tools import (
 # Convert hex to RGB (supports both 3-char and 6-char hex codes)
 rgb1 = hex_to_rgb("#FF8040")  # 6-character hex
 rgb2 = hex_to_rgb("#F80")     # 3-character hex (expanded to #FF8800)
+rgb3 = hex_to_rgb("#F800")    # RGBA, alpha validated then dropped
 print(f"6-char hex RGB: {rgb1}")  # RGB: (255, 128, 64)
 print(f"3-char hex RGB: {rgb2}")  # RGB: (255, 136, 0)
 
@@ -152,7 +153,10 @@ gameboy_image.save("gameboy_style.png")
 - `rgb_to_winhsl240()` - RGB → winHSL240: Windows OS (Paint, WordPad, Win32 GDI) — H: 0–239, S/L: 0–240
 - `rgb_to_winhsl255()` - RGB → winHSL255: Microsoft Office colour picker — H: 0–254, S/L: 0–255
 - `rgb_to_winhsl()` - Alias for `rgb_to_winhsl240()` (backward compatibility)
-- `hex_to_rgb()`, `rgb_to_hex()` - Hex ↔ RGB conversion
+- `hex_to_rgb()`, `rgb_to_hex()` - Strict hex ↔ RGB conversion; invalid input raises `ValueError`
+- `parse_hex_colors()` - Ordered compound hex components with validated, discarded alpha
+- `validate_rgb()` - Check a tuple/list of three built-in 8-bit integers without coercion
+- `xyz_to_rgb_float()` - Unrounded, unclipped RGB for precision-sensitive calculations
   - Supports 3-character shorthand (`#F00` or `F00` → `(255, 0, 0)`)
   - Supports 6-character standard (`#FF0000` or `FF0000` → `(255, 0, 0)`)
   - Works with or without `#` prefix
@@ -729,8 +733,8 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--count N`: Return top N nearest filaments instead of just one (default: 1, max: 50)
 - `--max-hue-delta DEGREES`: Restrict results to filaments within DEGREES of the target hue (LCH hue angle, 0-180). Useful when the best perceptual match changes hue (e.g., blue→purple). Achromatic colors are unaffected.
 - `--multi-color-mode {first,last,srgb_mean}`: Override the current-context mode
-  (built-in default: first). Compound-record parsing is a subsequent step;
-  configuration replacement alone does not fix bundled multi-color data.
+  (built-in default: first). Filaments retain ordered source `rgb_components`;
+  `effective_hex` describes the captured RGB used for matching.
 
 **Filtering and Listing:**
 

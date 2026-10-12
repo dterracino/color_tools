@@ -54,7 +54,14 @@ else:
 IMAGE_AVAILABLE = _image_available
 
 from ...palette import load_palette
+from ..._color_utils import validate_rgb
 from ..reporting import get_available_palettes
+
+
+def _parse_watermark_rgb(value: str) -> tuple[int, int, int]:
+    channels = tuple(int(channel.strip()) for channel in value.split(","))
+    validate_rgb(channels)
+    return (channels[0], channels[1], channels[2])
 
 
 def handle_image_command(
@@ -243,11 +250,8 @@ def handle_image_command(
             if args.watermark_text:
                 # Parse color arguments
                 try:
-                    color_parts = args.watermark_color.split(',')
-                    color = tuple(int(c.strip()) for c in color_parts)
-                    if len(color) != 3:
-                        raise ValueError("Color must have 3 components (R,G,B)")
-                except Exception as e:
+                    color = _parse_watermark_rgb(args.watermark_color)
+                except ValueError as e:
                     print(f"Error: Invalid --watermark-color format: {e}", file=sys.stderr)
                     print("Use format: R,G,B (e.g., 255,255,255)", file=sys.stderr)
                     sys.exit(1)
@@ -255,11 +259,8 @@ def handle_image_command(
                 stroke_color = None
                 if args.watermark_stroke_color:
                     try:
-                        stroke_parts = args.watermark_stroke_color.split(',')
-                        stroke_color = tuple(int(c.strip()) for c in stroke_parts)
-                        if len(stroke_color) != 3:
-                            raise ValueError("Stroke color must have 3 components (R,G,B)")
-                    except Exception as e:
+                        stroke_color = _parse_watermark_rgb(args.watermark_stroke_color)
+                    except ValueError as e:
                         print(f"Error: Invalid --watermark-stroke-color format: {e}", file=sys.stderr)
                         print("Use format: R,G,B (e.g., 0,0,0)", file=sys.stderr)
                         sys.exit(1)

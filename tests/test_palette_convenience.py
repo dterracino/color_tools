@@ -32,10 +32,10 @@ class TestPaletteFactories(unittest.TestCase):
         self.assertEqual(record.lch, lab_to_lch(record.lab))
 
     def test_hex_forms(self) -> None:
-        for value in ("#f00", "f00", "#FF0000", "ff0000"):
+        for value in ("#f00", "f00", "#FF0000", "ff0000", "#f000", "ff000000"):
             with self.subTest(value=value):
                 self.assertEqual(ColorRecord.from_hex(value).rgb, (255, 0, 0))
-        for value in ("", "#", "##f00", "#ffff", "gg0000", " ff0000"):
+        for value in ("", "#", "##f00", "#fffff", "gg0000", " ff0000"):
             with self.subTest(value=value), self.assertRaises(ValueError):
                 ColorRecord.from_hex(value)
 

@@ -150,7 +150,7 @@ class TestConfig(unittest.TestCase):
         def record() -> FilamentRecord:
             return FilamentRecord(
                 id="probe", maker="probe", type="PLA", finish=None,
-                color="probe", hex="#FF0000", hex2="#0000FF",
+                color="probe", hex="#FF0000-#0000FF",
             )
 
         first = record()

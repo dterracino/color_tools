@@ -31,11 +31,13 @@ Example:
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, Tuple
+from typing import TYPE_CHECKING, Tuple
 import math
 import colorsys
 
 from .constants import ColorConstants
+from ._color_utils import format_hex, parse_hex
+from ._color_utils import parse_hex_colors as parse_hex_colors, validate_rgb as validate_rgb
 
 if TYPE_CHECKING:
     import numpy as np
@@ -46,56 +48,38 @@ if TYPE_CHECKING:
 # General Helpers
 # ============================================================================
 
-def hex_to_rgb(hex_code: str) -> Optional[Tuple[int, int, int]]:
+def hex_to_rgb(hex_code: str) -> Tuple[int, int, int]:
     """
     Converts a hex color string to an RGB tuple.
 
     Args:
-        hex_code: Hex color string in the format "#RGB", "RGB", "#RRGGBB" or "RRGGBB".
-                  3-character codes are expanded (e.g., "#24c" -> "#2244cc").
+        hex_code: RGB, RGBA, RRGGBB, or RRGGBBAA, optionally prefixed with #.
+                  Short digits are expanded. CSS/PNG alpha-last order is used,
+                  not Windows/Android ARGB; alpha is validated then dropped.
 
     Returns:
         rgb: Tuple of (R, G, B) where each component is 0-255.
-        None if the hex code is invalid.
+
+    Raises:
+        ValueError: For invalid input, whitespace, or non-ASCII hex digits.
     """
-    hex_clean = hex_code.lstrip('#')
-    if len(hex_clean) == 3:
-        # Expand 3-character hex to 6-character (e.g., "24c" -> "2244cc")
-        try:
-            return (
-                int(hex_clean[0] * 2, 16),
-                int(hex_clean[1] * 2, 16),
-                int(hex_clean[2] * 2, 16)
-            )
-        except ValueError:
-            return None
-    elif len(hex_clean) == 6:
-        try:
-            return (
-                int(hex_clean[0:2], 16),
-                int(hex_clean[2:4], 16),
-                int(hex_clean[4:6], 16)
-            )
-        except ValueError:
-            return None
-    return None
-    
-def rgb_to_hex(rgb: Tuple[int, int, int]) -> str:
+    return parse_hex(hex_code)
+
+
+def rgb_to_hex(rgb: Tuple[int, int, int] | list[int]) -> str:
     """
     Converts an RGB tuple to a hex color string.
-    
+
     Args:
         rgb: Tuple of (R, G, B) where each component is 0-255.
     
     Returns:
         Hex color string in the format "#RRGGBB".
+
+    Raises:
+        ValueError: Unless input is three built-in integers in 0-255.
     """
-    r, g, b = rgb
-    return "#{:02X}{:02X}{:02X}".format(
-        max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, r)),
-        max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, g)),
-        max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, b))
-    )    
+    return format_hex(rgb)
 
 # ============================================================================
 # Forward Conversions (RGB → LAB)
@@ -292,10 +276,35 @@ def xyz_to_rgb(xyz: Tuple[float, float, float], clamp: bool = True) -> Tuple[int
     Args:
         xyz: XYZ color tuple
         clamp: If True, clamp out-of-gamut values to 0-255. If False, may return
-               values outside valid range (useful for gamut checking).
+               rounded values outside valid range. Use xyz_to_rgb_float for
+               precision-sensitive gamut checking.
     
     Returns:
         RGB tuple (0-255)
+    """
+    r_255, g_255, b_255 = xyz_to_rgb_float(xyz)
+    if clamp:
+        r_255 = max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, r_255))
+        g_255 = max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, g_255))
+        b_255 = max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, b_255))
+    return (round(r_255), round(g_255), round(b_255))
+
+
+def xyz_to_rgb_float(xyz: Tuple[float, float, float]) -> Tuple[float, float, float]:
+    """Convert D65 XYZ (0-100) to unrounded, unclipped encoded sRGB (0-255).
+
+    Channels may be outside 0-255. Use this path for gamut boundary checks;
+    xyz_to_rgb remains the integer-returning display conversion.
+
+    Args:
+        xyz: D65 XYZ coordinates on the 0-100 scale.
+
+    Returns:
+        Encoded sRGB channels on the 0-255 scale, without rounding or clipping.
+
+    Example:
+        >>> xyz_to_rgb_float((0.0, 0.0, 0.0))
+        (0.0, 0.0, 0.0)
     """
     # Scale from 0-100 to 0-1 range
     X, Y, Z = [v / ColorConstants.XYZ_SCALE_FACTOR for v in xyz]
@@ -315,13 +324,7 @@ def xyz_to_rgb(xyz: Tuple[float, float, float], clamp: bool = True) -> Tuple[int
     g_255 = g * ColorConstants.RGB_MAX
     b_255 = b * ColorConstants.RGB_MAX
     
-    if clamp:
-        # Clamp to valid range
-        r_255 = max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, r_255))
-        g_255 = max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, g_255))
-        b_255 = max(ColorConstants.RGB_MIN, min(ColorConstants.RGB_MAX, b_255))
-    
-    return (int(round(r_255)), int(round(g_255)), int(round(b_255)))
+    return (r_255, g_255, b_255)
 
 
 def lab_to_rgb(lab: Tuple[float, float, float], clamp: bool = True) -> Tuple[int, int, int]:

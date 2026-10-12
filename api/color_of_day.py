@@ -13,6 +13,8 @@ from datetime import date
 from http.server import BaseHTTPRequestHandler
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_hex
+
 if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
 
@@ -25,7 +27,7 @@ def _today_index(count: int) -> int:
 
 
 def _build_svg(color: ColorRecord) -> str:
-    bg = color.hex if color.hex.startswith("#") else f"#{color.hex}"
+    bg = rgb_to_hex(color.rgb)
     name = color.name.replace("-", " ").title()
     hex_upper = bg.upper()
     r, g, b = color.rgb

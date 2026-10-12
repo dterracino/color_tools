@@ -1,6 +1,7 @@
 import json
 import math
 import colorsys
+from color_tools.conversions import rgb_to_hex
 
 def srgb_to_linear(x):
     """
@@ -91,7 +92,7 @@ def generate_palette():
         for g in levels:
             for b in levels:
                 # 1. Hex
-                hex_val = f"#{r:02X}{g:02X}{b:02X}"
+                hex_val = rgb_to_hex((r, g, b))
                 
                 # 2. RGB
                 rgb_val = [r, g, b]

@@ -4,7 +4,8 @@
 
 - Created: 2026-10-10.
 - Updated: 2026-10-12.
-- Status: configuration, color-input, multi-color, and swatch work remains
+- Status: configuration, canonical color inputs, multi-color records, and
+  gamut precision are implemented. Swatches and additional modes remain
   planned. Python 3.12 migration is locally validated on 3.12, 3.13, and 3.14;
   confirmation from the next GitHub CI run remains pending.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
@@ -32,10 +33,95 @@ in docstrings and reject them until implemented.
 no copy/live mutable view. `reset_config()` restores defaults in the current
 context; context exit still restores the enclosing snapshot.
 
-The next record step preserves original `hex`, stores ordered immutable
+The implemented record step preserves original `hex`, stores ordered immutable
 `rgb_components`, removes `hex2`, and exposes computed `effective_hex` for
 single-color consumers. Audit all source/effective hex consumers before edits.
-Configuration replacement alone does not repair compound JSON parsing.
+Compound JSON parsing is now implemented through the shared parser.
+
+### Approved input contracts and current implementation
+
+- Strict RGB: tuple/list of exactly three built-in integers in 0-255.
+  Reject booleans, floats, integer subclasses, and coercion. Palette factories
+  store immutable tuples; scientific float/array conversions retain their contracts.
+- Single hex: 3/4/6/8 ASCII digits, optionally one `#`. Four/eight-digit forms
+  are CSS/PNG RGBA, not Windows/Android ARGB. Validate alpha then drop it for now.
+  Reject whitespace around a single color. `hex_to_rgb` now raises `ValueError`;
+  `rgb_to_hex` validates rather than clipping.
+- Compound hex: any positive number of components, with -, ASCII space,
+  comma, _, /, :, or ; separators. Permit surrounding spaces and spaces around
+  punctuation; reject empty components/repeated punctuation. Keep duplicates.
+- `hex2` is removed, including from templates/exports; loader errors direct
+  callers to move all components into `hex`. Preserve source hex for identity.
+- `srgb_mean` uses equal weights and nearest-even rounding once per channel.
+  Final LAB is derived from effective RGB. Other modes remain unimplemented.
+- Generic CSV/JSON and MCP include source hex, components, and effective hex.
+  AutoForge, filament-of-day SVG, and GUI swatches use the effective color.
+- `_color_utils.py` owns validation/parsing/formatting without importing conversions.
+  Palette factories/JSON loaders, CLI adapters, harmony, importers, PNG output, semantic
+  validation, MCP, image result formatting, and generator tooling reuse it.
+  Keep PDF-source text extraction and format-specific ARGB/packed output as
+  adapters; keep independent test references and scientific array pipelines.
+- `validation.py` remains semantic name plausibility checking. Its narrow
+  invalid-hex adapter preserves structured reporting; no name-matching redesign.
+- Gamut checks share unrounded `xyz_to_rgb_float`; chroma mapping explicitly
+  rejects invalid LAB and infeasible neutral lightness. It is not a globally
+  nearest-color optimizer.
+
+### Current-stage validation
+
+The configuration/input/record/gamut stage is complete locally. This does not
+complete the swatch, additional-mode, data-import, or remote-CI release gates.
+
+- `.\.venv\Scripts\python.exe -m unittest discover tests`: passed, 1,431 tests,
+  three skipped. Two skips exercise missing-`swatch` branches when that package
+  is installed; the third is the existing unavailable-Pillow placeholder.
+  GUI/template, interactive, image, importer/exporter, and MCP stdio tests ran.
+- `.\.venv\Scripts\python.exe -m pyright`: zero errors/warnings, also verified
+  against the existing fresh-dependency environment. Pylance has zero errors/
+  warnings, the Problems panel is clear, and all 35 `hex_to_rgb` call sites
+  passed signature compatibility checking.
+- `.\.venv\Scripts\python.exe -m color_tools --verify-all`: passed. No protected
+  data/constants changed, so no hashes were regenerated.
+- `.\.venv\Scripts\python.exe -m build --wheel --no-isolation --outdir <session-dist>`:
+  passed. Installed the wheel without dependency changes into an isolated
+  environment; strict consumer checking and runtime contract checks passed.
+- Installed-wheel `python -m pyright --verifytypes color_tools --ignoreexternal`:
+  passed, 100% completeness. This caught and prompted an explicit annotation
+  for the PNG writer's copied `colors` list.
+- `.\.venv\Scripts\python.exe -m sphinx -b html docs\sphinx <session-docs>`:
+  passed. Build products and logs stay outside the repository.
+- `git diff --check`: passed. No commit, push, or release performed.
+
+### Follow-up repository-wide input audit
+
+A second audit on 2026-10-12 searched tracked files independently of ignore
+rules, as well as library/API, tooling, source-data scripts, demos, samples,
+and documentation. It checked channel bounds/types/counts, integer hex
+decoding, regex grammars, prefix handling, compound splitting, and formatting.
+
+- Replaced watermark CLI text/stroke length checks with canonical RGB
+  validation, retaining comma-separated integer-text parsing and exit code 1.
+- Routed Panchroma, Polymaker, and Bambu source fields through
+  `parse_hex_colors` and `rgb_to_hex`. Malformed fields are errors with source
+  context; Polymaker no longer accepts a valid six-digit substring inside an
+  invalid field. PDF newline cleanup remains a source-format adapter.
+- Crayola generation now validates source RGB and normalizes source hex
+  through the canonical single-color helpers.
+- Python hex exports and color-of-the-day SVG fills use `rgb_to_hex` rather
+  than source hex, preserving solid RGB semantics when source text has alpha.
+- Remaining format grammars, numeric CLI/MCP adapters, scientific float/array
+  operations, alpha checks, output clipping, hash decoding, and name/comment
+  formatting are intentional, not duplicate strict RGB/hex implementations.
+  The standalone HTML TG16 generator formats browser-generated colors in
+  JavaScript; it cannot directly call Python helpers. Historical review and
+  proposal documents retain their original illustrative snippets.
+- `.\.venv\Scripts\python.exe -m unittest discover tests`: passed, 1,438 tests,
+  three skipped. Added seven regression tests covering watermark bounds,
+  source adapters, solid SVG output, and Python hex exports. PDF extraction
+  tests use mocked table transport because `pdfplumber` is not installed;
+  the actual field parsing and validation run through the production scripts.
+- `.\.venv\Scripts\python.exe -m pyright`: zero errors/warnings. The Problems
+  panel is clear. No protected data or constants were modified.
 
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later
@@ -48,33 +134,33 @@ the affected contract.
 
 ### Phase 1: inventory and contract decisions
 
-- [ ] Capture the current worktree, diagnostics, and relevant regression baseline.
-- [ ] Trace configuration consumers, object construction, caches, async callers,
+- [x] Capture the current worktree, diagnostics, and relevant regression baseline.
+- [x] Trace configuration consumers, object construction, caches, async callers,
   and worker boundaries. Record where settings are read versus captured.
-- [ ] Locate **all RGB input validation and hex conversion code throughout the
+- [x] Locate **all RGB input validation and hex conversion code throughout the
   repository**, including library modules, CLI, MCP, GUI/TUI, exporters,
   importers, tests, demos, scripts, tooling, and tools.
-- [ ] Build a caller/contract inventory rather than searching only for known
+- [x] Build a caller/contract inventory rather than searching only for known
   helper names. Include channel checks, regexes, integer parsing, prefix removal,
   short-hex expansion, formatting, coercion, and invalid-input fallbacks.
-- [ ] Route applicable production and internal-consumer code through the new
+- [x] Route applicable production and internal-consumer code through the new
   canonical helpers. Retain small format/error-presentation adapters, not
   duplicate conversion implementations. Tests may retain independent reference
   calculations and intentionally malformed inputs.
-- [ ] Distinguish input validation from output clipping, alpha handling,
+- [x] Distinguish input validation from output clipping, alpha handling,
   floating-coordinate conversions, and gamut checks. Do not narrow legitimate
   scalar or array conversion inputs to strict 8-bit palette inputs.
-- [ ] Choose a canonical helper location and dependency direction without
+- [x] Choose a canonical helper location and dependency direction without
   creating a conversions/utilities import cycle.
-- [ ] Approve hex grammar: prefixes, lengths, ASCII characters, whitespace,
+- [x] Approve hex grammar: prefixes, lengths, ASCII characters, whitespace,
   alpha policy, invalid types, and error contract.
-- [ ] Approve strict RGB input types, containers, bounds, booleans, integer
+- [x] Approve strict RGB input types, containers, bounds, booleans, integer
   subclasses, floats, and coercion/mutation policy.
-- [ ] Decide whether public `hex_to_rgb` keeps its optional-return contract or
+- [x] Decide whether public `hex_to_rgb` keeps its optional-return contract or
   changes to exceptions in 7.0.0.
-- [ ] Decide compound syntax, compatibility for separate `hex2`, and handling
+- [x] Decide compound syntax, compatibility for separate `hex2`, and handling
   when both compound `hex` and `hex2` are supplied.
-- [ ] Decide whether component counts are arbitrary or limited to four.
+- [x] Decide whether component counts are arbitrary or limited to four.
   Two, three, and four must be supported without adding `hex3`/`hex4` fields.
 - [x] Decide deprecation aliases versus removal for old dual-color API names,
   CLI options, and `mix` (historically intended to mean LAB averaging).
@@ -88,11 +174,11 @@ RapidFuzz or a standard-library fallback, compares the supplied hex color with
 the matched palette color using CIEDE2000, and returns a structured
 `ColorValidationRecord`. Its default distance threshold is 20.0.
 
-- [ ] Trace its public exports, CLI/MCP routes, import-tool usage, and tests.
+- [x] Trace its public exports, CLI/MCP routes, import-tool usage, and tests.
 - [ ] Review name-match confidence versus color-distance acceptance, threshold
   validation, invalid-hex reporting, optional-dependency parity, and its
   import-time palette snapshot.
-- [ ] Preserve the distinction between semantic name plausibility and strict
+- [x] Preserve the distinction between semantic name plausibility and strict
   input validity. Thread its hex parsing through the canonical implementation
   without silently changing its structured reporting contract.
 - [ ] Record any independently discovered behavior issues; obtain scope
@@ -116,7 +202,7 @@ This is not a claim that pandas or scikit-learn use the same storage mechanism.
   overrides must not mutate existing RGB/LAB or invalidate palette indexes.
 - [x] Gamut operations capture effective settings once and use that snapshot
   consistently for all internal checks.
-- [ ] Retain useful explicit per-call overrides with defined precedence:
+- [x] Retain useful explicit per-call overrides with defined precedence:
   explicit argument, effective context configuration, built-in default.
 - [x] Make caches whose contents depend on mode respect that mode; review the
   MCP cached filament palette specifically.
@@ -125,49 +211,49 @@ This is not a claim that pandas or scikit-learn use the same storage mechanism.
 
 ### Phase 3: gamut precision and shared validation
 
-- [ ] Add regression tests showing that current gamut checks round RGB before
+- [x] Add regression tests showing that current gamut checks round RGB before
   applying tolerance. Preserve public integer-returning conversion APIs.
-- [ ] Extract/reuse a floating-point conversion path for gamut calculations;
+- [x] Extract/reuse a floating-point conversion path for gamut calculations;
   do not duplicate transfer curves or scientific matrices.
-- [ ] Reuse and correct
+- [x] Reuse and correct
   [find_nearest_in_gamut](../../color_tools/gamut.py), rather than introducing a
   second mapper for filament blending.
-- [ ] Validate tolerance as a finite number >= 0, excluding booleans; retain
+- [x] Validate tolerance as a finite number >= 0, excluding booleans; retain
   default 0.01 in RGB channel units on the 0-255 scale.
-- [ ] Validate iterations as an integer >= 1, excluding booleans; retain
+- [x] Validate iterations as an integer >= 1, excluding booleans; retain
   default 20. Proposed policy has no arbitrary upper cap.
-- [ ] Terminate binary search when floating-point progress stops.
-- [ ] Verify boundary handling, attainable neutral endpoints, invalid LAB
+- [x] Terminate binary search when floating-point progress stops.
+- [x] Verify boundary handling, attainable neutral endpoints, invalid LAB
   inputs, and mapped-output guarantees. Define explicit failures where
   preserving lightness cannot produce an in-gamut result.
-- [ ] Describe the mapper as chroma reduction at constant LCH hue/lightness,
+- [x] Describe the mapper as chroma reduction at constant LCH hue/lightness,
   not a guarantee of the globally nearest color.
-- [ ] Consolidate parsing/validation using the inventory from Phase 1.
+- [x] Consolidate parsing/validation using the inventory from Phase 1.
   Remove silent black substitution and discarded malformed components.
-- [ ] Preserve contextual loader errors identifying the source and entry.
+- [x] Preserve contextual loader errors identifying the source and entry.
 
 ### Phase 4: multi-color representation and modes
 
-- [ ] Rename configuration terminology to `multi_color_mode`.
-- [ ] Retain an immutable ordered tuple of validated source components in each
+- [x] Rename configuration terminology to `multi_color_mode`.
+- [x] Retain an immutable ordered tuple of validated source components in each
   filament record, separately from its resolved RGB/LAB.
-- [ ] Preserve component repetition, source order, stable IDs, owned
+- [x] Preserve component repetition, source order, stable IDs, owned
   references, and original source information.
-- [ ] Validate every component even when only one will be selected.
-- [ ] Keep `first` as the default. Single-component inputs should resolve to
+- [x] Validate every component even when only one will be selected.
+- [x] Keep `first` as the default. Single-component inputs should resolve to
   that component under every mode.
-- [ ] Implement shared color selection/blending outside CLI/UI adapters.
+- [x] Implement approved color selection/blending outside CLI/UI adapters.
 
 | Mode | Definition | Decision status |
 | --- | --- | --- |
-| `first` | First defined component | Planned |
-| `last` | Final defined component | Planned |
+| `first` | First defined component | Implemented |
+| `last` | Final defined component | Implemented |
 | `representative` | Centrality, then chroma, then source order | User-defined algorithm |
 | `lightest` | Highest LAB L* | Proposed; confirm |
 | `darkest` | Lowest LAB L* | Proposed; confirm |
 | `most_chromatic` | Highest LAB C* | Proposed; confirm |
 | `least_chromatic` | Lowest LAB C* | Proposed; confirm |
-| `srgb_mean` | Equal arithmetic mean of encoded sRGB channels | Planned |
+| `srgb_mean` | Equal arithmetic mean of encoded sRGB channels | Implemented |
 | `linear_rgb_mean` | Decode sRGB, mean linear channels, encode to sRGB | Planned |
 | `lab_mean` | Equal arithmetic mean of D65 LAB coordinates | Planned |
 
@@ -189,13 +275,13 @@ the score/chroma bands admit them.
 
 - [ ] Confirm exact-score/source-order ties for the four proposed extrema
   modes; do not automatically reuse representative-mode tolerance bands.
-- [ ] Keep all mean calculations floating-point until final RGB output.
+- [x] Keep implemented mean calculations floating-point until final RGB output.
 - [ ] Reuse corrected gamut mapping for out-of-gamut LAB means.
 - [ ] Clamp residual numerical overshoot and round once to integer RGB.
-  Proposed rounding is Python nearest-even, not floor, ceiling, or ties-up.
-- [ ] Derive stored LAB from final RGB so matching, indexes, and swatches
+  Approved rounding is Python nearest-even, not floor, ceiling, or ties-up.
+- [x] Derive stored LAB from final RGB so matching, indexes, and swatches
   describe the same resolved color.
-- [ ] Document means as alternative empirical models for printed/melted
+- [x] Document means as alternative empirical models for printed/melted
   co-extruded filament. Users may test and choose a mode; none predicts
   pigment mixing from RGB alone. Equal component weights are the assumption.
 
@@ -272,7 +358,7 @@ warnings in existing and fresh dependency environments; installed-wheel
 completeness 100%; consumer and package/docs builds passed. This evidence does
 not replace validation after the changes above, nor establish a remote CI pass.
 
-## Verified baseline
+## Historical verified baseline (before the fixes)
 
 ### Filament regressions
 
@@ -287,7 +373,7 @@ The later module extraction,
 [commit c4fb0ec](https://github.com/dterracino/color_tools/commit/c4fb0ec24c3a6610b3fa39e4c635b3a3d9a9a2cf),
 introduced the current record initialization model.
 
-Current [filament loading and record initialization](../../color_tools/filament_palette.py):
+At the original review, [filament loading and record initialization](../../color_tools/filament_palette.py):
 
 - Passes JSON `hex` unchanged into `FilamentRecord`.
 - Does not populate the record's optional `hex2` from JSON or compound `hex`.
@@ -304,7 +390,7 @@ These counts are observations, not permanent test expectations.
 
 Observed red/blue example:
 
-| Input and mode | Current RGB | Historical LAB-average RGB |
+| Input and mode | Pre-fix RGB | Historical LAB-average RGB |
 | --- | --- | --- |
 | `#FF0000-#0000FF`, any accepted mode | `(0, 0, 0)` | Depends on mode |
 | Separate `hex`/`hex2`, `last` | `(255, 0, 0)` | `(0, 0, 255)` |
@@ -326,10 +412,10 @@ were not converted into behavioral regression gates.
 
 ## Workstream 1: consolidate color-input handling
 
-### Inventory to complete before editing
+### Historical initial inventory
 
-Start with these verified locations; trace their callers and expand the list
-before declaring consolidation complete.
+These observations describe the pre-change code. The current implementation
+inventory and contracts above supersede them.
 
 | Location | Current responsibility or difference |
 | --- | --- |
@@ -379,7 +465,7 @@ boundary adapters where the input format or error presentation differs.
 
 ## Workstream 2: filament color model and blending
 
-### Decisions requiring user approval
+### Historical decisions requiring user approval
 
 | Question | Options to evaluate | Initial recommendation, not an approved decision |
 | --- | --- | --- |
@@ -653,13 +739,13 @@ additions are required by this plan.
 
 ### Definition of done
 
-- [ ] User-approved parsing, mode, blending, and configuration contracts recorded.
-- [ ] One canonical implementation per RGB/hex contract; boundary adapters tested.
-- [ ] Existing compound data loads and selects/mixes correctly.
-- [ ] No silent black fallback or discarded invalid component.
-- [ ] Arbitrary-color support and `hex2` compatibility follow approved decisions.
-- [ ] All relevant consumers and serializers use a consistent representation.
-- [ ] Regression tests catch each known failure, including actual database loading.
+- [x] User-approved parsing, mode, blending, and configuration contracts recorded.
+- [x] One canonical implementation per RGB/hex contract; boundary adapters tested.
+- [x] Existing compound data loads and approved modes select/mix correctly.
+- [x] No silent black fallback or discarded invalid component.
+- [x] Arbitrary-color support and `hex2` removal follow approved decisions.
+- [x] All relevant consumers and serializers use a consistent representation.
+- [x] Regression tests catch each current-stage failure, including actual database loading.
 - [ ] Imports have reviewed provenance, preserved identities, and idempotent results.
 - [ ] Documentation, migration notes, hashes, and version metadata are synchronized.
 - [ ] Python 3.12 package floor, analysis target, development environment, CI,

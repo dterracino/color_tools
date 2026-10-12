@@ -12,6 +12,7 @@ import re
 from pathlib import Path
 from typing import List, Dict, Optional
 from collections import defaultdict
+from color_tools.conversions import parse_hex_colors, rgb_to_hex
 
 
 def slugify(text: str) -> str:
@@ -32,23 +33,6 @@ def generate_slug(filament: dict) -> str:
         parts.append(slugify(filament['finish']))
     parts.append(slugify(filament['color']))
     return '-'.join(parts)
-
-
-def extract_hex_code(text: str) -> Optional[str]:
-    """
-    Extract hex code from text.
-    
-    Args:
-        text: Text that may contain a hex code
-    
-    Returns:
-        Hex code with # prefix, or None
-    """
-    # Look for patterns like #RRGGBB or RRGGBB
-    match = re.search(r'#?([0-9A-Fa-f]{6})', text)
-    if match:
-        return '#' + match.group(1).upper()
-    return None
 
 
 def parse_product_name(product_name: str) -> tuple[Optional[str], Optional[str]]:
@@ -195,18 +179,16 @@ def parse_polymaker_pdf(pdf_path: Path) -> List[Dict]:
                             if finish_override:
                                 finish = finish_override
                             
-                            # Extract hex code (handle dual-color filaments with commas)
-                            hex_codes = [extract_hex_code(h.strip()) for h in hex_code.split(',')]
-                            hex_codes = [h for h in hex_codes if h]  # Remove None values
-                            
-                            if not hex_codes:
-                                continue
-                            
-                            # Handle dual-color filaments
-                            if len(hex_codes) > 1:
-                                hex_value = '-'.join(hex_codes)
-                            else:
-                                hex_value = hex_codes[0]
+                            try:
+                                hex_value = '-'.join(
+                                    rgb_to_hex(component)
+                                    for component in parse_hex_colors(hex_code.replace('\n', ' '))
+                                )
+                            except ValueError as error:
+                                raise ValueError(
+                                    f"Invalid hex for {product_name} {color_name} "
+                                    f"on page {page_num}: {hex_code!r}"
+                                ) from error
                             
                             # Parse TD value
                             td_float = None

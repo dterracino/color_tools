@@ -444,8 +444,27 @@ Use `data/palettes/` only when adding or maintaining a built-in palette in the s
 
 The configuration interface accepts `first` (default), `last`, and `srgb_mean`.
 Other planned selection and averaging modes are not accepted yet.
-Compound-source parsing and component retention are the next implementation
-step; the configuration update alone does not repair bundled compound records.
+Filament `hex` preserves the exact source text. All components are parsed once
+into immutable ordered `rgb_components`, retaining duplicates. `first` selects
+the first, `last` the last, and `srgb_mean` averages encoded sRGB channels with
+equal weights and Python nearest-even rounding once per channel. Stored LAB
+is derived from the final RGB. Means are empirical candidate models, not
+predictions of physical pigment mixing.
+
+Compound inputs support any positive number of colors separated by hyphen,
+ASCII space, comma, underscore, slash, colon, or semicolon. Spaces may surround
+punctuation; empty components/repeated punctuation are errors. Each component
+uses 3, 4, 6, or 8 ASCII hex digits, optionally preceded by one `#`.
+Four/eight-digit forms use CSS/PNG RGBA byte order, not Windows/Android ARGB.
+Alpha is validated but dropped for now. Single-color `hex_to_rgb()` does not
+accept separators or surrounding whitespace and raises `ValueError` on invalid
+input instead of returning `None`.
+
+Use `effective_hex` for a normalized single-color value. Generic CSV/JSON
+exports retain source `hex`, include `rgb_components` and `effective_hex`, and
+omit removed `hex2`. AutoForge's single-color column uses `effective_hex`.
+GUI export templates provide these same fields, including indexed component
+paths. JSON files with `hex2` must move those components into `hex`.
 
 **Via CLI:**
 
@@ -500,9 +519,10 @@ raise `ValueError`:
 Version 7.0.0 removes all former individual getters/setters and
 `--dual-color-mode`, without compatibility aliases. Replace `mix` with
 `srgb_mean` only if an encoded RGB mean is intended; it is not a LAB blend.
-The planned `lab_mean` is not available yet. The unrounded gamut-check fix is
-also a subsequent step; current integer conversion still limits tolerance
-precision.
+The planned `lab_mean` is not available yet. Gamut checks use unrounded RGB,
+so sub-integer tolerances are effective. The mapper reduces chroma at constant
+LCH lightness/hue, not necessarily to the globally nearest color. Invalid LAB
+coordinates or a lightness with no feasible neutral raise `ValueError`.
 
 ### Custom Data Directory
 

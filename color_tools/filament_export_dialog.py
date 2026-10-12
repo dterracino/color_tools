@@ -53,10 +53,10 @@ _GENERIC_CSV = ExportTemplate(
     extension="csv",
     encoding="csv",
     template=(
-        "id,maker,type,finish,color,hex,hex2,td_value,owned\n"
+        "id,maker,type,finish,color,hex,effective_hex,rgb_components,td_value,owned\n"
         "<%=loop_start%>\n"
         "<%=id%>,<%=maker%>,<%=type%>,<%=finish%>,<%=color%>,<%=hex%>,"
-        "<%=hex2%>,<%=td_value%>,<%=owned%>\n"
+        "<%=effective_hex%>,<%=rgb_components%>,<%=td_value%>,<%=owned%>\n"
         "<%=loop_end%>"
     ),
 )
@@ -69,7 +69,8 @@ _GENERIC_JSON = ExportTemplate(
         "<%=loop_start%>\n"
         "  {\"id\": <%=id%>, \"maker\": <%=maker%>, \"type\": <%=type%>, "
         "\"finish\": <%=finish%>, \"color\": <%=color%>, \"hex\": <%=hex%>, "
-        "\"hex2\": <%=hex2%>, \"td_value\": <%=td_value%>, "
+        "\"effective_hex\": <%=effective_hex%>, \"rgb_components\": <%=rgb_components%>, "
+        "\"td_value\": <%=td_value%>, "
         "\"rgb\": <%=rgb%>, \"lab\": <%=lab%>, "
         "\"other_names\": <%=other_names%>, \"source\": <%=source%>, "
         "\"owned\": <%=owned%>}\n"
@@ -84,7 +85,7 @@ _AUTOFORGE_CSV = ExportTemplate(
     template=(
         "Brand,Name,TD,Color,Owned\n"
         "<%=loop_start%>\n"
-        "<%=brand%>,<%=color%>,<%=td_value%>,<%=hex%>,<%=owned%>\n"
+        "<%=brand%>,<%=color%>,<%=td_value%>,<%=effective_hex%>,<%=owned%>\n"
         "<%=loop_end%>"
     ),
 )
@@ -111,7 +112,8 @@ _FIELD_NAMES = (
     "finish",
     "color",
     "hex",
-    "hex2",
+    "effective_hex",
+    "rgb_components",
     "td_value",
     "owned",
     "brand",
@@ -186,7 +188,8 @@ def _field_values(record: FilamentRecord) -> dict[str, object]:
         "finish": record.finish,
         "color": record.color,
         "hex": record.hex,
-        "hex2": record.hex2,
+        "effective_hex": record.effective_hex,
+        "rgb_components": record.rgb_components,
         "td_value": record.td_value,
         "owned": True,
         "rgb": record.rgb,

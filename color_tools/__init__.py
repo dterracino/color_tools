@@ -74,6 +74,8 @@ from .conversions import (
     # Hex ↔ RGB (basic web colors)
     hex_to_rgb,
     rgb_to_hex,
+    parse_hex_colors,
+    validate_rgb,
     
     # RGB ↔ LAB (the main event!)
     rgb_to_lab,
@@ -91,6 +93,7 @@ from .conversions import (
     # RGB ↔ XYZ (the universal translator)
     rgb_to_xyz,
     xyz_to_rgb,
+    xyz_to_rgb_float,
     
     # XYZ ↔ LAB (for power users)
     xyz_to_lab,
@@ -309,6 +312,8 @@ __all__ = [
     
     # Conversion functions (most commonly used)
     "hex_to_rgb",
+    "parse_hex_colors",
+    "validate_rgb",
     "rgb_to_hex",
     "rgb_to_lab",
     "rgb_to_lab_array",
@@ -319,6 +324,7 @@ __all__ = [
     "lch_to_lab",
     "rgb_to_xyz",
     "xyz_to_rgb",
+    "xyz_to_rgb_float",
     "xyz_to_lab",
     "lab_to_xyz",
     "rgb_to_hsl",

@@ -30,6 +30,7 @@ from color_tools.conversions import (
     rgb_to_xyz,
     xyz_to_lab,
     xyz_to_rgb,
+    xyz_to_rgb_float,
 )
 from color_tools.distance import (
     delta_e_76,
@@ -41,6 +42,7 @@ from color_tools.distance import (
 )
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
 from color_tools.config import MultiColorMode, config_context, get_config
+from color_tools._color_utils import validate_rgb
 from color_tools.gamut import find_nearest_in_gamut, is_in_srgb_gamut
 from color_tools.naming import generate_color_name
 from color_tools.palette import ColorRecord, Palette, load_palette
@@ -85,6 +87,7 @@ mcp: MCPServer[Any] = MCPServer(
 
 
 def _rgb(red: RGBChannel, green: RGBChannel, blue: RGBChannel) -> tuple[int, int, int]:
+    validate_rgb((red, green, blue))
     return (red, green, blue)
 
 
@@ -158,6 +161,8 @@ def _filament_match(record: FilamentRecord, distance: float, metric: str) -> Fil
         finish=record.finish,
         color=record.color,
         hex=record.hex,
+        effective_hex=record.effective_hex,
+        rgb_components=record.rgb_components,
         rgb=record.rgb,
         lab=record.lab,
         td_value=record.td_value,
@@ -278,7 +283,12 @@ def convert_color(
     value = _components(component_1, component_2, component_3, component_4)
     lab = _lab_from_space(value, source_space)
     gamut_status = is_in_srgb_gamut(lab) if source_space in {"xyz", "lab", "lch"} else None
-    unclamped_rgb = _rgb_from_space(value, source_space, clamp=False)
+    if source_space == "xyz":
+        unclamped_rgb = xyz_to_rgb_float((value[0], value[1], value[2]))
+    elif source_space in {"lab", "lch"}:
+        unclamped_rgb = xyz_to_rgb_float(lab_to_xyz(lab))
+    else:
+        unclamped_rgb = _rgb_from_space(value, source_space, clamp=False)
     rgb_was_clamped = any(channel < 0 or channel > 255 for channel in unclamped_rgb)
     rgb_dependent_target = target_space in {"rgb", "hsl", "cmy", "cmyk"}
     if not clamp_rgb and rgb_was_clamped and rgb_dependent_target and target_space != "rgb":
@@ -435,8 +445,7 @@ def validate_color_name(
     delta_e_threshold: Percentage = 20.0,
 ) -> ColorNameValidation:
     """Validate whether a color name plausibly describes a hex color."""
-    if hex_to_rgb(hex_code) is None:
-        raise ValueError("hex_code must be a three- or six-digit hexadecimal color")
+    hex_to_rgb(hex_code)
     result = validate_color(color_name, hex_code, de_threshold=delta_e_threshold)
     return ColorNameValidation(
         is_match=result.is_match,

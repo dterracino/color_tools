@@ -29,6 +29,7 @@ parent_dir = Path(__file__).parent.parent
 if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
+from color_tools.conversions import parse_hex_colors, rgb_to_hex
 
 @dataclass
 class NewFilament:
@@ -93,13 +94,11 @@ def parse_type_finish(type_string: str) -> tuple[str, Optional[str]]:
 
 
 def normalize_hex(hex_code: str) -> str:
-    """Normalize hex code to uppercase without # prefix."""
-    if hex_code is None:
-        return ''
-    hex_clean = hex_code.strip().upper()
-    if hex_clean.startswith('#'):
-        hex_clean = hex_clean[1:]
-    return hex_clean
+    """Normalize ordered components for comparison without a # prefix."""
+    return "-".join(
+        rgb_to_hex(component).removeprefix("#")
+        for component in parse_hex_colors(hex_code)
+    )
 
 
 def generate_filament_id(maker: str, type_name: str, finish: Optional[str], color: str) -> str:

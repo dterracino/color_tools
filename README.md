@@ -116,8 +116,12 @@ use built-in CSS/descriptive names, or pass `names=["Accent", "Background", ...]
 to supply explicit names (these override auto-naming and must match the color count).
 Use `Palette.from_hex(["#f00", "00ff00"])` for hex inputs, or
 `ColorRecord.from_rgb()` / `ColorRecord.from_hex()` for individual records.
-RGB requires exactly three integers from 0 to 255; hex accepts three or six
-hexadecimal digits with an optional `#`. Invalid values raise `ValueError`.
+RGB requires exactly three built-in integers from 0 to 255 in a tuple or list;
+booleans, floats, and integer subclasses are rejected without coercion.
+Hex accepts 3, 4, 6, or 8 ASCII hexadecimal digits with an optional `#`.
+Four/eight-digit forms use CSS/PNG RGBA order, not Windows/Android ARGB;
+alpha is validated but dropped for now. Invalid values raise `ValueError`,
+including through `hex_to_rgb()`; `rgb_to_hex()` no longer clips invalid RGB.
 Factories preserve order and duplicate colors; auto-generated names may repeat.
 For direct batch naming, `generate_color_names(colors)` returns all `(name, match_type)`
 results after loading the CSS color data once. Use `iter_color_names(colors)` for lazy
@@ -243,7 +247,14 @@ Runtime settings use frozen, context-local snapshots through `get_config()`,
 old individual configuration setters and `--dual-color-mode`; use
 `--multi-color-mode` with `first`, `last`, or `srgb_mean`. See the
 [configuration guide](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md)
-for scope, migration, and the remaining compound-filament parsing work.
+for scope, migration, and multi-color filament representation.
+
+Filaments preserve original `hex` text and an immutable ordered
+`rgb_components` tuple. Compound hex accepts any number of components separated
+by hyphen, space, comma, underscore, slash, colon, or semicolon. Every component
+is validated, including those not selected. `rgb`, `lab`, and `effective_hex`
+describe the color resolved at construction; later configuration changes do
+not alter existing records. The separate `hex2` field has been removed.
 
 ```python
 from color_tools import (

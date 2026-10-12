@@ -33,6 +33,7 @@ from __future__ import annotations
 
 import struct
 from pathlib import Path
+from color_tools.conversions import rgb_to_hex
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -288,11 +289,7 @@ class RiffPalImporter(PaletteImporter):
                 blue,
             )
 
-            color_name = (
-                f"#{red:02X}"
-                f"{green:02X}"
-                f"{blue:02X}"
-            )
+            color_name = rgb_to_hex(rgb)
 
             colors.append(
                 self._make_color_record(

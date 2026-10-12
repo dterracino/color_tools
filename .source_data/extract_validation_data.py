@@ -19,6 +19,7 @@ import json
 import re
 from typing import Optional
 
+from color_tools.conversions import hex_to_rgb, rgb_to_hex
 
 def extract_type_and_finish(filament_type_name: str) -> tuple[str, Optional[str]]:
     """
@@ -100,10 +101,7 @@ def extract_product_name(url: str, color_name: str, filament_type_name: str) -> 
 
 def normalize_hex(hex_color: str) -> str:
     """Ensure hex color has # prefix and is uppercase."""
-    hex_color = hex_color.strip().upper()
-    if not hex_color.startswith('#'):
-        hex_color = '#' + hex_color
-    return hex_color
+    return rgb_to_hex(hex_to_rgb(hex_color.strip()))
 
 
 def process_record(rec: dict) -> dict:

@@ -25,7 +25,7 @@ def _today_index(count: int) -> int:
 
 
 def _build_svg(filament: FilamentRecord) -> str:
-    bg = filament.hex if filament.hex.startswith("#") else f"#{filament.hex}"
+    bg = filament.effective_hex
     r, g, b = filament.rgb
     hex_upper = bg.upper()
     maker = filament.maker

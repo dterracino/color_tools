@@ -12,6 +12,7 @@ from mcp.client import Client
 from mcp.client.stdio import StdioServerParameters, stdio_client
 
 from color_tools.config import config_context
+from color_tools.conversions import rgb_to_xyz
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
 from color_tools.mcp.server import mcp, _filament_palette, _filament_palette_for_mode
 
@@ -24,7 +25,7 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
             return FilamentPalette([
                 FilamentRecord(
                     id="probe", maker="probe", type="PLA", finish=None,
-                    color="probe", hex="#FF0000", hex2="#0000FF",
+                    color="probe", hex="#FF0000-#0000FF",
                 )
             ])
 
@@ -177,6 +178,19 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         ):
             self.assertAlmostEqual(result[key], 0.0)
 
+    async def test_xyz_clamping_detects_sub_integer_boundary_deviation(self) -> None:
+        xyz = rgb_to_xyz((-0.25, 128.0, 128.0))
+        result = await self.call_tool(
+            "convert_color",
+            {
+                "source_space": "xyz", "target_space": "rgb",
+                "component_1": xyz[0], "component_2": xyz[1], "component_3": xyz[2],
+            },
+        )
+        self.assertFalse(result["in_srgb_gamut"])
+        self.assertTrue(result["rgb_was_clamped"])
+        self.assertEqual(result["target_value"][0], 0)
+
     async def test_named_color_search_supports_bundled_palettes(self) -> None:
         """Named-color matching should load non-CSS palettes by name."""
         result = await self.call_tool(
@@ -205,6 +219,24 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         )
         self.assertTrue(result["matches"])
         self.assertTrue(all(match["maker"] == "Bambu Lab" for match in result["matches"]))
+
+    async def test_compound_filament_wire_output_retains_source_components(self) -> None:
+        with config_context(multi_color_mode="last"):
+            record = FilamentRecord(
+                id="probe", maker="probe", type="PLA", finish=None,
+                color="probe", hex="#f00 / #00f",
+            )
+        palette = FilamentPalette([record])
+        with patch("color_tools.mcp.server._filament_palette", return_value=palette):
+            result = await self.call_tool(
+                "find_filaments", {"red": 0, "green": 0, "blue": 255, "count": 1},
+            )
+        match = result["matches"][0]
+        self.assertEqual(match["hex"], "#f00 / #00f")
+        self.assertEqual(match["effective_hex"], "#0000FF")
+        self.assertEqual(match["rgb_components"], [[255, 0, 0], [0, 0, 255]])
+        self.assertEqual(match["rgb"], [0, 0, 255])
+        self.assertNotIn("hex2", match)
 
     async def test_cvd_gamut_and_validation_tools(self) -> None:
         """Specialist tools should return typed transforms and validation evidence."""

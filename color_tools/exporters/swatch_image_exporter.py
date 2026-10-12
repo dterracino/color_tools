@@ -54,6 +54,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import (
     ExporterDependency,
     ExporterMetadata,
@@ -730,10 +731,7 @@ class SwatchImageExporter(PaletteExporter):
             values.append(
                 (
                     "HEX",
-                    "#"
-                    + color.hex.removeprefix(
-                        "#"
-                    ).upper(),
+                    rgb_to_hex(color.rgb),
                 )
             )
 

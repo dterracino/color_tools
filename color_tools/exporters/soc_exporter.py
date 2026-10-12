@@ -14,6 +14,7 @@ import xml.etree.ElementTree as ET
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -82,10 +83,7 @@ class SOCExporter(PaletteExporter):
 
         for index, color in enumerate(colors, start=1):
             name = color.name or f"Color {index}"
-            hex_code = (
-                "#"
-                + color.hex.removeprefix("#").lower()
-            )
+            hex_code = rgb_to_hex(color.rgb).lower()
 
             ET.SubElement(
                 root,

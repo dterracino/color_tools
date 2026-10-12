@@ -17,7 +17,7 @@ class TestFilamentCollections(unittest.TestCase):
             return FilamentPalette([
                 FilamentRecord(
                     id="probe", maker="Bambu Lab", type="PLA", finish="Basic",
-                    color="probe", hex="#FF0000", hex2="#0000FF",
+                    color="probe", hex="#FF0000-#0000FF",
                 )
             ])
 

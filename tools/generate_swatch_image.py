@@ -189,9 +189,10 @@ def _parse_args() -> argparse.Namespace:
 def main() -> None:
     """Run the swatch image generation tool."""
     args = _parse_args()
-    base_rgb = hex_to_rgb(args.base)
-    if base_rgb is None:
-        raise SystemExit(f"Invalid HEX base color: {args.base!r}")
+    try:
+        base_rgb = hex_to_rgb(args.base)
+    except ValueError as error:
+        raise SystemExit(f"Invalid HEX base color: {args.base!r}: {error}") from error
 
     try:
         output_path = generate_swatch_image(

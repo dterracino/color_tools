@@ -9,6 +9,16 @@ JSON entries ready to merge into filaments.json.
 import re
 import json
 from pathlib import Path
+from color_tools.conversions import parse_hex_colors, rgb_to_hex
+
+
+def _normalize_hex(hex_code: str, filepath: Path, color_name: str) -> str:
+    try:
+        return '-'.join(rgb_to_hex(component) for component in parse_hex_colors(hex_code))
+    except ValueError as error:
+        raise ValueError(
+            f"Invalid hex for {color_name} in {filepath}: {hex_code!r}"
+        ) from error
 
 
 def parse_bambu_file(filepath: Path, maker: str, filament_type: str, finish: str | None) -> list[dict]:
@@ -47,16 +57,14 @@ def parse_bambu_file(filepath: Path, maker: str, filament_type: str, finish: str
                 color_name = parts[0]
                 hex_code = parts[1].replace('Hex:', '').strip()
                 
-                # Clean up hex code
-                if not hex_code.startswith('#'):
-                    hex_code = '#' + hex_code
+                hex_code = _normalize_hex(hex_code, filepath, color_name)
                 
                 filaments.append({
                     "maker": maker,
                     "type": filament_type,
                     "finish": finish,
                     "color": color_name,
-                    "hex": hex_code.upper(),
+                    "hex": hex_code,
                     "td_value": None
                 })
                 i += 1
@@ -71,16 +79,14 @@ def parse_bambu_file(filepath: Path, maker: str, filament_type: str, finish: str
                 if hex_line.startswith('Hex:'):
                     hex_code = hex_line.replace('Hex:', '').strip()
                     
-                    # Clean up hex code
-                    if not hex_code.startswith('#'):
-                        hex_code = '#' + hex_code
+                    hex_code = _normalize_hex(hex_code, filepath, color_name)
                     
                     filaments.append({
                         "maker": maker,
                         "type": filament_type,
                         "finish": finish,
                         "color": color_name,
-                        "hex": hex_code.upper(),
+                        "hex": hex_code,
                         "td_value": None
                     })
                     i += 2  # Skip both lines

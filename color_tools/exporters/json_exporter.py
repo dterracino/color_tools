@@ -158,7 +158,7 @@ class JSONExporter(PaletteExporter):
         path.parent.mkdir(parents=True, exist_ok=True)
 
         data = [
-            asdict(filament)
+            {**asdict(filament), "effective_hex": filament.effective_hex}
             for filament in filaments
         ]
 

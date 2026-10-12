@@ -23,7 +23,8 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
 
 from color_tools.constants import ColorConstants
-from color_tools.conversions import rgb_to_lab, hex_to_rgb, lab_to_lch
+from color_tools.conversions import rgb_to_lab, rgb_to_hex, lab_to_lch
+from color_tools._color_utils import parse_hex_colors
 from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
 from color_tools.config import get_config
 from color_tools._palette_utils import ensure_list, should_prefer_source
@@ -50,7 +51,6 @@ class _FilamentData(_RequiredFilamentData, total=False):
 
     id: str
     finish: str | None
-    hex2: str | None
     td_value: float | None
     other_names: list[str] | None
 
@@ -61,7 +61,8 @@ class FilamentRecord:
     Immutable record representing a 3D printing filament.
     
     Filament colors are pre-computed in all major color spaces for fast matching.
-    Supports dual-color filaments (some have primary and secondary colors).
+    Original hex text and ordered RGB components are retained. The current
+    multi-color mode resolves RGB/LAB once at construction, not on later reads.
     
     The `other_names` field allows for alternative color names that can be used
     to find this filament.
@@ -77,7 +78,9 @@ class FilamentRecord:
         type: Material type (e.g., "PLA", "PETG", "ABS")
         finish: Surface finish (e.g., "Matte", "Glossy", "Silk"). Optional.
         color: Human-readable color name (e.g., "Jet Black")
-        hex: RGB color in hex format (e.g., "#000000")
+        hex: Original single or compound hex text. Components may be separated
+            by hyphen, space, comma, underscore, slash, colon, or semicolon.
+            CSS/PNG RGBA alpha is allowed but dropped from RGB components.
         td_value: Transmission density value (0.0-1.0) for light transmission simulation. Optional.
         other_names: Alternative names this filament is known by. Optional.
         source: Source JSON file this record came from (auto-set during loading)
@@ -98,50 +101,34 @@ class FilamentRecord:
     other_names: Optional[List[str]] = None
     source: str = "unknown.json"
     
-    # Dual-color support (some filaments have two colors)
-    hex2: Optional[str] = field(default=None, repr=False)
-    
     def __post_init__(self) -> None:
         """Compute derived color representations in all color spaces."""
         mode = get_config().multi_color_mode
-        
-        if mode == "last" and self.hex2 is not None:
-            hex_to_use = self.hex2
-        elif mode == "srgb_mean" and self.hex2 is not None:
-            # Mix the two colors by averaging their RGB values
-            rgb1 = hex_to_rgb(self.hex)
-            rgb2 = hex_to_rgb(self.hex2)
-            # Handle None returns from hex_to_rgb
-            if rgb1 is None or rgb2 is None:
-                # Fall back to first color if conversion fails
-                rgb1 = rgb1 or (0, 0, 0)
-                rgb2 = rgb2 or (0, 0, 0)
-            mixed_rgb = (
-                round((rgb1[0] + rgb2[0]) / 2),
-                round((rgb1[1] + rgb2[1]) / 2),
-                round((rgb1[2] + rgb2[2]) / 2)
+        components = parse_hex_colors(self.hex)
+        if mode == "last":
+            rgb = components[-1]
+        elif mode == "srgb_mean":
+            count = len(components)
+            rgb = (
+                round(sum(component[0] for component in components) / count),
+                round(sum(component[1] for component in components) / count),
+                round(sum(component[2] for component in components) / count),
             )
-            object.__setattr__(self, 'rgb', mixed_rgb)
-            object.__setattr__(self, 'lab', rgb_to_lab(mixed_rgb))
-            return
         else:
-            # Default: use first color (mode == "first" or hex2 is None)
-            hex_to_use = self.hex
-        
-        # Convert from hex (single source of truth)
-        rgb = hex_to_rgb(hex_to_use)
-        # Handle None return from hex_to_rgb
-        if rgb is None:
-            rgb = (0, 0, 0)  # Default to black if conversion fails
-        lab = rgb_to_lab(rgb)
-        
-        # Use object.__setattr__ for frozen dataclass
+            rgb = components[0]
+        object.__setattr__(self, 'rgb_components', components)
         object.__setattr__(self, 'rgb', rgb)
-        object.__setattr__(self, 'lab', lab)
+        object.__setattr__(self, 'lab', rgb_to_lab(rgb))
     
     # Derived color spaces (computed in __post_init__)
     rgb: Tuple[int, int, int] = field(init=False)
     lab: Tuple[float, float, float] = field(init=False)
+    rgb_components: tuple[tuple[int, int, int], ...] = field(init=False)
+
+    @property
+    def effective_hex(self) -> str:
+        """Normalized single-color hex derived from the captured effective RGB."""
+        return rgb_to_hex(self.rgb)
     
     def __str__(self) -> str:
         """Return a human-readable string representation of the filament."""
@@ -178,6 +165,8 @@ def _parse_filament_records(
     
     for i, f in enumerate(data):
         try:
+            if "hex2" in f:
+                raise ValueError("hex2 was removed; put all components in hex")
             records.append(FilamentRecord(
                 id=f.get("id", ""),  # User files may not have IDs
                 maker=f["maker"],

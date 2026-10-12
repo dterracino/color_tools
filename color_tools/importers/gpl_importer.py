@@ -35,6 +35,8 @@ from __future__ import annotations
 
 import re
 from pathlib import Path
+from color_tools.conversions import rgb_to_hex
+from color_tools._color_utils import validate_rgb
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -253,15 +255,13 @@ class GPLImporter(PaletteImporter):
                 ),
             )
 
-            if any(
-                channel < 0
-                or channel > 255
-                for channel in rgb
-            ):
+            try:
+                validate_rgb(rgb)
+            except ValueError as error:
                 raise ValueError(
                     "GPL RGB values must be between 0 and 255 "
                     f"on line {line_number}: {rgb}"
-                )
+                ) from error
 
             color_name = (
                 match.group("name")
@@ -269,11 +269,7 @@ class GPLImporter(PaletteImporter):
             ).strip()
 
             if not color_name:
-                color_name = (
-                    f"#{rgb[0]:02X}"
-                    f"{rgb[1]:02X}"
-                    f"{rgb[2]:02X}"
-                )
+                color_name = rgb_to_hex(rgb)
 
             colors.append(
                 self._make_color_record(

@@ -35,7 +35,9 @@ from color_tools.conversions import (
     lab_to_lch,
     rgb_to_hsl,
     rgb_to_lab,
+    rgb_to_hex,
 )
+from color_tools._color_utils import validate_rgb
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.palette import ColorRecord
 
@@ -429,11 +431,7 @@ class PaletteImporter(ABC):
             rgb
         )
 
-        r, g, b = rgb
-
-        hex_value = (
-            f"#{r:02X}{g:02X}{b:02X}"
-        )
+        hex_value = rgb_to_hex(rgb)
 
         hsl = rgb_to_hsl(
             rgb
@@ -473,17 +471,4 @@ class PaletteImporter(ABC):
                 If the tuple does not contain exactly three integer channels
                 between 0 and 255.
         """
-        if len(rgb) != 3:
-            raise ValueError(
-                "RGB colors must contain exactly three channels"
-            )
-
-        for channel in rgb:
-            if not isinstance(channel, int):
-                raise ValueError(
-                    "RGB channels must be integers"
-                )
-            if channel < 0 or channel > 255:
-                raise ValueError(
-                    f"RGB channels must be between 0 and 255: {rgb}"
-                )
+        validate_rgb(rgb)

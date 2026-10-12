@@ -12,11 +12,29 @@ a much larger volume. The intersection is the "sRGB gamut."
 """
 
 from __future__ import annotations
-from typing import Tuple
+import math
+from typing import Tuple, cast
 
 from .constants import ColorConstants
-from .conversions import lab_to_rgb, lab_to_lch, lch_to_lab
+from .conversions import lab_to_rgb, lab_to_lch, lch_to_lab, lab_to_xyz, xyz_to_rgb_float
 from .config import ColorConfig, get_config
+
+
+def _validate_lab(lab: object) -> None:
+    if not isinstance(lab, (tuple, list)):
+        raise ValueError("LAB must contain three finite numeric components")
+    components = cast(tuple[object, ...] | list[object], lab)
+    if len(components) != 3:
+        raise ValueError("LAB must contain three finite numeric components")
+    for component in components:
+        if isinstance(component, bool) or not isinstance(component, (int, float)):
+            raise ValueError("LAB must contain three finite numeric components")
+        try:
+            finite = math.isfinite(component)
+        except OverflowError as error:
+            raise ValueError("LAB components exceed the supported numeric range") from error
+        if not finite:
+            raise ValueError("LAB must contain three finite numeric components")
 
 
 def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = None) -> bool:
@@ -46,6 +64,11 @@ def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = 
     
     Returns:
         True if the color can be represented in sRGB, False if it would clip
+
+    Raises:
+        ValueError: If LAB is malformed, non-finite, or exceeds the supported
+            conversion range, or tolerance is negative/non-finite.
+        TypeError: If tolerance is not numeric or is a boolean.
     
     Example:
         >>> is_in_srgb_gamut((50, 0, 0))  # Mid gray
@@ -56,27 +79,23 @@ def is_in_srgb_gamut(lab: Tuple[float, float, float], tolerance: float | None = 
     if tolerance is None:
         tolerance = get_config().gamut_tolerance
     ColorConfig(gamut_tolerance=tolerance)
-        
+    _validate_lab(lab)
     try:
-        # Convert without clamping to see the "true" values
-        rgb = lab_to_rgb(lab, clamp=False)
-        r, g, b = rgb
-        
-        # Check if all components are within valid range (with small tolerance)
-        min_val = ColorConstants.RGB_MIN - tolerance
-        max_val = ColorConstants.RGB_MAX + tolerance
-        
-        return (min_val <= r <= max_val and 
-                min_val <= g <= max_val and 
-                min_val <= b <= max_val)
-    except:
-        return False
+        rgb = xyz_to_rgb_float(lab_to_xyz(lab))
+    except OverflowError as error:
+        raise ValueError("LAB conversion exceeds the supported numeric range") from error
+    min_val = ColorConstants.RGB_MIN - tolerance
+    max_val = ColorConstants.RGB_MAX + tolerance
+    return all(math.isfinite(channel) and min_val <= channel <= max_val for channel in rgb)
 
 
 def find_nearest_in_gamut(lab: Tuple[float, float, float], 
                           max_iterations: int | None = None) -> Tuple[float, float, float]:
     """
-    Find the nearest in-gamut LAB color to a given (possibly out-of-gamut) LAB color.
+    Reduce chroma to find an in-gamut LAB color at constant lightness and hue.
+
+    This is not a globally nearest-color optimization. Invalid coordinates or
+    lightness with no feasible neutral endpoint raise ValueError.
     
     **The Strategy:** When a color is out of gamut, it's usually because it's
     too *saturated* (high chroma). So we convert to LCH, then use binary search
@@ -100,7 +119,12 @@ def find_nearest_in_gamut(lab: Tuple[float, float, float],
                        If None, uses current context value (default 20).
     
     Returns:
-        In-gamut L*a*b* color (closest match that can be displayed)
+        Desaturated in-gamut L*a*b* at the same LCH lightness and hue.
+
+    Raises:
+        ValueError: If LAB is invalid, iterations is less than one, or no
+            in-gamut neutral exists at the requested lightness.
+        TypeError: If iterations is not an integer or is a boolean.
     
     Example:
         >>> # Super saturated red - can't be displayed!
@@ -122,6 +146,9 @@ def find_nearest_in_gamut(lab: Tuple[float, float, float],
     # Convert to LCH for easier chroma manipulation
     # LCH = cylindrical LAB (Lightness, Chroma, Hue)
     L, C, h = lab_to_lch(lab)
+    neutral = lch_to_lab((L, 0.0, h))
+    if not is_in_srgb_gamut(neutral, tolerance=config.gamut_tolerance):
+        raise ValueError("No in-gamut neutral exists at the requested LAB lightness")
     
     # Binary search for the maximum chroma that fits in gamut
     # Start with search bounds: [0, current_chroma]
@@ -170,6 +197,7 @@ def clamp_to_gamut(lab: Tuple[float, float, float]) -> Tuple[float, float, float
         In-gamut L*a*b* color (clamped)
     """
     from .conversions import rgb_to_lab
+    _validate_lab(lab)
     # Convert to RGB (with clamping), then back to LAB
     rgb = lab_to_rgb(lab, clamp=True)
     return rgb_to_lab(rgb)

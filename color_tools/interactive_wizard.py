@@ -35,6 +35,7 @@ else:
         pass  # PROMPT_TOOLKIT_AVAILABLE handles the guard
 
 from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
+from .conversions import hex_to_rgb, rgb_to_hex, validate_rgb
 
 __all__ = [
     "run_interactive_wizard",
@@ -160,16 +161,17 @@ def _ask_color_input(label: str = "color to match") -> tuple[list[str], str] | N
         print()
         while True:
             try:
-                raw = _pt("  Hex color (#RRGGBB or RRGGBB): ").strip()
+                raw = _pt("  Hex color (RGB/RGBA/RRGGBB/RRGGBBAA, optional #): ").strip()
             except (KeyboardInterrupt, EOFError):
                 return None
             if raw.lower() in ("q", "quit", "exit"):
                 return None
-            cleaned = raw.lstrip("#").strip()
-            if len(cleaned) == 6 and all(c in "0123456789abcdefABCDEF"
-                                          for c in cleaned):
-                return ["--hex", f"#{cleaned.upper()}"], f"#{cleaned.upper()}"
-            print("  Not a valid hex code. Try again (e.g. FF8040 or #FF8040).")
+            try:
+                normalized = rgb_to_hex(hex_to_rgb(raw))
+            except ValueError as error:
+                print(f"  Not a valid hex code: {error}")
+                continue
+            return ["--hex", normalized], normalized
 
     else:
         # RGB
@@ -185,12 +187,16 @@ def _ask_color_input(label: str = "color to match") -> tuple[list[str], str] | N
                     return None
                 try:
                     n = int(raw)
-                    if 0 <= n <= 255:
-                        values.append(n)
-                        break
-                    print("    Must be 0-255.")
                 except ValueError:
                     print("    Please enter a whole number.")
+                    continue
+                try:
+                    validate_rgb((n, 0, 0))
+                except ValueError:
+                    print("    Must be 0-255.")
+                    continue
+                values.append(n)
+                break
 
         return (["--value", str(values[0]), str(values[1]), str(values[2])],
                 f"rgb({values[0]}, {values[1]}, {values[2]})")
@@ -600,4 +606,3 @@ def run_interactive_wizard(json_path: "Path | None" = None) -> None:
         _run_filament_wizard(json_path)
     elif choice == 3:
         _run_convert_wizard(json_path)
-

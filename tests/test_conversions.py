@@ -136,16 +136,10 @@ class TestHexRGBConversions(unittest.TestCase):
         self.assertEqual(hex_to_rgb("#456"), (68, 85, 102))  # 0x44, 0x55, 0x66
     
     def test_hex_to_rgb_invalid(self):
-        """Test invalid hex codes return None."""
-        # Wrong length
-        self.assertIsNone(hex_to_rgb("#12"))
-        self.assertIsNone(hex_to_rgb("#12345"))
-        self.assertIsNone(hex_to_rgb("#1234567"))
-        
-        # Invalid characters
-        self.assertIsNone(hex_to_rgb("#GGG"))
-        self.assertIsNone(hex_to_rgb("#GGGGGG"))
-        self.assertIsNone(hex_to_rgb("#XYZ"))
+        """Malformed values raise instead of silently substituting a color."""
+        for value in ("#12", "#12345", "#1234567", "#GGG", "#GGGGGG", "#XYZ"):
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                hex_to_rgb(value)
     
     def test_rgb_to_hex_basic(self):
         """Test basic RGB to hex conversion."""
@@ -160,8 +154,6 @@ class TestHexRGBConversions(unittest.TestCase):
         colors = ["#FF0000", "#00FF00", "#0000FF", "#FFFFFF", "#123456", "#ABCDEF"]
         for hex_color in colors:
             rgb = hex_to_rgb(hex_color)
-            if rgb is None:
-                self.fail(f"Valid hex color was not parsed: {hex_color}")
             result = rgb_to_hex(rgb)
             self.assertEqual(result, hex_color.upper())
 

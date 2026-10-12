@@ -9,6 +9,7 @@ The Genesis uses 3 bits per color channel (RGB), giving 8 levels per channel.
 import json
 from pathlib import Path
 from typing import TypedDict
+from color_tools.conversions import rgb_to_hex as _rgb_to_hex
 
 
 class _GenesisColorData(TypedDict):
@@ -22,7 +23,7 @@ class _GenesisColorData(TypedDict):
 
 def rgb_to_hex(r: int, g: int, b: int) -> str:
     """Convert RGB values to hex string."""
-    return f"#{r:02x}{g:02x}{b:02x}"
+    return _rgb_to_hex((r, g, b)).lower()
 
 
 def rgb_to_hsl(r: int, g: int, b: int) -> tuple[float, float, float]:

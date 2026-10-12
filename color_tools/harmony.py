@@ -7,6 +7,7 @@ import math
 from typing import Literal, cast
 
 from .constants import ColorConstants
+from ._color_utils import validate_rgb
 from .conversions import (
     lab_to_lch,
     lab_to_rgb,
@@ -145,21 +146,6 @@ def _apply_tone(
     elif tone == "light":
         lightness += (100.0 - lightness) * 0.20
     return (lightness, chroma, hue)
-
-
-def _validate_rgb(rgb: object) -> None:
-    if not isinstance(rgb, tuple):
-        raise ValueError("RGB must be a tuple of three integer channels")
-    channels = cast(tuple[object, ...], rgb)
-    if len(channels) != 3:
-        raise ValueError("RGB must be a tuple of three integer channels")
-    if any(isinstance(channel, bool) or not isinstance(channel, int) for channel in channels):
-        raise ValueError("RGB channels must be integers")
-    if any(
-        channel < ColorConstants.RGB_MIN or channel > ColorConstants.RGB_MAX
-        for channel in cast(tuple[int, ...], channels)
-    ):
-        raise ValueError("RGB channels must be between 0 and 255")
 
 
 def _validate_lch(lch: object) -> tuple[float, float, float]:
@@ -338,7 +324,7 @@ def generate_harmony(
     Raises:
         ValueError: If the color or scheme is invalid, or the color is achromatic.
     """
-    _validate_rgb(rgb)
+    validate_rgb(rgb)
     return generate_harmony_lch(
         rgb_to_lch(rgb),
         scheme,

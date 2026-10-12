@@ -132,6 +132,7 @@ class CSVExporter(PaletteExporter):
             field.name
             for field in fields(FilamentRecord)
         ]
+        fieldnames.append("effective_hex")
 
         with path.open("w", encoding="utf-8", newline="") as file:
             writer = csv.DictWriter(
@@ -142,7 +143,7 @@ class CSVExporter(PaletteExporter):
             writer.writeheader()
 
             for filament in filaments:
-                writer.writerow(asdict(filament))
+                writer.writerow({**asdict(filament), "effective_hex": filament.effective_hex})
 
         return str(path)
 

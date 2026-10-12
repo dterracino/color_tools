@@ -257,8 +257,9 @@ def validate_color(
     suggested_lab = matched_color_record.lab
 
     # 3. Convert the user's input hex to LAB for comparison
-    input_rgb = hex_to_rgb(hex_code)
-    if input_rgb is None:
+    try:
+        input_rgb = hex_to_rgb(hex_code)
+    except ValueError:
         return ColorValidationRecord(
             is_match=False,
             name_match=best_match,

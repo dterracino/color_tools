@@ -96,7 +96,7 @@ class AutoForgeExporter(PaletteExporter):
                     filament.td_value
                     if filament.td_value is not None
                     else "",
-                    filament.hex,
+                    filament.effective_hex,
                     "TRUE",
                 ])
 

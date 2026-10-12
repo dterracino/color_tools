@@ -445,10 +445,19 @@ The CLI has five main commands:
 - `--verify-all`: Verify integrity of constants, data files, and matrices before proceeding
 - `--version`: Show version number and exit
 
-### Dual-Color Mode
-- Some filaments have two colors (hex and hex2)
-- Mode determines which color to use: "first" (default), "second", or "mix"
-- Must be set BEFORE loading FilamentPalette
+### Multi-Color Inputs and Modes
+- `hex` retains exact source text; `rgb_components` stores ordered immutable RGB triples.
+- Compound hex supports any number of colors separated by -, space, comma, _, /, :, or ;.
+- Single hex supports RGB/RGBA/RRGGBB/RRGGBBAA, optionally prefixed with #.
+  Alpha uses CSS/PNG RGBA order (not Windows/Android ARGB) and is validated then dropped.
+- Canonical helpers in `_color_utils.py` have no conversion dependencies;
+  public `hex_to_rgb`, `parse_hex_colors`, `validate_rgb`, and `rgb_to_hex` use them.
+- Invalid hex/RGB raises ValueError; never silently clip, discard components, or substitute black.
+- Strict RGB accepts tuple/list containers and exactly three built-in integers in 0-255.
+  Scientific float/array conversions retain their separate input contracts.
+- Modes are first (default), last, and srgb_mean; averaging rounds once, nearest-even.
+- Set mode before constructing/loading records. Use `effective_hex` in single-color outputs.
+- `hex2` is removed; generic exports retain source/components and include effective hex.
 
 ### Maker Synonyms
 - Filament searches support maker synonyms (e.g., "Bambu" finds "Bambu Lab")

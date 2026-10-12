@@ -17,6 +17,7 @@ import tempfile
 import unittest
 import zlib
 from pathlib import Path
+from typing import cast
 
 from color_tools.image.png_writer import SimplePNGWriter
 
@@ -118,6 +119,24 @@ class TestSimplePNGWriterConstructor(unittest.TestCase):
     def test_empty_colors_raises(self):
         with self.assertRaises(ValueError):
             SimplePNGWriter([])
+
+    def test_invalid_channels_are_rejected_not_wrapped(self) -> None:
+        for color in ((-1, 0, 0), (256, 0, 0), (True, 0, 0), (1.0, 0, 0), (1, 2)):
+            with self.subTest(color=color), self.assertRaises(ValueError):
+                SimplePNGWriter([cast(tuple[int, int, int], color)])
+
+    def test_color_mutation_is_validated_at_encoding(self) -> None:
+        writer = SimplePNGWriter([(1, 2, 3)])
+        writer.colors[0] = (256, 0, 0)
+        with self.assertRaises(ValueError):
+            writer.to_bytes()
+
+    def test_caller_list_changes_do_not_change_pixels(self) -> None:
+        colors = [(1, 2, 3)]
+        writer = SimplePNGWriter(colors)
+        before = writer.to_bytes()
+        colors[0] = (4, 5, 6)
+        self.assertEqual(writer.to_bytes(), before)
 
     def test_swatch_width_zero_raises(self):
         with self.assertRaises(ValueError):

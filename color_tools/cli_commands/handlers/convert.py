@@ -64,21 +64,23 @@ def handle_convert_command(args: Namespace) -> None:
                 float(value[2]),
             )
             
-            # Assume LAB unless otherwise specified
-            if args.from_space == "lch":
-                lab = lch_to_lab(gamut_value)
-            else:
-                lab = gamut_value
+            lab = gamut_value
         
-        in_gamut = is_in_srgb_gamut(lab)
-        print(f"LAB({lab[0]:.2f}, {lab[1]:.2f}, {lab[2]:.2f}) is {'IN' if in_gamut else 'OUT OF'} sRGB gamut")
-        
-        if not in_gamut:
-            nearest = find_nearest_in_gamut(lab)
-            nearest_rgb = lab_to_rgb(nearest)
-            print(f"Nearest in-gamut color:")
-            print(f"  LAB: ({nearest[0]:.2f}, {nearest[1]:.2f}, {nearest[2]:.2f})")
-            print(f"  RGB: {nearest_rgb}")
+        try:
+            if hex_value is None and args.from_space == "lch":
+                lab = lch_to_lab(lab)
+            in_gamut = is_in_srgb_gamut(lab)
+            print(f"LAB({lab[0]:.2f}, {lab[1]:.2f}, {lab[2]:.2f}) is {'IN' if in_gamut else 'OUT OF'} sRGB gamut")
+
+            if not in_gamut:
+                nearest = find_nearest_in_gamut(lab)
+                nearest_rgb = lab_to_rgb(nearest)
+                print("Nearest in-gamut color:")
+                print(f"  LAB: ({nearest[0]:.2f}, {nearest[1]:.2f}, {nearest[2]:.2f})")
+                print(f"  RGB: {nearest_rgb}")
+        except ValueError as error:
+            print(f"Error: {error}", file=sys.stderr)
+            sys.exit(2)
         
         sys.exit(0)
     

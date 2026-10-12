@@ -49,6 +49,8 @@ discard array item metadata before validating tools.
 - `convert_color` uses `component_1` through `component_4` in the source color space's normal
   order. `component_4` is required only for CMYK.
 - `find_filaments` accepts multiple makers, materials, or finishes as comma-separated strings.
+- Hex inputs accept RGB/RGBA/RRGGBB/RRGGBBAA with an optional `#`, in CSS/PNG
+  RGBA order (not Windows/Android ARGB). Alpha is validated but dropped for now.
 
 Structured outputs still use arrays where appropriate; the compatibility restriction applies only
 to tool input schemas.
@@ -77,6 +79,13 @@ The selected interpreter must have `color-match-tools[mcp]` installed.
 Color conversions and distance values come directly from Color Tools. Filament matches use the
 bundled manufacturer reference colors. A printed result can differ because of material batch,
 printer settings, layer thickness, background, lighting, and display calibration.
+
+Filament outputs retain original source `hex` and ordered `rgb_components`.
+`effective_hex`, `rgb`, and `lab` describe the captured effective color used
+for matching. Compound source strings are not single-color display values.
+Gamut checks use unrounded RGB; mapping reduces chroma at constant lightness
+and hue, not necessarily to the globally nearest color. Invalid coordinates
+or an infeasible neutral lightness are explicit errors.
 
 The first release is intentionally read-only and does not expose image file processing, exports,
 or owned-filament mutations. Those operations require explicit file-access and write policies.

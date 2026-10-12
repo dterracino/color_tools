@@ -271,8 +271,7 @@ class FilamentManagerWindow(_QMainWindow):
                 QColor(*record.rgb)
             )
             swatch.setToolTip(
-                f"{record.color}: {record.hex}"
-                + (f" / {record.hex2}" if record.hex2 else "")
+                f"{record.color}: {record.hex} (effective: {record.effective_hex})"
             )
             self.table.setItem(row, 1, swatch)
 

@@ -357,6 +357,21 @@ class TestHandleConvertCommand(unittest.TestCase):
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
+    def test_check_gamut_invalid_or_infeasible_values_exit_2(self) -> None:
+        for space, values in (
+            ("lab", [float("nan"), 0.0, 0.0]),
+            ("lab", [200.0, 0.0, 0.0]),
+            ("lch", [50.0, 30.0, float("inf")]),
+        ):
+            with self.subTest(space=space, values=values):
+                error_output = io.StringIO()
+                with patch("sys.stderr", error_output):
+                    code, _ = self._run_capture(self._make_args(
+                        value=values, from_space=space, check_gamut=True,
+                    ))
+                self.assertEqual(code, 2)
+                self.assertIn("Error:", error_output.getvalue())
+
     # --- --to (conversion) branch ---
 
     def test_rgb_to_lab_conversion_exits_0(self) -> None:
@@ -1306,6 +1321,34 @@ class TestHandleImageCommandOperations(unittest.TestCase):
         )
         _, err = self._run_expect_exit(args, expected_code=1)
         self.assertIn('watermark-color', err)
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_rgb_validation_rejects_bounds_and_lengths(self) -> None:
+        import color_tools.cli_commands.handlers.image as img_mod
+        for option in ('watermark_color', 'watermark_stroke_color'):
+            for value in ('-1,0,0', '256,0,0', '1,2', '1,2,3,4', '1.0,2,3'):
+                with self.subTest(option=option, value=value), patch.object(
+                    img_mod, 'add_text_watermark',
+                ) as apply_watermark:
+                    args = self._make_args(
+                        file=self._img_path, watermark=True, watermark_text='hello',
+                        **{option: value},
+                    )
+                    _, error = self._run_expect_exit(args, expected_code=1)
+                    self.assertIn(option.replace('_', '-'), error)
+                    apply_watermark.assert_not_called()
+
+    @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
+    def test_watermark_rgb_validation_preserves_integer_tuple_adapter(self) -> None:
+        import color_tools.cli_commands.handlers.image as img_mod
+        with patch.object(img_mod, 'add_text_watermark') as apply_watermark:
+            args = self._make_args(
+                file=self._img_path, watermark=True, watermark_text='hello',
+                watermark_color=' 0,128,255 ', watermark_stroke_color='255,0,128',
+            )
+            self._run_expect_return(args)
+        self.assertEqual(apply_watermark.call_args.kwargs['color'], (0, 128, 255))
+        self.assertEqual(apply_watermark.call_args.kwargs['stroke_color'], (255, 0, 128))
 
     @unittest.skipUnless(_PIL_FOR_HANDLER, 'Requires Pillow')
     def test_watermark_svg_succeeds(self) -> None:

@@ -63,6 +63,8 @@ class FilamentMatch(MCPModel):
     finish: str | None
     color: str
     hex: str
+    effective_hex: str
+    rgb_components: tuple[tuple[int, int, int], ...]
     rgb: tuple[int, int, int]
     lab: tuple[float, float, float]
     td_value: float | None

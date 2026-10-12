@@ -11,6 +11,7 @@ import re
 from pathlib import Path
 from collections import defaultdict
 import pdfplumber
+from color_tools.conversions import parse_hex_colors, rgb_to_hex
 
 
 def slugify(text: str) -> str:
@@ -172,18 +173,15 @@ def extract_panchroma_filaments(pdf_path: Path) -> list[dict]:
                     if not filament_type:
                         continue  # Skip non-Panchroma products
                     
-                    # Clean hex value
-                    hex_value = hex_value.upper()
-                    if not hex_value.startswith('#'):
-                        hex_value = '#' + hex_value
-                    
-                    # Handle dual-color filaments: convert comma separator to dash
-                    # Library expects "#AABBCC-#DDEEFF" but PDF has "#AABBCC, #DDEEFF"
-                    if ',' in hex_value:
-                        hex_parts = [h.strip() for h in hex_value.split(',')]
-                        # Ensure both parts have # prefix
-                        hex_parts = [h if h.startswith('#') else '#' + h for h in hex_parts]
-                        hex_value = '-'.join(hex_parts)
+                    try:
+                        hex_value = '-'.join(
+                            rgb_to_hex(component) for component in parse_hex_colors(hex_value)
+                        )
+                    except ValueError as error:
+                        raise ValueError(
+                            f"Invalid hex for {product_name} {color_name} "
+                            f"on page {page_num}: {hex_value!r}"
+                        ) from error
                     
                     filament = {
                         'maker': 'Panchroma',

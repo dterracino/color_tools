@@ -30,6 +30,7 @@ import json
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -180,7 +181,7 @@ class LospecExporter(PaletteExporter):
             "name": name,
             "author": author,
             "colors": [
-                color.hex.removeprefix("#").lower()
+                rgb_to_hex(color.rgb).removeprefix("#").lower()
                 for color in colors
             ],
         }

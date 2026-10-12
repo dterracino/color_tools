@@ -10,14 +10,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Breaking RGB/hex contracts** — canonical strict parsing and validation
+  now serve palette factories, CLI, harmony, importers, PNG output, MCP, and
+  internal tooling. `hex_to_rgb` raises `ValueError` rather than returning
+  `None`; `rgb_to_hex` validates rather than clipping. Accept 3/4/6/8 ASCII
+  hex digits with optional `#`, interpreting alpha-last CSS/PNG RGBA (not
+  Windows/Android ARGB); alpha is validated but dropped for now. Strict RGB
+  accepts tuple/list containers of three built-in integers in 0-255; palette
+  factories store immutable tuples. Scientific float/array inputs are unchanged.
+  JSON color loaders now validate RGB and hex with source/index errors instead
+  of coercing channels or ignoring extra components.
+- **Multi-color filament representation** — retain original `hex`, parse all
+  components once into ordered immutable `rgb_components`, and expose normalized
+  `effective_hex`. Support any component count and hyphen, space, comma,
+  underscore, slash, colon, or semicolon separators. Remove `hex2` entirely.
+  Resolve first/last/encoded-sRGB mean at construction, preserving duplicate
+  components and using nearest-even rounding. Generic exports and MCP include
+  source/components/effective color; AutoForge and SVG/GUI swatches use the
+  effective color. Export-template tags replace `hex2` with the new fields.
+  Single-color palette formats use canonical RGB hex formatting, while
+  retaining their format-specific casing and Paint.NET's ARGB envelope.
 - **Breaking configuration replacement** — remove the thread-local mutable
   configuration and all individual getters/setters without aliases. Add frozen
   `ColorConfig` snapshots and context-local `get_config`, `set_config`,
   `reset_config`, and nested exception-safe `config_context`. Rename the CLI
   override to `--multi-color-mode`; currently accept `first`, `last`, and
   `srgb_mean` only. Capture settings at record construction and distinguish
-  modes in filament caches. Compound parsing/component storage and additional
-  modes remain subsequent work.
+  modes in filament caches. Additional selection/averaging modes remain
+  future work.
 - **Gamut configuration validation** — reject invalid tolerance and iteration
   values, capture settings consistently for a mapping operation, and stop
   searching when floating-point bounds no longer advance.
@@ -44,6 +64,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Color-input audit follow-up** — watermark CLI text/stroke colors now use
+  canonical RGB validation, including channel bounds. Panchroma, Polymaker,
+  and Bambu source importers validate complete compound hex fields instead
+  of adding prefixes or accepting valid substrings from malformed colors.
+  Crayola palette generation validates source RGB and normalizes source hex
+  through the same helpers.
+  Python hex exports and color-of-the-day SVG swatches use canonical RGB
+  formatting so source RGBA text cannot leak transparency into solid colors.
+- **Filament parsing and gamut precision** — eliminate silent black substitution
+  for compound/malformed filament colors; retain source/index loader errors.
+  Preserve semantic color-name validation's structured invalid-input reporting.
+  Add `xyz_to_rgb_float` and reuse the conversion path for unrounded gamut
+  checks and MCP clamping diagnostics. Chroma mapping validates LAB and rejects
+  infeasible neutral endpoints rather than silently returning an out-of-gamut
+  result. PNG channels are validated rather than wrapped with a bit mask.
 - **Fresh-dependency strict validation** — check NumPy annotations against
   the supported Python floor and resolve dependencies through the configured
   virtual environment, rather than an interpreter override that can leave

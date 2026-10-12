@@ -3,7 +3,7 @@
 import sys
 from argparse import Namespace
 
-from ..utils import parse_hex_or_exit
+from ..utils import get_rgb_from_args
 from ...color_deficiency import simulate_cvd, correct_cvd
 
 
@@ -30,23 +30,8 @@ def handle_cvd_command(args: Namespace) -> None:
         print("Error: CVD command requires either --value or --hex", file=sys.stderr)
         sys.exit(2)
     
-    # Handle hex input
-    if hex_value is not None:
-        try:
-            r, g, b = parse_hex_or_exit(hex_value)
-        except ValueError as e:
-            print(f"Error: {e}", file=sys.stderr)
-            sys.exit(2)
-    else:
-        # Handle --value input
-        assert value is not None
-        r, g, b = value
-        # Validate RGB values
-        if not all(0 <= v <= 255 for v in [r, g, b]):
-            print("Error: RGB values must be in range 0-255")
-            sys.exit(2)
-    
-    rgb = (r, g, b)
+    rgb = get_rgb_from_args(args)
+    r, g, b = rgb
     
     # Apply transformation based on mode
     if args.mode == "simulate":

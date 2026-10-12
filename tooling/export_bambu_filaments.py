@@ -6,12 +6,13 @@ Outputs to: tooling/filaments_export.csv
 Format: Brand, Name, TD, Color
 """
 
-import json
 import csv
+import json
 from pathlib import Path
+from color_tools.filament_palette import FilamentRecord
 
 
-def export_bambu_filaments():
+def export_bambu_filaments() -> None:
     """Export Bambu Lab Basic and Matte filaments to CSV."""
     
     # Load filaments database
@@ -21,8 +22,8 @@ def export_bambu_filaments():
     output_path = script_dir / "filaments_export.csv"
     
     print(f"Loading filaments from: {filaments_path}")
-    with open(filaments_path, 'r', encoding='utf-8') as f:
-        filaments = json.load(f)
+    with filaments_path.open(encoding="utf-8") as stream:
+        filaments = json.load(stream)
     
     # Filter for Bambu Lab with Basic or Matte finish
     bambu_filaments = [
@@ -53,7 +54,16 @@ def export_bambu_filaments():
             # Convert None to empty string, keep 0 as 0
             if td is None:
                 td = ''
-            color = filament.get('hex', '')
+            record = FilamentRecord(
+                id=filament.get("id", ""),
+                maker=filament["maker"],
+                type=type_name,
+                finish=finish,
+                color=name,
+                hex=filament["hex"],
+                source=filaments_path.name,
+            )
+            color = record.effective_hex
             
             writer.writerow([brand, name, td, color])
     

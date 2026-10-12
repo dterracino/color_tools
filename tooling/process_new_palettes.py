@@ -15,13 +15,7 @@ from typing import Any
 # Add parent directory to path so we can import color_tools
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
-from color_tools.conversions import rgb_to_hsl, rgb_to_lab, rgb_to_lch
-
-
-def hex_to_rgb(hex_color: str) -> tuple[int, int, int]:
-    """Convert hex color (#RRGGBB) to RGB tuple."""
-    hex_color = hex_color.lstrip('#')
-    return tuple(int(hex_color[i:i+2], 16) for i in (0, 2, 4))  # type: ignore
+from color_tools.conversions import rgb_to_hsl, rgb_to_lab, rgb_to_lch, hex_to_rgb, rgb_to_hex
 
 
 def create_color_record(name: str, rgb: tuple[int, int, int]) -> dict[str, Any]:
@@ -36,7 +30,7 @@ def create_color_record(name: str, rgb: tuple[int, int, int]) -> dict[str, Any]:
         Dictionary with name, hex, rgb, hsl, lab, lch values
     """
     # Convert to hex
-    hex_color = f"#{rgb[0]:02x}{rgb[1]:02x}{rgb[2]:02x}"
+    hex_color = rgb_to_hex(rgb).lower()
     
     # Compute other color spaces using color_tools
     hsl = rgb_to_hsl(rgb)

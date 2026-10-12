@@ -8,6 +8,7 @@ import unittest
 from pathlib import Path
 from unittest.mock import patch
 
+from color_tools.config import config_context
 os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
@@ -255,6 +256,34 @@ class TestFilamentExportTemplates(unittest.TestCase):
                 "<%=loop_start%><%=not_a_field%><%=loop_end%>",
                 "text",
             )
+
+    def test_multicolor_template_fields_and_effective_autoforge(self) -> None:
+        from color_tools.filament_export_dialog import FilamentExportDialog
+
+        with config_context(multi_color_mode="last"):
+            record = FilamentRecord(
+                id="probe", maker="probe", type="PLA", finish=None,
+                color="probe", hex="#f00-#00f",
+            )
+        dialog = FilamentExportDialog([record])
+        try:
+            tags = {
+                dialog.tag_selector.itemText(index)
+                for index in range(dialog.tag_selector.count())
+            }
+            self.assertIn("<%=effective_hex%>", tags)
+            self.assertIn("<%=rgb_components[1][0]%>", tags)
+            self.assertNotIn("<%=hex2%>", tags)
+            dialog.template_selector.setCurrentText("Generic JSON")
+            row = json.loads(dialog.preview.toPlainText())[0]
+            self.assertEqual(row["hex"], record.hex)
+            self.assertEqual(row["effective_hex"], "#0000FF")
+            self.assertEqual(row["rgb_components"], [[255, 0, 0], [0, 0, 255]])
+            dialog.template_selector.setCurrentText("AutoForge CSV")
+            self.assertIn("#0000FF", dialog.preview.toPlainText())
+            self.assertNotIn(record.hex, dialog.preview.toPlainText())
+        finally:
+            dialog.close()
 
     def test_dialog_switches_between_editable_templates(self) -> None:
         from color_tools.filament_export_dialog import FilamentExportDialog

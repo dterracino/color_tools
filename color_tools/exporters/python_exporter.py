@@ -56,6 +56,7 @@ from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, Literal, cast
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -682,7 +683,7 @@ class PythonExporter(PaletteExporter):
         """Format one color according to the selected value options."""
         if options.value_format == "hex":
             return repr(
-                color.hex.upper()
+                rgb_to_hex(color.rgb)
             )
 
         if options.value_format == "rgb":

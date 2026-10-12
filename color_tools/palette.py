@@ -113,7 +113,7 @@ class ColorRecord:
     @classmethod
     def from_rgb(
         cls,
-        rgb: tuple[int, int, int],
+        rgb: tuple[int, int, int] | list[int],
         *,
         name: str | None = None,
         source: str = "custom",
@@ -131,6 +131,7 @@ class ColorRecord:
             'red'
         """
         validate_rgb(rgb)
+        rgb = (rgb[0], rgb[1], rgb[2])
         if name is None:
             if auto_name:
                 # Local import avoids the naming module's dependency on Palette.
@@ -158,9 +159,10 @@ class ColorRecord:
         source: str = "custom",
         auto_name: bool = False,
     ) -> ColorRecord:
-        """Create a record from RGB/RRGGBB hex, optionally prefixed with #.
+        """Create a record from RGB/RGBA/RRGGBB/RRGGBBAA, optionally prefixed with #.
 
         Naming follows from_rgb(); malformed hex raises ValueError.
+        Alpha uses CSS/PNG ordering and is validated then dropped.
 
         Example:
             >>> ColorRecord.from_hex("#f00", auto_name=True).name
@@ -210,8 +212,9 @@ def _parse_color_records(
     for i, c in enumerate(data):
         try:
             # Parse color data (all values should be arrays/tuples)
-            # Validate/coerce RGB to int to ensure numeric values
-            rgb = (int(c["rgb"][0]), int(c["rgb"][1]), int(c["rgb"][2]))
+            validate_rgb(c["rgb"])
+            parse_hex(c["hex"])
+            rgb = (c["rgb"][0], c["rgb"][1], c["rgb"][2])
             hsl = (float(c["hsl"][0]), float(c["hsl"][1]), float(c["hsl"][2]))
             lab = (float(c["lab"][0]), float(c["lab"][1]), float(c["lab"][2]))
             lch = (float(c["lch"][0]), float(c["lch"][1]), float(c["lch"][2]))
@@ -537,7 +540,7 @@ class Palette:
     @classmethod
     def from_rgb(
         cls,
-        rgb_colors: Iterable[tuple[int, int, int]],
+        rgb_colors: Iterable[tuple[int, int, int] | list[int]],
         *,
         names: Iterable[str] | None = None,
         name_prefix: str = "Color",
@@ -557,9 +560,10 @@ class Palette:
             >>> Palette.from_rgb([(255, 0, 0)], auto_name=True).records[0].name
             'red'
         """
-        colors = list(rgb_colors)
-        for rgb in colors:
+        colors: list[tuple[int, int, int]] = []
+        for rgb in rgb_colors:
             validate_rgb(rgb)
+            colors.append((rgb[0], rgb[1], rgb[2]))
         color_names = list(names) if names is not None else None
         if color_names is not None and len(color_names) != len(colors):
             raise ValueError("The number of names must match the number of colors")
@@ -592,10 +596,10 @@ class Palette:
         source: str = "custom",
         auto_name: bool = False,
     ) -> Palette:
-        """Build a palette from RGB/RRGGBB hex strings, with optional #.
+        """Build a palette from RGB/RGBA/RRGGBB/RRGGBBAA strings, with optional #.
 
         Naming, ordering, and validation follow from_rgb(). Invalid hex raises
-        ValueError.
+        ValueError. CSS/PNG alpha is validated then dropped.
 
         Example:
             >>> Palette.from_hex(["#f00", "00ff00"]).records[1].hex

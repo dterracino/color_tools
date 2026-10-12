@@ -35,6 +35,7 @@ import re
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import hex_to_rgb, rgb_to_hex
 if TYPE_CHECKING:
     from color_tools.palette import ColorRecord
 
@@ -184,28 +185,8 @@ class HexImporter(PaletteImporter):
                     f"line {line_number}: {raw_line!r}"
                 )
 
-            hex_value = match.group(
-                "hex"
-            ).upper()
-
-            rgb = (
-                int(
-                    hex_value[0:2],
-                    16,
-                ),
-                int(
-                    hex_value[2:4],
-                    16,
-                ),
-                int(
-                    hex_value[4:6],
-                    16,
-                ),
-            )
-
-            color_name = (
-                f"#{hex_value}"
-            )
+            rgb = hex_to_rgb(match.group("hex"))
+            color_name = rgb_to_hex(rgb)
 
             colors.append(
                 self._make_color_record(

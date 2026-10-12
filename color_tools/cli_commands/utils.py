@@ -12,6 +12,7 @@ if TYPE_CHECKING:
     import argparse
 
 from ..constants import ColorConstants
+from .._color_utils import validate_rgb
 
 
 def validate_color_input_exclusivity(args: argparse.Namespace) -> None:
@@ -43,8 +44,6 @@ def get_rgb_from_args(args: argparse.Namespace) -> tuple[int, int, int]:
     Raises:
         SystemExit: If neither --value nor --hex is provided, or if hex is invalid
     """
-    from ..conversions import hex_to_rgb
-    
     # Check mutual exclusivity first
     validate_color_input_exclusivity(args)
     
@@ -55,15 +54,16 @@ def get_rgb_from_args(args: argparse.Namespace) -> tuple[int, int, int]:
     
     # Handle hex input
     if args.hex is not None:
-        result = hex_to_rgb(args.hex)
-        if result is None:
-            print(f"Error: Invalid hex color code: '{args.hex}'", file=sys.stderr)
-            print("Expected format: #RGB, RGB, #RRGGBB, or RRGGBB", file=sys.stderr)
-            sys.exit(2)
-        return result
+        return parse_hex_or_exit(args.hex)
     
     # Handle --value input (RGB values)
-    return tuple(args.value)  # type: ignore[return-value]
+    try:
+        validate_rgb(args.value)
+    except ValueError as error:
+        print(f"Error: {error}", file=sys.stderr)
+        sys.exit(2)
+    rgb = cast(tuple[int, int, int] | list[int], args.value)
+    return (rgb[0], rgb[1], rgb[2])
 
 
 def parse_hex_or_exit(hex_string: str) -> tuple[int, int, int]:
@@ -81,13 +81,12 @@ def parse_hex_or_exit(hex_string: str) -> tuple[int, int, int]:
     """
     from ..conversions import hex_to_rgb
     
-    result = hex_to_rgb(hex_string)
-    if result is None:
-        print(f"Error: Invalid hex color code: '{hex_string}'", file=sys.stderr)
-        print("Expected format: #RGB, RGB, #RRGGBB, or RRGGBB", file=sys.stderr)
+    try:
+        return hex_to_rgb(hex_string)
+    except ValueError as error:
+        print(f"Error: Invalid hex color code: '{hex_string}': {error}", file=sys.stderr)
+        print("Expected RGB, RGBA, RRGGBB, or RRGGBBAA, optionally prefixed with #", file=sys.stderr)
         sys.exit(2)
-    
-    return result
 
 
 def is_valid_lab(lab_tuple: object) -> bool:

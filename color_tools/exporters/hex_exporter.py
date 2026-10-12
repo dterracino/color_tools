@@ -18,6 +18,7 @@ from __future__ import annotations
 from pathlib import Path
 from typing import TYPE_CHECKING
 
+from color_tools.conversions import rgb_to_hex
 from color_tools.exporters.base import (
     ExporterMetadata,
     PaletteExporter,
@@ -82,7 +83,7 @@ class HexExporter(PaletteExporter):
             newline="\n",
         ) as file:
             for color in colors:
-                hex_code = color.hex.removeprefix("#").upper()
+                hex_code = rgb_to_hex(color.rgb).removeprefix("#")
                 file.write(f"{hex_code}\n")
 
         return str(path)

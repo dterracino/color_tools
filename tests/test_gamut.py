@@ -1,6 +1,7 @@
 """Unit tests for color_tools.gamut module."""
 
 import unittest
+from typing import cast
 import sys
 from pathlib import Path
 
@@ -14,11 +15,24 @@ from color_tools.gamut import (
     clamp_to_gamut,
     find_nearest_in_gamut,
 )
-from color_tools.conversions import rgb_to_lab
+from color_tools.conversions import rgb_to_lab, lab_to_rgb, xyz_to_rgb_float, lab_to_xyz
 
 
 class TestIsInGamut(unittest.TestCase):
     """Test gamut checking function (takes LAB values)."""
+
+    def test_sub_integer_boundary_precision(self) -> None:
+        for rgb in ((-0.25, 128.0, 128.0), (255.25, 128.0, 128.0)):
+            lab = rgb_to_lab(rgb)
+            self.assertTrue(0 <= lab_to_rgb(lab, clamp=False)[0] <= 255)
+            self.assertFalse(is_in_srgb_gamut(lab, tolerance=0.1))
+            self.assertTrue(is_in_srgb_gamut(lab, tolerance=0.5))
+            self.assertAlmostEqual(xyz_to_rgb_float(lab_to_xyz(lab))[0], rgb[0], places=3)
+
+    def test_invalid_lab_is_not_silently_out_of_gamut(self) -> None:
+        for lab in ((float("nan"), 0, 0), (50, float("inf"), 0), (True, 0, 0), (50, 0)):
+            with self.subTest(lab=lab), self.assertRaises(ValueError):
+                is_in_srgb_gamut(cast(tuple[float, float, float], lab))
     
     def test_valid_rgb_colors_in_gamut(self):
         """Test that standard RGB colors converted to LAB are in gamut."""
@@ -80,6 +94,23 @@ class TestClampToGamut(unittest.TestCase):
 
 class TestGamutClipRGB(unittest.TestCase):
     """Test finding nearest in-gamut LAB color."""
+
+    def test_infeasible_neutral_is_explicit_error(self) -> None:
+        for lab in ((101.0, 100.0, 0.0), (-1.0, 100.0, 0.0)):
+            with self.subTest(lab=lab), self.assertRaisesRegex(ValueError, "neutral"):
+                find_nearest_in_gamut(lab)
+
+    def test_mapping_preserves_lightness_and_hue(self) -> None:
+        from color_tools.conversions import lab_to_lch
+
+        original = (50.0, 100.0, -100.0)
+        mapped = find_nearest_in_gamut(original, max_iterations=1000)
+        before = lab_to_lch(original)
+        after = lab_to_lch(mapped)
+        self.assertTrue(is_in_srgb_gamut(mapped))
+        self.assertEqual(before[0], after[0])
+        self.assertAlmostEqual(before[2], after[2], places=10)
+        self.assertLess(after[1], before[1])
     
     def test_already_in_gamut(self):
         """Test that in-gamut LAB colors are unchanged."""
