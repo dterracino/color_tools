@@ -10,6 +10,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **PNG writer rendering modes and resource bound** — add dependency-free
+  solid, deterministic block, and encoded-sRGB gradient constructors. Preserve
+  exact gradient endpoints, use nearest-even channel rounding, reject block
+  widths that would omit a component, and make all single-color modes solid.
+  Limit output to `2**24` pixels (48 MiB decoded RGB) and feed repeated rows to
+  zlib incrementally instead of materializing the complete uncompressed image.
 - **Canonical color normalization** — document `_color_utils` as the sole
   implementation of strict scalar RGB validation and hex parsing/formatting.
   Add public `normalize_hex` for canonical uppercase `#RRGGBB` output and

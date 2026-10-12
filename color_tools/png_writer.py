@@ -1,9 +1,9 @@
 """
-Minimal PNG writer for color swatch strips.
+Minimal PNG writer for repeated-row RGB images.
 
-Encodes a list of RGB colors as a horizontal strip of swatches and writes it as
-a PNG file. Uses only the standard library (``zlib`` and ``struct``), so it works
-without Pillow or numpy.
+Encodes solid, block, gradient, and equal-width swatch rows as PNG files. Uses
+only the standard library (``zlib`` and ``struct``), so it works without Pillow
+or numpy.
 
 This module belongs to the base package, not the optional image package.
 It must not import Pillow, NumPy, or modules that require them.
@@ -38,17 +38,41 @@ from ._color_utils import validate_rgb
 RGB = tuple[int, int, int]
 
 
+def _validate_dimension(name: str, value: int, maximum: int) -> None:
+    """Validate one public image dimension."""
+    if type(value) is not int or value < 1:
+        raise ValueError(f"{name} must be a positive integer")
+    if value > maximum:
+        raise ValueError(f"image {name} {value} exceeds PNG limit of {maximum}")
+
+
+def _freeze_colors(colors: Sequence[RGB | list[int]]) -> tuple[RGB, ...]:
+    """Validate colors and return an immutable copy."""
+    if not colors:
+        raise ValueError("colors must not be empty")
+
+    for index, color in enumerate(colors):
+        try:
+            validate_rgb(color)
+        except ValueError as error:
+            raise ValueError(f"colors[{index}]: {error}") from error
+
+    return tuple((color[0], color[1], color[2]) for color in colors)
+
+
 class SimplePNGWriter:
     """
-    Write a horizontal strip of solid-color swatches as a PNG.
+    Write a repeated horizontal RGB row as a PNG.
 
-    The image is ``len(colors) * swatch_width`` pixels wide and ``swatch_height``
-    pixels tall. Each color fills one ``swatch_width`` x ``swatch_height`` block.
+    Direct construction creates an equal-width strip: the image is
+    ``len(colors) * swatch_width`` pixels wide and ``swatch_height`` pixels
+    tall. The named constructors create solid, deterministic block, or encoded-
+    sRGB gradient rows. Every row in the resulting image is identical.
 
     Attributes:
         colors: Immutable validated (R, G, B) tuples, in left-to-right order
-        swatch_width: Width of each swatch in pixels
-        swatch_height: Height of each swatch (and of the image) in pixels
+        swatch_width: Direct-constructor swatch width; 1 for generated rows
+        swatch_height: Image height
         width: Total image width in pixels
         height: Total image height in pixels
     """
@@ -85,6 +109,10 @@ class SimplePNGWriter:
     # Width and height are unsigned 32-bit values capped at 2^31 - 1 by the spec
     _MAX_DIMENSION: Final = 2**31 - 1
 
+    # Bound complete-image work even though repeated rows are streamed to zlib.
+    # At this limit, decoded RGB pixel data is 48 MiB.
+    _MAX_PIXELS: Final = 2**24
+
     # Not a spec value: zlib compression level (9 = smallest output)
     _ZLIB_LEVEL: Final = 9
 
@@ -104,43 +132,101 @@ class SimplePNGWriter:
         Raises:
             ValueError: If colors is empty, a color fails strict RGB validation,
                 a swatch dimension is not a positive built-in integer, or the resulting
-                image exceeds the PNG dimension limit
+                image exceeds the PNG dimension or pixel-count limits
         """
-        if not colors:
-            raise ValueError("colors must not be empty")
-        if type(swatch_width) is not int or swatch_width < 1:
-            raise ValueError("swatch_width must be a positive integer")
-        if type(swatch_height) is not int or swatch_height < 1:
-            raise ValueError("swatch_height must be a positive integer")
+        frozen_colors = _freeze_colors(colors)
+        _validate_dimension("swatch_width", swatch_width, self._MAX_DIMENSION)
+        _validate_dimension("swatch_height", swatch_height, self._MAX_DIMENSION)
 
-        for index, color in enumerate(colors):
-            try:
-                validate_rgb(color)
-            except ValueError as error:
-                raise ValueError(f"colors[{index}]: {error}") from error
-
-        self.colors: tuple[RGB, ...] = tuple(
-            (color[0], color[1], color[2]) for color in colors
+        width = len(frozen_colors) * swatch_width
+        _validate_dimension("width", width, self._MAX_DIMENSION)
+        self._validate_image_size(width, swatch_height)
+        pixel_row = b"".join(bytes(color) * swatch_width for color in frozen_colors)
+        self._initialize(
+            colors=frozen_colors,
+            width=width,
+            height=swatch_height,
+            swatch_width=swatch_width,
+            pixel_row=pixel_row,
         )
-        self.swatch_width = swatch_width
-        self.swatch_height = swatch_height
-        self.width: int = len(self.colors) * swatch_width
-        self.height: int = swatch_height
-
-        if self.width > self._MAX_DIMENSION:
-            raise ValueError(
-                f"image width {self.width} exceeds PNG limit of {self._MAX_DIMENSION}"
-            )
-        if self.height > self._MAX_DIMENSION:
-            raise ValueError(
-                f"image height {self.height} exceeds PNG limit of {self._MAX_DIMENSION}"
-            )
 
     # ------------------------------------------------------------------
     # Public API
     # ------------------------------------------------------------------
+    @classmethod
+    def from_solid(
+        cls,
+        color: RGB | list[int],
+        width: int,
+        height: int,
+    ) -> SimplePNGWriter:
+        """Create a solid-color image with the requested dimensions."""
+        colors = _freeze_colors([color])
+        cls._validate_dimensions(width, height)
+        return cls._from_pixel_row(colors, bytes(colors[0]) * width, width, height)
+
+    @classmethod
+    def from_blocks(
+        cls,
+        colors: Sequence[RGB | list[int]],
+        width: int,
+        height: int,
+    ) -> SimplePNGWriter:
+        """
+        Create source-order vertical color blocks spanning the requested width.
+
+        Block widths differ by at most one pixel. Remainder pixels are assigned
+        to the earliest blocks, and every component receives at least one pixel.
+        """
+        frozen_colors = _freeze_colors(colors)
+        cls._validate_dimensions(width, height)
+        if width < len(frozen_colors):
+            raise ValueError(
+                "width must be at least the number of colors so no block is omitted"
+            )
+
+        base_width, remainder = divmod(width, len(frozen_colors))
+        pixel_row = b"".join(
+            bytes(color) * (base_width + (index < remainder))
+            for index, color in enumerate(frozen_colors)
+        )
+        return cls._from_pixel_row(frozen_colors, pixel_row, width, height)
+
+    @classmethod
+    def from_gradient(
+        cls,
+        colors: Sequence[RGB | list[int]],
+        width: int,
+        height: int,
+    ) -> SimplePNGWriter:
+        """Create an encoded-sRGB gradient through equally spaced color stops."""
+        frozen_colors = _freeze_colors(colors)
+        cls._validate_dimensions(width, height)
+        if len(frozen_colors) == 1:
+            return cls._from_pixel_row(
+                frozen_colors, bytes(frozen_colors[0]) * width, width, height
+            )
+        if width == 1:
+            raise ValueError("multi-color gradients require a width of at least 2")
+
+        pixel_row = bytearray()
+        segment_count = len(frozen_colors) - 1
+        for x in range(width):
+            position = x * segment_count / (width - 1)
+            segment = min(int(position), segment_count - 1)
+            fraction = position - segment
+            start = frozen_colors[segment]
+            end = frozen_colors[segment + 1]
+            pixel_row.extend(
+                round(start[channel] + (end[channel] - start[channel]) * fraction)
+                for channel in range(3)
+            )
+        return cls._from_pixel_row(
+            frozen_colors, bytes(pixel_row), width, height
+        )
+
     def to_bytes(self) -> bytes:
-        """Encode the swatch strip and return the complete PNG file as bytes."""
+        """Encode the image and return the complete PNG file as bytes."""
         return b"".join(
             (
                 self._SIGNATURE,
@@ -168,6 +254,58 @@ class SimplePNGWriter:
     # ------------------------------------------------------------------
     # Chunk construction
     # ------------------------------------------------------------------
+    @classmethod
+    def _validate_dimensions(cls, width: int, height: int) -> None:
+        """Validate dimensions and the complete-image resource bound."""
+        _validate_dimension("width", width, cls._MAX_DIMENSION)
+        _validate_dimension("height", height, cls._MAX_DIMENSION)
+        cls._validate_image_size(width, height)
+
+    @classmethod
+    def _validate_image_size(cls, width: int, height: int) -> None:
+        """Reject images above the decoded-pixel resource limit."""
+        pixels = width * height
+        if pixels > cls._MAX_PIXELS:
+            raise ValueError(
+                f"image has {pixels} pixels; maximum is {cls._MAX_PIXELS}"
+            )
+
+    @classmethod
+    def _from_pixel_row(
+        cls,
+        colors: tuple[RGB, ...],
+        pixel_row: bytes,
+        width: int,
+        height: int,
+    ) -> SimplePNGWriter:
+        """Build an instance from one already validated RGB pixel row."""
+        writer = cls.__new__(cls)
+        writer._initialize(
+            colors=colors,
+            width=width,
+            height=height,
+            swatch_width=1,
+            pixel_row=pixel_row,
+        )
+        return writer
+
+    def _initialize(
+        self,
+        *,
+        colors: tuple[RGB, ...],
+        width: int,
+        height: int,
+        swatch_width: int,
+        pixel_row: bytes,
+    ) -> None:
+        """Store the common immutable layout state for every construction path."""
+        self.colors = colors
+        self.swatch_width = swatch_width
+        self.swatch_height = height
+        self.width = width
+        self.height = height
+        self._pixel_row = pixel_row
+
     @staticmethod
     def _chunk(chunk_type: bytes, data: bytes) -> bytes:
         """Build one chunk: length + type + data + CRC (CRC covers type and data)."""
@@ -192,10 +330,17 @@ class SimplePNGWriter:
         return bytes([self._SRGB_INTENT_PERCEPTUAL])
 
     def _scanline(self) -> bytes:
-        """One image row: filter byte, then each color repeated swatch_width times."""
-        pixels = b"".join(bytes(color) * self.swatch_width for color in self.colors)
-        return bytes([self._SCANLINE_FILTER_NONE]) + pixels
+        """Return one filter-none scanline."""
+        return bytes([self._SCANLINE_FILTER_NONE]) + self._pixel_row
 
     def _idat_data(self) -> bytes:
-        """IDAT payload: every row is identical, so build one and repeat it."""
-        return zlib.compress(self._scanline() * self.height, self._ZLIB_LEVEL)
+        """Compress identical scanlines incrementally without copying the image."""
+        compressor = zlib.compressobj(self._ZLIB_LEVEL)
+        scanline = self._scanline()
+        chunks: list[bytes] = []
+        for _ in range(self.height):
+            chunk = compressor.compress(scanline)
+            if chunk:
+                chunks.append(chunk)
+        chunks.append(compressor.flush())
+        return b"".join(chunks)

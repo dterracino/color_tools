@@ -308,7 +308,7 @@ unavailable; pass `available_only=False` to list every registered format.
 
 #### PNG Writing (stdlib, no Pillow)
 
-- `from color_tools.png_writer import SimplePNGWriter` — write RGB color strips as PNG without Pillow
+- `from color_tools.png_writer import SimplePNGWriter` — write repeated-row RGB images as PNG without Pillow
 
 ```python
 from color_tools.png_writer import SimplePNGWriter
@@ -324,14 +324,28 @@ SimplePNGWriter(colors, swatch_width=32, swatch_height=32).save("nes_preview.png
 
 # Get raw bytes without writing a file
 png_bytes = SimplePNGWriter(colors).to_bytes()
+
+# Render one solid color
+solid = SimplePNGWriter.from_solid((255, 128, 0), width=128, height=64)
+
+# Render source-order blocks; remainder pixels go to the earliest blocks
+blocks = SimplePNGWriter.from_blocks(colors, width=128, height=64)
+
+# Interpolate equally spaced stops in encoded sRGB
+gradient = SimplePNGWriter.from_gradient(colors, width=128, height=64)
 ```
 
 The writer is part of the base package and does not import the optional image
 module. It stores an immutable copy of RGB tuple/list colors, uses canonical
 strict RGB validation, and writes an sRGB-tagged 8-bit RGB PNG without alpha.
-Swatch dimensions must be positive built-in integers; total width and height
-must not exceed `2**31 - 1`. `save()` creates missing parent directories and
-overwrites existing files. The former image-package import has been removed.
+Dimensions must be positive built-in integers; width and height must not exceed
+`2**31 - 1`, and an image may contain at most `2**24` pixels (48 MiB of decoded
+RGB data). Block output rejects widths smaller than the color count rather than
+omitting components. A multi-color gradient requires at least two pixels and
+always preserves its first and last colors; single-color blocks and gradients
+are solid. Every generated row is identical. `save()` creates missing parent
+directories and overwrites existing files. The former image-package import has
+been removed.
 
 #### Exporting a Custom RGB Palette
 

@@ -115,8 +115,8 @@ Dependency-Free PNG Writing
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 ``from color_tools.png_writer import SimplePNGWriter`` writes sRGB-tagged
-8-bit RGB swatch strips without Pillow or NumPy. It is part of the base package,
-not ``color_tools.image``.
+8-bit RGB solid, block, gradient, and equal-width swatch images without Pillow
+or NumPy. It is part of the base package, not ``color_tools.image``.
 
 .. autosummary::
    :toctree: api

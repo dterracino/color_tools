@@ -17,6 +17,7 @@ import unittest
 import zlib
 from pathlib import Path
 from typing import TYPE_CHECKING, cast
+from unittest.mock import patch
 
 from color_tools.png_writer import RGB, SimplePNGWriter
 
@@ -146,6 +147,79 @@ class TestPixels(unittest.TestCase):
         self.assertEqual(decode_pixels(SimplePNGWriter(colors).to_bytes()), [colors])
 
 
+class TestGeneratedRows(unittest.TestCase):
+    def test_solid_exact_pixels(self) -> None:
+        writer = SimplePNGWriter.from_solid((12, 34, 56), width=4, height=3)
+        self.assertEqual(writer.colors, ((12, 34, 56),))
+        self.assertEqual((writer.width, writer.height), (4, 3))
+        self.assertEqual(decode_pixels(writer.to_bytes()), [[(12, 34, 56)] * 4] * 3)
+
+    def test_blocks_divide_evenly(self) -> None:
+        writer = SimplePNGWriter.from_blocks(
+            [RED, GREEN, BLUE], width=9, height=2
+        )
+        expected = [RED] * 3 + [GREEN] * 3 + [BLUE] * 3
+        self.assertEqual(decode_pixels(writer.to_bytes()), [expected, expected])
+
+    def test_blocks_assign_remainder_to_earliest_colors(self) -> None:
+        writer = SimplePNGWriter.from_blocks(
+            [RED, GREEN, BLUE], width=8, height=1
+        )
+        self.assertEqual(
+            decode_pixels(writer.to_bytes()),
+            [[RED] * 3 + [GREEN] * 3 + [BLUE] * 2],
+        )
+
+    def test_blocks_reject_width_that_would_omit_a_color(self) -> None:
+        with self.assertRaisesRegex(ValueError, "at least the number of colors"):
+            SimplePNGWriter.from_blocks([RED, GREEN, BLUE], width=2, height=1)
+
+    def test_gradient_preserves_endpoints(self) -> None:
+        writer = SimplePNGWriter.from_gradient([RED, BLUE], width=4, height=1)
+        self.assertEqual(
+            decode_pixels(writer.to_bytes()),
+            [[RED, (170, 0, 85), (85, 0, 170), BLUE]],
+        )
+
+    def test_gradient_uses_equally_spaced_stops(self) -> None:
+        colors = [RED, GREEN, BLUE, (255, 255, 255)]
+        writer = SimplePNGWriter.from_gradient(colors, width=4, height=1)
+        self.assertEqual(decode_pixels(writer.to_bytes()), [colors])
+
+    def test_gradient_uses_nearest_even_rounding(self) -> None:
+        writer = SimplePNGWriter.from_gradient(
+            [(0, 0, 0), (1, 3, 255)], width=3, height=1
+        )
+        self.assertEqual(
+            decode_pixels(writer.to_bytes()),
+            [[(0, 0, 0), (0, 2, 128), (1, 3, 255)]],
+        )
+
+    def test_narrow_gradient_preserves_first_and_last(self) -> None:
+        writer = SimplePNGWriter.from_gradient(
+            [RED, GREEN, BLUE], width=2, height=1
+        )
+        self.assertEqual(decode_pixels(writer.to_bytes()), [[RED, BLUE]])
+
+    def test_multi_color_gradient_rejects_width_one(self) -> None:
+        with self.assertRaisesRegex(ValueError, "width of at least 2"):
+            SimplePNGWriter.from_gradient([RED, BLUE], width=1, height=1)
+
+    def test_single_color_is_solid_in_every_mode(self) -> None:
+        for writer in (
+            SimplePNGWriter.from_solid(RED, width=3, height=2),
+            SimplePNGWriter.from_blocks([RED], width=3, height=2),
+            SimplePNGWriter.from_gradient([RED], width=3, height=2),
+        ):
+            with self.subTest(writer=writer):
+                self.assertEqual(decode_pixels(writer.to_bytes()), [[RED] * 3] * 2)
+
+    def test_encoding_does_not_use_whole_image_zlib_compress(self) -> None:
+        writer = SimplePNGWriter.from_solid(RED, width=3, height=4)
+        with patch("color_tools.png_writer.zlib.compress", side_effect=AssertionError):
+            self.assertEqual(decode_pixels(writer.to_bytes()), [[RED] * 3] * 4)
+
+
 class TestInputIsolation(unittest.TestCase):
     def test_mutating_input_after_init_has_no_effect(self) -> None:
         colors = [RED, GREEN]
@@ -260,12 +334,34 @@ class TestValidation(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, "width"):
             SimplePNGWriter([RED, BLUE], swatch_width=2**30)
 
-    def test_largest_allowed_dimension_accepted_by_validation(self) -> None:
-        # Construct only; encoding that many pixels would be absurd.
-        writer = SimplePNGWriter([RED], swatch_width=2**31 - 1)
-        self.assertEqual(writer.width, 2**31 - 1)
-        writer = SimplePNGWriter([RED], swatch_height=2**31 - 1)
-        self.assertEqual(writer.height, 2**31 - 1)
+    def test_largest_allowed_pixel_count_accepted_by_validation(self) -> None:
+        writer = SimplePNGWriter([RED], swatch_width=4096, swatch_height=4096)
+        self.assertEqual((writer.width, writer.height), (4096, 4096))
+
+    def test_rejects_images_above_pixel_limit(self) -> None:
+        with self.assertRaisesRegex(ValueError, "maximum is 16777216"):
+            SimplePNGWriter([RED], swatch_width=4096, swatch_height=4097)
+
+    def test_generated_dimension_types_are_strict(self) -> None:
+        class Integer(int):
+            pass
+
+        for bad in (True, False, 1.0, "1", None, Integer(1)):
+            for dimension in ("width", "height"):
+                with self.subTest(value=bad, dimension=dimension):
+                    arguments = {"width": 1, "height": 1, dimension: bad}
+                    with self.assertRaisesRegex(ValueError, dimension):
+                        SimplePNGWriter.from_solid(
+                            RED,
+                            width=cast(int, arguments["width"]),
+                            height=cast(int, arguments["height"]),
+                        )
+
+    def test_generated_colors_use_canonical_validation(self) -> None:
+        with self.assertRaisesRegex(ValueError, r"colors\[1\]"):
+            SimplePNGWriter.from_gradient(
+                [RED, cast(RGB, (0, 0, 1.0))], width=2, height=1
+            )
 
 
 class TestImport(unittest.TestCase):

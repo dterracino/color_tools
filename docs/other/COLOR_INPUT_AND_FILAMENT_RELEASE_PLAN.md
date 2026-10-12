@@ -244,6 +244,32 @@ On 2026-10-12, completed the scalar normalization and sRGB transfer review.
   data verification; both legacy 512-color generator smoke checks; and
   `git diff --check`.
 
+### Repeated-row PNG writer upgrade
+
+On 2026-10-12, extended `SimplePNGWriter` with dependency-free constructors for
+solid, source-order block, and encoded-sRGB gradient images while preserving the
+existing equal-width constructor used by palette LUT export.
+
+- Block widths differ by at most one pixel, with remainder pixels assigned to
+  the earliest components. Widths smaller than the component count are rejected
+  so no component is silently omitted.
+- Gradient stops are equally spaced, channel interpolation uses Python
+  nearest-even rounding, and first/last endpoint pixels are exact. A multi-color
+  gradient requires width 2 or greater; width 2 preserves the endpoints even
+  when intermediate stops cannot be represented. Single-color output is solid
+  in every mode.
+- All outputs repeat one horizontal row. The writer does not expose arbitrary
+  row iteration because no current swatch or LUT consumer needs it.
+- Output is limited to `2**24` pixels (48 MiB decoded RGB). Repeated scanlines
+  are fed incrementally to zlib instead of constructing the complete
+  uncompressed image in memory; PNG's `2**31 - 1` per-dimension limit remains.
+- The record-level Phase 5 API remains pending; this change supplies its shared
+  renderer without reading record types or ambient configuration.
+- Validation passed: 52 focused PNG-writer tests; 1,464 full-suite tests with
+  two expected optional-feature skips; zero repository-wide strict Pyright
+  errors or warnings; package/data integrity verification; warning-as-error
+  Sphinx HTML build; and `git diff --check`.
+
 This section consolidates the subsequent design discussion and is the working
 execution checklist. It supersedes conflicting initial recommendations later
 in this document. The verified baseline and import-source inventory below remain
