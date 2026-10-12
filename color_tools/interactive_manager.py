@@ -21,6 +21,7 @@ if TYPE_CHECKING:
     from pathlib import Path
 
     from prompt_toolkit import Application
+    from prompt_toolkit.formatted_text import StyleAndTextTuples
     from prompt_toolkit.key_binding import KeyBindings
     from prompt_toolkit.key_binding.key_processor import KeyPressEvent
     from prompt_toolkit.layout import HSplit, Layout, Window
@@ -367,9 +368,9 @@ class InteractiveFilamentManager:
             mouse_support=True
         )
     
-    def _get_display_text(self) -> list[tuple[str, str]]:
+    def _get_display_text(self) -> StyleAndTextTuples:
         """Generate the formatted text for display."""
-        result: list[tuple[str, str]] = []
+        result: StyleAndTextTuples = []
         
         # Header
         total = len(self.palette.records)

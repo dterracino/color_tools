@@ -1176,11 +1176,11 @@ def _calculate_focal_region(
         0:width,
     ]
 
-    x_normalized = (
+    x_normalized: FloatArray = (
         xx / max(width - 1, 1)
     )
 
-    y_normalized = (
+    y_normalized: FloatArray = (
         yy / max(height - 1, 1)
     )
 

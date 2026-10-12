@@ -68,7 +68,7 @@ See `.github/workflows/docs.yml`
 ### Deployment Process
 
 1. Checkout repository
-2. Set up Python 3.11
+2. Set up Python 3.12
 3. Install package with `[docs]` extras
 4. Build Sphinx HTML documentation
 5. Deploy to `gh-pages` branch

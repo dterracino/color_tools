@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Python minimum raised to 3.12** — version 7.0.0 drops Python 3.10 and
+  3.11 support. Package metadata, strict analysis, generated-code checks,
+  documentation builds, and installation guidance now use the 3.12 floor.
+  Runtime CI covers Python 3.12, 3.13, and 3.14; `.python-version` selects
+  3.12 as the development default without an upper compatibility bound.
+  MCP annotations and installed-wheel consumers use standard-library typing
+  instead of the corresponding backport imports.
 - **Repository strict CI gate** — run the configured repository-wide Pyright
   check on Python 3.12 in a dedicated virtual environment with library,
   documentation, and demo dependencies. Errors and warnings fail the job;
@@ -26,6 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Fresh-dependency strict validation** — check NumPy annotations against
+  the supported Python floor and resolve dependencies through the configured
+  virtual environment, rather than an interpreter override that can leave
+  the old environment in use. Type quantization centroids, saliency grids,
+  and prompt-toolkit text using their concrete contracts; retain RapidFuzz's
+  empty-choice handling despite its overly narrow no-cutoff overload.
+- **GitHub Actions Node runtime** — update Python setup in CI and docs to
+  `actions/setup-python@v6`, which targets Node 24 instead of deprecated Node 20.
 - **Remaining strict test and documentation typing** — preserve runtime
   assertions and malformed-input coverage while typing schema traversal,
   logging fixtures, and the external ASE parser boundary. Sphinx extension

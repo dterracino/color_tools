@@ -17,14 +17,14 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.12", "3.13", "3.14"]
 
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
           cache: "pip"
@@ -45,7 +45,7 @@ jobs:
         run: |
           python -m venv .venv
           .venv/bin/python -m pip install -e ".[all,docs,dev]" pytest "pygame>=2.5.0" "moderngl>=5.10.0"
-          .venv/bin/pyright --project pyrightconfig.json --pythonpath .venv/bin/python --warnings
+          .venv/bin/pyright --project pyrightconfig.json --warnings
 
       - name: Verify installed-wheel type completeness
         if: matrix.python-version == '3.12'

@@ -404,7 +404,7 @@ class TestPythonExporter(ExtendedExporterTestCase):
                 {
                     "include": ["*.py"],
                     "typeCheckingMode": "strict",
-                    "pythonVersion": "3.10",
+                    "pythonVersion": "3.12",
                 }
             ),
             encoding="utf-8",

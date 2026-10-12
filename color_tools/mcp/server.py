@@ -3,11 +3,10 @@
 from __future__ import annotations
 
 from functools import lru_cache
-from typing import Any, Literal
+from typing import Annotated, Any, Literal
 
 from mcp.server.mcpserver import MCPServer
 from pydantic import Field
-from typing_extensions import Annotated
 
 from color_tools import __version__
 from color_tools.color_deficiency import correct_cvd, simulate_cvd

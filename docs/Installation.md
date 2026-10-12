@@ -6,7 +6,14 @@
 
 ## Requirements
 
-**Python 3.10+** is required.
+**Python 3.12+** is required for version 7.0.0 and newer. The CI test matrix
+covers Python 3.12, 3.13, and 3.14.
+
+For Python 3.10 or 3.11, use the previous release series:
+
+```bash
+pip install "color-match-tools<7"
+```
 
 ## Install from PyPI (Recommended)
 

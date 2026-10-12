@@ -5,6 +5,7 @@ Tests the validate_color function and its supporting utilities.
 """
 
 import unittest
+from unittest.mock import patch
 from color_tools.validation import (
     validate_color,
     ColorValidationRecord,
@@ -176,6 +177,16 @@ class TestColorValidationRecord(unittest.TestCase):
 
 class TestValidateColorExactMatches(unittest.TestCase):
     """Test validate_color with exact CSS color matches."""
+
+    @unittest.skipUnless(HAS_RAPIDFUZZ, "RapidFuzz is not installed")
+    def test_empty_choices_return_no_match(self) -> None:
+        """An empty palette can produce None even without a score cutoff."""
+        with patch("color_tools.validation._color_names", []):
+            result = validate_color("red", "#FF0000")
+        self.assertFalse(result.is_match)
+        self.assertIsNone(result.name_match)
+        self.assertEqual(result.name_confidence, 0.0)
+        self.assertEqual(result.delta_e, float("inf"))
     
     def test_exact_red_match(self):
         """Test exact match for red."""

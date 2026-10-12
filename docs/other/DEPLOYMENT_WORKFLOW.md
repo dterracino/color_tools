@@ -24,8 +24,8 @@
 │  └─ Fetch all history                                          │
 │                                                                 │
 │  Step 2: Set up Python                                         │
-│  ├─ actions/setup-python@v5                                    │
-│  ├─ Python 3.11                                                │
+│  ├─ actions/setup-python@v6                                    │
+│  ├─ Python 3.12                                                │
 │  └─ pip cache enabled                                          │
 │                                                                 │
 │  Step 3: Install dependencies                                  │

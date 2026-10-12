@@ -1052,10 +1052,11 @@ def quantize_image_to_palette(
         # This preserves image detail by finding representative colors
         
         # Convert pixels to numpy array for vectorized operations
-        pixels_array = np.array(pixels_rgb, dtype=np.float32)
+        pixels_array: NDArray[np.float32] = np.array(pixels_rgb, dtype=np.float32)
         
         # Sample pixels for large images (max 10k samples for speed)
         max_samples = 10000
+        samples: NDArray[np.float32]
         if len(pixels_array) > max_samples:
             sample_indices = np.random.choice(len(pixels_array), max_samples, replace=False)
             samples = pixels_array[sample_indices]
@@ -1064,28 +1065,33 @@ def quantize_image_to_palette(
         
         # Initialize centroids using k-means++ approach (better than random)
         # Start with random first centroid
-        centroids = [samples[np.random.randint(len(samples))]]
+        centroid_samples: list[NDArray[np.float32]] = [
+            samples[np.random.randint(len(samples))]
+        ]
         
         for _ in range(palette_size - 1):
             # Calculate distances from each sample to nearest centroid
             distances = np.min([
                 np.sum((samples - centroid) ** 2, axis=1)
-                for centroid in centroids
+                for centroid in centroid_samples
             ], axis=0)
             
             # Choose next centroid with probability proportional to distance^2
             probabilities = distances / distances.sum()
             next_idx = np.random.choice(len(samples), p=probabilities)
-            centroids.append(samples[next_idx])
+            centroid_samples.append(samples[next_idx])
         
-        centroids = np.array(centroids, dtype=np.float32)
+        centroids: NDArray[np.float32] = np.array(centroid_samples, dtype=np.float32)
         
         # Run k-means on samples (fewer iterations, vectorized)
         for _ in range(5):  # Reduced from 10 iterations
+            centroid_rows: list[NDArray[np.float32]] = [
+                centroids[i] for i in range(len(centroids))
+            ]
             # Assign samples to nearest centroid (vectorized)
             distances = np.array([
                 np.sum((samples - centroid) ** 2, axis=1)
-                for centroid in centroids
+                for centroid in centroid_rows
             ])
             assignments = np.argmin(distances, axis=0)
             
@@ -1096,9 +1102,10 @@ def quantize_image_to_palette(
                     centroids[i] = samples[mask].mean(axis=0)
         
         # Assign ALL pixels to nearest centroid (vectorized, fast)
+        centroid_rows = [centroids[i] for i in range(len(centroids))]
         distances = np.array([
             np.sum((pixels_array - centroid) ** 2, axis=1)
-            for centroid in centroids
+            for centroid in centroid_rows
         ])
         pixel_assignments = np.argmin(distances, axis=0)
         

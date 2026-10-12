@@ -3,7 +3,8 @@
 ## Status and next-session entry point
 
 - Created: 2026-10-10.
-- Status: planning only; implementation and data imports have not started.
+- Status: color-input and filament work remains planned; Python 3.12 minimum
+  migration is implemented and undergoing retained-runtime validation.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
 - Read this document before the next color-input, filament, or release work.
 - Preserve the existing user-palette work and unrelated worktree changes.
@@ -277,7 +278,12 @@ source files and a reviewable provenance trail.
 The user approves raising the published 7.0.0 minimum from Python 3.10 to
 Python 3.12. Drop support for 3.10 and 3.11; declare `>=3.12` without an upper
 bound. Standardize the development baseline and analysis target on 3.12.
-This work is scheduled for the next implementation pass, not completed here.
+Implemented: package and analysis floor 3.12, runtime CI
+3.12/3.13/3.14, docs builds on 3.12, generated-code checks on 3.12, and
+`.python-version` selecting 3.12. Local suites passed on all three runtimes;
+fresh-dependency strict validation passed on 3.12. GitHub's Ubuntu validation
+still needs the next pushed run. The table and checklist below preserve the
+original planning baseline; unrelated color/filament work remains deferred.
 
 | Surface | Current declaration or observed state | Required alignment |
 | --- | --- | --- |

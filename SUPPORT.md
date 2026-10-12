@@ -45,4 +45,4 @@ What is out of scope:
 
 - General Python programming questions
 - Help with your specific application's architecture
-- Issues caused by unsupported Python versions (< 3.10)
+- Issues caused by unsupported Python versions (< 3.12 for version 7.0.0+)

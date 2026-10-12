@@ -39,7 +39,7 @@ python -c "from color_tools.palette import Palette; p = Palette.load_default(); 
 
 ## Project Overview
 
-This is a color science library for Python 3.10+ that provides:
+This is a color science library for Python 3.12+ that provides:
 - Accurate color space conversions (RGB, LAB, LCH, HSL, XYZ)
 - Perceptual color distance metrics (Delta E formulas)
 - CSS color and 3D printing filament databases
@@ -82,7 +82,7 @@ Follow the global process in `~/.copilot/instructions/global.instructions.md`. I
   - Common patterns should be abstracted into utilities
 
 ### General Python Guidelines
-- Use Python 3.10+ syntax (union types with `|`, modern type hints)
+- Use Python 3.12+ syntax; preserve compatibility with the 3.12 runtime floor
 - Follow PEP 8 style conventions
 - Use `from __future__ import annotations` for forward references
 - Use type hints for all function signatures: `Path | str | None`, `tuple[int, int, int]`, etc.

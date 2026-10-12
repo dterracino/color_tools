@@ -47,7 +47,7 @@ The documentation is automatically rebuilt and deployed on:
 ### Workflow Process
 
 1. Checkout code
-2. Set up Python 3.11
+2. Set up Python 3.12
 3. Install package with `[docs]` extras
 4. Build Sphinx documentation
 5. Deploy to `gh-pages` branch

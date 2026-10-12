@@ -179,6 +179,13 @@ class ColorValidationRecord:
         return f"{match_status}: '{self.name_match}' ({confidence} confidence, ΔE {self.delta_e:.1f})"
 
 
+def _extract_color_name(
+    query: str, choices: dict[str, str]
+) -> tuple[str, float, str] | None:
+    """Keep the empty-choice result allowed across RapidFuzz stub versions."""
+    return process.extractOne(query, choices)
+
+
 def validate_color(
     color_name: str,
     hex_code: str,
@@ -214,10 +221,7 @@ def validate_color(
                 choice: _normalize_color_name(choice)
                 for choice in _color_names
             }
-            match_result = process.extractOne(
-                normalized_query,
-                normalized_choices,
-            )
+            match_result = _extract_color_name(normalized_query, normalized_choices)
             if match_result is None:
                 return ColorValidationRecord(
                     is_match=False,
@@ -285,5 +289,3 @@ def validate_color(
         delta_e=delta_e,
         message=message
     )
-
-

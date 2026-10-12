@@ -66,6 +66,9 @@ A comprehensive Python library for color science operations, color space convers
 
 ### Installation
 
+Python 3.12 or newer is required. The CI test matrix covers Python 3.12, 3.13,
+and 3.14. Python 3.10 and 3.11 users must remain on the 6.x release series.
+
 ```bash
 # Base package (zero dependencies)
 pip install color-match-tools

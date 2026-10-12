@@ -48,8 +48,11 @@ you are expected to uphold it.
 
 ### Prerequisites
 
-- Python 3.10 or higher
+- Python 3.12 or higher
 - Git
+
+The repository's `.python-version` selects Python 3.12 for tools such as pyenv
+and uv. It is a development default, not an upper bound on supported runtimes.
 
 ### Steps
 
@@ -95,11 +98,20 @@ python -m unittest tests.test_conversions
 python -m unittest tests.test_conversions.TestRGBConversions.test_rgb_to_lab
 ```
 
-All tests must pass before submitting a pull request.
+All tests must pass before submitting a pull request. CI runs the suite on
+Python 3.12, 3.13, and 3.14, and checks strict repository typing on Python 3.12.
+Use the repository virtual environment, including the documentation and demo
+dependencies, to reproduce that typing check:
+
+```bash
+python -m pip install -r requirements-dev.txt
+python -m pip install pytest "pygame>=2.5.0" "moderngl>=5.10.0"
+pyright --project pyrightconfig.json --warnings
+```
 
 ## Code Style
 
-- **Python 3.10+** syntax (union types with `|`, modern type hints)
+- **Python 3.12+** syntax; do not require features from newer Python releases
 - **PEP 8** style conventions
 - **Type hints** on all function signatures
 - **Docstrings** on all public functions and classes

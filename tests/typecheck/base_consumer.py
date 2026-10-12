@@ -3,8 +3,7 @@
 # pyright: strict
 
 from collections.abc import Iterator
-
-from typing_extensions import assert_type
+from typing import assert_type
 
 from color_tools import (
     ColorRecord,
