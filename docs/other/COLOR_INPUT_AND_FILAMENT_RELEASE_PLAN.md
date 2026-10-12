@@ -6,7 +6,8 @@
 - Updated: 2026-10-12.
 - Status: configuration, canonical color inputs, multi-color records, gamut
   precision, lazy image-package initialization, and watermark cleanup are
-  implemented. Swatches and additional modes remain planned. Python 3.12
+  implemented. Dependency-free record swatches are implemented; additional
+  color-resolution modes remain planned. Python 3.12
   migration is locally validated on 3.12, 3.13, and 3.14; confirmation from
   the next GitHub CI run remains pending.
 - Target: the upcoming breaking release, currently prepared as 7.0.0.
@@ -76,8 +77,9 @@ Compound JSON parsing is now implemented through the shared parser.
 
 ### Current-stage validation
 
-The configuration/input/record/gamut stage is complete locally. This does not
-complete the swatch, additional-mode, data-import, or remote-CI release gates.
+The configuration/input/record/gamut stage is complete locally. This historical
+validation snapshot predates the completed record-swatch stage and does not
+complete the additional-mode, data-import, or remote-CI release gates.
 
 - `.\.venv\Scripts\python.exe -m unittest discover tests`: passed, 1,431 tests,
   three skipped. Two skips exercise missing-`swatch` branches when that package
@@ -263,8 +265,8 @@ existing equal-width constructor used by palette LUT export.
 - Output is limited to `2**24` pixels (48 MiB decoded RGB). Repeated scanlines
   are fed incrementally to zlib instead of constructing the complete
   uncompressed image in memory; PNG's `2**31 - 1` per-dimension limit remains.
-- The record-level Phase 5 API remains pending; this change supplies its shared
-  renderer without reading record types or ambient configuration.
+- The record-level Phase 5 API described below now uses this shared renderer
+  without teaching the writer about record types or ambient configuration.
 - Validation passed: 52 focused PNG-writer tests; 1,464 full-suite tests with
   two expected optional-feature skips; zero repository-wide strict Pyright
   errors or warnings; package/data integrity verification; warning-as-error
@@ -275,9 +277,10 @@ execution checklist. It supersedes conflicting initial recommendations later
 in this document. The verified baseline and import-source inventory below remain
 useful evidence, not proof that the proposed implementation already exists.
 
-No configuration, mixing, gamut, or swatch implementation is authorized merely
-by a proposal appearing here. Resolve the marked decisions before implementing
-the affected contract.
+No unresolved configuration, mixing, gamut, or additional-mode implementation
+is authorized merely by a proposal appearing here. Resolve the marked decisions
+before implementing the affected contract. Phase 5 records the separately
+approved and implemented swatch contract.
 
 ### Phase 1: inventory and contract decisions
 
@@ -434,14 +437,14 @@ the score/chroma bands admit them.
 
 ### Phase 5: dependency-free record swatches
 
-- [ ] Add consistent swatch conveniences to color and filament records.
-- [ ] Return complete PNG `bytes`, never a type conditional on Pillow being
+- [x] Add consistent swatch conveniences to color and filament records.
+- [x] Return complete PNG `bytes`, never a type conditional on Pillow being
   installed. Add an explicit save convenience returning a `Path`.
-- [ ] Reuse [SimplePNGWriter](../../color_tools/png_writer.py) and shared
+- [x] Reuse [SimplePNGWriter](../../color_tools/png_writer.py) and shared
   rendering logic; do not add another PNG encoder or a new image abstraction.
-- [ ] Validate RGB without bit-mask wrapping and validate positive integer
+- [x] Validate RGB without bit-mask wrapping and validate positive integer
   dimensions excluding booleans.
-- [ ] Decide method names, default dimensions, output-size/resource limits,
+- [x] Decide method names, default dimensions, output-size/resource limits,
   and undersized-image behavior before implementation.
 
 | Swatch mode | Rendering |
@@ -450,16 +453,34 @@ the score/chroma bands admit them.
 | `blocks` | All original components in source-order vertical sections |
 | `gradient` | Equally spaced original component stops, sRGB interpolation |
 
-- [ ] Single-color records render solid under every swatch mode.
-- [ ] Partition block pixels deterministically with widths differing by at
+- [x] Single-color records render solid under every swatch mode.
+- [x] Partition block pixels deterministically with widths differing by at
   most one pixel; do not silently omit components when width is insufficient.
-- [ ] Four-color gradient stops are 0%, 33 1/3%, 66 2/3%, 100%.
+- [x] Four-color gradient stops are 0%, 33 1/3%, 66 2/3%, 100%.
   Preserve first/last endpoint pixels and define narrow-gradient behavior.
-- [ ] Use encoded sRGB interpolation only; no interpolation-space setting.
-- [ ] Do not reread ambient mixing configuration during rendering.
-- [ ] Document blocks/gradients as component illustrations, not extrusion
+- [x] Use encoded sRGB interpolation only; no interpolation-space setting.
+- [x] Do not reread ambient mixing configuration during rendering.
+- [x] Document blocks/gradients as component illustrations, not extrusion
   geometry or additional physical blending predictions.
-- [ ] Keep the Pillow-based labeled swatch-sheet exporter distinct.
+- [x] Keep the Pillow-based labeled swatch-sheet exporter distinct.
+
+Implemented public record methods:
+
+- `to_swatch_png(*, width=64, height=64, mode="solid") -> bytes`
+- `save_swatch_png(path, *, width=64, height=64, mode="solid") -> Path`
+
+These are methods rather than properties or dataclass fields because rendering
+performs allocation and accepts dimensions/mode. This also keeps dataclass
+constructor, equality, hashing, repr, and generic CSV/JSON serialization
+unchanged. Both records share private routing into `SimplePNGWriter`; saving
+creates parent directories and returns the caller's destination as a `Path`.
+
+Validation passed: 14 focused record-swatch tests plus the 52 PNG-writer tests;
+1,478 full-suite tests with two expected optional-feature skips; zero strict
+Pyright errors or warnings; dependency-free subprocess coverage with Pillow and
+NumPy imports blocked; package/data integrity verification; warning-as-error
+Sphinx HTML build; a wheel installed and exercised without dependencies in a
+fresh environment; and `git diff --check`.
 
 ### Phase 6: integration and regression gates
 
@@ -476,9 +497,10 @@ the score/chroma bands admit them.
   and first-in-order tie resolution using independent expectations.
 - [ ] Test nested configuration contexts, exception restoration, invalid
   updates, task/thread scope, existing-record lifetime, and cache behavior.
-- [ ] Validate decoded PNG dimensions and exact pixels for solid/blocks/
+- [x] Validate decoded PNG dimensions and exact pixels for solid/blocks/
   gradients, deterministic remainders, endpoints, and invalid dimensions.
-- [ ] Verify swatches in an isolated base-only installation without Pillow.
+- [x] Verify swatches from an installed wheel in an isolated base-only
+  environment without Pillow or NumPy.
 - [ ] Exercise real bundled compounds and independently audit every database
   component/result. Retain the mutation checks specified in Workstream 4.
 

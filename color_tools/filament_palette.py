@@ -20,7 +20,7 @@ import logging
 from dataclasses import dataclass, field
 from functools import cmp_to_key
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, TypedDict, Union, cast
+from typing import Any, Callable, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
 
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, rgb_to_hex, lab_to_lch
@@ -29,6 +29,10 @@ from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_c
 from color_tools.config import get_config
 from color_tools._palette_utils import ensure_list, should_prefer_source
 from color_tools.filament_filter_criteria import FilamentFilterCriteria
+from color_tools._record_swatches import (
+    render_record_swatch as _render_record_swatch,
+    save_record_swatch as _save_record_swatch,
+)
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -129,6 +133,45 @@ class FilamentRecord:
     def effective_hex(self) -> str:
         """Normalized single-color hex derived from the captured effective RGB."""
         return rgb_to_hex(self.rgb)
+
+    def to_swatch_png(
+        self,
+        *,
+        width: int = 64,
+        height: int = 64,
+        mode: Literal["solid", "blocks", "gradient"] = "solid",
+    ) -> bytes:
+        """Render a dependency-free PNG swatch for this filament.
+
+        Solid output uses the captured effective RGB. Blocks and gradients use
+        the immutable source components in their original order without reading
+        the current ambient multi-color configuration.
+        """
+        return _render_record_swatch(
+            self.rgb,
+            self.rgb_components,
+            width=width,
+            height=height,
+            mode=mode,
+        )
+
+    def save_swatch_png(
+        self,
+        path: str | Path,
+        *,
+        width: int = 64,
+        height: int = 64,
+        mode: Literal["solid", "blocks", "gradient"] = "solid",
+    ) -> Path:
+        """Save a PNG swatch, create parent directories, and return its Path."""
+        return _save_record_swatch(
+            self.rgb,
+            self.rgb_components,
+            path,
+            width=width,
+            height=height,
+            mode=mode,
+        )
     
     def __str__(self) -> str:
         """Return a human-readable string representation of the filament."""

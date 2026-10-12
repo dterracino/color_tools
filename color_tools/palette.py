@@ -37,7 +37,7 @@ Example:
 
 from __future__ import annotations
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Tuple, TypedDict, cast
+from typing import Dict, List, Literal, Optional, Tuple, TypedDict, cast
 import json
 import logging
 from pathlib import Path
@@ -48,6 +48,10 @@ from color_tools.conversions import rgb_to_lab, rgb_to_hsl, rgb_to_hex, lab_to_l
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
 from color_tools._palette_utils import get_palette_files, rounded_key, should_prefer_source
 from color_tools._color_utils import parse_hex, validate_rgb
+from color_tools._record_swatches import (
+    render_record_swatch as _render_record_swatch,
+    save_record_swatch as _save_record_swatch,
+)
 
 # Compatibility alias retained for callers that imported the historical helper.
 _should_prefer_source = should_prefer_source
@@ -170,6 +174,44 @@ class ColorRecord:
         """
         return cls.from_rgb(
             parse_hex(hex_code), name=name, source=source, auto_name=auto_name
+        )
+
+    def to_swatch_png(
+        self,
+        *,
+        width: int = 64,
+        height: int = 64,
+        mode: Literal["solid", "blocks", "gradient"] = "solid",
+    ) -> bytes:
+        """Render a dependency-free PNG swatch for this color.
+
+        A color record has one RGB component, so every supported mode produces
+        the same solid image. Dimensions must be positive built-in integers.
+        """
+        return _render_record_swatch(
+            self.rgb,
+            (self.rgb,),
+            width=width,
+            height=height,
+            mode=mode,
+        )
+
+    def save_swatch_png(
+        self,
+        path: str | Path,
+        *,
+        width: int = 64,
+        height: int = 64,
+        mode: Literal["solid", "blocks", "gradient"] = "solid",
+    ) -> Path:
+        """Save a PNG swatch, create parent directories, and return its Path."""
+        return _save_record_swatch(
+            self.rgb,
+            (self.rgb,),
+            path,
+            width=width,
+            height=height,
+            mode=mode,
         )
     
     def __str__(self) -> str:

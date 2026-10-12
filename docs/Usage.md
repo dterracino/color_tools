@@ -347,6 +347,31 @@ are solid. Every generated row is identical. `save()` creates missing parent
 directories and overwrites existing files. The former image-package import has
 been removed.
 
+##### Record Swatches
+
+`ColorRecord` and `FilamentRecord` provide the same dependency-free PNG
+conveniences. They return complete PNG bytes or save the PNG and return its
+destination `Path`:
+
+```python
+from color_tools import ColorRecord, load_filaments
+
+color = ColorRecord.from_hex("#FF8000", name="Orange")
+png_bytes = color.to_swatch_png()  # 64×64 solid PNG
+saved_path = color.save_swatch_png("swatches/orange.png", width=128, height=64)
+
+filament = next(record for record in load_filaments() if len(record.rgb_components) > 1)
+blocks = filament.to_swatch_png(mode="blocks", width=128, height=64)
+gradient = filament.to_swatch_png(mode="gradient", width=128, height=64)
+```
+
+Supported modes are `solid` (the record's captured effective RGB), `blocks`
+(source-order components), and `gradient` (equally spaced encoded-sRGB stops).
+A `ColorRecord` has one component, so every mode is solid. Filament blocks and
+gradients illustrate the stored components; they do not represent extrusion
+geometry or predict physical pigment mixing. Rendering never rereads ambient
+multi-color configuration. Invalid modes or dimensions raise `ValueError`.
+
 #### Exporting a Custom RGB Palette
 
 Create a palette directly from RGB tuples, then choose an export format:
