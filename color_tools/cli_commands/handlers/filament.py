@@ -43,6 +43,33 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
         print("Error: exclusion filters require --nearest", file=sys.stderr)
         sys.exit(2)
 
+    count_conflicts = any(
+        (
+            args.nearest,
+            args.limit is not None,
+            args.export is not None,
+            args.list_makers,
+            args.list_types,
+            args.list_finishes,
+            args.list_export_formats,
+            getattr(args, "list_owned", False),
+            getattr(args, "add_owned", None) is not None,
+            getattr(args, "remove_owned", None) is not None,
+            getattr(args, "manage", False),
+            getattr(args, "gui", False),
+        )
+    )
+    if args.count and count_conflicts:
+        print(
+            "Error: --count cannot be combined with another filament operation",
+            file=sys.stderr,
+        )
+        sys.exit(2)
+
+    if args.limit is not None and not args.nearest:
+        print("Error: --limit requires --nearest", file=sys.stderr)
+        sys.exit(2)
+
     if getattr(args, 'gui', False):
         from ...filament_manager_gui import run_filament_manager_gui
         run_filament_manager_gui(json_dir=json_path)
@@ -160,12 +187,13 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
                 color=args.exclude_color,
             )
             
-            if args.count > 1:
+            limit = 1 if args.limit is None else args.limit
+            if limit > 1:
                 # Multiple results
                 results = filament_palette.nearest_filaments_by_criteria(
                     rgb_val,
                     metric=args.metric,
-                    count=args.count,
+                    count=limit,
                     include=include,
                     exclude=exclude,
                     owned=owned_filter,
@@ -196,7 +224,7 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
             sys.exit(1)
         sys.exit(0)
 
-    if args.maker or args.type or args.finish or args.color or args.export:
+    if args.maker or args.type or args.finish or args.color or args.export or args.count:
         # Filter filaments (or get all if no filters and exporting)
         if args.maker or args.type or args.finish or args.color:
             results = filament_palette.filter(
@@ -221,6 +249,10 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
                 owned=owned_filter
             )
         
+        if args.count:
+            print(len(results))
+            sys.exit(0)
+
         if not results:
             print("No filaments found matching the criteria")
             sys.exit(1)

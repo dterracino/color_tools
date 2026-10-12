@@ -217,7 +217,7 @@ Examples:
         "--space", 
         choices=["rgb", "hsl", "lab", "lch"], 
         default="lab",
-        help="Color space of the input value (default: lab)"
+        help="Interpret --value in this color space (default: lab; --hex is always RGB)"
     )
     color_parser.add_argument(
         "--metric",
@@ -243,11 +243,11 @@ Examples:
         help="Use a retro palette instead of CSS colors. Common palettes include: cga4, cga16, ega16, ega64, vga, web, gameboy, pico8. Use '--palette list' to see all available palettes including user-created ones."
     )
     color_parser.add_argument(
-        "--count",
+        "--limit",
         type=int,
-        default=1,
+        default=None,
         metavar="N",
-        help="Number of nearest colors to return (default: 1, max: 50)"
+        help="Maximum number of nearest colors to return (default: 1, max: 50)"
     )
     # Export operations
     color_parser.add_argument(
@@ -388,11 +388,16 @@ Examples:
         )
     )
     filament_parser.add_argument(
-        "--count",
+        "--limit",
         type=int,
-        default=1,
+        default=None,
         metavar="N",
-        help="Number of nearest filaments to return (default: 1, max: 50)"
+        help="Maximum number of nearest filaments to return (default: 1, max: 50)"
+    )
+    filament_parser.add_argument(
+        "--count",
+        action="store_true",
+        help="Print only the number of filaments matching the filters"
     )
     
     # List operations

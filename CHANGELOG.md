@@ -10,6 +10,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Scoped pytest discovery** — restrict repository-root pytest collection to
+  `tests/`. Standalone and manually runnable checks under `tools/`, including
+  the code-metrics sidecar tests, remain opt-in.
+- **Clear CLI count and limit semantics** — replace `--count N` with
+  `--limit N` for nearest color and filament result limits. Add a script-friendly
+  filament `--count` query that prints only the number of records matching the
+  active maker, type, finish, color, and owned/all-filament filters.
 - **Palette LUT convenience API** — add `Palette.save_lut_png(path) -> Path`
   as a discoverable file-based wrapper around the registered `palette_lut`
   exporter. Preserve palette order and duplicates, require an explicit

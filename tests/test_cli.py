@@ -106,6 +106,16 @@ class TestColorCommand(unittest.TestCase):
         self.assertIn("red", stdout.lower())
         # Should show distance
         self.assertIn("distance", stdout.lower())
+
+    def test_color_limit_returns_multiple_results(self) -> None:
+        """color --limit should return multiple nearest matches."""
+        exit_code, stdout, _ = self.run_cli(
+            "color", "--nearest", "--hex", "FF0000", "--limit", "3"
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertIn("1.", stdout)
+        self.assertIn("2.", stdout)
+        self.assertIn("3.", stdout)
     
     def test_color_mutual_exclusivity(self) -> None:
         """color --name and --nearest can be used together (shows color details)."""
@@ -161,15 +171,24 @@ class TestFilamentCommand(unittest.TestCase):
         self.assertIn("distance", stdout.lower())
     
     def test_filament_multiple_results(self) -> None:
-        """filament --count should return multiple matches."""
+        """filament --limit should return multiple matches."""
         exit_code, stdout, _ = self.run_cli(
-            "filament", "--nearest", "--hex", "0000FF", "--count", "3"
+            "filament", "--nearest", "--hex", "0000FF", "--limit", "3"
         )
         self.assertEqual(exit_code, 0)
         # Should have numbered results
         self.assertIn("1.", stdout)
         self.assertIn("2.", stdout)
         self.assertIn("3.", stdout)
+
+    def test_filament_count_prints_only_matching_count(self) -> None:
+        """filament --count should print the size of the filtered query."""
+        exit_code, stdout, _ = self.run_cli(
+            "filament", "--maker", "Bambu Lab", "--all-filaments", "--count"
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertRegex(stdout, r"^\d+\n$")
+        self.assertGreater(int(stdout), 0)
 
     def test_filament_nearest_with_color_filter(self) -> None:
         """filament --nearest should apply the existing color-name filter."""

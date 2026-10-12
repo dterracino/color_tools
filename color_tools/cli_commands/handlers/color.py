@@ -130,13 +130,14 @@ def handle_color_command(args: Namespace, json_path: "Path | str | None" = None)
                 sys.exit(2)
         
         # Use the determined color space
-        if args.count > 1:
+        limit = 1 if args.limit is None else args.limit
+        if limit > 1:
             # Multiple results
             results = palette.nearest_colors(
                 val,
                 space=space,
                 metric=args.metric,
-                count=args.count,
+                count=limit,
                 cmc_l=args.cmc_l,
                 cmc_c=args.cmc_c,
             )

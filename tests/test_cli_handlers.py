@@ -449,7 +449,7 @@ class TestHandleColorCommand(unittest.TestCase):
             value=None, hex=None,
             name=None, nearest=False, export=None, output=None,
             palette=None, list_export_formats=False,
-            space='rgb', metric='de2000', count=1,
+            space='rgb', metric='de2000', limit=None,
             cmc_l=2.0, cmc_c=1.0,
         )
         defaults.update(kwargs)
@@ -565,9 +565,9 @@ class TestHandleColorCommand(unittest.TestCase):
         code, _ = self._run_capture(args)
         self.assertEqual(code, 2)
 
-    def test_nearest_count_multiple_has_enumeration(self) -> None:
-        """--nearest with count>1 shows enumerated results."""
-        args = self._make_args(nearest=True, hex='#FF0000', count=3)
+    def test_nearest_limit_multiple_has_enumeration(self) -> None:
+        """--nearest with limit greater than one shows enumerated results."""
+        args = self._make_args(nearest=True, hex='#FF0000', limit=3)
         _, output = self._run_capture(args)
         self.assertIn('1.', output)
         self.assertIn('2.', output)
@@ -715,7 +715,7 @@ class TestHandleFilamentCommand(unittest.TestCase):
             exclude_finish=None, exclude_color=None,
             list_makers=False, list_types=False, list_finishes=False,
             list_export_formats=False, export=None, output=None,
-            metric='de2000', count=1, cmc_l=2.0, cmc_c=1.0,
+            metric='de2000', limit=None, count=False, cmc_l=2.0, cmc_c=1.0,
             all_filaments=True,   # Always search all to avoid owned-file side effects
             multi_color_mode='first',
             manage=False,
@@ -803,10 +803,37 @@ class TestHandleFilamentCommand(unittest.TestCase):
         self.assertEqual(code, 2)
 
     def test_nearest_multiple_results_exits_0(self) -> None:
-        """--nearest with count>1 exits 0."""
-        args = self._make_args(nearest=True, hex='#FF0000', count=3)
+        """--nearest with limit greater than one exits 0."""
+        args = self._make_args(nearest=True, hex='#FF0000', limit=3)
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
+
+    def test_count_prints_only_filtered_total(self) -> None:
+        """--count prints only the number of matching records."""
+        args = self._make_args(maker=['Bambu Lab'], count=True)
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertRegex(output, r"^\d+\n$")
+        self.assertGreater(int(output), 0)
+
+    def test_count_with_no_matches_exits_0(self) -> None:
+        """A valid count query reports zero without treating it as an error."""
+        args = self._make_args(maker=['NonExistentMakerXYZ999'], count=True)
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertEqual(output, "0\n")
+
+    def test_count_rejects_nearest_search(self) -> None:
+        """--count and --nearest have intentionally separate contracts."""
+        args = self._make_args(nearest=True, hex='#FF0000', count=True)
+        code, _ = self._run_capture(args)
+        self.assertEqual(code, 2)
+
+    def test_count_rejects_listing_operation(self) -> None:
+        """--count cannot be silently ignored by a listing operation."""
+        args = self._make_args(list_makers=True, count=True)
+        code, _ = self._run_capture(args)
+        self.assertEqual(code, 2)
 
     def test_exclusions_require_nearest(self) -> None:
         """Exclusion options are deliberately scoped to nearest searches."""

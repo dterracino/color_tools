@@ -85,7 +85,8 @@ class FilamentRecord:
         hex: Original single or compound hex text. Components may be separated
             by hyphen, space, comma, underscore, slash, colon, or semicolon.
             CSS/PNG RGBA alpha is allowed but dropped from RGB components.
-        td_value: Transmission density value (0.0-1.0) for light transmission simulation. Optional.
+        td_value: Transmission-distance value when available. Values are not
+            normalized percentages. Optional.
         other_names: Alternative names this filament is known by. Optional.
         source: Source JSON file this record came from (auto-set during loading)
     """

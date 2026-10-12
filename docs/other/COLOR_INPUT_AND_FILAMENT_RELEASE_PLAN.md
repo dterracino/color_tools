@@ -496,6 +496,26 @@ Validation passed: four focused convenience tests plus 52 PNG-writer tests;
 Pyright errors or warnings; package/data integrity verification;
 warning-as-error Sphinx HTML build; and `git diff --check`.
 
+### Breaking CLI count and limit semantics
+
+Nearest-result limits now use `--limit N` consistently in both the `color` and
+`filament` commands. The old limit-style `--count N` spelling is removed rather
+than retained as a compatibility alias. The filament command reuses `--count`
+as a flag that prints only the number of records matching maker, type, finish,
+color, and owned/all-filament filters. A zero-match count is a successful query
+and prints `0`; count queries reject combinations with other filament operations.
+
+The color command continues to interpret `--value` as LAB unless `--space` is
+provided; `--hex` is always RGB and serves as the RGB shortcut. Help and usage
+text now state that distinction explicitly. The LAB default is retained.
+
+Validation passed: 1,486 tests with two expected optional-feature skips; strict
+Pyright with zero errors or warnings; package/data integrity verification;
+warning-as-error Sphinx HTML build; and `git diff --check`. Repository-root
+pytest discovery is scoped to `tests/`; standalone code-metrics tests and manual
+palette scripts under `tools/` remain opt-in and are not part of the library
+test suite.
+
 ### Phase 6: integration and regression gates
 
 - [ ] Wire library loaders/direct constructors, public exports, CLI modes and
@@ -522,7 +542,8 @@ warning-as-error Sphinx HTML build; and `git diff --check`.
 
 - [ ] Execute the Bambu, Overture, and IEMAI reconciliation described in
   Workstream 5 only after shared color contracts are tested.
-- [ ] Obtain approval for approximate IEMAI values and provenance policy.
+- [x] Confirm the TD policy: retain values when available without provenance
+  metadata or source-certification claims.
 - [ ] Review dry-run reports; preserve IDs/owned references and demonstrate
   deterministic, idempotent imports.
 - [ ] Regenerate protected hashes after data changes.
@@ -761,11 +782,16 @@ Do not automatically include other Bambu PDFs simply because they are present.
 Inspect PDF contents during the import phase; extraction quality and coverage
 have not been verified in this planning pass.
 
-The IEMAI files explicitly say no manufacturer-published HEX table was found,
-and label values as third-party approximations with confidence/source URLs.
-Confirm inclusion criteria and how provenance will be retained before importing.
-Do not present these values as manufacturer-certified or invent measured data.
-Verify the reported absence of existing IEMAI records before applying the import.
+The library stores TD values when available. It does not track whether a value
+is manufacturer-provided, community-sourced, or hand-measured, and does not
+claim a provenance or certification level. Imports must not add provenance
+fields or gate otherwise valid TD values on their source category.
+
+The IEMAI files label their HEX values as approximations. Treat those values as
+supplied import data: reconcile them, report changes and conflicts, and do not
+describe them as manufacturer-certified. No provenance schema or separate
+provenance approval is required. Verify the reported absence of existing IEMAI
+records before applying the import.
 
 ### Extraction and reconciliation process
 
@@ -786,15 +812,17 @@ Verify the reported absence of existing IEMAI records before applying the import
 6. Resolve disagreements explicitly. Do not guess whether different product lines
    or similarly named colors represent the same filament.
 7. Preserve IDs, owned references, unrelated metadata, and records absent from the
-   new sources. No deletions or TD estimates without explicit approval.
+   new sources. Do not delete records or invent TD values; retain supplied TD
+   values when available.
 8. Parse all colors with the approved shared helpers, including multi-color
    components. Apply the reviewed changes deterministically and atomically.
 9. Run the importer again: it must produce no additional changes.
 10. Regenerate protected hashes with [update_hashes.py](../../tooling/update_hashes.py),
     verify integrity, and document actual additions/corrections in the changelog.
 
-Do not modify scientific constants to make imported data fit. Retain original
-source files and a reviewable provenance trail.
+Do not modify scientific constants to make imported data fit. Retain the supplied
+source files as import inputs and keep deterministic dry-run reports; do not add
+provenance fields to the library schema.
 
 ## Workstream 6: Python 3.12 minimum and reproducible type checking
 
@@ -929,7 +957,7 @@ additions are required by this plan.
 - [x] Arbitrary-color support and `hex2` removal follow approved decisions.
 - [x] All relevant consumers and serializers use a consistent representation.
 - [x] Regression tests catch each current-stage failure, including actual database loading.
-- [ ] Imports have reviewed provenance, preserved identities, and idempotent results.
+- [ ] Imports preserve identities and produce deterministic, idempotent results.
 - [ ] Documentation, migration notes, hashes, and version metadata are synchronized.
 - [ ] Python 3.12 package floor, analysis target, development environment, CI,
   deployment/build runtimes, and current support documentation agree.

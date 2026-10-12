@@ -1,7 +1,8 @@
 # Codex handoff: Color Tools 7.0.0
 
-Prepared on 2026-10-12 after completing the base-package PNG writer replacement.
-This is a continuation handoff, not release approval.
+Prepared on 2026-10-12 after completing the base-package PNG writer replacement
+and updated as later release-plan work was completed. This is a continuation
+handoff, not release approval.
 
 ## Start here
 
@@ -11,12 +12,11 @@ This is a continuation handoff, not release approval.
    [the release plan](COLOR_INPUT_AND_FILAMENT_RELEASE_PLAN.md).
 3. Inspect the current worktree. Preserve existing changes; do not assume a
    clean checkout or discard files supplied by the user.
-4. The next requested work is to review
-   [the image initialization issues document](../image_init_cleanup_issues.md)
-   and continue that cleanup. The previous assistant deliberately did not start
-   it while completing the PNG task.
-5. Reconcile that document with current source before implementing: its
-   `SimplePNGWriter` references are now obsolete.
+4. Image initialization, record swatches, Palette LUT convenience, and the
+   breaking CLI count/limit cleanup are complete locally.
+5. The color command retains LAB as the default interpretation of `--value`;
+   `--hex` is the RGB shortcut. Continue with the Phase 7 Bambu, Overture, and
+   IEMAI dry-run reconciliation process.
 
 **Do not commit, push, tag, publish, or release.** The user owns those actions.
 Use the project virtual environment; do not install into system Python.
@@ -53,11 +53,11 @@ or reapply superseded proposals.
 | Phase 2: configuration | Complete locally, including context scope, record lifetime, caches, and boundary tests | Revalidate as future modes/routes change |
 | Phase 3: gamut/shared validation | Complete locally | Reuse this implementation for future LAB blending |
 | Phase 4: multi-color records/modes | Records, `first`, `last`, `srgb_mean` complete | Additional modes and their decisions/tests remain |
-| Phase 5: record swatches | Not implemented | PNG encoder prerequisite is now complete; record rendering/API decisions remain |
-| Phase 6: integration/regressions | Complete for implemented contracts and current modes | Future mode/swatch integration and associated tests remain |
+| Phase 5: record swatches | Complete, including record PNG methods and `Palette.save_lut_png()` | No current-mode work remains |
+| Phase 6: integration/regressions | Complete for implemented contracts, current modes, swatches, and CLI count/limit semantics | Future modes and data imports require their own integration coverage |
 | Phase 7: imports/release | Not complete | Data reconciliation, approvals, final validation, remote CI and release review |
 | Workstream 6: Python minimum | Implemented and previously validated locally on 3.12/3.13/3.14 | Next remote CI confirmation and final post-change release validation |
-| Image initialization cleanup | Not started | Review supplied findings, correct stale expectations, implement approved scope |
+| Image initialization cleanup | Complete locally | Revalidate during final release checks |
 
 The latest PNG test total supersedes earlier totals recorded in the plan.
 Earlier 3.13/3.14 runs are evidence for the floor migration, not a claim that the
@@ -203,41 +203,16 @@ Successful verification ran outside the checkout with isolated venv
 `VIRTUAL_ENV`, its Scripts directory first on PATH, and explicit `--pythonpath`.
 Do not report completeness against a different installed package.
 
-## Immediate next task: image initialization cleanup
+## Completed follow-up work
 
-The user's [issues document](../image_init_cleanup_issues.md) is a static review,
-not verified runtime evidence. Read current source and reproduce findings.
-
-Its obsolete requirements must be adjusted:
-
-- `SimplePNGWriter` must not be in the image name table, `__all__`, or
-  `TYPE_CHECKING` exports.
-- Base-writer dependency-free checks should use `color_tools.png_writer`;
-  they already have coverage.
-- Do not restore an image-package alias for convenience.
-
-Remaining proposed work includes precise optional-dependency errors, removal
-of success-shaped placeholders, lazy imports, honest availability semantics,
-type/export-table consistency, and correction of broken docstring examples.
-Related watermark findings include Cairo native-load errors, exception
-chaining, duplicated compositing, validation, and example correctness.
-
-Verify which dependencies each export actually needs. The image extra includes
-more than Pillow/NumPy; do not blindly restrict missing-dependency handling to
-two names. Preserve strict public typing and test both installed/missing-extra
-paths. Some availability/error behavior is a design decision; confirm meaningful
-behavior changes rather than guessing from the review.
+Image-package lazy initialization, watermark cleanup, dependency-free record
+swatches, PNG block/gradient rendering, and the Palette LUT convenience are
+complete. The CLI now uses `--limit N` for nearest-result limits in both color
+and filament commands; filament `--count` prints only the filtered record total.
+See the release plan and changelog for the current contracts and validation.
 
 ## Outstanding work and decisions after cleanup
 
-- Record swatches: not implemented. Decide public method names, default
-  dimensions, save-return contract, size/resource policy, insufficient block
-  widths, and narrow gradient behavior with the user.
-- Planned rendering: solid uses captured effective RGB; blocks use source-order
-  components; gradients use equally spaced encoded-sRGB stops. Do not reread
-  ambient mixing configuration at render time.
-- The current writer has equal-width strips; shared rendering must account for
-  variable block remainders/gradient pixels without creating another PNG encoder.
 - Additional modes: `representative`, extrema, `linear_rgb_mean`, `lab_mean`
   remain unimplemented. The user explicitly limited the initial stage to the
   three implemented modes.
@@ -246,9 +221,12 @@ behavior changes rather than guessing from the review.
 - Broader `validation.py` semantic review remains deferred; do not redesign it
   as part of input consolidation without approval.
 - Bambu/Overture/IEMAI data reconciliation/imports have not been applied.
-  Follow Workstream 5: reviewed provenance, dry runs, stable IDs/owned references,
-  deterministic idempotent updates, no unapproved deletions/TD estimates.
-  Approximate IEMAI values require approval.
+  Follow Workstream 5: dry runs, stable IDs/owned references, deterministic
+  idempotent updates, and no unapproved deletions. TD values may be included
+  when available regardless of whether they are manufacturer-provided,
+  community-sourced, or hand-measured; the library does not track provenance or
+  make certification claims. No provenance field or separate IEMAI provenance
+  approval is required.
 - Final hashes, migration/release documentation, wheel consumers, integrity
   checks, optional-feature validation and release-diff review remain release gates.
 - Remote GitHub CI confirmation remains pending. No remote CI pass was claimed.

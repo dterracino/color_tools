@@ -177,6 +177,9 @@ python -m color_tools filament --list-makers
 # Find filaments from a specific maker
 python -m color_tools filament --maker "Bambu Lab"
 
+# Count filaments from a specific maker without listing them
+python -m color_tools filament --maker "Bambu Lab" --all-filaments --count
+
 # Use synonyms (Bambu = Bambu Lab)
 python -m color_tools filament --maker "Bambu" --type "PLA"
 ```
@@ -201,14 +204,14 @@ Some filaments (especially silk) have two colors that appear different depending
 
 ### How do I find alternatives for unavailable filaments?
 
-Use `--count` to find multiple matches:
+Use `--limit` to find multiple matches:
 
 ```bash
 # Find top 5 alternatives to a color
-python -m color_tools filament --nearest --value 180 100 200 --count 5
+python -m color_tools filament --nearest --value 180 100 200 --limit 5
 
 # Find alternatives only in PLA
-python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --maker "*" --count 5
+python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --maker "*" --limit 5
 ```
 
 ---

@@ -614,7 +614,7 @@ python -m color_tools color --name "steelblue"
 python -m color_tools color --nearest --value 128 64 200 --space rgb
 
 # Find top 3 nearest colors
-python -m color_tools color --nearest --value 128 64 200 --space rgb --count 3
+python -m color_tools color --nearest --value 128 64 200 --space rgb --limit 3
 
 # Find nearest using LAB values with CIE94 metric
 python -m color_tools color --nearest --value 50 25 -30 --space lab --metric de94
@@ -634,11 +634,12 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--name NAME`: Find exact color by name (case-insensitive)
 - `--nearest`: Find the closest color to specified value
 - `--value V1 V2 V3`: Color value tuple (format depends on `--space`)
-- `--space {rgb,hsl,lab,lch}`: Color space of input value (default: lab)
+- `--space {rgb,hsl,lab,lch}`: Interpret `--value` in this color space
+  (default: `lab`; `--hex` is always RGB)
 - `--metric {euclidean,de76,de94,de2000,cmc,cmc21,cmc11}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
-- `--count N`: Return top N nearest colors instead of just one (default: 1, max: 50)
+- `--limit N`: Return at most N nearest colors instead of just one (default: 1, max: 50)
 - `--palette NAME`: Use retro/classic palette instead of CSS colors (use `--palette list` to see all available)
 
 #### Custom Palettes
@@ -718,7 +719,7 @@ Search and query the 3D printing filament database.
 python -m color_tools filament --nearest --value 255 0 0
 
 # Find top 5 nearest filaments 
-python -m color_tools filament --nearest --value 255 0 0 --count 5
+python -m color_tools filament --nearest --value 255 0 0 --limit 5
 
 # Use different color distance metrics
 python -m color_tools filament --nearest --value 100 150 200 --metric cmc
@@ -728,7 +729,7 @@ python -m color_tools filament --nearest --value 100 150 200 --metric de94
 python -m color_tools filament --nearest --value 100 150 200 --metric cmc --cmc-l 1.0 --cmc-c 1.0
 
 # Restrict results to the same hue family (prevents blue→purple substitution, etc.)
-python -m color_tools filament --nearest --hex "#5c94fc" --count 5 --max-hue-delta 30
+python -m color_tools filament --nearest --hex "#5c94fc" --limit 5 --max-hue-delta 30
 
 # Restrict candidates by color name
 python -m color_tools filament --nearest --hex "#ed1c24" --color "Red"
@@ -780,6 +781,9 @@ python -m color_tools filament --type PLA "PLA+" PETG
 # Filter by multiple finishes
 python -m color_tools filament --finish Basic "Silk+" Matte
 
+# Count matching records without listing them
+python -m color_tools filament --maker "Bambu Lab" --all-filaments --count
+
 # Use wildcard (*) to bypass individual filters while keeping others
 python -m color_tools filament --maker "*" --type "PLA"        # All makers, only PLA
 python -m color_tools filament --maker "Bambu" --type "*"      # Only Bambu, all types
@@ -795,7 +799,7 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--metric {euclidean,de76,de94,de2000,cmc}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
-- `--count N`: Return top N nearest filaments instead of just one (default: 1, max: 50)
+- `--limit N`: Return at most N nearest filaments instead of just one (default: 1, max: 50)
 - `--max-hue-delta DEGREES`: Restrict results to filaments within DEGREES of the target hue (LCH hue angle, 0-180). Useful when the best perceptual match changes hue (e.g., blue→purple). Achromatic colors are unaffected.
 - `--multi-color-mode {first,last,srgb_mean}`: Override the current-context mode
   (built-in default: first). Filaments retain ordered source `rgb_components`;
@@ -810,6 +814,7 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+"). Use "*" to bypass this filter.
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+"). Use "*" to bypass this filter.
 - `--color NAME`: Filter by color name
+- `--count`: Print only the number of filaments matching the filters
 - `--exclude-maker NAME [NAME ...]`: With `--nearest`, exclude matching makers
 - `--exclude-type NAME [NAME ...]`: With `--nearest`, exclude matching filament types
 - `--exclude-finish NAME [NAME ...]`: With `--nearest`, exclude matching finishes
@@ -831,13 +836,13 @@ options require `--nearest`.
 
 ```bash
 # Find top 3 PLA filaments from any maker nearest to blue
-python -m color_tools filament --nearest --value 33 33 255 --type "PLA" --maker "*" --count 3
+python -m color_tools filament --nearest --value 33 33 255 --type "PLA" --maker "*" --limit 3
 
 # Find top 5 Bambu filaments of any type nearest to purple  
-python -m color_tools filament --nearest --value 128 0 128 --maker "Bambu" --type "*" --count 5
+python -m color_tools filament --nearest --value 128 0 128 --maker "Bambu" --type "*" --limit 5
 
 # Find top 10 matte finish filaments from any maker/type nearest to green
-python -m color_tools filament --nearest --value 0 255 0 --finish "Matte" --maker "*" --type "*" --count 10
+python -m color_tools filament --nearest --value 0 255 0 --finish "Matte" --maker "*" --type "*" --limit 10
 ```
 
 **Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments. Use "*" as a wildcard to bypass individual filters while keeping others active.
@@ -1351,7 +1356,7 @@ user-supplied JSON file) from forging extra log lines.
 python -m color_tools filament --nearest --value 180 100 200
 
 # Find top 3 alternatives in case my preferred filament is unavailable
-python -m color_tools filament --nearest --value 180 100 200 --count 3
+python -m color_tools filament --nearest --value 180 100 200 --limit 3
 
 # Use CMC color difference (textile industry standard)
 python -m color_tools filament --nearest --value 180 100 200 --metric cmc
@@ -1360,7 +1365,7 @@ python -m color_tools filament --nearest --value 180 100 200 --metric cmc
 python -m color_tools filament --nearest --value 180 100 200 --metric de94
 
 # Find alternatives from any maker but only PLA type
-python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --maker "*" --count 5
+python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --maker "*" --limit 5
 ```
 
 ### Color Space Analysis
@@ -1385,7 +1390,7 @@ python -m color_tools convert --check-gamut --value 50 80 60
 python -m color_tools color --nearest --value 65.2 25.8 -15.4 --space lab
 
 # Find top 3 nearest CSS colors for broader options
-python -m color_tools color --nearest --value 65.2 25.8 -15.4 --space lab --count 3
+python -m color_tools color --nearest --value 65.2 25.8 -15.4 --space lab --limit 3
 
 # Find nearest color using LCH (perceptually uniform cylindrical space)
 python -m color_tools color --nearest --value 67.3 65.7 46.3 --space lch

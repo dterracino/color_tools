@@ -192,7 +192,7 @@ The tool uses indexed lookups for fast color matching:
 **For large datasets:**
 
 - Filter by manufacturer or type before performing nearest neighbor searches
-- Use `--count` to limit results when you only need top matches
+- Use `--limit` when you only need the top nearest matches
 - Consider pre-filtering with `filament_palette.filter()` in Python API
 
 **For batch operations:**
