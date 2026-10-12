@@ -10,6 +10,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Palette LUT convenience API** — add `Palette.save_lut_png(path) -> Path`
+  as a discoverable file-based wrapper around the registered `palette_lut`
+  exporter. Preserve palette order and duplicates, require an explicit
+  destination, and retain exporter-owned validation and directory creation.
 - **Dependency-free record swatches** — add `to_swatch_png()` and
   `save_swatch_png()` to both `ColorRecord` and `FilamentRecord`, with 64×64
   solid defaults and explicit block/gradient modes. Filament illustrations use

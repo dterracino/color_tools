@@ -665,6 +665,32 @@ class Palette:
         """
         return cls(load_colors())
 
+    def save_lut_png(self, path: str | Path) -> Path:
+        """Export this palette as an N×1 RGB PNG lookup texture.
+
+        Colors retain their palette order and duplicate entries. The registered
+        ``palette_lut`` exporter owns encoding, validation, and directory
+        creation. The returned path is the destination supplied by the caller.
+
+        Args:
+            path: Destination PNG file.
+
+        Returns:
+            The destination as a ``Path``.
+
+        Raises:
+            ValueError: If the palette is empty.
+            OSError: If creating directories or writing the file fails.
+        """
+        # Local import avoids the export facade's dependency on Palette.
+        from color_tools.exporters import get_exporter
+
+        exported_path = get_exporter("palette_lut").export_colors(
+            self.records,
+            path,
+        )
+        return Path(exported_path)
+
     def find_by_name(self, name: str) -> Optional[ColorRecord]:
         """Find color by exact name match (case-insensitive)."""
         return self._by_name.get(name.lower())

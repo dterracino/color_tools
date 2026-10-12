@@ -372,6 +372,23 @@ gradients illustrate the stored components; they do not represent extrusion
 geometry or predict physical pigment mixing. Rendering never rereads ambient
 multi-color configuration. Invalid modes or dimensions raise `ValueError`.
 
+##### Palette LUT Convenience
+
+A `Palette` can save its ordered colors directly as an N×1 RGB PNG lookup
+texture through the registered `palette_lut` exporter:
+
+```python
+from color_tools import load_palette
+
+palette = load_palette("nes")
+path = palette.save_lut_png("textures/nes.png")
+```
+
+`save_lut_png()` requires an explicit destination, creates missing parent
+directories through the exporter, preserves palette order and duplicate colors,
+and returns the destination as a `Path`. It remains file-based because the
+exporter contract writes complete artifacts rather than returning encoded bytes.
+
 #### Exporting a Custom RGB Palette
 
 Create a palette directly from RGB tuples, then choose an export format:

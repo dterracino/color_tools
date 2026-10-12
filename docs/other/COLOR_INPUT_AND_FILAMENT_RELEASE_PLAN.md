@@ -482,6 +482,20 @@ NumPy imports blocked; package/data integrity verification; warning-as-error
 Sphinx HTML build; a wheel installed and exercised without dependencies in a
 fresh environment; and `git diff --check`.
 
+### Palette LUT convenience
+
+`Palette.save_lut_png(path) -> Path` provides a bounded file-based convenience
+over the registered `palette_lut` exporter. It requires an explicit destination,
+preserves palette order and duplicates, and retains exporter-owned validation,
+parent-directory creation, and PNG encoding. The local exporter import avoids a
+`palette`/export-facade cycle. No generic `Palette.export()` API or format-specific
+method family was added.
+
+Validation passed: four focused convenience tests plus 52 PNG-writer tests;
+1,482 full-suite tests with two expected optional-feature skips; zero strict
+Pyright errors or warnings; package/data integrity verification;
+warning-as-error Sphinx HTML build; and `git diff --check`.
+
 ### Phase 6: integration and regression gates
 
 - [ ] Wire library loaders/direct constructors, public exports, CLI modes and
