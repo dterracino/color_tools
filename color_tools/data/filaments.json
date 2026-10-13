@@ -171,6 +171,78 @@
     "td_value": null
   },
   {
+    "id": "bambu-lab-petg-matte-avocado-green",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Avocado Green",
+    "hex": "#BCE194",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-baby-blue",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Baby Blue",
+    "hex": "#B9D9EB",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-black",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-gray",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Gray",
+    "hex": "#7F7E83",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-lime",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Lime",
+    "hex": "#C0DF16",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-pink",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Pink",
+    "hex": "#FABBCB",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-violet",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Violet",
+    "hex": "#A7A4E0",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-petg-matte-white",
+    "maker": "Bambu Lab",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
     "id": "bambu-lab-petg-translucent-translucent-brown",
     "maker": "Bambu Lab",
     "type": "PETG",
@@ -961,6 +1033,69 @@
     "color": "White",
     "hex": "#FFFFFF",
     "td_value": 6.1
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-black",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": 0.6
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-cyan",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "Cyan",
+    "hex": "#009BD8",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-gray",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "Gray",
+    "hex": "#AFB1AE",
+    "td_value": 1.6
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-orange",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "Orange",
+    "hex": "#DC3A27",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-silver",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "Silver",
+    "hex": "#959698",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-white",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "bambu-lab-pla-tough-plus-yellow",
+    "maker": "Bambu Lab",
+    "type": "PLA",
+    "finish": "Tough+",
+    "color": "Yellow",
+    "hex": "#F4D53F",
+    "td_value": null
   },
   {
     "id": "bambu-lab-pla-translucent-blue",
@@ -2628,12 +2763,1110 @@
     "td_value": 4.8
   },
   {
+    "id": "overture-abs-ash-grey",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Ash Grey",
+    "hex": "#6C7074",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-black",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-blue",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#00628F",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-dark-blue",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Dark Blue",
+    "hex": "#034E89",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-dark-green",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Dark Green",
+    "hex": "#008F77",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-dark-red",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Dark Red",
+    "hex": "#FF311F",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-diamond-gray",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Diamond Gray",
+    "hex": "#8C8C8C",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-diamond-orange",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Diamond Orange",
+    "hex": "#FF8133",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-diamond-purple",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Diamond Purple",
+    "hex": "#A04ED0",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-glow-green",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Glow Green",
+    "hex": "#EBEFEE",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-gold",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Gold",
+    "hex": "#FFDA05",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-grass-green",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Grass Green",
+    "hex": "#C4D802",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-gray",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#CACAC9",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-green",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Green",
+    "hex": "#3D9441",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-light-blue",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Light Blue",
+    "hex": "#5DC5EA",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-natural",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Natural",
+    "hex": "#F8F8EE",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-orange",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF6229",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-pink",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#F79DBC",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-purple",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#7142A3",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-royal-gold",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Royal Gold",
+    "hex": "#F0A400",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-slate-gray",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Slate Gray",
+    "hex": "#91A0B6",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-white",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-abs-yellow",
+    "maker": "Overture",
+    "type": "ABS",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FFFF47",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-black",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-light-gray",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air Light Gray",
+    "hex": "#AFAEAB",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-neon-green",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air Neon Green",
+    "hex": "#C0D904",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-orange",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air Orange",
+    "hex": "#FD9106",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-white",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air White",
+    "hex": "#EDD5B7",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-wood",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air Wood",
+    "hex": "#E6C49E",
+    "td_value": null
+  },
+  {
+    "id": "overture-air-pla-air-yellow",
+    "maker": "Overture",
+    "type": "Air PLA",
+    "finish": null,
+    "color": "Air Yellow",
+    "hex": "#F5C001",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-black",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-blue",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#002979",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-brown",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#785F53",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-diamond-blue",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Diamond Blue",
+    "hex": "#324485",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-diamond-green",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Diamond Green",
+    "hex": "#26A648",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-diamond-red",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Diamond Red",
+    "hex": "#C01616",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-gray",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#B5B9BA",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-green",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Green",
+    "hex": "#01AA5E",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-natural",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Natural",
+    "hex": "#F1E6B3",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-olive-green",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Olive Green",
+    "hex": "#6B7550",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-orange",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF9A40",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-purple",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#7959B6",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-red",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Red",
+    "hex": "#AF251E",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-white",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-asa-yellow",
+    "maker": "Overture",
+    "type": "ASA",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FFE802",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-nylon-black",
+    "maker": "Overture",
+    "type": "Easy Nylon",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-nylon-gray",
+    "maker": "Overture",
+    "type": "Easy Nylon",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#808E93",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-beige",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Beige",
+    "hex": "#F7F6ED",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-black",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-caramel",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Caramel",
+    "hex": "#A88D5D",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-cement-grey",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Cement Grey",
+    "hex": "#697272",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-cobalt-blue",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Cobalt Blue",
+    "hex": "#274DA0",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-digital-blue",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Digital Blue",
+    "hex": "#0696EF",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-green",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Green",
+    "hex": "#4DFF64",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-magenta",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Magenta",
+    "hex": "#FD3DB5",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-orange",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Orange",
+    "hex": "#FF5F2E",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-pine-green",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Pine Green",
+    "hex": "#00A5A8",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-pink",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Pink",
+    "hex": "#FFC0CB",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-pumpkin-orange",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Pumpkin Orange",
+    "hex": "#FF8D5C",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-purple",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Purple",
+    "hex": "#7B49A2",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-red",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Red",
+    "hex": "#FF2C29",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-rock-white",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Rock White",
+    "hex": "#EDF0F2",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-sky-blue",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Sky Blue",
+    "hex": "#3BC9ED",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-space-gray",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Space Gray",
+    "hex": "#B2B8B8",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-white",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-yellow",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Yellow",
+    "hex": "#FCFF66",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-easy-yolk-yellow",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Easy Yolk Yellow",
+    "hex": "#FFE357",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-glow-blue",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Glow Blue",
+    "hex": "#5EB7D4",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-glow-orange",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Glow Orange",
+    "hex": "#FF9C66",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-glow-red",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Glow Red",
+    "hex": "#FF7D7A",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-glow-yellow",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Glow Yellow",
+    "hex": "#EBFF6B",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-shimmer-bronze",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Shimmer Bronze",
+    "hex": "#81BA6D",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-shimmer-dark-green",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Shimmer Dark Green",
+    "hex": "#008059",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-shimmer-purple",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Shimmer Purple",
+    "hex": "#906482",
+    "td_value": null
+  },
+  {
+    "id": "overture-easy-pla-shimmer-silver-green",
+    "maker": "Overture",
+    "type": "Easy PLA",
+    "finish": null,
+    "color": "Shimmer Silver Green",
+    "hex": "#9ECB86",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-black",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-grass-green",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Grass Green",
+    "hex": "#B1FF0A",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-gray",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#CDCFD5",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-luminous-blue",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Luminous Blue",
+    "hex": "#E9E7E7",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-luminous-electric-indigo",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Luminous Electric Indigo",
+    "hex": "#C3D3E0",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-luminous-green",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Luminous Green",
+    "hex": "#ECF2E9",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-luminous-orange",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Luminous Orange",
+    "hex": "#E8E8E8",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-luminous-pink",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Luminous Pink",
+    "hex": "#DCDCE4",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-neon-magenta",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Neon Magenta",
+    "hex": "#FB23AF",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-neon-yellow",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Neon Yellow",
+    "hex": "#FEF71D",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-orange",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF8B47",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-pastel-rose",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Pastel Rose",
+    "hex": "#F5D0B7",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-pink",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#FFA3C6",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-translucent-blue",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Translucent Blue",
+    "hex": "#386DFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-translucent-green",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Translucent Green",
+    "hex": "#00E691",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-translucent-orange",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Translucent Orange",
+    "hex": "#FA4616",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-translucent-purple",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Translucent Purple",
+    "hex": "#8014C8",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-translucent-red",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "Translucent Red",
+    "hex": "#C00000",
+    "td_value": null
+  },
+  {
+    "id": "overture-high-speed-tpu-white",
+    "maker": "Overture",
+    "type": "High Speed TPU",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pc-professional-black",
+    "maker": "Overture",
+    "type": "PC Professional",
+    "finish": null,
+    "color": "Black",
+    "hex": "#00C26B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pc-professional-blue",
+    "maker": "Overture",
+    "type": "PC Professional",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#0378D0",
+    "td_value": null
+  },
+  {
+    "id": "overture-pc-professional-gray",
+    "maker": "Overture",
+    "type": "PC Professional",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#E3E8E7",
+    "td_value": null
+  },
+  {
+    "id": "overture-pc-professional-red",
+    "maker": "Overture",
+    "type": "PC Professional",
+    "finish": null,
+    "color": "Red",
+    "hex": "#D7021C",
+    "td_value": null
+  },
+  {
+    "id": "overture-pc-professional-white",
+    "maker": "Overture",
+    "type": "PC Professional",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-army-green",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Army Green",
+    "hex": "#404720",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-black",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-blue",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#034E89",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-brown",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#A47C48",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-digital-blue",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Digital Blue",
+    "hex": "#0378D0",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-gold",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Gold",
+    "hex": "#CE8D00",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-grass-green",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Grass Green",
+    "hex": "#C4D802",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-green",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Green",
+    "hex": "#38AF69",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-light-gray",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Light Gray",
+    "hex": "#D5D8DD",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-magenta",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Magenta",
+    "hex": "#C80181",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-orange",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF854D",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-pink",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#F79DBC",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-purple",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#7142A3",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-red",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Red",
+    "hex": "#FF0000",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-rock-white",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Rock White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-space-grey",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Space Grey",
+    "hex": "#76797D",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-sparkle-blue",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Sparkle Blue",
+    "hex": "#253F56",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-starry-blue",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Starry Blue",
+    "hex": "#142B4B",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-transparent-blue",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Transparent Blue",
+    "hex": "#09048E",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-transparent-green",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Transparent Green",
+    "hex": "#019A45",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-transparent-red",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Transparent Red",
+    "hex": "#CE333E",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-white",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "White",
+    "hex": "#F5F5F4",
+    "td_value": null
+  },
+  {
+    "id": "overture-petg-yellow",
+    "maker": "Overture",
+    "type": "PETG",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FFC946",
+    "td_value": null
+  },
+  {
     "id": "overture-pla-black",
     "maker": "Overture",
     "type": "PLA",
     "finish": null,
     "color": "Black",
-    "hex": "#2B292E",
+    "hex": "#000000",
     "td_value": 0.6
   },
   {
@@ -2646,13 +3879,67 @@
     "td_value": 0.3
   },
   {
+    "id": "overture-pla-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#033877",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-brown",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#D7A86A",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-cement-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Cement Gray",
+    "hex": "#697272",
+    "td_value": null
+  },
+  {
     "id": "overture-pla-chocolate",
     "maker": "Overture",
     "type": "PLA",
     "finish": null,
     "color": "Chocolate",
-    "hex": "#795438",
+    "hex": "#57361C",
     "td_value": 1.2
+  },
+  {
+    "id": "overture-pla-cold-white",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Cold White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-fresh-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Fresh Red",
+    "hex": "#E31A1F",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-glow-in-dark-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Glow In Dark (Green)",
+    "hex": "#EBF1E0",
+    "td_value": null
   },
   {
     "id": "overture-pla-gray-matte",
@@ -2664,6 +3951,69 @@
     "td_value": 3.2
   },
   {
+    "id": "overture-pla-gray-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Gray Blue",
+    "hex": "#81BAC1",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Green",
+    "hex": "#00C26B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-highlight-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Highlight Yellow",
+    "hex": "#E4FF33",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-jeans-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Jeans Blue",
+    "hex": "#43729B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-jeans-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Jeans Red",
+    "hex": "#FF706B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-lemon-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Lemon Yellow",
+    "hex": "#FFED29",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-light-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Light Blue",
+    "hex": "#3ABBDE",
+    "td_value": null
+  },
+  {
     "id": "overture-pla-light-gray",
     "maker": "Overture",
     "type": "PLA",
@@ -2673,12 +4023,66 @@
     "td_value": 1.4
   },
   {
+    "id": "overture-pla-light-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Light Green",
+    "hex": "#8FFFA2",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-light-grey",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Light Grey",
+    "hex": "#C7D4D6",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-light-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Light Yellow",
+    "hex": "#EFFF8A",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-metallic-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Metallic Gray",
+    "hex": "#8B98AC",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-morning-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Morning Blue",
+    "hex": "#8FEEFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-olive-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Olive green",
+    "hex": "#97A014",
+    "td_value": null
+  },
+  {
     "id": "overture-pla-orange",
     "maker": "Overture",
     "type": "PLA",
     "finish": null,
     "color": "Orange",
-    "hex": "#F27C1C",
+    "hex": "#FF8E24",
     "td_value": 9.4
   },
   {
@@ -2687,8 +4091,17 @@
     "type": "PLA",
     "finish": null,
     "color": "Pink",
-    "hex": "#E0A1BB",
+    "hex": "#F09BB5",
     "td_value": 5.6
+  },
+  {
+    "id": "overture-pla-purple",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#6F4AB2",
+    "td_value": null
   },
   {
     "id": "overture-pla-red",
@@ -2696,8 +4109,44 @@
     "type": "PLA",
     "finish": null,
     "color": "Red",
-    "hex": "#AC2714",
+    "hex": "#E9301E",
     "td_value": 8.0
+  },
+  {
+    "id": "overture-pla-royal-copper",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Royal Copper",
+    "hex": "#A47456",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-royal-gold",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Royal Gold",
+    "hex": "#FFCB47",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-royal-silver",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Royal Silver",
+    "hex": "#C6CDD2",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-sakura-pink",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Sakura Pink",
+    "hex": "#FFD1D1",
+    "td_value": null
   },
   {
     "id": "overture-pla-space-gray",
@@ -2709,13 +4158,607 @@
     "td_value": 1.6
   },
   {
+    "id": "overture-pla-space-grey",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Space Grey",
+    "hex": "#63646B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-sparkle-black",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Sparkle Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-sparkle-purple",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Sparkle Purple",
+    "hex": "#7701B2",
+    "td_value": null
+  },
+  {
     "id": "overture-pla-white",
     "maker": "Overture",
     "type": "PLA",
     "finish": null,
     "color": "White",
-    "hex": "#E7EBE5",
+    "hex": "#FFFEFA",
     "td_value": 6.4
+  },
+  {
+    "id": "overture-pla-wine",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Wine",
+    "hex": "#BE133B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#E6B535",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-carbon-fiber-black",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Carbon Fiber Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-light-blue-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Light Blue-Yellow",
+    "hex": "#B8FFFF-#FFF49E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-army-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Army Green",
+    "hex": "#6E8451",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-baby-pink",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Baby Pink",
+    "hex": "#FFE0E0",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-bamboo-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Bamboo Green",
+    "hex": "#A1D66B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-beige",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Beige",
+    "hex": "#E7EFD7",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-black",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Black",
+    "hex": "#1D1E1E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-black-white",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Black-White",
+    "hex": "#000000-#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Blue",
+    "hex": "#005DA4",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-blue-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Blue-Red",
+    "hex": "#0074BD-#F00024",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-brick-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Brick Red",
+    "hex": "#D22D2F",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-butter-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Butter Yellow",
+    "hex": "#FCFAA6",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-chocolate",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Chocolate",
+    "hex": "#503529",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-dark-orange",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Dark Orange",
+    "hex": "#DC4116",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-grass-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Grass Green",
+    "hex": "#CEFF5C",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-gray-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Gray Green",
+    "hex": "#666F60",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Green",
+    "hex": "#519F62",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-jeans-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Jeans Blue",
+    "hex": "#6787AD",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-jeans-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Jeans Red",
+    "hex": "#F76E6E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-lavender",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Lavender",
+    "hex": "#7E5777",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Blue",
+    "hex": "#99FFFA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-brown",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Brown",
+    "hex": "#EDD5A6",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Green",
+    "hex": "#AFDEB9",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-grey",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Grey",
+    "hex": "#BAC4C4",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-orange",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Orange",
+    "hex": "#F2B87B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-pink",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Pink",
+    "hex": "#F7E6DE",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-light-teal",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Light Teal",
+    "hex": "#C7FFE3",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-lilac",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Lilac",
+    "hex": "#ECD1FF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-navy-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Navy Blue",
+    "hex": "#072E4E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-olive-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Olive Green",
+    "hex": "#A88704",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-orange",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Orange",
+    "hex": "#F3C102",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-orange-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Orange-Red",
+    "hex": "#FCAB59-#F02800",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-pale-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pale Green",
+    "hex": "#BECBA8",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-pink",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Pink",
+    "hex": "#FFE0E1",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-purple",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Purple",
+    "hex": "#8C69B5",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Red",
+    "hex": "#EB3B41",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-repose-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Repose Gray",
+    "hex": "#B1A498",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-skin",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Skin",
+    "hex": "#F0DDC2",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-slate-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Slate Gray",
+    "hex": "#4F6B86",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-turquoise",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Turquoise",
+    "hex": "#60F0E7",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-white",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte White",
+    "hex": "#E6DEDE",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-wood",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Wood",
+    "hex": "#CAAC78",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-matte-matte-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Matte",
+    "color": "Matte Yellow",
+    "hex": "#EFDC4C",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-fossil-rock",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Fossil Rock",
+    "hex": "#C2C0BA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-haze-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Haze Gray",
+    "hex": "#C3D2DA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-marigold-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Marigold Yellow",
+    "hex": "#FFDA47",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-mars-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Mars Red",
+    "hex": "#D76D3B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-mist-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Mist Gray",
+    "hex": "#F2F3EC",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-moonlight-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Moonlight Gray",
+    "hex": "#E4E6E7",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-muted-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Muted Gray",
+    "hex": "#CED2D4",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-rock-white",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Rock White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-sedimentary-rock",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Sedimentary Rock",
+    "hex": "#C4B199",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-slate-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Slate Gray",
+    "hex": "#638BA1",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-turquoise-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Turquoise Blue",
+    "hex": "#A3EAFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-rock-turquoise-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Rock",
+    "color": "Turquoise Green",
+    "hex": "#86DACD",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Blue",
+    "hex": "#0353BA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-blue-silver",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Blue-Silver",
+    "hex": "#009DE0-#D1DBEA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-blue-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Blue-Yellow",
+    "hex": "#FFFF5C-#3673BA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-chrismas-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Chrismas Red",
+    "hex": "#CE5D4C",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-copper",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Copper",
+    "hex": "#641501",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-fresh-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Fresh Red",
+    "hex": "#CC0201",
+    "td_value": null
   },
   {
     "id": "overture-pla-silk-silk-gold",
@@ -2723,8 +4766,476 @@
     "type": "PLA",
     "finish": "Silk",
     "color": "Silk Gold",
-    "hex": "#f2d012",
+    "hex": "#F9E352",
     "td_value": 3.0
+  },
+  {
+    "id": "overture-pla-silk-silk-gold-silver",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Gold-Silver",
+    "hex": "#B2C2C7-#FFCB1F",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-gray",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Gray",
+    "hex": "#394658",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Green",
+    "hex": "#018E63",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-green-blue",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Green-Blue",
+    "hex": "#005AAD-#00C27B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-green-magenta",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Green-Magenta",
+    "hex": "#9FFF05-#AD0076",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-green-silver",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Green-Silver",
+    "hex": "#00C28E-#606B6C",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-magenta-gold",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Magenta-Gold",
+    "hex": "#B71A7D-#FFCB1F",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-neon-green",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Neon Green",
+    "hex": "#91C800",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-orange",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Orange",
+    "hex": "#F44703",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-pink",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Pink",
+    "hex": "#DF877C",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-purple",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Purple",
+    "hex": "#7769BC",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-purple-gold",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Purple-Gold",
+    "hex": "#702AB2-#FFCB1F",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Red",
+    "hex": "#DA445A",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-red-gold",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Red-Gold",
+    "hex": "#F04C64-#F5BC00",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-rose-red",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Rose Red",
+    "hex": "#9B0350",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-silver",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Silver",
+    "hex": "#818FA0",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-silver-pink",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Silver Pink",
+    "hex": "#A8726B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-white",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk White",
+    "hex": "#DDD4CA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-silk-silk-yellow",
+    "maker": "Overture",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silk Yellow",
+    "hex": "#ECC403",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-army-green",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Army Green",
+    "hex": "#8A8850",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-black",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Black",
+    "hex": "#0D110E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-bronze",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Bronze",
+    "hex": "#704515",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-brown",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#AB713E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-champagne",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Champagne",
+    "hex": "#F4F4EA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-chocolate",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Chocolate",
+    "hex": "#50311E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-copper",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Copper",
+    "hex": "#BB8330",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-dark-blue",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Dark Blue",
+    "hex": "#003B80",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-digital-blue",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Digital Blue",
+    "hex": "#0099E6",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-fresh-red",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Fresh Red",
+    "hex": "#F00000",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-gray-blue",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Gray Blue",
+    "hex": "#8FBBC1",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-green",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Green",
+    "hex": "#0CCF81",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-highlight-yellow",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Highlight Yellow",
+    "hex": "#EBFF57",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-jeans-blue",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Jeans Blue",
+    "hex": "#73A1BA",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-jeans-red",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Jeans Red",
+    "hex": "#CE4F4E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-light-blue",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Light Blue",
+    "hex": "#99F1FF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-light-gray",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Light Gray",
+    "hex": "#74777D",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-light-green",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Light Green",
+    "hex": "#BCD69B",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-light-yellow",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Light Yellow",
+    "hex": "#F4D563",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-moonlight-silver",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Moonlight Silver",
+    "hex": "#D5DCDD",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-morning-blue",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Morning Blue",
+    "hex": "#75AFCD",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-olive-green",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Olive Green",
+    "hex": "#B0BE50",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-orange",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF852E",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-pink",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#F092B3",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-purple",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#7659B5",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-red",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Red",
+    "hex": "#FF0505",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-royal-gold",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Royal Gold",
+    "hex": "#E3B145",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-sakura-pink",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Sakura Pink",
+    "hex": "#FEC2C2",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-silver-metal",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Silver Metal",
+    "hex": "#C9D0D4",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-space-grey",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Space Grey",
+    "hex": "#969BA2",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-white",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "White",
+    "hex": "#E8E4DF",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-wine",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Wine",
+    "hex": "#800020",
+    "td_value": null
+  },
+  {
+    "id": "overture-pla-professional-yellow",
+    "maker": "Overture",
+    "type": "PLA Professional",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#EEEA44",
+    "td_value": null
   },
   {
     "id": "overture-pla-plus-black",
@@ -2788,6 +5299,267 @@
     "color": "Yellow",
     "hex": "#DFB234",
     "td_value": 11.2
+  },
+  {
+    "id": "overture-super-pla-plus-black",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-dark-blue",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Dark Blue",
+    "hex": "#183681",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-green",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Green",
+    "hex": "#00D17A",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-light-brown",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Light Brown",
+    "hex": "#B8AF99",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-light-gray",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Light Gray",
+    "hex": "#BAC8C9",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-orange",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FF7A33",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-pink",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Pink",
+    "hex": "#FF5786",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-purple",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#8761C1",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-red",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Red",
+    "hex": "#E60000",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-sakura-pink",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Sakura Pink",
+    "hex": "#FFCCCD",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-white",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-super-pla-plus-yellow",
+    "maker": "Overture",
+    "type": "Super PLA+",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FFD342",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-black",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-blue",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#274E96",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-bright-pink",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Bright Pink",
+    "hex": "#FFBDD1",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-brown",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#A47C48",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-digital-blue",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Digital Blue",
+    "hex": "#0378D0",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-green",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Green",
+    "hex": "#00EB75",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-grey",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#E2E7E9",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-light-green",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Light Green",
+    "hex": "#A0FD62",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-neon-green",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Neon Green",
+    "hex": "#2EFF6D",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-neon-orange",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Neon Orange",
+    "hex": "#FA8E36",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-neon-red",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Neon Red",
+    "hex": "#FF3F38",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-orange",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#FFA11D",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-purple",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Purple",
+    "hex": "#8B69CE",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-red",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Red",
+    "hex": "#D7021C",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-space-grey",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Space Grey",
+    "hex": "#90999D",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-white",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "overture-tpu-yellow",
+    "maker": "Overture",
+    "type": "TPU",
+    "finish": null,
+    "color": "Yellow",
+    "hex": "#FFDF03",
+    "td_value": null
   },
   {
     "id": "panchroma-cope-aqua-blue",
@@ -9319,5 +12091,1688 @@
     "finish": null,
     "color": "Lime Green",
     "hex": "#78D64B"
+  },
+  {
+    "id": "iemai-abs-basic-black",
+    "maker": "IEMAI",
+    "type": "ABS",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-abs-basic-white",
+    "maker": "IEMAI",
+    "type": "ABS",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-abs-esd-black",
+    "maker": "IEMAI",
+    "type": "ABS",
+    "finish": "ESD",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-abs-cf-carbon-fiber",
+    "maker": "IEMAI",
+    "type": "ABS-CF",
+    "finish": null,
+    "color": "Carbon Fiber",
+    "hex": "#232323",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-beige",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Beige",
+    "hex": "#D1BC8A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-black",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-blue",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Blue",
+    "hex": "#0E78E1",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-brown",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Brown",
+    "hex": "#804040",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-emerald-green",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Emerald Green",
+    "hex": "#4ED08D",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-marina-blue",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Marina Blue",
+    "hex": "#71B4DE",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-olive-green",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Olive Green",
+    "hex": "#6F7640",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-orange",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Orange",
+    "hex": "#F26E02",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-pink",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Pink",
+    "hex": "#EFAEEA",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-red",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "RED",
+    "hex": "#FF0000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-silver-grey",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Silver Grey",
+    "hex": "#8A8A8A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-skin",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "Skin",
+    "hex": "#DDD2BD",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-basic-white",
+    "maker": "IEMAI",
+    "type": "ASA",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#F2F2F2",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-cf-matte-black",
+    "maker": "IEMAI",
+    "type": "ASA-CF",
+    "finish": null,
+    "color": "Matte Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-gf-black",
+    "maker": "IEMAI",
+    "type": "ASA-GF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-asa-gf-matte-white",
+    "maker": "IEMAI",
+    "type": "ASA-GF",
+    "finish": null,
+    "color": "Matte White",
+    "hex": "#F2F3F4",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pa12-basic-black",
+    "maker": "IEMAI",
+    "type": "PA12",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pa12-basic-natural",
+    "maker": "IEMAI",
+    "type": "PA12",
+    "finish": "Basic",
+    "color": "Natural",
+    "hex": "#F5E6C8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pa12-cf-black",
+    "maker": "IEMAI",
+    "type": "PA12-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pa12-gf-black",
+    "maker": "IEMAI",
+    "type": "PA12-GF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pa6-cf-black",
+    "maker": "IEMAI",
+    "type": "PA6-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pc-basic-black",
+    "maker": "IEMAI",
+    "type": "PC",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pc-basic-clear",
+    "maker": "IEMAI",
+    "type": "PC",
+    "finish": "Basic",
+    "color": "Clear",
+    "hex": "#F0F0F0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pc-cf-black",
+    "maker": "IEMAI",
+    "type": "PC-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-peek-basic-natural",
+    "maker": "IEMAI",
+    "type": "PEEK",
+    "finish": "Basic",
+    "color": "Natural",
+    "hex": "#F5E6C8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pei-basic-amber",
+    "maker": "IEMAI",
+    "type": "PEI",
+    "finish": "Basic",
+    "color": "Amber",
+    "hex": "#FFBF00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pei-basic-natural",
+    "maker": "IEMAI",
+    "type": "PEI",
+    "finish": "Basic",
+    "color": "Natural",
+    "hex": "#F5E6C8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pekk-basic-natural",
+    "maker": "IEMAI",
+    "type": "PEKK",
+    "finish": "Basic",
+    "color": "Natural",
+    "hex": "#F5E6C8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-army-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Army Green",
+    "hex": "#0F3102",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-black",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-brown",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Brown",
+    "hex": "#95806D",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-clear",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Clear",
+    "hex": "#F0F0F0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-metal-silver",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Metal Silver",
+    "hex": "#7C8288",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-navy-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Navy Blue",
+    "hex": "#21354E",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-pink",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Pink",
+    "hex": "#F4A4C0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-skin",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "Skin",
+    "hex": "#F3E9D0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-basic-white",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-crystal-transparent-yellow",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Crystal",
+    "color": "Transparent Yellow",
+    "hex": "#FFE066",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-fluorescent-green-glitter",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Fluorescent",
+    "color": "Green Glitter",
+    "hex": "#0FFF0D",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Blue",
+    "hex": "#0E8BE9",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-clear-blue-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Clear Blue Purple",
+    "hex": "#B18CFE",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Green",
+    "hex": "#1E8609",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-light-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Light Blue",
+    "hex": "#025F75",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Orange",
+    "hex": "#FF9200",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-red",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Red",
+    "hex": "#B01307",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glitter-smoke-grey",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glitter",
+    "color": "Smoke Grey",
+    "hex": "#8D8985",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glow-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glow",
+    "color": "Blue",
+    "hex": "#00BFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glow-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glow",
+    "color": "Green",
+    "hex": "#1EF901",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glow-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glow",
+    "color": "Orange",
+    "hex": "#FBAD28",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-glow-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Glow",
+    "color": "Purple",
+    "hex": "#BF40ED",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-black",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Black",
+    "hex": "#212121",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Blue",
+    "hex": "#005EBD",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-gradient-blue-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Gradient Blue-Purple",
+    "hex": "#BB58BF-#285DC5",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-gray",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Gray",
+    "hex": "#848484",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Green",
+    "hex": "#3E8C2A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-metal-gold",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Metal Gold",
+    "hex": "#EEA852",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-metal-silver",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Metal Silver",
+    "hex": "#B3B3B3",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Orange",
+    "hex": "#FF7800",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-pink",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Pink",
+    "hex": "#E6A0BC",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Purple",
+    "hex": "#9B00AC",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-red",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Red",
+    "hex": "#C72C2E",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-translucent-dual-color-gradient-indigo-to-white",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Translucent Dual Color Gradient Indigo to White",
+    "hex": "#132C43-#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-transparent-gradient-red-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Transparent Gradient Red-Orange",
+    "hex": "#EF5224-#FB798F",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-transparent-smoke-gray",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Transparent Smoke Gray",
+    "hex": "#424548",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-water-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Water Blue",
+    "hex": "#50A8F7",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-yellow",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed",
+    "color": "Yellow",
+    "hex": "#E6B42B",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-high-speed-matte-matte-army-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "High Speed Matte",
+    "color": "Matte Army Green",
+    "hex": "#024B01",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-marble-marble",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Marble",
+    "color": "Marble",
+    "hex": "#D2DAE1",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-army-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Army Green",
+    "hex": "#4B5320",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-beige",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Beige",
+    "hex": "#DCD6B7",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-black",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-brown",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Brown",
+    "hex": "#8E4615",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-grey",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Grey",
+    "hex": "#828587",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-navy-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Navy Blue",
+    "hex": "#07305A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Orange",
+    "hex": "#FE6530",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-red",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "Red",
+    "hex": "#DB1F1F",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-white",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "White",
+    "hex": "#FAFAFA",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-matte-wood",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Matte",
+    "color": "WOOD",
+    "hex": "#DCA76F",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-metal-gold",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Metal",
+    "color": "Gold",
+    "hex": "#FFAA00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-blue-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Blue Purple",
+    "hex": "#2409F1-#9405E1",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-blue-lila",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Blue/Lila",
+    "hex": "#1178FF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-clear-light-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Clear Light Purple",
+    "hex": "#CCA7E8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-color-gradient-purple-white",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Color Gradient Purple-White",
+    "hex": "#BA77BB-#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-dual-color-gradient-blue-to-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Dual Color Gradient Blue to Purple",
+    "hex": "#05AADD-#A88FE0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-fluorescent-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Fluorescent Green",
+    "hex": "#1EFF00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-gradient-blue-to-white",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Gradient Blue to White",
+    "hex": "#58B3F3-#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-gradient-blue-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Gradient Blue-Green",
+    "hex": "#52D6FC-#B1DD8B",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-gradient-green-to-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Gradient Green to Purple",
+    "hex": "#41B3A5-#9D92D7",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-gradient-orange-white",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Gradient Orange-White",
+    "hex": "#FF8000-#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-gradient-pink-yellow",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Gradient Pink - Yellow",
+    "hex": "#FF80C0-#FFFF80",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-light-pink",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Light Pink",
+    "hex": "#F1B3F9",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-light-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Light Purple",
+    "hex": "#A694FF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "ORANGE",
+    "hex": "#C57A11",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-orange-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Orange Blue",
+    "hex": "#ED8E07-#260FD7",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-pink-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Pink-Purple",
+    "hex": "#EA78ED-#713EA8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-rainbow",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Rainbow",
+    "hex": "#55B0F1-#50F286-#F59714",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-red-orange",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Red Orange",
+    "hex": "#FF4015-#FF6A00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-yellow-red-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Yellow Red Blue",
+    "hex": "#EDF104-#ED1233-#1708E2",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-yellow-red-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Yellow Red Green",
+    "hex": "#EDF104-#ED1233-#08E24A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-translucent-yellow-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Translucent",
+    "color": "Yellow-Green",
+    "hex": "#CCEF63-#1EBF7E",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-amber",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Amber",
+    "hex": "#FFBF00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Blue",
+    "hex": "#254FCB",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-clear",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Clear",
+    "hex": "#F0F0F0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-clear-champagne",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Clear Champagne",
+    "hex": "#F7E7CE",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-cyan",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Cyan",
+    "hex": "#00FFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-grape-purple",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Grape Purple",
+    "hex": "#732EB8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-green",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Green",
+    "hex": "#6EF78A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-light-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Light Blue",
+    "hex": "#C5DFF2",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-light-brown",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Light Brown",
+    "hex": "#EFD1AE",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-light-pink",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Light Pink",
+    "hex": "#FF9EFA",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-red",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Red",
+    "hex": "#FB5656",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-sky-blue",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Sky Blue",
+    "hex": "#00ABFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-smoke-gray",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Smoke Gray",
+    "hex": "#373B3F",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-transparent-yellow",
+    "maker": "IEMAI",
+    "type": "PETG",
+    "finish": "Transparent",
+    "color": "Yellow",
+    "hex": "#FFE066",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-plus-high-speed-c-black",
+    "maker": "IEMAI",
+    "type": "PETG+",
+    "finish": "High Speed",
+    "color": "C-Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-plus-high-speed-c-white",
+    "maker": "IEMAI",
+    "type": "PETG+",
+    "finish": "High Speed",
+    "color": "C-White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-cf-army-green",
+    "maker": "IEMAI",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Army Green",
+    "hex": "#2C5F34",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-cf-black",
+    "maker": "IEMAI",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-cf-grey",
+    "maker": "IEMAI",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#34383C",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-cf-matte-black",
+    "maker": "IEMAI",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Matte Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-cf-orange",
+    "maker": "IEMAI",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Orange",
+    "hex": "#AD3E00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-cf-red",
+    "maker": "IEMAI",
+    "type": "PETG-CF",
+    "finish": null,
+    "color": "Red",
+    "hex": "#5C0700",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-gf-black",
+    "maker": "IEMAI",
+    "type": "PETG-GF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-gf-gray",
+    "maker": "IEMAI",
+    "type": "PETG-GF",
+    "finish": null,
+    "color": "Gray",
+    "hex": "#5C5C5C",
+    "td_value": null
+  },
+  {
+    "id": "iemai-petg-gf-white",
+    "maker": "IEMAI",
+    "type": "PETG-GF",
+    "finish": null,
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-basic-black",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-basic-iemai-pla-grey",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "IEMAI PLA Grey",
+    "hex": "#808080",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-basic-orange",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Orange",
+    "hex": "#FF8000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-basic-red",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "Red",
+    "hex": "#FF0000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-basic-white",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-glitter-clear-light-purple",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Glitter",
+    "color": "Clear Light Purple",
+    "hex": "#A47ED3",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-gradient-light-blue-to-purple",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Gradient",
+    "color": "Light Blue to Purple",
+    "hex": "#29C2F5-#D86BFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-gradient-rainbow-01-pink-to-purple",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Gradient",
+    "color": "Rainbow-01 Pink to Purple",
+    "hex": "#E358BC-#8171E3",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-gradient-rainbow-c-summer-breeze",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Gradient",
+    "color": "Rainbow-c Summer Breeze",
+    "hex": "#B2DD23-#3FC99B",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-high-speed-aqua-tide",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Aqua Tide",
+    "hex": "#C8E0F9",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-high-speed-mist-gray",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "High Speed",
+    "color": "Mist Gray",
+    "hex": "#999999",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-high-speed-matte-army-green",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "High Speed Matte",
+    "color": "Army Green",
+    "hex": "#086A01",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-marble-stone-white",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Marble",
+    "color": "Stone White",
+    "hex": "#E0E0E0",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-rainbow-green-begonia",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Rainbow",
+    "color": "Green Begonia",
+    "hex": "#79FB0E-#72A6DA-#D282F7-#7249E4",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-copper",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Copper",
+    "hex": "#831100",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-gold",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Gold",
+    "hex": "#C7A548",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-metallic-gold",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Metallic Gold",
+    "hex": "#FFD700",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-pink",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Pink",
+    "hex": "#FE9EFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-pink-to-yellow-gradient",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Pink to Yellow Gradient",
+    "hex": "#FF704D",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-red",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Red",
+    "hex": "#FF0000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-red-bronze",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Red Bronze",
+    "hex": "#C85F32",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-silver",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Silver",
+    "hex": "#6B6B6B",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-violet",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk",
+    "color": "Violet",
+    "hex": "#40166A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-black-red",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Black Red",
+    "hex": "#000000-#A34342",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-blue-green",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Blue Green",
+    "hex": "#1708E2-#37F104",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-blue-silver",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Blue/Silver",
+    "hex": "#0258B2-#8E9A9A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-green-silver",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Green Silver",
+    "hex": "#919191",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-red-blue",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Red Blue",
+    "hex": "#5E30EB",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-violet-red",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Violet Red",
+    "hex": "#9929BD",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-violet-yellow",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Violet Yellow",
+    "hex": "#874EFE",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-silk-dual-yellow-to-green",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Silk Dual",
+    "color": "Yellow to Green",
+    "hex": "#85F76E",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-blue",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Blue",
+    "hex": "#283DCC",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-brown",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Brown",
+    "hex": "#422622",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-clear",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Clear",
+    "hex": "#FBFBF9",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-clear-green",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Clear Green",
+    "hex": "#6EF78A",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-orange",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Orange",
+    "hex": "#FB810C",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-red",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Red",
+    "hex": "#FB5656",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-translucent-smoke-gray",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Translucent",
+    "color": "Smoke Gray",
+    "hex": "#373B3F",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-transparent-yellow",
+    "maker": "IEMAI",
+    "type": "PLA",
+    "finish": "Transparent",
+    "color": "Yellow",
+    "hex": "#FFFF00",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-plus-pro-high-speed-rainbow",
+    "maker": "IEMAI",
+    "type": "PLA+/Pro",
+    "finish": "High Speed",
+    "color": "Rainbow",
+    "hex": "#53D5FD-#F4A4C0-#FFF76B-#96D35F",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-plus-pro-high-speed-rainbow-01",
+    "maker": "IEMAI",
+    "type": "PLA+/Pro",
+    "finish": "High Speed",
+    "color": "Rainbow-01",
+    "hex": "#E392FE-#BE38F3-#3A88FE",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-plus-pro-silk-silk-rose-pink-magenta",
+    "maker": "IEMAI",
+    "type": "PLA+/Pro",
+    "finish": "Silk",
+    "color": "Silk Rose Pink (Magenta)",
+    "hex": "#E358BC",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-plus-pro-silk-triple-red-yellow-blue",
+    "maker": "IEMAI",
+    "type": "PLA+/Pro",
+    "finish": "Silk Triple",
+    "color": "Red Yellow Blue",
+    "hex": "#FF0000-#FFFF00-#0000FF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-cf-army-green",
+    "maker": "IEMAI",
+    "type": "PLA-CF",
+    "finish": null,
+    "color": "Army Green",
+    "hex": "#1C4025",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-cf-black",
+    "maker": "IEMAI",
+    "type": "PLA-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#020303",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-cf-blue",
+    "maker": "IEMAI",
+    "type": "PLA-CF",
+    "finish": null,
+    "color": "Blue",
+    "hex": "#003052",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-cf-brown",
+    "maker": "IEMAI",
+    "type": "PLA-CF",
+    "finish": null,
+    "color": "Brown",
+    "hex": "#553030",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pla-cf-grey",
+    "maker": "IEMAI",
+    "type": "PLA-CF",
+    "finish": null,
+    "color": "Grey",
+    "hex": "#545454",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pp-basic-natural",
+    "maker": "IEMAI",
+    "type": "PP",
+    "finish": "Basic",
+    "color": "Natural",
+    "hex": "#F5E6C8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-ppa-cf-black",
+    "maker": "IEMAI",
+    "type": "PPA-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-pps-cf-black",
+    "maker": "IEMAI",
+    "type": "PPS-CF",
+    "finish": null,
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-ppsu-basic-natural",
+    "maker": "IEMAI",
+    "type": "PPSU",
+    "finish": "Basic",
+    "color": "Natural",
+    "hex": "#F5E6C8",
+    "td_value": null
+  },
+  {
+    "id": "iemai-tpu-85a-black",
+    "maker": "IEMAI",
+    "type": "TPU",
+    "finish": "85A",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-tpu-95a-clear-smoke-gray",
+    "maker": "IEMAI",
+    "type": "TPU",
+    "finish": "95A",
+    "color": "Clear Smoke Gray",
+    "hex": "#CFC8CA",
+    "td_value": null
+  },
+  {
+    "id": "iemai-tpu-95a-white",
+    "maker": "IEMAI",
+    "type": "TPU",
+    "finish": "95A",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-tpu-95a-hf-high-speed-blue",
+    "maker": "IEMAI",
+    "type": "TPU",
+    "finish": "95A HF/High Speed",
+    "color": "Blue",
+    "hex": "#1A8CFF",
+    "td_value": null
+  },
+  {
+    "id": "iemai-tpu-basic-black",
+    "maker": "IEMAI",
+    "type": "TPU",
+    "finish": "Basic",
+    "color": "Black",
+    "hex": "#000000",
+    "td_value": null
+  },
+  {
+    "id": "iemai-tpu-basic-white",
+    "maker": "IEMAI",
+    "type": "TPU",
+    "finish": "Basic",
+    "color": "White",
+    "hex": "#FFFFFF",
+    "td_value": null
   }
 ]

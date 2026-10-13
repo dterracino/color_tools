@@ -1,0 +1,354 @@
+# Overture filament import review - DATABASE COLUMNS
+# Derived from the hand-reviewed overture_filaments_review.txt file.
+# Import candidates: 300
+# Omitted no-hex rows: 44
+# Maker is Overture; finish and td_value use JSON-style null.
+# Columns: page | maker | type | finish | color | hex | td_value | status
+page | maker | type | finish | color | hex | td_value | status
+3 | Overture | PLA | null | Black | #000000 | null | OK
+3 | Overture | PLA | null | Brown | #D7A86A | null | OK
+3 | Overture | PLA | null | Sparkle Black | #000000 | null | OK
+3 | Overture | PLA | null | Royal Copper | #A47456 | null | OK
+3 | Overture | PLA | null | Space Grey | #63646B | null | OK
+3 | Overture | PLA | null | Orange | #FF8E24 | null | OK
+3 | Overture | PLA | null | Cement Gray | #697272 | null | OK
+3 | Overture | PLA | null | Yellow | #E6B535 | null | OK
+3 | Overture | PLA | null | Metallic Gray | #8B98AC | null | OK
+3 | Overture | PLA | null | Royal Gold | #FFCB47 | null | OK
+3 | Overture | PLA | null | Royal Silver | #C6CDD2 | null | OK
+3 | Overture | PLA | null | Highlight Yellow | #E4FF33 | null | OK
+3 | Overture | PLA | null | Light Grey | #C7D4D6 | null | OK
+3 | Overture | PLA | null | Lemon Yellow | #FFED29 | null | OK
+3 | Overture | PLA | null | White | #FFFEFA | null | OK
+3 | Overture | PLA | null | Light Yellow | #EFFF8A | null | OK
+3 | Overture | PLA | null | Cold White | #FFFFFF | null | OK
+3 | Overture | PLA | null | Olive green | #97A014 | null | OK
+3 | Overture | PLA | null | Wine | #BE133B | null | OK
+3 | Overture | PLA | null | Green | #00C26B | null | OK
+3 | Overture | PLA | null | Fresh Red | #E31A1F | null | OK
+3 | Overture | PLA | null | Light Green | #8FFFA2 | null | OK
+3 | Overture | PLA | null | Red | #E9301E | null | OK
+3 | Overture | PLA | null | Glow In Dark (Green) | #EBF1E0 | null | OK
+3 | Overture | PLA | null | Jeans Red | #FF706B | null | OK
+3 | Overture | PLA | null | Morning Blue | #8FEEFF | null | OK
+3 | Overture | PLA | null | Pink | #F09BB5 | null | OK
+3 | Overture | PLA | null | Light Blue | #3ABBDE | null | OK
+3 | Overture | PLA | null | Sakura Pink | #FFD1D1 | null | OK
+3 | Overture | PLA | null | Gray Blue | #81BAC1 | null | OK
+3 | Overture | PLA | null | Chocolate | #57361C | null | OK
+3 | Overture | PLA | null | Jeans Blue | #43729B | null | OK
+4 | Overture | PLA | null | Blue | #033877 | null | OK
+4 | Overture | PLA | null | Purple | #6F4AB2 | null | OK
+4 | Overture | PLA | null | Sparkle Purple | #7701B2 | null | OK
+4 | Overture | PLA | Matte | Carbon Fiber Black | #000000 | null | OK
+4 | Overture | PLA | Matte | Matte Pink | #FFE0E1 | null | OK
+4 | Overture | PLA | Matte | Matte Black | #1D1E1E | null | OK
+4 | Overture | PLA | Matte | Matte Light Pink | #F7E6DE | null | OK
+4 | Overture | PLA | Matte | Matte Light Grey | #BAC4C4 | null | OK
+4 | Overture | PLA | Matte | Matte Baby Pink | #FFE0E0 | null | OK
+4 | Overture | PLA | Matte | Matte Repose Gray | #B1A498 | null | OK
+4 | Overture | PLA | Matte | Matte Chocolate | #503529 | null | OK
+4 | Overture | PLA | Matte | Matte White | #E6DEDE | null | OK
+4 | Overture | PLA | Matte | Matte Wood | #CAAC78 | null | OK
+4 | Overture | PLA | Matte | Matte Brick Red | #D22D2F | null | OK
+4 | Overture | PLA | Matte | Matte Light Brown | #EDD5A6 | null | OK
+4 | Overture | PLA | Matte | Matte Red | #EB3B41 | null | OK
+4 | Overture | PLA | Matte | Matte Light Blue | #99FFFA | null | OK
+4 | Overture | PLA | Matte | Matte Jeans Red | #F76E6E | null | OK
+4 | Overture | PLA | Matte | Matte Blue | #005DA4 | null | OK
+5 | Overture | PLA | Matte | Matte Jeans Blue | #6787AD | null | OK
+5 | Overture | PLA | Matte | Matte Army Green | #6E8451 | null | OK
+5 | Overture | PLA | Matte | Matte Dark Orange | #DC4116 | null | OK
+5 | Overture | PLA | Matte | Matte Gray Green | #666F60 | null | OK
+5 | Overture | PLA | Matte | Matte Orange | #F3C102 | null | OK
+5 | Overture | PLA | Matte | Matte Slate Gray | #4F6B86 | null | OK
+5 | Overture | PLA | Matte | Matte Yellow | #EFDC4C | null | OK
+5 | Overture | PLA | Matte | Matte Navy Blue | #072E4E | null | OK
+5 | Overture | PLA | Matte | Matte Butter Yellow | #FCFAA6 | null | OK
+5 | Overture | PLA | Matte | Matte Lavender | #7E5777 | null | OK
+5 | Overture | PLA | Matte | Matte Light Orange | #F2B87B | null | OK
+5 | Overture | PLA | Matte | Matte Purple | #8C69B5 | null | OK
+5 | Overture | PLA | Matte | Matte Skin | #F0DDC2 | null | OK
+5 | Overture | PLA | Matte | Matte Lilac | #ECD1FF | null | OK
+5 | Overture | PLA | Matte | Matte Beige | #E7EFD7 | null | OK
+5 | Overture | PLA | Matte | Matte Black-White | #000000-#FFFFFF | null | OK
+5 | Overture | PLA | Matte | Matte Olive Green | #A88704 | null | OK
+5 | Overture | PLA | Matte | Matte Orange-Red | #FCAB59-#F02800 | null | OK
+5 | Overture | PLA | Matte | Matte Grass Green | #CEFF5C | null | OK
+5 | Overture | PLA | Matte | Matte Blue-Red | #0074BD-#F00024 | null | OK
+5 | Overture | PLA | Matte | Matte Pale Green | #BECBA8 | null | OK
+5 | Overture | PLA | Matte | Light Blue-Yellow | #B8FFFF-#FFF49E | null | OK
+5 | Overture | PLA | Matte | Matte Light Teal | #C7FFE3 | null | OK
+5 | Overture | PLA | Matte | Matte Light Green | #AFDEB9 | null | OK
+5 | Overture | PLA | Matte | Matte Bamboo Green | #A1D66B | null | OK
+5 | Overture | PLA | Matte | Matte Turquoise | #60F0E7 | null | OK
+5 | Overture | PLA | Matte | Matte Green | #519F62 | null | OK
+6 | Overture | PLA | Rock | Rock White | #FFFFFF | null | OK
+6 | Overture | PLA | Rock | Fossil Rock | #C2C0BA | null | OK
+6 | Overture | PLA | Rock | Sedimentary Rock | #C4B199 | null | OK
+6 | Overture | PLA | Rock | Turquoise Green | #86DACD | null | OK
+6 | Overture | PLA | Rock | Turquoise Blue | #A3EAFF | null | OK
+6 | Overture | PLA | Rock | Mars Red | #D76D3B | null | OK
+6 | Overture | PLA | Rock | Marigold Yellow | #FFDA47 | null | OK
+6 | Overture | PLA | Rock | Moonlight Gray | #E4E6E7 | null | OK
+6 | Overture | PLA | Rock | Mist Gray | #F2F3EC | null | OK
+6 | Overture | PLA | Rock | Slate Gray | #638BA1 | null | OK
+6 | Overture | PLA | Rock | Haze Gray | #C3D2DA | null | OK
+6 | Overture | PLA | Rock | Muted Gray | #CED2D4 | null | OK
+7 | Overture | PLA Professional | null | Black | #0D110E | null | OK
+7 | Overture | PLA Professional | null | Light Yellow | #F4D563 | null | OK
+7 | Overture | PLA Professional | null | Light Gray | #74777D | null | OK
+7 | Overture | PLA Professional | null | Highlight Yellow | #EBFF57 | null | OK
+7 | Overture | PLA Professional | null | Space Grey | #969BA2 | null | OK
+7 | Overture | PLA Professional | null | Army Green | #8A8850 | null | OK
+7 | Overture | PLA Professional | null | Silver Metal | #C9D0D4 | null | OK
+7 | Overture | PLA Professional | null | Green | #0CCF81 | null | OK
+7 | Overture | PLA Professional | null | White | #E8E4DF | null | OK
+7 | Overture | PLA Professional | null | Light Green | #BCD69B | null | OK
+7 | Overture | PLA Professional | null | Champagne | #F4F4EA | null | OK
+7 | Overture | PLA Professional | null | Olive Green | #B0BE50 | null | OK
+7 | Overture | PLA Professional | null | Wine | #800020 | null | OK
+7 | Overture | PLA Professional | null | Light Blue | #99F1FF | null | OK
+7 | Overture | PLA Professional | null | Fresh Red | #F00000 | null | OK
+7 | Overture | PLA Professional | null | Gray Blue | #8FBBC1 | null | OK
+7 | Overture | PLA Professional | null | Red | #FF0505 | null | OK
+7 | Overture | PLA Professional | null | Morning Blue | #75AFCD | null | OK
+7 | Overture | PLA Professional | null | Jeans Red | #CE4F4E | null | OK
+7 | Overture | PLA Professional | null | Jeans Blue | #73A1BA | null | OK
+7 | Overture | PLA Professional | null | Pink | #F092B3 | null | OK
+7 | Overture | PLA Professional | null | Digital Blue | #0099E6 | null | OK
+7 | Overture | PLA Professional | null | Sakura Pink | #FEC2C2 | null | OK
+7 | Overture | PLA Professional | null | Dark Blue | #003B80 | null | OK
+7 | Overture | PLA Professional | null | Chocolate | #50311E | null | OK
+7 | Overture | PLA Professional | null | Purple | #7659B5 | null | OK
+7 | Overture | PLA Professional | null | Brown | #AB713E | null | OK
+7 | Overture | PLA Professional | null | Orange | #FF852E | null | OK
+7 | Overture | PLA Professional | null | Moonlight Silver | #D5DCDD | null | OK
+7 | Overture | PLA Professional | null | Royal Gold | #E3B145 | null | OK
+7 | Overture | PLA Professional | null | Bronze | #704515 | null | OK
+7 | Overture | PLA Professional | null | Yellow | #EEEA44 | null | OK
+7 | Overture | PLA Professional | null | Copper | #BB8330 | null | OK
+8 | Overture | Super PLA+ | null | Black | #000000 | null | OK
+8 | Overture | Super PLA+ | null | Light Brown | #B8AF99 | null | OK
+8 | Overture | Super PLA+ | null | Light Gray | #BAC8C9 | null | OK
+8 | Overture | Super PLA+ | null | Orange | #FF7A33 | null | OK
+8 | Overture | Super PLA+ | null | White | #FFFFFF | null | OK
+8 | Overture | Super PLA+ | null | Yellow | #FFD342 | null | OK
+8 | Overture | Super PLA+ | null | Red | #E60000 | null | OK
+8 | Overture | Super PLA+ | null | Green | #00D17A | null | OK
+8 | Overture | Super PLA+ | null | Pink | #FF5786 | null | OK
+8 | Overture | Super PLA+ | null | Dark Blue | #183681 | null | OK
+8 | Overture | Super PLA+ | null | Sakura Pink | #FFCCCD | null | OK
+8 | Overture | Super PLA+ | null | Purple | #8761C1 | null | OK
+8 | Overture | Easy PLA | null | Easy Black | #000000 | null | OK
+8 | Overture | Easy PLA | null | Easy Caramel | #A88D5D | null | OK
+8 | Overture | Easy PLA | null | Easy Cement Grey | #697272 | null | OK
+8 | Overture | Easy PLA | null | Easy Digital Blue | #0696EF | null | OK
+8 | Overture | Easy PLA | null | Easy Space Gray | #B2B8B8 | null | OK
+8 | Overture | Easy PLA | null | Easy Green | #4DFF64 | null | OK
+8 | Overture | Easy PLA | null | Easy Rock White | #EDF0F2 | null | OK
+8 | Overture | Easy PLA | null | Glow Red | #FF7D7A | null | OK
+8 | Overture | Easy PLA | null | Easy White | #FFFFFF | null | OK
+8 | Overture | Easy PLA | null | Glow Orange | #FF9C66 | null | OK
+8 | Overture | Easy PLA | null | Easy Red | #FF2C29 | null | OK
+8 | Overture | Easy PLA | null | Glow Yellow | #EBFF6B | null | OK
+8 | Overture | Easy PLA | null | Easy Orange | #FF5F2E | null | OK
+8 | Overture | Easy PLA | null | Glow Blue | #5EB7D4 | null | OK
+9 | Overture | Easy PLA | null | Shimmer Silver Green | #9ECB86 | null | OK
+9 | Overture | Easy PLA | null | Easy Beige | #F7F6ED | null | OK
+9 | Overture | Easy PLA | null | Shimmer Bronze | #81BA6D | null | OK
+9 | Overture | Easy PLA | null | Easy Yolk Yellow | #FFE357 | null | OK
+9 | Overture | Easy PLA | null | Shimmer Dark Green | #008059 | null | OK
+9 | Overture | Easy PLA | null | Easy Sky Blue | #3BC9ED | null | OK
+9 | Overture | Easy PLA | null | Shimmer Purple | #906482 | null | OK
+9 | Overture | Easy PLA | null | Easy Cobalt Blue | #274DA0 | null | OK
+9 | Overture | Easy PLA | null | Easy Purple | #7B49A2 | null | OK
+9 | Overture | Easy PLA | null | Easy Pink | #FFC0CB | null | OK
+9 | Overture | Easy PLA | null | Easy Pine Green | #00A5A8 | null | OK
+9 | Overture | Easy PLA | null | Easy Yellow | #FCFF66 | null | OK
+9 | Overture | Easy PLA | null | Easy Magenta | #FD3DB5 | null | OK
+9 | Overture | Easy PLA | null | Easy Pumpkin Orange | #FF8D5C | null | OK
+10 | Overture | PLA | Silk | Silk Gray | #394658 | null | OK
+10 | Overture | PLA | Silk | Silk Neon Green | #91C800 | null | OK
+10 | Overture | PLA | Silk | Silk Silver | #818FA0 | null | OK
+10 | Overture | PLA | Silk | Silk Green | #018E63 | null | OK
+10 | Overture | PLA | Silk | Silk White | #DDD4CA | null | OK
+10 | Overture | PLA | Silk | Silk Purple | #7769BC | null | OK
+10 | Overture | PLA | Silk | Silk Rose Red | #9B0350 | null | OK
+10 | Overture | PLA | Silk | Silk Blue | #0353BA | null | OK
+10 | Overture | PLA | Silk | Silk Fresh Red | #CC0201 | null | OK
+10 | Overture | PLA | Silk | Silk Gold-Silver | #B2C2C7-#FFCB1F | null | OK
+10 | Overture | PLA | Silk | Silk Red | #DA445A | null | OK
+10 | Overture | PLA | Silk | Silk Green-Silver | #00C28E-#606B6C | null | OK
+10 | Overture | PLA | Silk | Silk Silver Pink | #A8726B | null | OK
+10 | Overture | PLA | Silk | Silk Blue-Silver | #009DE0-#D1DBEA | null | OK
+10 | Overture | PLA | Silk | Silk Chrismas Red | #CE5D4C | null | OK
+10 | Overture | PLA | Silk | Silk Blue-Yellow | #FFFF5C-#3673BA | null | OK
+10 | Overture | PLA | Silk | Silk Pink | #DF877C | null | OK
+10 | Overture | PLA | Silk | Silk Green-Blue | #005AAD-#00C27B | null | OK
+10 | Overture | PLA | Silk | Silk Copper | #641501 | null | OK
+10 | Overture | PLA | Silk | Silk Purple-Gold | #702AB2-#FFCB1F | null | OK
+10 | Overture | PLA | Silk | Silk Magenta-Gold | #B71A7D-#FFCB1F | null | OK
+10 | Overture | PLA | Silk | Silk Red-Gold | #F04C64-#F5BC00 | null | OK
+10 | Overture | PLA | Silk | Silk Green-Magenta | #9FFF05-#AD0076 | null | OK
+10 | Overture | PLA | Silk | Silk Orange | #F44703 | null | OK
+10 | Overture | PLA | Silk | Silk Yellow | #ECC403 | null | OK
+10 | Overture | PLA | Silk | Silk Gold | #F9E352 | null | OK
+11 | Overture | Air PLA | null | Air Black | #000000 | null | OK
+11 | Overture | Air PLA | null | Air Wood | #E6C49E | null | OK
+11 | Overture | Air PLA | null | Air Light Gray | #AFAEAB | null | OK
+11 | Overture | Air PLA | null | Air Yellow | #F5C001 | null | OK
+11 | Overture | Air PLA | null | Air White | #EDD5B7 | null | OK
+11 | Overture | Air PLA | null | Air Neon Green | #C0D904 | null | OK
+11 | Overture | Air PLA | null | Air Orange | #FD9106 | null | OK
+12 | Overture | PETG | null | Black | #000000 | null | OK
+12 | Overture | PETG | null | Yellow | #FFC946 | null | OK
+12 | Overture | PETG | null | Space Grey | #76797D | null | OK
+12 | Overture | PETG | null | Grass Green | #C4D802 | null | OK
+12 | Overture | PETG | null | Light Gray | #D5D8DD | null | OK
+12 | Overture | PETG | null | Green | #38AF69 | null | OK
+12 | Overture | PETG | null | Rock White | #FFFFFF | null | OK
+12 | Overture | PETG | null | Transparent Green | #019A45 | null | OK
+12 | Overture | PETG | null | White | #F5F5F4 | null | OK
+12 | Overture | PETG | null | Army Green | #404720 | null | OK
+12 | Overture | PETG | null | Transparent Red | #CE333E | null | OK
+12 | Overture | PETG | null | Digital Blue | #0378D0 | null | OK
+12 | Overture | PETG | null | Red | #FF0000 | null | OK
+12 | Overture | PETG | null | Blue | #034E89 | null | OK
+12 | Overture | PETG | null | Magenta | #C80181 | null | OK
+12 | Overture | PETG | null | Transparent Blue | #09048E | null | OK
+12 | Overture | PETG | null | Pink | #F79DBC | null | OK
+12 | Overture | PETG | null | Starry Blue | #142B4B | null | OK
+12 | Overture | PETG | null | Orange | #FF854D | null | OK
+12 | Overture | PETG | null | Sparkle Blue | #253F56 | null | OK
+12 | Overture | PETG | null | Gold | #CE8D00 | null | OK
+12 | Overture | PETG | null | Purple | #7142A3 | null | OK
+12 | Overture | PETG | null | Brown | #A47C48 | null | OK
+13 | Overture | TPU | null | Black | #000000 | null | OK
+13 | Overture | TPU | null | Green | #00EB75 | null | OK
+13 | Overture | TPU | null | Space Grey | #90999D | null | OK
+13 | Overture | TPU | null | Digital Blue | #0378D0 | null | OK
+13 | Overture | TPU | null | Grey | #E2E7E9 | null | OK
+13 | Overture | TPU | null | Blue | #274E96 | null | OK
+13 | Overture | TPU | null | White | #FFFFFF | null | OK
+13 | Overture | TPU | null | Purple | #8B69CE | null | OK
+13 | Overture | TPU | null | Red | #D7021C | null | OK
+13 | Overture | TPU | null | Neon Green | #2EFF6D | null | OK
+13 | Overture | TPU | null | Bright Pink | #FFBDD1 | null | OK
+13 | Overture | TPU | null | Neon Orange | #FA8E36 | null | OK
+13 | Overture | TPU | null | Orange | #FFA11D | null | OK
+13 | Overture | TPU | null | Neon Red | #FF3F38 | null | OK
+13 | Overture | TPU | null | Brown | #A47C48 | null | OK
+13 | Overture | TPU | null | Light Green | #A0FD62 | null | OK
+13 | Overture | TPU | null | Yellow | #FFDF03 | null | OK
+14 | Overture | High Speed TPU | null | Black | #000000 | null | OK
+14 | Overture | High Speed TPU | null | Orange | #FF8B47 | null | OK
+14 | Overture | High Speed TPU | null | Gray | #CDCFD5 | null | OK
+14 | Overture | High Speed TPU | null | Grass Green | #B1FF0A | null | OK
+14 | Overture | High Speed TPU | null | White | #FFFFFF | null | OK
+14 | Overture | High Speed TPU | null | Neon Magenta | #FB23AF | null | OK
+14 | Overture | High Speed TPU | null | Neon Yellow | #FEF71D | null | OK
+14 | Overture | High Speed TPU | null | Pink | #FFA3C6 | null | OK
+14 | Overture | High Speed TPU | null | Pastel Rose | #F5D0B7 | null | OK
+14 | Overture | High Speed TPU | null | Translucent Red | #C00000 | null | OK
+14 | Overture | High Speed TPU | null | Luminous Pink | #DCDCE4 | null | OK
+14 | Overture | High Speed TPU | null | Translucent Blue | #386DFF | null | OK
+14 | Overture | High Speed TPU | null | Luminous Electric Indigo | #C3D3E0 | null | OK
+14 | Overture | High Speed TPU | null | Translucent Orange | #FA4616 | null | OK
+14 | Overture | High Speed TPU | null | Luminous Blue | #E9E7E7 | null | OK
+14 | Overture | High Speed TPU | null | Translucent Purple | #8014C8 | null | OK
+14 | Overture | High Speed TPU | null | Luminous Orange | #E8E8E8 | null | OK
+14 | Overture | High Speed TPU | null | Translucent Green | #00E691 | null | OK
+14 | Overture | High Speed TPU | null | Luminous Green | #ECF2E9 | null | OK
+15 | Overture | ABS | null | Black | #000000 | null | OK
+15 | Overture | ABS | null | Gold | #FFDA05 | null | OK
+15 | Overture | ABS | null | Ash Grey | #6C7074 | null | OK
+15 | Overture | ABS | null | Yellow | #FFFF47 | null | OK
+15 | Overture | ABS | null | Diamond Gray | #8C8C8C | null | OK
+15 | Overture | ABS | null | Grass Green | #C4D802 | null | OK
+15 | Overture | ABS | null | Slate Gray | #91A0B6 | null | OK
+15 | Overture | ABS | null | Green | #3D9441 | null | OK
+15 | Overture | ABS | null | Gray | #CACAC9 | null | OK
+15 | Overture | ABS | null | Glow Green | #EBEFEE | null | OK
+15 | Overture | ABS | null | Natural | #F8F8EE | null | OK
+15 | Overture | ABS | null | Dark Green | #008F77 | null | OK
+15 | Overture | ABS | null | White | #FFFFFF | null | OK
+15 | Overture | ABS | null | Light Blue | #5DC5EA | null | OK
+15 | Overture | ABS | null | Dark Red | #FF311F | null | OK
+15 | Overture | ABS | null | Blue | #00628F | null | OK
+15 | Overture | ABS | null | Pink | #F79DBC | null | OK
+15 | Overture | ABS | null | Dark Blue | #034E89 | null | OK
+15 | Overture | ABS | null | Orange | #FF6229 | null | OK
+15 | Overture | ABS | null | Purple | #7142A3 | null | OK
+15 | Overture | ABS | null | Diamond Orange | #FF8133 | null | OK
+15 | Overture | ABS | null | Diamond Purple | #A04ED0 | null | OK
+15 | Overture | ABS | null | Royal Gold | #F0A400 | null | OK
+16 | Overture | ASA | null | Black | #000000 | null | OK
+16 | Overture | ASA | null | Natural | #F1E6B3 | null | OK
+16 | Overture | ASA | null | Gray | #B5B9BA | null | OK
+16 | Overture | ASA | null | Olive Green | #6B7550 | null | OK
+16 | Overture | ASA | null | White | #FFFFFF | null | OK
+16 | Overture | ASA | null | Diamond Green | #26A648 | null | OK
+16 | Overture | ASA | null | Red | #AF251E | null | OK
+16 | Overture | ASA | null | Green | #01AA5E | null | OK
+16 | Overture | ASA | null | Diamond Red | #C01616 | null | OK
+16 | Overture | ASA | null | Diamond Blue | #324485 | null | OK
+16 | Overture | ASA | null | Brown | #785F53 | null | OK
+16 | Overture | ASA | null | Blue | #002979 | null | OK
+16 | Overture | ASA | null | Orange | #FF9A40 | null | OK
+16 | Overture | ASA | null | Purple | #7959B6 | null | OK
+16 | Overture | ASA | null | Yellow | #FFE802 | null | OK
+16 | Overture | Easy Nylon | null | Black | #000000 | null | OK
+16 | Overture | Easy Nylon | null | Gray | #808E93 | null | OK
+17 | Overture | PC Professional | null | Black | #00C26B | null | OK
+17 | Overture | PC Professional | null | Red | #D7021C | null | OK
+17 | Overture | PC Professional | null | Gray | #E3E8E7 | null | OK
+17 | Overture | PC Professional | null | Blue | #0378D0 | null | OK
+17 | Overture | PC Professional | null | White | #FFFFFF | null | OK
+
+# Omitted entries without explicit hex values (not import candidates)
+# page | maker | type | finish | color | source value
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Rocket Pop | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Aurora Berry | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Rainbow A1 | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Avocado | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Christmas Prism | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Tequila Sunrise | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Champagne Frost | /
+# OMITTED_NO_HEX | 4 | Overture | PLA | null | Northern Lights | /
+# OMITTED_NO_HEX | 5 | Overture | PLA | Matte | Rainbow | /
+# OMITTED_NO_HEX | 5 | Overture | PLA | Matte | Rainbow M1 | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Alpine Forest | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Painted Hills | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Desert Bluff | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Sedona Red | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Tropical Jungle | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Pink Lake | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Glacier Blue | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Walnut Wood | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Rock Rainbow | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Jarrah | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Cheesewood | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | White Oak | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Barrier Reef | /
+# OMITTED_NO_HEX | 6 | Overture | PLA | Rock | Wetland Green | /
+# OMITTED_NO_HEX | 7 | Overture | PLA Professional | null | Sunset Rainbow | /
+# OMITTED_NO_HEX | 9 | Overture | Easy PLA | null | Easy Natural | Transparent
+# OMITTED_NO_HEX | 10 | Overture | PLA | Silk | Silk Vaporwave | /
+# OMITTED_NO_HEX | 10 | Overture | PLA | Silk | Silk Purple Chrome | /
+# OMITTED_NO_HEX | 10 | Overture | PLA | Silk | Silk Tropic | /
+# OMITTED_NO_HEX | 10 | Overture | PLA | Silk | Silk Copper Shore | /
+# OMITTED_NO_HEX | 10 | Overture | PLA | Silk | Silk Periwinkle | /
+# OMITTED_NO_HEX | 10 | Overture | PLA | Silk | Silk Caramel | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Chrome Gray | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Parakeet | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Lime Surge | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Punch Pink | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Glacier Flash | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Golden Ember | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Tiger Eye | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Evergreen Bronze | /
+# OMITTED_NO_HEX | 11 | Overture | PLA | Silk | Silk Lettuce Tomato | /
+# OMITTED_NO_HEX | 12 | Overture | PETG | null | Transparent | Transparent
+# OMITTED_NO_HEX | 14 | Overture | High Speed TPU | null | Transparent | Transparent
+# OMITTED_NO_HEX | 17 | Overture | PC Professional | null | Transparent | Transparent

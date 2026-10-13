@@ -535,18 +535,31 @@ test suite.
   gradients, deterministic remainders, endpoints, and invalid dimensions.
 - [x] Verify swatches from an installed wheel in an isolated base-only
   environment without Pillow or NumPy.
-- [ ] Exercise real bundled compounds and independently audit every database
-  component/result. Retain the mutation checks specified in Workstream 4.
+- [x] Exercise real bundled compounds and independently audit every database
+  component/result. Database-wide runtime regression coverage now loads all
+  1,545 records under every supported multi-color mode, validates derived
+  RGB/LAB/effective-hex results, round-trips public palette indexes, and
+  decodes solid, block, and gradient swatches for every filament. Retain the
+  mutation checks specified in Workstream 4.
 
 ### Phase 7: imports and release completion
 
-- [ ] Execute the Bambu, Overture, and IEMAI reconciliation described in
-  Workstream 5 only after shared color contracts are tested.
+- [x] Execute the Bambu, Overture, and IEMAI reconciliation described in
+  Workstream 5 only after shared color contracts are tested. All three approved
+  imports are complete.
 - [x] Confirm the TD policy: retain values when available without provenance
   metadata or source-certification claims.
-- [ ] Review dry-run reports; preserve IDs/owned references and demonstrate
-  deterministic, idempotent imports.
-- [ ] Regenerate protected hashes after data changes.
+- [x] Review dry-run reports; preserve IDs/owned references and demonstrate
+  deterministic, idempotent imports for Bambu, IEMAI, and Overture.
+- [x] Regenerate protected hashes after the Bambu, IEMAI, and Overture data
+  changes.
+- [ ] After all filament imports are complete, add a prominent README callout
+  for filament-data contributions, especially missing or corrected TD values.
+  Provide a no-code submission path, link the detailed contributor guidance,
+  and explain in plain language what transmission distance (TD) represents and
+  why accurate TD values matter when creating HueForge projects. Make clear
+  that TD is not a normalized percentage and preserve the library's policy of
+  storing available values without provenance metadata or certification claims.
 - [ ] Update API/CLI examples, configuration instructions, migration notes,
   optional-dependency guidance, and changelog.
 - [ ] Run focused tests, full regression suites, strict repository typing,
@@ -772,15 +785,51 @@ mutation-testing dependency is required.
 
 | Maker | Source files | Requested action |
 | --- | --- | --- |
-| Bambu Lab | [.source_data/Bambu_PETG_Matte_Hex_Code_Table.pdf](../../.source_data/Bambu_PETG_Matte_Hex_Code_Table.pdf) | Add missing PETG Matte entries and correct existing hex values |
-| Bambu Lab | [.source_data/Bambu_PETG_Translucent_Hex_Code_Table.pdf](../../.source_data/Bambu_PETG_Translucent_Hex_Code_Table.pdf) | Add missing PETG Translucent entries and correct existing hex values |
-| Bambu Lab | [.source_data/Bambu_PLA_Tough_Hex_Code_Table.pdf](../../.source_data/Bambu_PLA_Tough_Hex_Code_Table.pdf) | Add missing PLA Tough entries and correct existing hex values |
-| Overture | [Overture_Hex_Code_List.pdf](../../.source_data/Overture_Hex_Code_List.pdf), [OvertureHexCodes.htm](../../.source_data/OvertureHexCodes.htm) | Reconcile the two sources, correct existing records, add missing records |
-| IEMAI | [iemai_filament_colors.csv](../../.source_data/iemai_filament_colors.csv), [iemai_filament_colors_by_material.txt](../../.source_data/iemai_filament_colors_by_material.txt) | Reconcile both inputs and import the new maker's records |
+| Bambu Lab | [.source_data/Bambu_PETG_Matte_Hex_Code_Table.pdf](../../.source_data/Bambu_PETG_Matte_Hex_Code_Table.pdf) | Complete: added 8 missing PETG Matte records; no existing records changed |
+| Bambu Lab | [.source_data/Bambu_PETG_Translucent_Hex_Code_Table.pdf](../../.source_data/Bambu_PETG_Translucent_Hex_Code_Table.pdf) | Complete: all 8 source records were already present and unchanged |
+| Bambu Lab | [.source_data/Bambu_PLA_Tough_Hex_Code_Table.pdf](../../.source_data/Bambu_PLA_Tough_Hex_Code_Table.pdf) | Complete: source identifies PLA Tough+; added 7 missing records; no existing records changed |
+| Overture | [Overture_Hex_Code_List.pdf](../../.source_data/Overture_Hex_Code_List.pdf) | Complete: added 293 missing records, corrected seven existing hex values while preserving IDs/TD, retained 11 existing records absent from the PDF, and omitted 44 no-hex rows |
+| IEMAI | [iemai_filament_colors.csv](../../.source_data/iemai_filament_colors.csv), [iemai_filament_colors_by_material.txt](../../.source_data/iemai_filament_colors_by_material.txt) | Complete: both 188-row inputs reconcile exactly; imported 187 records and explicitly excluded PC Transparent |
 
 Do not automatically include other Bambu PDFs simply because they are present.
-Inspect PDF contents during the import phase; extraction quality and coverage
-have not been verified in this planning pass.
+The three approved Bambu PDFs were extracted and visually checked during the
+import. Other Bambu PDFs remain outside the approved scope.
+
+The Overture HTML contains conflicts and errors and is no longer the intended
+import source. Extract positioned text from the PDF programmatically, include
+only products with explicit hex values (including explicit compound values),
+and write every extracted row to a text review file. The user will hand-correct
+that file before it becomes import data. Omit gradient-only swatches that provide
+no explicit RGB/hex values; completeness is not required. The positioned
+extractor produced 300 explicit-hex review rows, including 13 compound rows,
+and recorded 44 no-hex products as audit comments. It found no duplicate
+product/color identities and flagged the five-digit `PC Professional` White
+value (`#FFFFF`) for manual correction.
+
+The user corrected the extracted file, including `PC Professional` White to
+`#FFFFFF`; all 300 candidate statuses are now `OK`. The separate
+`overture_filaments_import_review.txt` file maps appearance families `Matte PLA`,
+`Silk PLA`, and `Rock PLA` to `type=PLA` with `Matte`, `Silk`, and `Rock`
+finishes. Functional formulations/product grades remain types: `Super PLA+`,
+`Easy PLA`, `Air PLA`, `PLA Professional`, `High Speed TPU`, `Easy Nylon`, and
+`PC Professional`. The prepared data has 81 rows with finishes, 13 compound
+colors, and no duplicate identities. The user approved this mapping. The
+importer added 293 records and corrected
+seven existing hex values while preserving their IDs, TD values, and unrelated
+metadata. Eleven existing Overture records absent from the PDF were retained.
+The immediate idempotence rerun reported all 300 reviewed candidates unchanged,
+with no additions, corrections, or conflicts. The bundled database now contains
+1,545 filaments.
+Treat Overture product-line names that identify distinct materials, including
+`Super PLA+`, as filament types rather than finishes.
+
+For IEMAI, promote only source qualifiers `CF` and `GF` into compound material
+types (`ASA-CF`, `PPS-CF`, and so on). Preserve every other qualifier as a
+finish, and preserve `PLA+/Pro` as the parent filament type. The paired inputs
+currently reconcile across all 188 rows; 24 rows are promoted and 28 contain
+ordered multi-color values. Explicitly exclude the alpha-bearing `IEMAI PC
+Transparent` row. The 187 approved candidates were imported, and the immediate
+idempotence rerun reported 187 unchanged records with no additions or conflicts.
 
 The library stores TD values when available. It does not track whether a value
 is manufacturer-provided, community-sourced, or hand-measured, and does not
@@ -802,9 +851,10 @@ records before applying the import.
    [extract_panchroma.py](../../tooling/extract_panchroma.py), and
    [merge_bambu_filaments.py](../../tooling/merge_bambu_filaments.py). Reuse sound
    extraction/normalization patterns, not blind append behavior.
-3. Build bounded, testable extraction/import scripts when needed. Keep extraction,
-   normalization, comparison, and application separate; do not require PDF/HTML
-   extraction dependencies in the runtime library.
+3. Build bounded, testable extraction/import scripts when needed. Every active
+   importer must be read-only by default and require an explicit apply option
+   before writing. Keep extraction, normalization, comparison, and application
+   separate; do not require PDF/HTML extraction dependencies in the runtime library.
 4. Normalize maker/material/finish/color names deliberately. Identify existing
    records by ID or approved product identity, not hex, since hex is being corrected.
 5. Emit a dry-run report: additions, old/new hex corrections, unchanged records,
@@ -823,6 +873,43 @@ records before applying the import.
 Do not modify scientific constants to make imported data fit. Retain the supplied
 source files as import inputs and keep deterministic dry-run reports; do not add
 provenance fields to the library schema.
+
+## Post-import follow-up tasks
+
+### Harmony-based filament recommendations
+
+Add a public API and CLI workflow that accepts a base color and harmony type,
+plus the existing optional filament filters such as maker, material type, and
+finish. Generate the requested harmony with the existing harmony implementation,
+apply the requested filament filters through the existing filtering API, and
+find the closest available filament for each generated harmony color using the
+existing color-distance machinery.
+
+Return each harmony position with its generated target color, matched filament,
+and Delta E between that target and the filament color. Preserve harmony order
+and multi-color filament behavior. Before implementation, define the behavior
+for an empty filtered candidate set, tie ordering, the distance formula exposed
+to callers, and whether callers may request more than one match per harmony
+position. Reuse the existing harmony, filtering, and nearest-color responsibilities
+rather than duplicating their logic.
+
+### FilamentColors.xyz scraper (post-7.0.0)
+
+After the 7.0.0 release, build a supported scraper/import-preparation workflow
+for [FilamentColors.xyz](https://filamentcolors.xyz/). First audit the existing
+experimental tooling in `tooling/filamentcolors_library.py`,
+`tooling/extract_filamentcolors_manufacturers.py`, and
+`tooling/analyze_filamentcolors_data.py`; reuse useful API and reconciliation
+logic, but do not treat those scripts as the finished implementation.
+
+The supported workflow should fetch source data without modifying the bundled
+database, retain a reproducible local source snapshot, report pagination and
+source-version details, and produce reviewable normalized output. Any later
+database importer must remain read-only by default, require an explicit apply
+option, preserve stable identities, reconcile existing records, handle TD and
+multi-color data through the canonical library contracts, report conflicts,
+and be deterministic and idempotent. Confirm the site's current API behavior
+and usage requirements when this post-release task begins.
 
 ## Workstream 6: Python 3.12 minimum and reproducible type checking
 

@@ -15,8 +15,8 @@ handoff, not release approval.
 4. Image initialization, record swatches, Palette LUT convenience, and the
    breaking CLI count/limit cleanup are complete locally.
 5. The color command retains LAB as the default interpretation of `--value`;
-   `--hex` is the RGB shortcut. Continue with the Phase 7 Bambu, Overture, and
-   IEMAI dry-run reconciliation process.
+   `--hex` is the RGB shortcut. The approved Bambu, IEMAI, and Overture imports
+   are complete; continue with remaining release validation and documentation.
 
 **Do not commit, push, tag, publish, or release.** The user owns those actions.
 Use the project virtual environment; do not install into system Python.
@@ -55,7 +55,7 @@ or reapply superseded proposals.
 | Phase 4: multi-color records/modes | Records, `first`, `last`, `srgb_mean` complete | Additional modes and their decisions/tests remain |
 | Phase 5: record swatches | Complete, including record PNG methods and `Palette.save_lut_png()` | No current-mode work remains |
 | Phase 6: integration/regressions | Complete for implemented contracts, current modes, swatches, and CLI count/limit semantics | Future modes and data imports require their own integration coverage |
-| Phase 7: imports/release | Not complete | Data reconciliation, approvals, final validation, remote CI and release review |
+| Phase 7: imports/release | Bambu, IEMAI, and Overture imports complete | Contribution callout, final validation, remote CI and release review |
 | Workstream 6: Python minimum | Implemented and previously validated locally on 3.12/3.13/3.14 | Next remote CI confirmation and final post-change release validation |
 | Image initialization cleanup | Complete locally | Revalidate during final release checks |
 
@@ -220,13 +220,64 @@ See the release plan and changelog for the current contracts and validation.
   extrema tie policy separately. LAB means must reuse corrected gamut mapping.
 - Broader `validation.py` semantic review remains deferred; do not redesign it
   as part of input consolidation without approval.
-- Bambu/Overture/IEMAI data reconciliation/imports have not been applied.
-  Follow Workstream 5: dry runs, stable IDs/owned references, deterministic
-  idempotent updates, and no unapproved deletions. TD values may be included
+- The Bambu reconciliation is complete: 15 missing records were added (8 PETG
+  Matte and 7 PLA Tough+), all 8 PETG Translucent source records were unchanged,
+  and the idempotence rerun reported 23 unchanged records with no additions or
+  conflicts. The IEMAI paired 188-row sources reconcile, 24
+  CF/GF qualifiers are promoted to compound types, and 28 multi-color rows are
+  preserved. The 187 approved IEMAI candidates were imported; `PLA+/Pro` is a
+  type and the alpha-bearing PC Transparent row was explicitly excluded. The
+  idempotence rerun reported all 187 candidates unchanged with no conflicts.
+  The Overture import added 293 records, corrected seven hex values while
+  preserving stable IDs and TD values, retained 11 records absent from the PDF,
+  and omitted 44 no-hex rows. Its idempotence rerun reported all 300 reviewed
+  rows unchanged. The bundled database now contains 1,545 records. Follow
+  Workstream 5: dry runs,
+  stable IDs/owned references,
+  deterministic idempotent updates, and no unapproved deletions. TD values may
+  be included
   when available regardless of whether they are manufacturer-provided,
   community-sourced, or hand-measured; the library does not track provenance or
   make certification claims. No provenance field or separate IEMAI provenance
   approval is required.
+- A database-wide runtime regression audit now covers all 1,545 records under
+  `first`, `last`, and `srgb_mean`; normalized identity uniqueness; derived
+  RGB/LAB/effective-hex values; public ID/maker/type/finish/color/RGB indexes;
+  and structurally validated solid, block, and gradient PNG swatches for every
+  filament. The post-audit full suite passed with 1,516 tests, two expected
+  skips, and 14,368 subtests; repository-wide strict Pyright and
+  `python -m color_tools --verify-all` also passed.
+- The Overture positioned PDF extractor is complete and wrote
+  `.source_data/overture_filaments_review.txt`: 300 explicit-hex rows in visual
+  order, 44 no-hex audit omissions, 13 compound rows, no duplicate
+  product/color identities, and one malformed `PC Professional` White value
+  (`#FFFFF`) flagged for correction. The user corrected and approved the review
+  file. Rerun the extractor to another output path if preserving manual edits.
+- The user completed the Overture extraction review; all 300 candidates are now
+  `OK`, including PC Professional White corrected to `#FFFFFF`. The derived
+  `.source_data/overture_filaments_import_review.txt` separates database type
+  and finish fields without modifying the reviewed extraction. Matte, Silk, and
+  Rock are PLA finishes; functional formulations/product grades remain types.
+  It contains 81 finish-bearing rows, 13 canonical compound rows, and no
+  duplicate identities. The mapping was approved and imported as described
+  above.
+- After the filament imports, design and implement harmony-based filament
+  recommendations: accept a base color, harmony, and existing filament filters;
+  return the closest filament for each harmony position together with its Delta E.
+  Reuse the existing harmony, filtering, and color-distance APIs. The release
+  plan records the remaining result-count, tie, empty-set, and distance-contract
+  decisions to make before implementation.
+- Post-7.0.0, build a supported FilamentColors.xyz scraper and import-preparation
+  workflow. Audit the existing experimental downloader, manufacturer extractor,
+  and analyzer under `tooling/` before deciding what to retain. The release plan
+  records the expected snapshot, review, safety, reconciliation, and idempotence
+  boundaries. This task is not a 7.0.0 release gate.
+- After those imports are complete, add a prominent README invitation for
+  filament-data contributions and an easy no-code submission path. Include a
+  plain-language description of transmission distance (TD), why it matters for
+  HueForge projects, and that TD is not a normalized percentage. Link to the
+  detailed filament contribution guidance rather than requiring contributors
+  to edit protected data files directly.
 - Final hashes, migration/release documentation, wheel consumers, integrity
   checks, optional-feature validation and release-diff review remain release gates.
 - Remote GitHub CI confirmation remains pending. No remote CI pass was claimed.

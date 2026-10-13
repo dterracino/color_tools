@@ -923,7 +923,7 @@ conversion searches.
 
 ````text
 ╭─── Filament Library Manager ─────────────────────────────────────────────────╮
-│ 1,050 total | 42 owned* | Showing 1,050 filaments                            │
+│ 1,545 total | 42 owned* | Showing 1,545 filaments                            │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ > [✓] Bambu Lab - PLA Matte - Jet Black                                      │
 │   [ ] Bambu Lab - PLA Matte - White                                          │

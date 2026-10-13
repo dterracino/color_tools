@@ -194,7 +194,10 @@ class ColorConstants:
     # Updated 2026-03-28: Updated MAKER_SYNONYMS_JSON_HASH after merge (BBL, BambuLab synonyms added)
     # Updated 2026-04-22: Updated MATRICES_EXPECTED_HASH after adding ALL_SIMULATION and ALL_CORRECTION matrices
     # Updated 2026-09-19: Updated FILAMENTS_JSON_HASH after adding 5 Bambu Lab PLA Pure filaments
-    _EXPECTED_HASH = "e0742fa03d69d20d820d9b6ff5ad614cc7e95e8d5d5dd826ce4635253714e43f"
+    # Updated 2026-10-12: Updated FILAMENTS_JSON_HASH after adding 15 Bambu Lab filaments
+    # Updated 2026-10-12: Updated FILAMENTS_JSON_HASH after adding 187 IEMAI filaments
+    # Updated 2026-10-13: Updated FILAMENTS_JSON_HASH after importing reviewed Overture data
+    _EXPECTED_HASH = "3b254eaed286435d6f8eb4fe1231030bf3832674b747b2a3ec65be494c716fbc"
     # Updated for 6.3.0: Added WIN_HSL240_HUE_MAX, WIN_HSL240_SL_MAX, WIN_HSL255_HUE_MAX, WIN_HSL255_SL_MAX
     
     # ========================================================================
@@ -207,7 +210,7 @@ class ColorConstants:
     # Updated 2026-07-11: Added 132 Anycubic filaments (PLA Basic/+/High Speed/Matte/Silk/Galaxy/Metal/Marble, PETG/Translucent)
     
     COLORS_JSON_HASH = "ca33f6055298d37c1ad469656d3ba0f2f15d506bbc6149cd42e696fc5c3a3d00"
-    FILAMENTS_JSON_HASH = "329af5d609a558ceb7b68fd65e8f8df1308f0e68484609a9774a63ba2b8bdff8"
+    FILAMENTS_JSON_HASH = "7c2e655d33892e507cbee2d986254abf24c633d27ee32af324c243812301fd86"
     MAKER_SYNONYMS_JSON_HASH = "73df3893a98fb8439e8cc127eb9cd5ee763027c346ad9f528f8290514f999fe1"  # Updated 2026-03-28: Merged remote changes (BBL, BambuLab synonyms added)
     
     # Palette file hashes

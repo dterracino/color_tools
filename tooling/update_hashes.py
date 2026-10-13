@@ -45,12 +45,12 @@ def print_error(message: str) -> None:
 
 def print_warning(message: str) -> None:
     """Print a warning message."""
-    console.print(f"[bold yellow]⚠️  Warning:[/bold yellow] {message}")
+    console.print(f"[bold yellow]Warning:[/bold yellow] {message}")
 
 
 def print_success(message: str) -> None:
     """Print a success message."""
-    console.print(f"[bold green]✓[/bold green] {message}")
+    console.print(f"[bold green][OK][/bold green] {message}")
 
 
 def print_info(message: str) -> None:
@@ -366,18 +366,18 @@ def main():
         # Confirm with user
         response = input("Do you want to automatically update constants.py with these hash values? (y/N): ")
         if response.lower() not in ('y', 'yes'):
-            console.print("[bold red]❌ Cancelled.[/bold red] No files were modified.")
+            console.print("[bold red]Cancelled.[/bold red] No files were modified.")
             print_info("To manually update, copy the hash values above into constants.py")
             return
         
         print()
-        console.print("[bold cyan]🔄 Step 1/2:[/bold cyan] Updating individual hash values...")
+        console.print("[bold cyan]Step 1/2:[/bold cyan] Updating individual hash values...")
         
         # Collect all hashes and update the file
         all_hashes = collect_all_hashes()
         if update_constants_file(all_hashes):
-            console.print("[bold green]✅ Individual hash values updated successfully![/bold green]")
-            console.print("\n[bold cyan]🔄 Step 2/2:[/bold cyan] Generating final ColorConstants hash...")
+            console.print("[bold green]Individual hash values updated successfully![/bold green]")
+            console.print("\n[bold cyan]Step 2/2:[/bold cyan] Generating final ColorConstants hash...")
             
             # Generate the ColorConstants hash and update it too
             try:
@@ -395,15 +395,15 @@ def main():
                 
                 if result.returncode == 0:
                     constants_hash = result.stdout.strip()
-                    console.print(f"[dim]🔄 Generated new ColorConstants hash: {constants_hash}[/dim]")
-                    console.print(f"[dim]🔄 Updating _EXPECTED_HASH with: {constants_hash}[/dim]")
+                    console.print(f"[dim]Generated new ColorConstants hash: {constants_hash}[/dim]")
+                    console.print(f"[dim]Updating _EXPECTED_HASH with: {constants_hash}[/dim]")
                     
                     # Update the _EXPECTED_HASH value in the file
                     final_hash = {"_EXPECTED_HASH": constants_hash}
                     
                     if update_constants_file(final_hash):
-                        console.print("[bold green]✅ ColorConstants hash updated successfully![/bold green]")
-                        console.print("\n[bold green]🎉 COMPLETE![/bold green] All hash values have been updated automatically.")
+                        console.print("[bold green]ColorConstants hash updated successfully![/bold green]")
+                        console.print("\n[bold green]COMPLETE![/bold green] All hash values have been updated automatically.")
                         console.print("\n[bold cyan]Final verification:[/bold cyan]")
                         console.print("   [yellow]python -m color_tools --verify-all[/yellow]")
                     else:
@@ -417,7 +417,7 @@ def main():
                 print_warning(f"Could not generate ColorConstants hash: {e}")
                 print_info("Run the script again with --constants-only to get the final hash.")
         else:
-            console.print("[bold red]❌ Failed to update constants.py[/bold red]")
+            console.print("[bold red]Failed to update constants.py[/bold red]")
     else:
         console.print("\n[bold yellow]NEXT STEPS:[/bold yellow]")
         console.print("[dim]1. Copy the hash values above into constants.py[/dim]")
@@ -426,7 +426,7 @@ def main():
         console.print("[dim]3. Update _EXPECTED_HASH in constants.py with that value[/dim]")
         console.print("[dim]4. Verify everything works:[/dim]")
         console.print("   [yellow]python -m color_tools --verify-all[/yellow]")
-        console.print("\n[bold blue]🚀 Quick option:[/bold blue] Run with --autoupdate flag to do everything automatically:")
+        console.print("\n[bold blue]Quick option:[/bold blue] Run with --autoupdate flag to do everything automatically:")
         console.print("   [yellow]python tooling/update_hashes.py --autoupdate[/yellow]")
 
 

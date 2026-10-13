@@ -1,0 +1,355 @@
+# Overture PDF filament extraction - MANUAL REVIEW REQUIRED
+# Source: Overture_Hex_Code_List.pdf
+# Explicit-hex rows: 300
+# Omitted no-hex rows: 44
+# Rows requiring correction: 1
+# Edit this file before it is used as import data.
+# Columns: page | product | color | hex | status
+page | product | color | hex | status
+3 | PLA | Black | #000000 | OK
+3 | PLA | Brown | #D7A86A | OK
+3 | PLA | Sparkle Black | #000000 | OK
+3 | PLA | Royal Copper | #A47456 | OK
+3 | PLA | Space Grey | #63646B | OK
+3 | PLA | Orange | #FF8E24 | OK
+3 | PLA | Cement Gray | #697272 | OK
+3 | PLA | Yellow | #E6B535 | OK
+3 | PLA | Metallic Gray | #8B98AC | OK
+3 | PLA | Royal Gold | #FFCB47 | OK
+3 | PLA | Royal Silver | #C6CDD2 | OK
+3 | PLA | Highlight Yellow | #E4FF33 | OK
+3 | PLA | Light Grey | #C7D4D6 | OK
+3 | PLA | Lemon Yellow | #FFED29 | OK
+3 | PLA | White | #FFFEFA | OK
+3 | PLA | Light Yellow | #EFFF8A | OK
+3 | PLA | Cold White | #FFFFFF | OK
+3 | PLA | Olive green | #97A014 | OK
+3 | PLA | Wine | #BE133B | OK
+3 | PLA | Green | #00C26B | OK
+3 | PLA | Fresh Red | #E31A1F | OK
+3 | PLA | Light Green | #8FFFA2 | OK
+3 | PLA | Red | #E9301E | OK
+3 | PLA | Glow In Dark (Green) | #EBF1E0 | OK
+3 | PLA | Jeans Red | #FF706B | OK
+3 | PLA | Morning Blue | #8FEEFF | OK
+3 | PLA | Pink | #F09BB5 | OK
+3 | PLA | Light Blue | #3ABBDE | OK
+3 | PLA | Sakura Pink | #FFD1D1 | OK
+3 | PLA | Gray Blue | #81BAC1 | OK
+3 | PLA | Chocolate | #57361C | OK
+3 | PLA | Jeans Blue | #43729B | OK
+4 | PLA | Blue | #033877 | OK
+4 | PLA | Purple | #6F4AB2 | OK
+4 | PLA | Sparkle Purple | #7701B2 | OK
+4 | Matte PLA | Carbon Fiber Black | #000000 | OK
+4 | Matte PLA | Matte Pink | #FFE0E1 | OK
+4 | Matte PLA | Matte Black | #1D1E1E | OK
+4 | Matte PLA | Matte Light Pink | #F7E6DE | OK
+4 | Matte PLA | Matte Light Grey | #BAC4C4 | OK
+4 | Matte PLA | Matte Baby Pink | #FFE0E0 | OK
+4 | Matte PLA | Matte Repose Gray | #B1A498 | OK
+4 | Matte PLA | Matte Chocolate | #503529 | OK
+4 | Matte PLA | Matte White | #E6DEDE | OK
+4 | Matte PLA | Matte Wood | #CAAC78 | OK
+4 | Matte PLA | Matte Brick Red | #D22D2F | OK
+4 | Matte PLA | Matte Light Brown | #EDD5A6 | OK
+4 | Matte PLA | Matte Red | #EB3B41 | OK
+4 | Matte PLA | Matte Light Blue | #99FFFA | OK
+4 | Matte PLA | Matte Jeans Red | #F76E6E | OK
+4 | Matte PLA | Matte Blue | #005DA4 | OK
+5 | Matte PLA | Matte Jeans Blue | #6787AD | OK
+5 | Matte PLA | Matte Army Green | #6E8451 | OK
+5 | Matte PLA | Matte Dark Orange | #DC4116 | OK
+5 | Matte PLA | Matte Gray Green | #666F60 | OK
+5 | Matte PLA | Matte Orange | #F3C102 | OK
+5 | Matte PLA | Matte Slate Gray | #4F6B86 | OK
+5 | Matte PLA | Matte Yellow | #EFDC4C | OK
+5 | Matte PLA | Matte Navy Blue | #072E4E | OK
+5 | Matte PLA | Matte Butter Yellow | #FCFAA6 | OK
+5 | Matte PLA | Matte Lavender | #7E5777 | OK
+5 | Matte PLA | Matte Light Orange | #F2B87B | OK
+5 | Matte PLA | Matte Purple | #8C69B5 | OK
+5 | Matte PLA | Matte Skin | #F0DDC2 | OK
+5 | Matte PLA | Matte Lilac | #ECD1FF | OK
+5 | Matte PLA | Matte Beige | #E7EFD7 | OK
+5 | Matte PLA | Matte Black-White | #000000 / #FFFFFF | OK
+5 | Matte PLA | Matte Olive Green | #A88704 | OK
+5 | Matte PLA | Matte Orange-Red | #FCAB59 / #F02800 | OK
+5 | Matte PLA | Matte Grass Green | #CEFF5C | OK
+5 | Matte PLA | Matte Blue-Red | #0074BD / #F00024 | OK
+5 | Matte PLA | Matte Pale Green | #BECBA8 | OK
+5 | Matte PLA | Light Blue-Yellow | #B8FFFF / #FFF49E | OK
+5 | Matte PLA | Matte Light Teal | #C7FFE3 | OK
+5 | Matte PLA | Matte Light Green | #AFDEB9 | OK
+5 | Matte PLA | Matte Bamboo Green | #A1D66B | OK
+5 | Matte PLA | Matte Turquoise | #60F0E7 | OK
+5 | Matte PLA | Matte Green | #519F62 | OK
+6 | Rock PLA | Rock White | #FFFFFF | OK
+6 | Rock PLA | Fossil Rock | #C2C0BA | OK
+6 | Rock PLA | Sedimentary Rock | #C4B199 | OK
+6 | Rock PLA | Turquoise Green | #86DACD | OK
+6 | Rock PLA | Turquoise Blue | #A3EAFF | OK
+6 | Rock PLA | Mars Red | #D76D3B | OK
+6 | Rock PLA | Marigold Yellow | #FFDA47 | OK
+6 | Rock PLA | Moonlight Gray | #E4E6E7 | OK
+6 | Rock PLA | Mist Gray | #F2F3EC | OK
+6 | Rock PLA | Slate Gray | #638BA1 | OK
+6 | Rock PLA | Haze Gray | #C3D2DA | OK
+6 | Rock PLA | Muted Gray | #CED2D4 | OK
+7 | PLA Professional | Black | #0D110E | OK
+7 | PLA Professional | Light Yellow | #F4D563 | OK
+7 | PLA Professional | Light Gray | #74777D | OK
+7 | PLA Professional | Highlight Yellow | #EBFF57 | OK
+7 | PLA Professional | Space Grey | #969BA2 | OK
+7 | PLA Professional | Army Green | #8A8850 | OK
+7 | PLA Professional | Silver Metal | #C9D0D4 | OK
+7 | PLA Professional | Green | #0CCF81 | OK
+7 | PLA Professional | White | #E8E4DF | OK
+7 | PLA Professional | Light Green | #BCD69B | OK
+7 | PLA Professional | Champagne | #F4F4EA | OK
+7 | PLA Professional | Olive Green | #B0BE50 | OK
+7 | PLA Professional | Wine | #800020 | OK
+7 | PLA Professional | Light Blue | #99F1FF | OK
+7 | PLA Professional | Fresh Red | #F00000 | OK
+7 | PLA Professional | Gray Blue | #8FBBC1 | OK
+7 | PLA Professional | Red | #FF0505 | OK
+7 | PLA Professional | Morning Blue | #75AFCD | OK
+7 | PLA Professional | Jeans Red | #CE4F4E | OK
+7 | PLA Professional | Jeans Blue | #73A1BA | OK
+7 | PLA Professional | Pink | #F092B3 | OK
+7 | PLA Professional | Digital Blue | #0099E6 | OK
+7 | PLA Professional | Sakura Pink | #FEC2C2 | OK
+7 | PLA Professional | Dark Blue | #003B80 | OK
+7 | PLA Professional | Chocolate | #50311E | OK
+7 | PLA Professional | Purple | #7659b5 | OK
+7 | PLA Professional | Brown | #AB713E | OK
+7 | PLA Professional | Orange | #FF852E | OK
+7 | PLA Professional | Moonlight Silver | #D5DCDD | OK
+7 | PLA Professional | Royal Gold | #E3B145 | OK
+7 | PLA Professional | Bronze | #704515 | OK
+7 | PLA Professional | Yellow | #EEEA44 | OK
+7 | PLA Professional | Copper | #BB8330 | OK
+8 | Super PLA+ | Black | #000000 | OK
+8 | Super PLA+ | Light Brown | #B8AF99 | OK
+8 | Super PLA+ | Light Gray | #BAC8C9 | OK
+8 | Super PLA+ | Orange | #FF7A33 | OK
+8 | Super PLA+ | White | #FFFFFF | OK
+8 | Super PLA+ | Yellow | #FFD342 | OK
+8 | Super PLA+ | Red | #E60000 | OK
+8 | Super PLA+ | Green | #00D17A | OK
+8 | Super PLA+ | Pink | #FF5786 | OK
+8 | Super PLA+ | Dark Blue | #183681 | OK
+8 | Super PLA+ | Sakura Pink | #FFCCCD | OK
+8 | Super PLA+ | Purple | #8761C1 | OK
+8 | Easy PLA | Easy Black | #000000 | OK
+8 | Easy PLA | Easy Caramel | #A88D5D | OK
+8 | Easy PLA | Easy Cement Grey | #697272 | OK
+8 | Easy PLA | Easy Digital Blue | #0696EF | OK
+8 | Easy PLA | Easy Space Gray | #B2B8B8 | OK
+8 | Easy PLA | Easy Green | #4DFF64 | OK
+8 | Easy PLA | Easy Rock White | #EDF0F2 | OK
+8 | Easy PLA | Glow Red | #FF7D7A | OK
+8 | Easy PLA | Easy White | #FFFFFF | OK
+8 | Easy PLA | Glow Orange | #FF9C66 | OK
+8 | Easy PLA | Easy Red | #FF2C29 | OK
+8 | Easy PLA | Glow Yellow | #EBFF6B | OK
+8 | Easy PLA | Easy Orange | #FF5F2E | OK
+8 | Easy PLA | Glow Blue | #5EB7D4 | OK
+9 | Easy PLA | Shimmer Silver Green | #9ECB86 | OK
+9 | Easy PLA | Easy Beige | #F7F6ED | OK
+9 | Easy PLA | Shimmer Bronze | #81BA6D | OK
+9 | Easy PLA | Easy Yolk Yellow | #FFE357 | OK
+9 | Easy PLA | Shimmer Dark Green | #008059 | OK
+9 | Easy PLA | Easy Sky Blue | #3BC9ED | OK
+9 | Easy PLA | Shimmer Purple | #906482 | OK
+9 | Easy PLA | Easy Cobalt Blue | #274DA0 | OK
+9 | Easy PLA | Easy Purple | #7B49A2 | OK
+9 | Easy PLA | Easy Pink | #FFC0CB | OK
+9 | Easy PLA | Easy Pine Green | #00A5A8 | OK
+9 | Easy PLA | Easy Yellow | #FCFF66 | OK
+9 | Easy PLA | Easy Magenta | #FD3DB5 | OK
+9 | Easy PLA | Easy Pumpkin Orange | #FF8D5C | OK
+10 | Silk PLA | Silk Gray | #394658 | OK
+10 | Silk PLA | Silk Neon Green | #91C800 | OK
+10 | Silk PLA | Silk Silver | #818FA0 | OK
+10 | Silk PLA | Silk Green | #018E63 | OK
+10 | Silk PLA | Silk White | #DDD4CA | OK
+10 | Silk PLA | Silk Purple | #7769BC | OK
+10 | Silk PLA | Silk Rose Red | #9B0350 | OK
+10 | Silk PLA | Silk Blue | #0353BA | OK
+10 | Silk PLA | Silk Fresh Red | #CC0201 | OK
+10 | Silk PLA | Silk Gold-Silver | #B2C2C7 / #FFCB1F | OK
+10 | Silk PLA | Silk Red | #DA445A | OK
+10 | Silk PLA | Silk Green-Silver | #00C28E / #606B6C | OK
+10 | Silk PLA | Silk Silver Pink | #A8726B | OK
+10 | Silk PLA | Silk Blue-Silver | #009DE0 / #D1DBEA | OK
+10 | Silk PLA | Silk Chrismas Red | #CE5D4C | OK
+10 | Silk PLA | Silk Blue-Yellow | #FFFF5C / #3673BA | OK
+10 | Silk PLA | Silk Pink | #DF877C | OK
+10 | Silk PLA | Silk Green-Blue | #005AAD / #00C27B | OK
+10 | Silk PLA | Silk Copper | #641501 | OK
+10 | Silk PLA | Silk Purple-Gold | #702AB2 / #FFCB1F | OK
+10 | Silk PLA | Silk Magenta-Gold | #B71A7D / #FFCB1F | OK
+10 | Silk PLA | Silk Red-Gold | #F04C64 / #F5BC00 | OK
+10 | Silk PLA | Silk Green-Magenta | #9FFF05 / #AD0076 | OK
+10 | Silk PLA | Silk Orange | #F44703 | OK
+10 | Silk PLA | Silk Yellow | #ECC403 | OK
+10 | Silk PLA | Silk Gold | #F9E352 | OK
+11 | Air PLA | Air Black | #000000 | OK
+11 | Air PLA | Air Wood | #E6C49E | OK
+11 | Air PLA | Air Light Gray | #AFAEAB | OK
+11 | Air PLA | Air Yellow | #F5C001 | OK
+11 | Air PLA | Air White | #EDD5B7 | OK
+11 | Air PLA | Air Neon Green | #C0D904 | OK
+11 | Air PLA | Air Orange | #FD9106 | OK
+12 | PETG | Black | #000000 | OK
+12 | PETG | Yellow | #FFC946 | OK
+12 | PETG | Space Grey | #76797D | OK
+12 | PETG | Grass Green | #C4D802 | OK
+12 | PETG | Light Gray | #D5D8DD | OK
+12 | PETG | Green | #38AF69 | OK
+12 | PETG | Rock White | #FFFFFF | OK
+12 | PETG | Transparent Green | #019A45 | OK
+12 | PETG | White | #F5F5F4 | OK
+12 | PETG | Army Green | #404720 | OK
+12 | PETG | Transparent Red | #CE333E | OK
+12 | PETG | Digital Blue | #0378D0 | OK
+12 | PETG | Red | #FF0000 | OK
+12 | PETG | Blue | #034E89 | OK
+12 | PETG | Magenta | #C80181 | OK
+12 | PETG | Transparent Blue | #09048E | OK
+12 | PETG | Pink | #F79DBC | OK
+12 | PETG | Starry Blue | #142B4B | OK
+12 | PETG | Orange | #FF854D | OK
+12 | PETG | Sparkle Blue | #253F56 | OK
+12 | PETG | Gold | #CE8D00 | OK
+12 | PETG | Purple | #7142A3 | OK
+12 | PETG | Brown | #A47C48 | OK
+13 | TPU | Black | #000000 | OK
+13 | TPU | Green | #00EB75 | OK
+13 | TPU | Space Grey | #90999D | OK
+13 | TPU | Digital Blue | #0378D0 | OK
+13 | TPU | Grey | #E2E7E9 | OK
+13 | TPU | Blue | #274E96 | OK
+13 | TPU | White | #FFFFFF | OK
+13 | TPU | Purple | #8B69CE | OK
+13 | TPU | Red | #D7021C | OK
+13 | TPU | Neon Green | #2EFF6D | OK
+13 | TPU | Bright Pink | #FFBDD1 | OK
+13 | TPU | Neon Orange | #fa8e36 | OK
+13 | TPU | Orange | #FFA11D | OK
+13 | TPU | Neon Red | #FF3F38 | OK
+13 | TPU | Brown | #A47C48 | OK
+13 | TPU | Light Green | #A0FD62 | OK
+13 | TPU | Yellow | #FFDF03 | OK
+14 | High Speed TPU | Black | #000000 | OK
+14 | High Speed TPU | Orange | #FF8B47 | OK
+14 | High Speed TPU | Gray | #CDCFD5 | OK
+14 | High Speed TPU | Grass Green | #B1FF0A | OK
+14 | High Speed TPU | White | #FFFFFF | OK
+14 | High Speed TPU | Neon Magenta | #FB23AF | OK
+14 | High Speed TPU | Neon Yellow | #FEF71D | OK
+14 | High Speed TPU | Pink | #FFA3C6 | OK
+14 | High Speed TPU | Pastel Rose | #F5D0B7 | OK
+14 | High Speed TPU | Translucent Red | #C00000 | OK
+14 | High Speed TPU | Luminous Pink | #DCDCE4 | OK
+14 | High Speed TPU | Translucent Blue | #386DFF | OK
+14 | High Speed TPU | Luminous Electric Indigo | #C3D3E0 | OK
+14 | High Speed TPU | Translucent Orange | #FA4616 | OK
+14 | High Speed TPU | Luminous Blue | #E9E7E7 | OK
+14 | High Speed TPU | Translucent Purple | #8014C8 | OK
+14 | High Speed TPU | Luminous Orange | #E8E8E8 | OK
+14 | High Speed TPU | Translucent Green | #00E691 | OK
+14 | High Speed TPU | Luminous Green | #ECF2E9 | OK
+15 | ABS | Black | #000000 | OK
+15 | ABS | Gold | #FFDA05 | OK
+15 | ABS | Ash Grey | #6C7074 | OK
+15 | ABS | Yellow | #FFFF47 | OK
+15 | ABS | Diamond Gray | #8C8C8C | OK
+15 | ABS | Grass Green | #C4D802 | OK
+15 | ABS | Slate Gray | #91A0B6 | OK
+15 | ABS | Green | #3D9441 | OK
+15 | ABS | Gray | #CACAC9 | OK
+15 | ABS | Glow Green | #EBEFEE | OK
+15 | ABS | Natural | #F8F8EE | OK
+15 | ABS | Dark Green | #008F77 | OK
+15 | ABS | White | #FFFFFF | OK
+15 | ABS | Light Blue | #5DC5EA | OK
+15 | ABS | Dark Red | #FF311F | OK
+15 | ABS | Blue | #00628F | OK
+15 | ABS | Pink | #F79DBC | OK
+15 | ABS | Dark Blue | #034E89 | OK
+15 | ABS | Orange | #FF6229 | OK
+15 | ABS | Purple | #7142A3 | OK
+15 | ABS | Diamond Orange | #FF8133 | OK
+15 | ABS | Diamond Purple | #A04ED0 | OK
+15 | ABS | Royal Gold | #F0A400 | OK
+16 | ASA | Black | #000000 | OK
+16 | ASA | Natural | #F1E6B3 | OK
+16 | ASA | Gray | #B5B9BA | OK
+16 | ASA | Olive Green | #6B7550 | OK
+16 | ASA | White | #FFFFFF | OK
+16 | ASA | Diamond Green | #26A648 | OK
+16 | ASA | Red | #AF251E | OK
+16 | ASA | Green | #01AA5E | OK
+16 | ASA | Diamond Red | #C01616 | OK
+16 | ASA | Diamond Blue | #324485 | OK
+16 | ASA | Brown | #785F53 | OK
+16 | ASA | Blue | #002979 | OK
+16 | ASA | Orange | #FF9A40 | OK
+16 | ASA | Purple | #7959B6 | OK
+16 | ASA | Yellow | #FFE802 | OK
+16 | Easy Nylon | Black | #000000 | OK
+16 | Easy Nylon | Gray | #808E93 | OK
+17 | PC Professional | Black | #00C26B | OK
+17 | PC Professional | Red | #D7021C | OK
+17 | PC Professional | Gray | #E3E8E7 | OK
+17 | PC Professional | Blue | #0378D0 | OK
+17 | PC Professional | White | #FFFFFF | OK
+
+# Omitted entries without explicit hex values (not import candidates)
+# page | product | color | source value
+# OMITTED_NO_HEX | 4 | PLA | Rocket Pop | /
+# OMITTED_NO_HEX | 4 | PLA | Aurora Berry | /
+# OMITTED_NO_HEX | 4 | PLA | Rainbow A1 | /
+# OMITTED_NO_HEX | 4 | PLA | Avocado | /
+# OMITTED_NO_HEX | 4 | PLA | Christmas Prism | /
+# OMITTED_NO_HEX | 4 | PLA | Tequila Sunrise | /
+# OMITTED_NO_HEX | 4 | PLA | Champagne Frost | /
+# OMITTED_NO_HEX | 4 | PLA | Northern Lights | /
+# OMITTED_NO_HEX | 5 | Matte PLA | Rainbow | /
+# OMITTED_NO_HEX | 5 | Matte PLA | Rainbow M1 | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Alpine Forest | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Painted Hills | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Desert Bluff | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Sedona Red | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Tropical Jungle | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Pink Lake | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Glacier Blue | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Walnut Wood | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Rock Rainbow | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Jarrah | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Cheesewood | /
+# OMITTED_NO_HEX | 6 | Rock PLA | White Oak | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Barrier Reef | /
+# OMITTED_NO_HEX | 6 | Rock PLA | Wetland Green | /
+# OMITTED_NO_HEX | 7 | PLA Professional | Sunset Rainbow | /
+# OMITTED_NO_HEX | 9 | Easy PLA | Easy Natural | Transparent
+# OMITTED_NO_HEX | 10 | Silk PLA | Silk Vaporwave | /
+# OMITTED_NO_HEX | 10 | Silk PLA | Silk Purple Chrome | /
+# OMITTED_NO_HEX | 10 | Silk PLA | Silk Tropic | /
+# OMITTED_NO_HEX | 10 | Silk PLA | Silk Copper Shore | /
+# OMITTED_NO_HEX | 10 | Silk PLA | Silk Periwinkle | /
+# OMITTED_NO_HEX | 10 | Silk PLA | Silk Caramel | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Chrome Gray | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Parakeet | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Lime Surge | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Punch Pink | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Glacier Flash | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Golden Ember | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Tiger Eye | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Evergreen Bronze | /
+# OMITTED_NO_HEX | 11 | Silk PLA | Silk Lettuce Tomato | /
+# OMITTED_NO_HEX | 12 | PETG | Transparent | Transparent
+# OMITTED_NO_HEX | 14 | High Speed TPU | Transparent | Transparent
+# OMITTED_NO_HEX | 17 | PC Professional | Transparent | Transparent

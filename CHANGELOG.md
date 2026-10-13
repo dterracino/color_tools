@@ -8,8 +8,56 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **Bambu Lab filament expansion** — add 8 PETG Matte and 7 PLA Tough+
+  colors from the approved Bambu Lab source tables, increasing the bundled
+  filament database from 1,050 to 1,065 records. PETG Translucent was already
+  complete and remains unchanged.
+- **Safe Bambu import tooling** — add a bounded PDF importer that defaults to
+  a read-only dry run and requires `--apply` before it writes. It validates
+  source identity and row counts, reports additions/unchanged/conflicts,
+  refuses conflicting updates, writes atomically, and is idempotent. PDF
+  extraction remains a tooling-only dependency.
+- **IEMAI normalization preview** — add a console-only reconciliation tool for
+  the paired 188-row CSV and grouped-text sources. It promotes source `CF` and
+  `GF` qualifiers into compound material types, preserves other qualifiers as
+  finishes, preserves `PLA+/Pro` as a material type, canonicalizes ordered
+  multi-color hex values, explicitly excludes the unsupported alpha-bearing
+  `PC Transparent` row, reports source drift, and has no database-write path.
+- **IEMAI filament expansion** — add 187 reviewed IEMAI records, including
+  ordered multi-color filaments and compound `CF`/`GF` material types. The
+  unsupported alpha-bearing `IEMAI PC Transparent` source row is excluded,
+  increasing the bundled filament database from 1,065 to 1,252 records.
+- **Safe IEMAI import tooling** — add a paired-source importer that defaults to
+  a read-only dry run, requires `--apply` before writing, rejects reconciliation
+  or database conflicts, writes atomically, and is idempotent.
+- **Overture positioned PDF extractor** — add a database-independent tool that
+  reconstructs visual table order, preserves explicit compound hex values,
+  audits omitted no-hex products, and writes an editable review file before any
+  Overture import is constructed.
+- **Overture import-review preparation** — add a deterministic second-stage tool
+  that preserves the hand-reviewed extraction while producing database-shaped
+  maker/type/finish/color/hex/TD columns, canonicalizing compound colors, and
+  rejecting unresolved or duplicate candidate identities.
+- **Overture filament expansion** — import 293 missing records from the reviewed
+  PDF data and correct seven existing hex values while preserving their stable
+  IDs, TD values, and unrelated metadata. Eleven existing Overture records absent
+  from the PDF remain untouched, increasing the bundled database from 1,252 to
+  1,545 filaments.
+- **Safe Overture import tooling** — add a reviewed-file importer that defaults
+  to dry-run mode, reports additions/corrections/retained records/conflicts,
+  requires `--apply` to write atomically, and is idempotent.
+- **Filament database runtime audit** — add exhaustive regression coverage for
+  all 1,545 bundled records across every supported multi-color mode, derived
+  RGB/LAB/effective-hex values, public palette indexes, and dependency-free
+  solid, block, and gradient PNG swatches.
+
 ### Changed
 
+- **Windows-safe hash utility output** — replace emoji status markers in
+  `tooling/update_hashes.py` with ASCII text so its autoupdate path works in
+  Windows consoles using legacy encodings.
 - **Scoped pytest discovery** — restrict repository-root pytest collection to
   `tests/`. Standalone and manually runnable checks under `tools/`, including
   the code-metrics sidecar tests, remain opt-in.
