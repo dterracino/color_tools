@@ -197,7 +197,9 @@ class ColorConstants:
     # Updated 2026-10-12: Updated FILAMENTS_JSON_HASH after adding 15 Bambu Lab filaments
     # Updated 2026-10-12: Updated FILAMENTS_JSON_HASH after adding 187 IEMAI filaments
     # Updated 2026-10-13: Updated FILAMENTS_JSON_HASH after importing reviewed Overture data
-    _EXPECTED_HASH = "3b254eaed286435d6f8eb4fe1231030bf3832674b747b2a3ec65be494c716fbc"
+    # Updated 2026-10-13: Added the reviewed retro palette batch and retired
+    # unsupported legacy Game Boy palette hashes.
+    _EXPECTED_HASH = "89280d34bfcd8717daf7952972a9de82f70595d448e2e75c54cfe30dd0ab8e4f"
     # Updated for 6.3.0: Added WIN_HSL240_HUE_MAX, WIN_HSL240_SL_MAX, WIN_HSL255_HUE_MAX, WIN_HSL255_SL_MAX
     
     # ========================================================================
@@ -214,26 +216,35 @@ class ColorConstants:
     MAKER_SYNONYMS_JSON_HASH = "73df3893a98fb8439e8cc127eb9cd5ee763027c346ad9f528f8290514f999fe1"  # Updated 2026-03-28: Merged remote changes (BBL, BambuLab synonyms added)
     
     # Palette file hashes
+    AMSTRAD_CPC_PALETTE_HASH = "ce7715f5be03abcef3b49d2e94e2a57ac0119796a9b87759c9bc44325f805198"
     APPLE2_PALETTE_HASH = "ebc753e69fda9d369c766554b840991fa080b6c9e5b1c6206706136fb78fd6fb"
+    BBC_MICRO_PALETTE_HASH = "c1734beaa8616de42a3c040db38e94c49ed17ad99e84d91cdb8fb13ef25d5ab6"
     CGA4_PALETTE_HASH = "87667dd713c656e12a67ea04fbecef0d2c0509d9b8188e2e67063c3410ae69f0"
     CGA16_PALETTE_HASH = "b4515d2110bda9f6ad3e973bc5703b4d9bc771aa1e76b885d35b6f279daa04a1"
+    COLECOVISION_PALETTE_HASH = "962dc89b9ba25bf2b514dbc34af9058467c1c0b4d92c396474f15dfb439fa6c2"
     COMMODORE64_PALETTE_HASH = "bd37a4104014f5188aa25833a5e3c3bcd6690e63db338e2447acd4f9fb9f26cb"
     CRAYOLA_PALETTE_HASH = "c08c16ceb1cc2119916c581ddf63538924e7fb1bca60cc1c1e833c1f050c65d3"
     EGA16_PALETTE_HASH = "b4515d2110bda9f6ad3e973bc5703b4d9bc771aa1e76b885d35b6f279daa04a1"
     EGA64_PALETTE_HASH = "a39d71654a288743cc3d90a17a214f2360fabd38725e49f8b8111143a482d06c"
-    GAMEBOY_PALETTE_HASH = "09274f3d1b0a653ed0456168de6a14d4762c42cc060af71ee77d5753c41b2f65"
-    GAMEBOY_COLOR_PALETTE_HASH = "ce89b327971f175d8788e5aa4ff586a62884fa0c9e3d727101a5a1403fa182c2"
-    GAMEBOY_DMG_PALETTE_HASH = "e1f36b4ad75d0e5c9e7dc3b85e9d8cae8db481a7dc092bd71de7bf90a7bf475a"
-    GAMEBOY_GBL_PALETTE_HASH = "875e1080a794ce416de08b62c8a5ba037d2d749021eddf574adbf8e9bf722222"
-    GAMEBOY_MGB_PALETTE_HASH = "0b3449bfe3123b6c93dfbd36d541cb71dfb213e6f9051511bd156a7053455994"
+    GAMEBOY_PALETTE_HASH = "df9640c261cc37c7bad74fb49da247b6f4c9c919b399bb4f48b384ee8ded860a"
+    GAMEBOY_DMG_PALETTE_HASH = "ef53382931b7a3ad6f39d110e076869825d030c260882f3ddba48c389878aae0"
+    GAMEBOY_LIGHT_PALETTE_HASH = "563f4b26839122ea523c752c1e3728a2797c53c9ccc948af3945ee042300eb61"
+    GAMEBOY_POCKET_PALETTE_HASH = "10a8ef9fe6143cf9f8745bd907dd796a916a10b20e1abfefceee49537b66a65e"
+    INTELLIVISION_PALETTE_HASH = "9ffb66f9ce1a3e9f5b4eefd02042bebc3cb8060eba76d5fc33c86e05f7a6cf57"
     MACINTOSH_PALETTE_HASH = "28804cc88a94a196dd760ade89df387c03ff10740078c52ecce414c0465c9452"
+    MSX1_PALETTE_HASH = "962dc89b9ba25bf2b514dbc34af9058467c1c0b4d92c396474f15dfb439fa6c2"
     NES_PALETTE_HASH = "7526fd4e35bae0cba4ea20b00583312cc9f9ef85b496a067bab6f90287f67205"
     PICO8_PALETTE_HASH = "7c2319a44b706f6a4148e832140ac8c629aae411418fe3d6d7f842c4b525b76f"
+    SG_1000_PALETTE_HASH = "962dc89b9ba25bf2b514dbc34af9058467c1c0b4d92c396474f15dfb439fa6c2"
     SMS_PALETTE_HASH = "0b7e3c461cce23c2ae5dc2ec576209ab2c17ae7fe6b5f5c3e92823f15350443f"
     TANDY16_PALETTE_HASH = "c72ace4358704445ca982400f11556d99989cf19ecc3f7d6f271b0e2076ed6f4"
+    TI_99_4A_PALETTE_HASH = "962dc89b9ba25bf2b514dbc34af9058467c1c0b4d92c396474f15dfb439fa6c2"
+    TIC80_PALETTE_HASH = "845d13b67b1d9648047961b23e188922d84304736a987813ad3c1e2df786360b"
     VGA_PALETTE_HASH = "cf597b1b7ab37eda0f977ea5fe353f3a95b07fa3aa5b8db913624128de1bfc85"
+    VIC_20_PALETTE_HASH = "17e13dfdad1155d1749fa949ce73ac7d7a8f5c60ae9e21adbedcf118e4c2662d"
     VIRTUALBOY_PALETTE_HASH = "a35450f1f912b9e8c88fafd5d0349ebaf203e9d093817aa22bbce2c19d549c50"
     WEB_PALETTE_HASH = "aaaf11e7b129b6325476f70534d8bc39a2a87adf3dce5bbcae18c89311737983"
+    ZX_SPECTRUM_PALETTE_HASH = "38fa8a0f712586e20977b3c3226b286f68df2826b6acebcf80d6afd70ba091a8"
     
     # User data files (optional, not verified) - now in user/ subdirectory
     USER_COLORS_JSON_FILENAME = "user/user-colors.json"
@@ -315,26 +326,35 @@ class ColorConstants:
         # Verify palette files
         palettes_dir = data_dir / "palettes"
         palette_checks = [
+            ("amstrad-cpc.json", cls.AMSTRAD_CPC_PALETTE_HASH),
             ("apple2.json", cls.APPLE2_PALETTE_HASH),
+            ("bbc-micro.json", cls.BBC_MICRO_PALETTE_HASH),
             ("cga4.json", cls.CGA4_PALETTE_HASH),
             ("cga16.json", cls.CGA16_PALETTE_HASH),
+            ("colecovision.json", cls.COLECOVISION_PALETTE_HASH),
             ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
             ("crayola.json", cls.CRAYOLA_PALETTE_HASH),
             ("ega16.json", cls.EGA16_PALETTE_HASH),
             ("ega64.json", cls.EGA64_PALETTE_HASH),
             ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),
-            ("gameboy-color.json", cls.GAMEBOY_COLOR_PALETTE_HASH),
-            ("gameboy_dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
-            ("gameboy_gbl.json", cls.GAMEBOY_GBL_PALETTE_HASH),
-            ("gameboy_mgb.json", cls.GAMEBOY_MGB_PALETTE_HASH),
+            ("gameboy-dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
+            ("gameboy-light.json", cls.GAMEBOY_LIGHT_PALETTE_HASH),
+            ("gameboy-pocket.json", cls.GAMEBOY_POCKET_PALETTE_HASH),
+            ("intellivision.json", cls.INTELLIVISION_PALETTE_HASH),
             ("macintosh.json", cls.MACINTOSH_PALETTE_HASH),
+            ("msx1.json", cls.MSX1_PALETTE_HASH),
             ("nes.json", cls.NES_PALETTE_HASH),
             ("pico8.json", cls.PICO8_PALETTE_HASH),
+            ("sg-1000.json", cls.SG_1000_PALETTE_HASH),
             ("sms.json", cls.SMS_PALETTE_HASH),
             ("tandy16.json", cls.TANDY16_PALETTE_HASH),
+            ("ti-99-4a.json", cls.TI_99_4A_PALETTE_HASH),
+            ("tic80.json", cls.TIC80_PALETTE_HASH),
             ("vga.json", cls.VGA_PALETTE_HASH),
+            ("vic-20.json", cls.VIC_20_PALETTE_HASH),
             ("virtualboy.json", cls.VIRTUALBOY_PALETTE_HASH),
             ("web.json", cls.WEB_PALETTE_HASH),
+            ("zx-spectrum.json", cls.ZX_SPECTRUM_PALETTE_HASH),
         ]
         
         for palette_file, expected_hash in palette_checks:

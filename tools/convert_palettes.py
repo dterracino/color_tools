@@ -116,7 +116,7 @@ PALETTE_METADATA = {
         "simultaneous_colors": 4,
         "tags": ["vintage", "nintendo", "gameboy", "handheld", "monochrome"]
     },
-    "gameboy_dmg": {
+    "gameboy-dmg": {
         "name": "Game Boy DMG-01",
         "description": "Game Boy DMG-01 original hardware palette variations",
         "native_resolution": [160, 144],
@@ -129,7 +129,7 @@ PALETTE_METADATA = {
         "simultaneous_colors": 4,
         "tags": ["vintage", "nintendo", "gameboy", "dmg", "handheld"]
     },
-    "gameboy_gbl": {
+    "gameboy-light": {
         "name": "Game Boy Light",
         "description": "Game Boy Light backlit screen palette (Japan exclusive)",
         "native_resolution": [160, 144],
@@ -142,7 +142,7 @@ PALETTE_METADATA = {
         "simultaneous_colors": 4,
         "tags": ["vintage", "nintendo", "gameboy", "light", "handheld", "backlit"]
     },
-    "gameboy_mgb": {
+    "gameboy-pocket": {
         "name": "Game Boy Pocket",
         "description": "Game Boy Pocket (MGB-001) palette variations",
         "native_resolution": [160, 144],

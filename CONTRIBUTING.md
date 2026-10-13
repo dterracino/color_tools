@@ -157,24 +157,86 @@ Use clear, descriptive commit messages. A brief summary line is sufficient for m
 
 ## Adding to the Filament Database
 
-The filament database (`color_tools/data/filaments.json`) uses a specific format:
+Filament data contributions are especially welcome. You can report a missing
+filament, correct an existing color, or supply a missing or corrected
+transmission distance (TD).
+
+### No-code submissions
+
+Use the
+[Filament Data Submission form](https://github.com/dterracino/color_tools/issues/new?template=filament_data.yml).
+You do not need to fork the repository, edit JSON, generate an ID, or update a
+hash. A maintainer will review the information and handle the protected data
+file. Corrections are just as valuable as new records.
+
+Please provide as much of the following as you know:
+
+| Field | What to provide |
+| --- | --- |
+| Maker | The manufacturer or brand shown for the filament |
+| Type | The material or formulation, such as `PLA`, `PLA+`, or `ASA-CF` |
+| Finish | An appearance such as `Matte`, `Silk`, or `Rock`, if applicable |
+| Color | The manufacturer's color or product name |
+| Hex | An explicit color value, or ordered values for a multi-color filament |
+| TD | A published, community-provided, or measured value, if available |
+| Reference | A product page, color chart, measurement photo, or other useful context |
+
+Do not guess a hex or TD value merely to fill a field. For multi-color
+filaments, preserve the source order and submit values as
+`#RRGGBB-#RRGGBB` (with additional components when applicable). Product lines
+that describe a material or formulation belong in **Type**; appearance belongs
+in **Finish**.
+
+### What transmission distance means
+
+Transmission distance describes how readily light passes through a filament,
+expressed as a distance in millimeters. A lower TD represents a more opaque
+filament; a higher TD represents a filament that transmits light through a
+greater thickness. TD is not a percentage and is not normalized to 0.0–1.0.
+
+HueForge uses a filament's color and TD to model how its appearance changes as
+printed layers accumulate over other colors. An inaccurate TD can make a
+preview change color at the wrong thickness, while an accurate value helps
+HueForge choose layer transitions that better reproduce the intended image.
+
+The library keeps TD values when they are available, whether they originated
+with a manufacturer, the community, or a direct measurement. It does not store
+per-record provenance or certify a TD value's origin. References submitted in
+an issue help maintainers review the contribution; they are not added to the
+filament record as provenance metadata.
+
+### Pull requests for filament data
+
+Code contributors may update `color_tools/data/filaments.json` directly. The
+database uses this format:
 
 ```json
 {
+  "id": "manufacturer-pla-matte-color-name",
   "maker": "Manufacturer Name",
   "type": "PLA",
   "finish": "Matte",
   "color": "Color Name",
   "hex": "#RRGGBB",
-  "td_value": 0.5
+  "td_value": 0.5,
+  "other_names": null
 }
 ```
 
-After modifying `filaments.json`, you **must** regenerate the data file hashes.
-See [Hash Integrity](#hash-integrity) below.
+For a multi-color filament, put every ordered component in `hex`, for example
+`"#FF0000-#0000FF"`. Use `null` when finish, TD, or alternate names are not
+known. Preserve the existing `id` when correcting a record; IDs are stable
+references and must not change with display text or color corrections.
 
-For guidance on sourcing accurate hex values, see the existing entries as a reference —
-values should match the manufacturer's published color as closely as possible.
+After modifying `filaments.json`, regenerate the protected data hashes as
+described in [Hash Integrity](#hash-integrity), run the database and full test
+suites, and update `CHANGELOG.md`.
+
+For large manufacturer imports, keep extraction, review, normalization, and
+application separate. Importers must default to a dry run and require an
+explicit option before modifying the database. They should report additions,
+corrections, unchanged records, and conflicts, and a second run must be
+idempotent.
 
 ## Hash Integrity
 

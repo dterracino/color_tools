@@ -43,7 +43,9 @@ A comprehensive Python library for color science operations, color space convers
   - Unique semantic IDs for all filaments (e.g., "bambu-lab-pla-silk-red")
   - Alternative name support for regional variations and rebranding
   - Maker synonym support for flexible filament searches
-  - **Retro/Classic Palettes**: CGA, EGA, VGA, and Web-safe color palettes
+  - **Retro/Classic Palettes**: 29 presentation-style built-in palettes
+    including Amstrad CPC, BBC Micro, CGA, EGA, Game Boy, Intellivision,
+    PICO-8, TIC-80, VIC-20, and ZX Spectrum
 - **Image Transformations** *(with [image] extra)*:
   - **Color Vision Deficiency (CVD)**: Simulate and correct for colorblindness (protanopia, deuteranopia, tritanopia)
   - **Palette Quantization**: Convert images to retro palettes (CGA, EGA, VGA, Game Boy) with dithering support
@@ -388,7 +390,34 @@ The library includes extensive color databases:
 
 - **CSS Colors**: 147 named colors with full color space representations
 - **3D Printing Filaments**: 1,545 filaments from major manufacturers
-- **Retro Palettes**: 20 official palettes including CGA, EGA, VGA, Game Boy, Commodore 64, PICO-8, and more
+- **Retro Palettes**: 29 built-in palettes including Amstrad CPC, BBC Micro,
+  CGA, EGA, VGA, Game Boy, Commodore 64, Intellivision, PICO-8, TIC-80,
+  VIC-20, ZX Spectrum, and more
+
+Built-in system and retro palettes are presentation-style sRGB
+representations intended to evoke how a system would display an image on a
+modern screen. They are not claims of electrically or historically exact RGB
+output. Values may differ from published hardware specifications, emulator
+tables, or captures because analog video, region, hardware revision, signal
+path, display, gamma, and reproduction goals can all affect the visible result.
+
+### Help improve the filament database
+
+Have a filament that is missing, has the wrong color, or needs a transmission
+distance (TD) value? **[Submit a filament update](https://github.com/dterracino/color_tools/issues/new?template=filament_data.yml)**—no code, Git, or JSON editing is required.
+
+TD describes how readily light passes through a printed filament, expressed as
+a distance in millimeters. Lower values describe more opaque filaments; higher
+values describe filaments that transmit light through a greater thickness.
+HueForge uses TD with color and layer thickness to predict how stacked filament
+layers blend, so an accurate TD can materially improve a HueForge preview and
+the resulting print. TD is not a percentage or a normalized 0.0–1.0 value.
+
+New filaments, corrected colors, and measured or published TD values are all
+welcome. The database stores TD values when available without claiming that
+they are manufacturer-certified or tracking per-record provenance. See
+[Contributing filament data](https://github.com/dterracino/color_tools/blob/main/CONTRIBUTING.md#adding-to-the-filament-database)
+for the requested details and the code-contribution path.
 
 Extend with your own data using [User Data Files](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#user-data-files-optional-extensions).
 
@@ -556,7 +585,9 @@ See [Troubleshooting](https://github.com/dterracino/color_tools/blob/main/docs/T
 
 **CRITICAL**: Color science constants should **NEVER** be modified. They represent fundamental values from international standards.
 
-See [FAQ](https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md#contributing) for contribution guidelines.
+See [CONTRIBUTING.md](https://github.com/dterracino/color_tools/blob/main/CONTRIBUTING.md)
+for contribution guidelines. Filament additions and corrections can be
+[submitted without writing code](https://github.com/dterracino/color_tools/issues/new?template=filament_data.yml).
 
 ## 📄 License
 

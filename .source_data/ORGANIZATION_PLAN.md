@@ -68,7 +68,7 @@ These files are provenance records only — no action needed.
 | `apple-ii-retro-palette.json` | `data/palettes/apple2.json` |
 | `crayola_crayon_colors.json` | `data/palettes/crayola.json` |
 | `ega-palette.txt` | `data/palettes/ega16.json`, `ega64.json` |
-| `gameboy-color-retro-palette.json` | `data/palettes/gameboy-color.json` |
+| `gameboy-color-retro-palette.json` | Retired; unattributed 14-color source retained for audit only |
 | `macintosh-retro-palette.json` | `data/palettes/macintosh.json` |
 | `sega-master-system-retro-palette.json` | `data/palettes/sms.json` |
 | `tandy16-retro-palette.json` | `data/palettes/tandy16.json` |

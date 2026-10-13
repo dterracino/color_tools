@@ -86,7 +86,9 @@ Array of filament objects with manufacturer info and color data:
   - Single color: `"#RRGGBB"`
   - Dual color (silk/mixed): `"#RRGGBB-#RRGGBB"` (dash-separated)
   
-- **td_value** (number or null): Translucency/transparency value (manufacturer-specific scale)
+- **td_value** (number or null): Transmission distance in millimeters when
+  known. It is not a percentage or a normalized value; see
+  [Contributing filament data](../CONTRIBUTING.md#adding-to-the-filament-database).
   
 - **other_names** (array of strings or null, optional): Alternative names for this filament
   - Regional variations: `["Premium Red (EU)", "Classic Red (US)"]`
@@ -382,18 +384,48 @@ print(f"Nearest color: {nearest.name} ({nearest.hex})")
 
 ### Built-in Palettes
 
+Built-in system and retro palettes are presentation-style sRGB
+representations for simulating how an image would look when displayed by a
+given system. They are selected for useful, recognizable image conversion on
+modern displays rather than as claims of electrically exact hardware output.
+Values can therefore differ from published specifications, emulator tables, or
+captured hardware because video standard, hardware revision, analog signal
+path, CRT behavior, gamma, and reproduction choices all affect the result.
+
+General-purpose collections such as `crayola` and `web` are ordinary color
+collections rather than system-display simulations.
+
 | Palette | Colors | Description |
 | --------- | -------- | ------------- |
+| `amstrad-cpc` | 27 | Amstrad CPC 3-level RGB hardware palette |
+| `apple2` | 6 | Apple II display palette |
+| `bbc-micro` | 8 | BBC Micro static physical colors |
 | `cga4` | 4 | CGA 4-color (Palette 1, high intensity) |
 | `cga16` | 16 | CGA 16-color (full RGBI palette) |
+| `colecovision` | 15 | Gamma-corrected TMS9918 CRT-style palette |
+| `commodore64` | 16 | Commodore 64 palette |
+| `crayola` | 120 | Crayola crayon color collection |
 | `ega16` | 16 | EGA 16-color (standard/default palette) |
 | `ega64` | 64 | EGA 64-color (full 6-bit RGB palette) |
+| `gameboy` | 4 | GB Studio monochrome authoring palette |
+| `gameboy-dmg` | 4 | SameBoy DMG-01 screen approximation |
+| `gameboy-light` | 4 | SameBoy backlit Game Boy Light approximation |
+| `gameboy-pocket` | 4 | Neutral four-level Game Boy Pocket grayscale |
+| `intellivision` | 16 | Vivid CRT-style Intellivision STIC palette |
+| `macintosh` | 8 | Classic Macintosh system palette |
+| `msx1` | 15 | Gamma-corrected TMS9918 CRT-style palette |
+| `nes` | 54 | NES display palette |
+| `pico8` | 16 | PICO-8 default fantasy-console palette |
+| `sms` | 64 | Sega Master System 6-bit RGB palette |
+| `sg-1000` | 15 | Gamma-corrected TMS9918 CRT-style palette |
+| `tandy16` | 16 | Tandy/PCjr 16-color palette |
+| `ti-99-4a` | 15 | Gamma-corrected TMS9918 CRT-style palette |
+| `tic80` | 16 | TIC-80 default SWEETIE-16 palette |
 | `vga` | 256 | VGA 256-color (Mode 13h palette) |
+| `vic-20` | 16 | VIC-I CRT-style display palette |
+| `virtualboy` | 4 | Virtual Boy four-level red palette |
 | `web` | 216 | Web-safe 216-color palette (6×6×6 RGB cube) |
-| `gameboy_dmg` | 4 | Original Game Boy (DMG) green-tinted palette |
-| `gameboy_gbl` | 4 | Game Boy Light palette |
-| `gameboy_mgb` | 4 | Game Boy Pocket palette |
-| `commodore64` | 16 | Commodore 64 palette |
+| `zx-spectrum` | 15 | ZX Spectrum normal/bright display approximation |
 
 ### Creating a User Palette
 

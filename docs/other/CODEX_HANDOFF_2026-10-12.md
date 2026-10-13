@@ -272,12 +272,32 @@ See the release plan and changelog for the current contracts and validation.
   and analyzer under `tooling/` before deciding what to retain. The release plan
   records the expected snapshot, review, safety, reconciliation, and idempotence
   boundaries. This task is not a 7.0.0 release gate.
-- After those imports are complete, add a prominent README invitation for
-  filament-data contributions and an easy no-code submission path. Include a
-  plain-language description of transmission distance (TD), why it matters for
-  HueForge projects, and that TD is not a normalized percentage. Link to the
-  detailed filament contribution guidance rather than requiring contributors
-  to edit protected data files directly.
+- Filament contribution guidance is complete. The README now prominently
+  invites missing/corrected filament and TD submissions, the contributor guide
+  explains TD and both no-code/code paths, and a dedicated GitHub issue form
+  collects database identity, ordered color values, optional TD, and review
+  context without requiring contributors to edit protected data files.
+- Four compact retro palettes are now included as protected built-in data:
+  Amstrad CPC (27 colors), BBC Micro (eight static physical colors), TIC-80
+  SWEETIE-16, and ZX Spectrum (15 unique normal/bright colors). Their source
+  tables are explicit, deterministically generated, independently regression
+  tested, registered for integrity verification, and documented. The Spectrum
+  representation uses the conventional D7/FF display approximation. TMS9918 and
+  Intellivision remain user decisions and were not added.
+- The Game Boy palettes have been reduced to four traceable representations:
+  the established GB Studio authoring colors under `gameboy`, SameBoy-derived
+  `gameboy-dmg` and `gameboy-light`, and a neutral `gameboy-pocket` grayscale.
+  The unattributed underscore-named files and unsupported 14-color
+  `gameboy-color` collection were retired. See
+  `docs/other/GAME_BOY_PALETTE_SOURCES.md` for sources and representation
+  boundaries. Integrity hashes and final palette counts are intentionally
+  pending until the remaining palette additions are complete.
+- Four separately discoverable system palettes now share the approved
+  gamma-corrected TMS9918 CRT-style table: `ti-99-4a`, `colecovision`,
+  `sg-1000`, and `msx1`. Hardware transparency code 0 is omitted, leaving 15
+  visible colors in hardware order. The generator owns one shared source table;
+  `docs/other/TMS9918_PALETTE_SOURCES.md` records its provenance and intended
+  image-stylization boundary. MSX2 remains separate and pending.
 - Final hashes, migration/release documentation, wheel consumers, integrity
   checks, optional-feature validation and release-diff review remain release gates.
 - Remote GitHub CI confirmation remains pending. No remote CI pass was claimed.

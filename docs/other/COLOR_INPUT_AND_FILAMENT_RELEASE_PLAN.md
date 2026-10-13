@@ -553,13 +553,15 @@ test suite.
   deterministic, idempotent imports for Bambu, IEMAI, and Overture.
 - [x] Regenerate protected hashes after the Bambu, IEMAI, and Overture data
   changes.
-- [ ] After all filament imports are complete, add a prominent README callout
+- [x] After all filament imports are complete, add a prominent README callout
   for filament-data contributions, especially missing or corrected TD values.
   Provide a no-code submission path, link the detailed contributor guidance,
   and explain in plain language what transmission distance (TD) represents and
   why accurate TD values matter when creating HueForge projects. Make clear
   that TD is not a normalized percentage and preserve the library's policy of
   storing available values without provenance metadata or certification claims.
+  Implemented with a dedicated GitHub issue form, expanded contributor guide,
+  and README invitation.
 - [ ] Update API/CLI examples, configuration instructions, migration notes,
   optional-dependency guidance, and changelog.
 - [ ] Run focused tests, full regression suites, strict repository typing,

@@ -30,7 +30,7 @@ def compact_palette(filepath: Path) -> None:
 
 def main():
     palettes_dir = Path('color_tools/data/palettes')
-    new_palettes = ['apple2.json', 'macintosh.json', 'gameboy-color.json', 'tandy16.json']
+    new_palettes = ['apple2.json', 'macintosh.json', 'tandy16.json']
     
     for palette_file in new_palettes:
         compact_palette(palettes_dir / palette_file)

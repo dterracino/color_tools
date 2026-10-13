@@ -411,6 +411,7 @@ class TestVerificationFlags(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0)
         self.assertIn("integrity verified", result.stdout.lower())
+        self.assertIn("all registered palettes", result.stdout.lower())
     
     def test_verify_matrices(self) -> None:
         """--verify-matrices should check transformation matrices."""

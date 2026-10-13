@@ -281,7 +281,10 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
             for error in errors:
                 print(f"  {error}", file=sys.stderr)
             sys.exit(1)
-        print("✓ Data files integrity verified (colors.json, filaments.json, maker_synonyms.json, 20 palettes)")
+        print(
+            "✓ Data files integrity verified "
+            "(colors.json, filaments.json, maker_synonyms.json, all registered palettes)"
+        )
     
     # Verify user data files integrity if requested
     if args.verify_user_data:

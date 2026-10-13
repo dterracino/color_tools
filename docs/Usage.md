@@ -81,6 +81,9 @@ web = load_palette('web')       # Web-safe 216-color palette
 crayola = load_palette('crayola')  # 120 Crayola crayon colors
 pico8 = load_palette('pico8')   # PICO-8 fantasy console 16-color palette
 
+# System palettes are presentation-style modern-display representations,
+# not guarantees of hardware-exact RGB output.
+
 # Error handling - helpful messages if palette doesn't exist
 try:
     palette = load_palette('unknown')
@@ -245,7 +248,7 @@ family.
 #### Palettes
 
 - `Palette.load_default()` - Load CSS color database
-- `load_palette(name)` - Load retro/classic palette (use `color-tools color --palette list` to see all 20 available)
+- `load_palette(name)` - Load retro/classic palette (use `color-tools color --palette list` to see all 29 bundled palettes and any user palettes)
 - `FilamentPalette.load_default()` - Load filament database
 - `palette.nearest_color()` - Find nearest color match
 - `palette.find_by_name()` - Look up color by name
@@ -1206,6 +1209,12 @@ python -m color_tools image --file artwork.jpg --cvd-correct tritan --output cor
 
 #### Retro Palette Conversion
 
+System palette conversion is intended to simulate the recognizable
+presentation of an image on the selected platform. The stored sRGB values are
+not guaranteed to match a particular hardware revision, video standard,
+signal path, CRT, capture, published specification, or emulator palette
+exactly.
+
 ```bash
 # Convert to classic CGA 4-color palette
 python -m color_tools image --file photo.jpg --quantize-palette cga4
@@ -1238,7 +1247,7 @@ python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
 - `--dither`: Apply Floyd-Steinberg dithering for palette quantization
 - `--list-palettes`: List all available retro palettes with color counts
 
-**Available Palettes:** Use `color-tools color --palette list` or `color-tools image --list-palettes` to see all 20 core palettes (including apple2, cga4, cga16, commodore64, crayola, ega16, ega64, gameboy variants, macintosh, nes, pico8, sms, tandy16, vga, virtualboy, web) plus any custom user palettes
+**Available Palettes:** Use `color-tools color --palette list` or `color-tools image --list-palettes` to see all 29 bundled palettes plus any custom user palettes.
 
 User palettes belong in `data/user/palettes/` and must have filenames beginning with `user-` (for example, `user-mycustom.json`, used as `user-mycustom`). Each entry needs only `name` and `hex`; other color values are calculated when loaded. Files ending in `example.json` are ignored during discovery. Both palette-list commands work without the optional image dependencies. The global `--json DIR` option also applies to image palette listing and quantization.
 

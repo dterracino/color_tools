@@ -15,6 +15,39 @@ The scripts may have hardcoded paths, expect specific input formats, or modify d
 
 ## Current Scripts
 
+### `generate_additional_retro_palettes.py`
+
+**Purpose:** Deterministically generate the protected `amstrad-cpc`,
+`bbc-micro`, `colecovision`, `gameboy`, `gameboy-dmg`, `gameboy-light`,
+`gameboy-pocket`, `msx1`, `sg-1000`, `ti-99-4a`, `tic80`, and `zx-spectrum`
+built-in palette files using production color-space conversions.
+
+The source tables preserve the systems' documented index order. BBC Micro uses
+the eight static physical colors and omits its flashing logical pairs. Amstrad
+CPC maps its documented off/half/full RGB levels to 0/128/255. ZX Spectrum uses
+the conventional D7/FF sRGB display approximation and omits duplicate bright
+black. TIC-80 preserves the official SWEETIE-16 index order.
+
+The Game Boy tables and representation choices are documented separately in
+[Game Boy Palette Sources and Representation Decisions](../docs/other/GAME_BOY_PALETTE_SOURCES.md).
+The four system-named TMS9918 representations are documented in
+[TMS9918 System Palette Source and Representation](../docs/other/TMS9918_PALETTE_SOURCES.md).
+
+References:
+
+- [BBC Microcomputer System User Guide](https://www.retro-kit.co.uk/user/custom/Acorn/8bit/BBCMicro/manuals/BBCMicroUserGuide.pdf)
+- [ZX Spectrum BASIC Programming manual](https://www.professorinterativo.com.br/zx_spectrum/pdf/hardware_pdf/Basic_Programming.pdf)
+- [Amstrad CPC firmware color appendix](https://cpctech.cpcwiki.de/docs/manual/s968ap05.pdf)
+- [TIC-80 palette documentation](https://github.com/nesbox/TIC-80/wiki/Palette)
+
+```bash
+python tooling/generate_additional_retro_palettes.py
+```
+
+**Safe to re-run:** Yes. Regression tests require byte-for-byte deterministic
+output. Regenerate protected hashes if the source definitions intentionally
+change.
+
 ### `import_bambu_filaments.py`
 
 **Purpose:** Reconcile the approved Bambu Lab PDF color tables with the bundled

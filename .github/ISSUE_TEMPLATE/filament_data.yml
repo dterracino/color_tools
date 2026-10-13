@@ -1,0 +1,94 @@
+name: Filament Data Submission
+description: Submit a missing filament, color correction, or TD value without writing code
+title: "[Filament]: "
+labels: ["enhancement"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for helping improve the filament database! No code or JSON editing is required.
+
+        Please enter only values you have available. Do not guess a color or transmission distance (TD). TD is expressed in millimeters, not as a percentage or normalized value.
+
+  - type: dropdown
+    id: submission-type
+    attributes:
+      label: Submission type
+      description: What should be added or corrected?
+      options:
+        - New filament
+        - Existing filament color correction
+        - Missing or corrected TD value
+        - Multiple corrections for one filament
+    validations:
+      required: true
+
+  - type: input
+    id: maker
+    attributes:
+      label: Maker
+      description: Manufacturer or brand shown for the filament
+      placeholder: "e.g. Bambu Lab"
+    validations:
+      required: true
+
+  - type: input
+    id: material-type
+    attributes:
+      label: Filament type
+      description: Material or formulation, not an appearance
+      placeholder: "e.g. PLA, Super PLA+, ASA-CF"
+    validations:
+      required: true
+
+  - type: input
+    id: finish
+    attributes:
+      label: Finish
+      description: Optional appearance such as Matte, Silk, Rock, or Glow
+      placeholder: "Leave blank when no separate finish applies"
+
+  - type: input
+    id: color-name
+    attributes:
+      label: Color name
+      description: Manufacturer's color or product name
+      placeholder: "e.g. Jade White"
+    validations:
+      required: true
+
+  - type: input
+    id: hex-values
+    attributes:
+      label: Hex color value or values
+      description: "For multi-color filament, preserve source order using #RRGGBB-#RRGGBB"
+      placeholder: "e.g. #FFFFFF or #FF0000-#0000FF"
+
+  - type: input
+    id: td-value
+    attributes:
+      label: Transmission distance (TD)
+      description: Optional value in millimeters; leave blank when unknown
+      placeholder: "e.g. 2.5"
+
+  - type: input
+    id: reference
+    attributes:
+      label: Reference link
+      description: Optional product page, color chart, community listing, or measurement reference
+      placeholder: "https://..."
+
+  - type: textarea
+    id: details
+    attributes:
+      label: Additional details
+      description: Include measurement notes, screenshots, packaging text, alternate names, or correction context
+      placeholder: "Tell us how the color or TD was obtained, or what needs correcting."
+
+  - type: checkboxes
+    id: confirmation
+    attributes:
+      label: Confirmation
+      options:
+        - label: I have not intentionally guessed any submitted color or TD value.
+          required: true

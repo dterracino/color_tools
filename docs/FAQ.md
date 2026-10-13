@@ -367,6 +367,13 @@ python -m color_tools image --file photo.jpg --quantize-palette gameboy --dither
 
 ### What palettes are available for image quantization?
 
+Built-in system and retro palettes are presentation-style sRGB
+representations. Their purpose is to produce a useful visual simulation of how
+the selected system would present an image, not to guarantee electrically
+exact RGB values for every hardware revision, region, analog signal path,
+display, capture, specification, or emulator. Differences from other published
+tables can therefore be intentional.
+
 **To see all available palettes (core + user) with color counts:**
 
 ```bash
@@ -381,10 +388,14 @@ Both commands show the same information: palette names and the number of colors 
 
 **Core palettes include:**
 
-- Classic PC: `apple2`, `cga4`, `cga16`, `ega16`, `ega64`, `macintosh`, `tandy16`, `vga`
-- Game consoles: `commodore64`, `gameboy`, `gameboy-color`, `gameboy_dmg`, `gameboy_gbl`, `gameboy_mgb`, `nes`, `pico8`, `sms`, `virtualboy`
-- Web: `web` (216-color web-safe palette)
-- Other: `crayola` (120 classic Crayola colors)
+- Classic computers: `amstrad-cpc`, `apple2`, `bbc-micro`, `cga4`, `cga16`,
+  `commodore64`, `ega16`, `ega64`, `macintosh`, `msx1`, `tandy16`,
+  `ti-99-4a`, `vga`, `vic-20`, and `zx-spectrum`
+- Consoles and handhelds: `gameboy`, `gameboy-dmg`, `gameboy-light`,
+  `gameboy-pocket`, `colecovision`, `intellivision`, `nes`, `sg-1000`, `sms`,
+  and `virtualboy`
+- Fantasy consoles: `pico8` and `tic80`
+- General color collections: `crayola` and `web`
 
 ### Can I create custom retro palettes?
 

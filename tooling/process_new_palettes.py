@@ -128,16 +128,6 @@ def main():
     colors = process_hex_array('macintosh-retro-palette.json', 'macintosh', mac_names)
     save_palette('macintosh', colors)
     
-    # Game Boy Color - 14 colors
-    gbc_names = [
-        'dark_blue_green', 'medium_green', 'light_green', 'lightest_green',
-        'dark_purple', 'dark_pink', 'light_pink',
-        'dark_blue', 'medium_blue', 'light_blue',
-        'dark_brown', 'medium_brown', 'orange', 'yellow'
-    ]
-    colors = process_hex_array('gameboy-color-retro-palette.json', 'gameboy-color', gbc_names)
-    save_palette('gameboy-color', colors)
-    
     # Tandy 16
     tandy_colors = process_tandy16()
     save_palette('tandy16', tandy_colors)
@@ -146,7 +136,7 @@ def main():
     sega_colors = process_sega_master_system()
     save_palette('sega-master-system', sega_colors)
     
-    print(f"\n✨ All 5 palettes generated successfully!")
+    print(f"\n✨ All 4 palettes generated successfully!")
 
 
 if __name__ == '__main__':

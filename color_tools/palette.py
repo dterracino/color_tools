@@ -424,6 +424,11 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     only ``name`` and ``hex``; all other color-space values are calculated from
     the hex value when loaded. Files ending in ``example.json`` are excluded
     from palette discovery.
+
+    Built-in system palettes are presentation-style sRGB representations for
+    simulating how an image would look on the named platform. They are not
+    guarantees of electrically exact output from every hardware revision,
+    video standard, signal path, display, capture, specification, or emulator.
     
     Common built-in palettes include:
     - cga4: CGA 4-color palette (Palette 1, high intensity) - classic gaming!
@@ -432,7 +437,18 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     - ega64: EGA 64-color palette (full 6-bit RGB)
     - vga: VGA 256-color palette (Mode 13h)
     - web: Web-safe 216-color palette (6x6x6 RGB cube)
-    - gameboy: Game Boy 4-shade green palette
+    - gameboy: GB Studio 4-shade authoring palette
+    - gameboy-dmg: Original Game Boy screen approximation
+    - gameboy-light: Backlit Game Boy Light screen approximation
+    - gameboy-pocket: Neutral 4-shade Game Boy Pocket grayscale
+    - ti-99-4a: TI-99/4A CRT-style TMS9918 palette
+    - colecovision: ColecoVision CRT-style TMS9918 palette
+    - sg-1000: SG-1000 CRT-style TMS9918 palette
+    - msx1: MSX1 CRT-style TMS9918 palette
+    - bbc-micro: BBC Micro 8-color physical palette
+    - zx-spectrum: ZX Spectrum 15-color display approximation
+    - amstrad-cpc: Amstrad CPC 27-color hardware palette
+    - tic80: TIC-80 default SWEETIE-16 palette
     
     Args:
         name: Palette name (e.g., 'cga4', 'ega16', 'vga', 'web', or 'user-mycustom')

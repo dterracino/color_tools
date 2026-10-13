@@ -52,6 +52,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   all 1,545 bundled records across every supported multi-color mode, derived
   RGB/LAB/effective-hex values, public palette indexes, and dependency-free
   solid, block, and gradient PNG swatches.
+- **Filament data contribution workflow** — add a no-code GitHub submission
+  form plus README and contributor guidance for new filaments, corrections,
+  ordered multi-color values, and transmission-distance contributions. Explain
+  how TD affects HueForge layer blending and clarify that TD is measured in
+  millimeters rather than as a percentage or normalized value.
+- **Four compact retro palettes** — add protected built-in palettes for the
+  27-color Amstrad CPC, eight static BBC Micro colors, TIC-80's 16-color
+  SWEETIE-16 default, and the ZX Spectrum's 15 unique normal/bright colors.
+  Document the Spectrum's conventional D7/FF display approximation and provide
+  a deterministic generator with independent source-table regression tests.
+- **Traceable Game Boy palette set** — replace the unattributed underscore-named
+  DMG, Pocket, and Light approximations with documented `gameboy-dmg`,
+  `gameboy-pocket`, and `gameboy-light` palettes. Retain `gameboy` explicitly as
+  the GB Studio authoring palette and remove the unsupported 14-color
+  `gameboy-color` collection.
+- **System-named TMS9918 palettes** — add separate 15-color `ti-99-4a`,
+  `colecovision`, `sg-1000`, and `msx1` palettes generated from one shared,
+  gamma-corrected CRT-style source table. Omit hardware transparency code 0 and
+  document the representation as image stylization rather than exact output.
 
 ### Changed
 
