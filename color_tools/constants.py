@@ -284,6 +284,46 @@ class ColorConstants:
         actual_hash = hashlib.sha256(content).hexdigest()
 
         return actual_hash == expected_hash
+
+    @classmethod
+    def _registered_palette_hashes(cls) -> tuple[tuple[str, str], ...]:
+        """Return registered system palette filenames and expected hashes."""
+        return (
+            ("amstrad-cpc.json", cls.AMSTRAD_CPC_PALETTE_HASH),
+            ("apple2.json", cls.APPLE2_PALETTE_HASH),
+            ("bbc-micro.json", cls.BBC_MICRO_PALETTE_HASH),
+            ("cga4.json", cls.CGA4_PALETTE_HASH),
+            ("cga16.json", cls.CGA16_PALETTE_HASH),
+            ("colecovision.json", cls.COLECOVISION_PALETTE_HASH),
+            ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
+            ("crayola.json", cls.CRAYOLA_PALETTE_HASH),
+            ("ega16.json", cls.EGA16_PALETTE_HASH),
+            ("ega64.json", cls.EGA64_PALETTE_HASH),
+            ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),
+            ("gameboy-dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
+            ("gameboy-light.json", cls.GAMEBOY_LIGHT_PALETTE_HASH),
+            ("gameboy-pocket.json", cls.GAMEBOY_POCKET_PALETTE_HASH),
+            ("intellivision.json", cls.INTELLIVISION_PALETTE_HASH),
+            ("macintosh.json", cls.MACINTOSH_PALETTE_HASH),
+            ("msx1.json", cls.MSX1_PALETTE_HASH),
+            ("nes.json", cls.NES_PALETTE_HASH),
+            ("pico8.json", cls.PICO8_PALETTE_HASH),
+            ("sg-1000.json", cls.SG_1000_PALETTE_HASH),
+            ("sms.json", cls.SMS_PALETTE_HASH),
+            ("tandy16.json", cls.TANDY16_PALETTE_HASH),
+            ("ti-99-4a.json", cls.TI_99_4A_PALETTE_HASH),
+            ("tic80.json", cls.TIC80_PALETTE_HASH),
+            ("vga.json", cls.VGA_PALETTE_HASH),
+            ("vic-20.json", cls.VIC_20_PALETTE_HASH),
+            ("virtualboy.json", cls.VIRTUALBOY_PALETTE_HASH),
+            ("web.json", cls.WEB_PALETTE_HASH),
+            ("zx-spectrum.json", cls.ZX_SPECTRUM_PALETTE_HASH),
+        )
+
+    @classmethod
+    def registered_palette_count(cls) -> int:
+        """Return the number of system palettes registered for verification."""
+        return len(cls._registered_palette_hashes())
     
     @classmethod
     def verify_all_data_files(cls, data_dir: Path | None = None) -> tuple[bool, list[str]]:
@@ -325,39 +365,7 @@ class ColorConstants:
         
         # Verify palette files
         palettes_dir = data_dir / "palettes"
-        palette_checks = [
-            ("amstrad-cpc.json", cls.AMSTRAD_CPC_PALETTE_HASH),
-            ("apple2.json", cls.APPLE2_PALETTE_HASH),
-            ("bbc-micro.json", cls.BBC_MICRO_PALETTE_HASH),
-            ("cga4.json", cls.CGA4_PALETTE_HASH),
-            ("cga16.json", cls.CGA16_PALETTE_HASH),
-            ("colecovision.json", cls.COLECOVISION_PALETTE_HASH),
-            ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
-            ("crayola.json", cls.CRAYOLA_PALETTE_HASH),
-            ("ega16.json", cls.EGA16_PALETTE_HASH),
-            ("ega64.json", cls.EGA64_PALETTE_HASH),
-            ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),
-            ("gameboy-dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
-            ("gameboy-light.json", cls.GAMEBOY_LIGHT_PALETTE_HASH),
-            ("gameboy-pocket.json", cls.GAMEBOY_POCKET_PALETTE_HASH),
-            ("intellivision.json", cls.INTELLIVISION_PALETTE_HASH),
-            ("macintosh.json", cls.MACINTOSH_PALETTE_HASH),
-            ("msx1.json", cls.MSX1_PALETTE_HASH),
-            ("nes.json", cls.NES_PALETTE_HASH),
-            ("pico8.json", cls.PICO8_PALETTE_HASH),
-            ("sg-1000.json", cls.SG_1000_PALETTE_HASH),
-            ("sms.json", cls.SMS_PALETTE_HASH),
-            ("tandy16.json", cls.TANDY16_PALETTE_HASH),
-            ("ti-99-4a.json", cls.TI_99_4A_PALETTE_HASH),
-            ("tic80.json", cls.TIC80_PALETTE_HASH),
-            ("vga.json", cls.VGA_PALETTE_HASH),
-            ("vic-20.json", cls.VIC_20_PALETTE_HASH),
-            ("virtualboy.json", cls.VIRTUALBOY_PALETTE_HASH),
-            ("web.json", cls.WEB_PALETTE_HASH),
-            ("zx-spectrum.json", cls.ZX_SPECTRUM_PALETTE_HASH),
-        ]
-        
-        for palette_file, expected_hash in palette_checks:
+        for palette_file, expected_hash in cls._registered_palette_hashes():
             palette_path = palettes_dir / palette_file
             if not cls.verify_data_file(palette_path, expected_hash):
                 errors.append(f"{palette_file} integrity check FAILED: {palette_path}")
@@ -565,6 +573,15 @@ class ColorConstants:
                 is_valid, error_msg = cls.verify_user_data_file(file_path)
                 if not is_valid and error_msg:
                     errors.append(error_msg)
+
+        # User palette examples are templates, not active palettes.
+        from ._palette_utils import get_palette_files
+
+        user_palettes_dir = data_dir / "user" / "palettes"
+        for palette_path in get_palette_files(user_palettes_dir, "user-*.json"):
+            is_valid, error_msg = cls.verify_user_data_file(palette_path)
+            if not is_valid and error_msg:
+                errors.append(error_msg)
         
         return (len(errors) == 0, errors)
 

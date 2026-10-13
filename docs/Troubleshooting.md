@@ -162,13 +162,15 @@ python -m color_tools --verify-all
 
 ### User Data Files
 
-User data files are **optionally** verified - you can generate `.sha256` hash files for integrity checking:
+User data files and active `user-*.json` palettes are **optionally** verified.
+Copyable `*.example.json` files are excluded. You can generate `.sha256` hash
+files for integrity checking:
 
 ```bash
-# Generate .sha256 files for all user data
+# Generate .sha256 files for user data and user palettes
 color-tools --generate-user-hashes
 
-# Verify user data integrity
+# Verify user-file integrity
 color-tools --verify-user-data
 ```
 

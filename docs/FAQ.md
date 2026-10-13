@@ -314,17 +314,19 @@ The library only loads files in the exact expected locations, so renaming effect
 Generate hash files for integrity checking:
 
 ```bash
-# Generate .sha256 files for all user data
+# Generate .sha256 files for user data and user palettes
 color-tools --generate-user-hashes
 
-# Verify user data integrity
+# Verify user-file integrity
 color-tools --verify-user-data
 
 # Verify everything (core + user data)
 color-tools --verify-all
 ```
 
-Hash files (`.sha256`) are created alongside your data files and automatically checked during verification.
+Hash files (`.sha256`) are created alongside user data files and active
+`user-*.json` palettes, then checked during verification. Copyable
+`*.example.json` files are excluded.
 
 ---
 

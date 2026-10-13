@@ -116,12 +116,40 @@ def show_override_report(json_dir: str | None = None) -> None:
         logger.removeHandler(handler)
 
 
+def _user_data_files(data_dir: Path) -> list[tuple[Path, str]]:
+    """Return supported user data paths with display labels."""
+    return [
+        (data_dir / ColorConstants.USER_COLORS_JSON_FILENAME, "colors"),
+        (data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME, "filaments"),
+        (data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME, "synonyms"),
+    ]
+
+
+def _user_palette_files(data_dir: Path) -> list[Path]:
+    """Return active user palette files, excluding copyable examples."""
+    return get_palette_files(data_dir / "user" / "palettes", "user-*.json")
+
+
+def _verified_user_file_counts(data_dir: Path) -> tuple[int, int]:
+    """Count user data and palette files that have integrity hashes."""
+    user_data_count = sum(
+        path.exists() and path.with_suffix(path.suffix + ".sha256").exists()
+        for path, _ in _user_data_files(data_dir)
+    )
+    user_palette_count = sum(
+        path.with_suffix(path.suffix + ".sha256").exists()
+        for path in _user_palette_files(data_dir)
+    )
+    return user_data_count, user_palette_count
+
+
 def generate_user_hashes(json_dir: str | None = None) -> None:
     """
-    Generate .sha256 files for all user data files and exit.
+    Generate .sha256 files for all active user files and exit.
     
     Creates hash files for user/user-colors.json, user/user-filaments.json, and 
-    user/user-synonyms.json if they exist.
+    user/user-synonyms.json if they exist, plus discoverable user palettes.
+    Copyable example files are excluded.
     
     Args:
         json_dir: Optional directory containing data files. If None, uses package default.
@@ -136,30 +164,21 @@ def generate_user_hashes(json_dir: str | None = None) -> None:
             print(f"Error: --json must be a directory: {data_dir}", file=sys.stderr)
             sys.exit(1)
     else:
-        data_dir = Path(__file__).parent / "data"
+        data_dir = Path(__file__).parent.parent / "data"
     
     user_dir = data_dir / "user"
     
     if not user_dir.exists():
-        print(f"No user data directory found at: {user_dir}")
-        print("Create user data files first, then run this command to generate hashes.")
+        print(f"No user directory found at: {user_dir}")
+        print("Create user data files or user palettes, then run this command again.")
         sys.exit(0)
     
-    print("Generating SHA-256 hash files for user data...")
+    print("Generating SHA-256 hash files for user files...")
     print("=" * 50)
-    
-    # Files to check for hash generation
-    user_files = [
-        (ColorConstants.USER_COLORS_JSON_FILENAME, "colors"),
-        (ColorConstants.USER_FILAMENTS_JSON_FILENAME, "filaments"),
-        (ColorConstants.USER_SYNONYMS_JSON_FILENAME, "synonyms")
-    ]
     
     generated_count = 0
     
-    for filename, display_name in user_files:
-        file_path = data_dir / filename
-        
+    for file_path, display_name in _user_data_files(data_dir):
         if file_path.exists():
             try:
                 hash_file = ColorConstants.save_user_data_hash(file_path)
@@ -172,13 +191,24 @@ def generate_user_hashes(json_dir: str | None = None) -> None:
                 print(f"✗ Failed to generate hash for {file_path.name}: {e}", file=sys.stderr)
         else:
             print(f"  Skipped {display_name}: {file_path.name} not found")
+
+    for file_path in _user_palette_files(data_dir):
+        try:
+            hash_file = ColorConstants.save_user_data_hash(file_path)
+            hash_value = ColorConstants.generate_user_data_hash(file_path)
+            print(f"✓ Generated {hash_file.name}")
+            print(f"  File: {file_path.name}")
+            print(f"  Hash: {hash_value}")
+            generated_count += 1
+        except Exception as e:
+            print(f"✗ Failed to generate hash for {file_path.name}: {e}", file=sys.stderr)
     
     if generated_count > 0:
         print(f"\nGenerated {generated_count} hash file(s) successfully.")
         print("\nTo verify integrity later, use: --verify-user-data")
     else:
-        print("\nNo user data files found to generate hashes for.")
-        print("Create user data files (user/user-colors.json, etc.) first.")
+        print("\nNo user files found to generate hashes for.")
+        print("Create user data files or user palettes first.")
 
 
 def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[str, int]]:
@@ -283,7 +313,11 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
             sys.exit(1)
         print(
             "✓ Data files integrity verified "
-            "(colors.json, filaments.json, maker_synonyms.json, all registered palettes)"
+            "(colors.json, filaments.json, maker_synonyms.json)"
+        )
+        print(
+            "✓ System palette files integrity verified "
+            f"({ColorConstants.registered_palette_count()} registered palettes)"
         )
     
     # Verify user data files integrity if requested
@@ -298,14 +332,17 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
                 print(f"  {error}", file=sys.stderr)
             sys.exit(1)
         
-        # Count files checked
-        user_dir = (data_dir or (Path(__file__).parent.parent / "data")) / "user"
-        if user_dir.exists():
-            hash_files = list(user_dir.glob("*.sha256"))
-            if hash_files:
-                print(f"✓ User data files integrity verified ({len(hash_files)} files checked)")
-            else:
-                print("✓ No user data hash files found to verify")
+        resolved_data_dir = data_dir or (Path(__file__).parent.parent / "data")
+        user_data_count, user_palette_count = _verified_user_file_counts(
+            resolved_data_dir
+        )
+        data_label = "user data file" if user_data_count == 1 else "user data files"
+        palette_label = "user palette" if user_palette_count == 1 else "user palettes"
+        print(
+            "✓ User files integrity verified "
+            f"({user_data_count} {data_label}, "
+            f"{user_palette_count} {palette_label})"
+        )
     
     # Handle --check-overrides flag
     if args.check_overrides:

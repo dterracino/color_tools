@@ -410,8 +410,15 @@ class TestVerificationFlags(unittest.TestCase):
             errors='replace'
         )
         self.assertEqual(result.returncode, 0)
-        self.assertIn("integrity verified", result.stdout.lower())
-        self.assertIn("all registered palettes", result.stdout.lower())
+        self.assertIn(
+            "Data files integrity verified "
+            "(colors.json, filaments.json, maker_synonyms.json)",
+            result.stdout,
+        )
+        self.assertIn(
+            "System palette files integrity verified (29 registered palettes)",
+            result.stdout,
+        )
     
     def test_verify_matrices(self) -> None:
         """--verify-matrices should check transformation matrices."""
@@ -438,6 +445,10 @@ class TestVerificationFlags(unittest.TestCase):
         )
         self.assertEqual(result.returncode, 0)
         self.assertIn("integrity verified", result.stdout.lower())
+        self.assertIn(
+            "User files integrity verified (3 user data files, 1 user palette)",
+            result.stdout,
+        )
     
     def test_verify_does_not_require_command(self) -> None:
         """Verification flags should work without a subcommand."""

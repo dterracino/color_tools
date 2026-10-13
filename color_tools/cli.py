@@ -147,12 +147,12 @@ Examples:
     parser.add_argument(
         "--verify-user-data",
         action="store_true",
-        help="Verify integrity of user data files (user/user-colors.json, user/user-filaments.json) against .sha256 files"
+        help="Verify user data files and user palettes against optional .sha256 files"
     )
     parser.add_argument(
         "--generate-user-hashes",
         action="store_true",
-        help="Generate .sha256 files for all user data files and exit"
+        help="Generate .sha256 files for user data files and user palettes, then exit"
     )
     parser.add_argument(
         "--check-overrides",

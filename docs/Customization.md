@@ -122,13 +122,13 @@ You can extend the core databases with your own custom data by creating optional
 
 User data is automatically loaded and merged with core data. User files are optional and ignored if they don't exist.
 
-**Integrity Verification:** User data verification is **optional** - you can generate `.sha256` hash files for your user data and verify them later:
+**Integrity Verification:** User-file verification is **optional** - you can generate `.sha256` hash files for your user data and active `user-*.json` palettes, then verify them later. Copyable `*.example.json` files are excluded:
 
 ```bash
-# Generate .sha256 files for all user data
+# Generate .sha256 files for user data and user palettes
 color-tools --generate-user-hashes
 
-# Verify user data integrity
+# Verify user-file integrity
 color-tools --verify-user-data
 
 # Verify everything (core + user data)

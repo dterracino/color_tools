@@ -22,6 +22,7 @@ from color_tools.cli_commands.reporting import (
     show_override_report,
     handle_verification_flags,
 )
+from color_tools.constants import ColorConstants
 
 
 class TestGetAvailablePalettes(unittest.TestCase):
@@ -175,7 +176,7 @@ class TestGenerateUserHashes(unittest.TestCase):
                 with self.assertRaises(SystemExit) as ctx:
                     generate_user_hashes(tmp)
         self.assertEqual(ctx.exception.code, 0)
-        self.assertIn('No user data directory', captured.getvalue())
+        self.assertIn('No user directory', captured.getvalue())
 
     def test_nonexistent_dir_exits_1(self):
         """Exits 1 when the specified directory does not exist."""
@@ -209,6 +210,39 @@ class TestGenerateUserHashes(unittest.TestCase):
             # Verify the .sha256 file was actually created
             sha_file = user_dir / 'user-colors.json.sha256'
             self.assertTrue(sha_file.exists())
+
+    def test_generates_and_verifies_user_palette_hash(self):
+        """Active user palettes are hashed and examples remain excluded."""
+        with tempfile.TemporaryDirectory() as tmp:
+            palettes_dir = Path(tmp) / "user" / "palettes"
+            palettes_dir.mkdir(parents=True)
+            palette_file = palettes_dir / "user-test.json"
+            palette_file.write_text(
+                '[{"name": "Test", "hex": "#123456"}]',
+                encoding="utf-8",
+            )
+            example_file = palettes_dir / "user-palette.example.json"
+            example_file.write_text("[]", encoding="utf-8")
+
+            with patch("sys.stdout", io.StringIO()):
+                generate_user_hashes(tmp)
+
+            self.assertTrue(
+                (palettes_dir / "user-test.json.sha256").exists()
+            )
+            self.assertFalse(
+                (palettes_dir / "user-palette.example.json.sha256").exists()
+            )
+            self.assertEqual(ColorConstants.verify_all_user_data(tmp), (True, []))
+
+            palette_file.write_text(
+                '[{"name": "Changed", "hex": "#654321"}]',
+                encoding="utf-8",
+            )
+            is_valid, errors = ColorConstants.verify_all_user_data(tmp)
+            self.assertFalse(is_valid)
+            self.assertEqual(len(errors), 1)
+            self.assertIn("Hash mismatch for user-test.json", errors[0])
 
 
 class TestShowOverrideReport(unittest.TestCase):
