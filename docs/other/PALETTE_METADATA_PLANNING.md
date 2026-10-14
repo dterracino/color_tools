@@ -1,6 +1,11 @@
 # Palette Metadata Format Planning
 
-**Status**: Planning / Ready to Implement
+**Status**: Historical planning document
+
+> The root-array format described as current below has been superseded by the
+> `schema_version: 1` indexed palette document. See
+> [FUTURE_PALETTE_SCHEMA.md](FUTURE_PALETTE_SCHEMA.md) for the approved envelope
+> and the remaining future display-profile design work.
 
 ## Overview
 

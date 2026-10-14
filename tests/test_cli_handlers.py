@@ -23,6 +23,8 @@ from pathlib import Path
 from typing import cast
 from unittest.mock import MagicMock, patch
 
+from tests.palette_document_fixtures import palette_document
+
 
 # ---------------------------------------------------------------------------
 # CVD
@@ -548,7 +550,10 @@ class TestHandleColorCommand(unittest.TestCase):
             palette_dir = Path(temp_dir) / "user" / "palettes"
             palette_dir.mkdir(parents=True)
             (palette_dir / "user-custom.json").write_text(
-                '[{"name":"Custom Blue","hex":"#0000FF"}]',
+                json.dumps(palette_document(
+                    "user-custom",
+                    [{"name": "Custom Blue", "hex": "#0000FF"}],
+                )),
                 encoding="utf-8",
             )
             args = self._make_args(name="Custom Blue", palette="user-custom")
@@ -711,6 +716,7 @@ class TestHandleFilamentCommand(unittest.TestCase):
         defaults: dict[str, object] = dict(
             value=None, hex=None,
             nearest=False, maker=None, type=None, finish=None, color=None,
+            has_td=False,
             exclude_maker=None, exclude_type=None,
             exclude_finish=None, exclude_color=None,
             list_makers=False, list_types=False, list_finishes=False,
@@ -822,6 +828,19 @@ class TestHandleFilamentCommand(unittest.TestCase):
         code, output = self._run_capture(args)
         self.assertEqual(code, 0)
         self.assertEqual(output, "0\n")
+
+    def test_has_td_count_includes_only_records_with_td(self) -> None:
+        """--has-td participates in ordinary filtered queries."""
+        from color_tools.filament_palette import FilamentPalette
+
+        expected = sum(
+            record.td_value is not None
+            for record in FilamentPalette.load_default().records
+        )
+        args = self._make_args(has_td=True, count=True)
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertEqual(int(output), expected)
 
     def test_count_rejects_nearest_search(self) -> None:
         """--count and --nearest have intentionally separate contracts."""
@@ -946,12 +965,17 @@ class TestHandleImageCommand(unittest.TestCase):
             palette_dir = Path(temp_dir) / "user" / "palettes"
             palette_dir.mkdir(parents=True)
             (palette_dir / "user-demo.json").write_text(
-                '[{"name":"Example","hex":"#000000","rgb":[0,0,0],'
-                '"hsl":[0,0,0],"lab":[0,0,0],"lch":[0,0,0]}]',
+                json.dumps(palette_document(
+                    "user-demo",
+                    [{"name": "Example", "hex": "#000000"}],
+                )),
                 encoding="utf-8",
             )
             (palette_dir / "user-palette.example.json").write_text(
-                '[{"name":"Example","hex":"#FFFFFF"}]',
+                json.dumps(palette_document(
+                    "user-palette.example",
+                    [{"name": "Example", "hex": "#FFFFFF"}],
+                )),
                 encoding="utf-8",
             )
             with patch.object(img_mod, "IMAGE_AVAILABLE", False):
@@ -1175,7 +1199,10 @@ class TestHandleImageCommandOperations(unittest.TestCase):
             palette_dir = data_dir / "user" / "palettes"
             palette_dir.mkdir(parents=True)
             (palette_dir / "user-custom.json").write_text(
-                '[{"name":"Custom Ink","hex":"#112233"}]',
+                json.dumps(palette_document(
+                    "user-custom",
+                    [{"name": "Custom Ink", "hex": "#112233"}],
+                )),
                 encoding="utf-8",
             )
             image_path = Path(temp_dir) / "source.png"

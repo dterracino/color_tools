@@ -1,34 +1,46 @@
-[
-  {
-    "name": "darkest",
-    "hex": "#000000",
-    "rgb": [0, 0, 0],
-    "hsl": [0.0, 0.0, 0.0],
-    "lab": [0.0, 0.0, 0.0],
-    "lch": [0.0, 0.0, 0.0]
+{
+  "schema_version": 1,
+  "metadata": {
+    "id": "gameboy-pocket",
+    "name": "Nintendo Game Boy Pocket",
+    "description": "A smaller monochrome Game Boy model released by Nintendo.",
+    "release_year": 1996
   },
-  {
-    "name": "dark",
-    "hex": "#555555",
-    "rgb": [85, 85, 85],
-    "hsl": [0.0, 0.0, 33.3],
-    "lab": [36.1, -0.0, 0.0],
-    "lch": [36.1, 0.0, 158.2]
-  },
-  {
-    "name": "light",
-    "hex": "#aaaaaa",
-    "rgb": [170, 170, 170],
-    "hsl": [0.0, 0.0, 66.7],
-    "lab": [69.6, -0.0, 0.0],
-    "lch": [69.6, 0.0, 158.2]
-  },
-  {
-    "name": "lightest",
-    "hex": "#ffffff",
-    "rgb": [255, 255, 255],
-    "hsl": [0.0, 0.0, 100.0],
-    "lab": [100.0, -0.0, 0.0],
-    "lch": [100.0, 0.0, 158.2]
+  "palette": {
+    "type": "indexed",
+    "colors": [
+      {
+        "name": "darkest",
+        "hex": "#000000",
+        "rgb": [0, 0, 0],
+        "hsl": [0.0, 0.0, 0.0],
+        "lab": [0.0, 0.0, 0.0],
+        "lch": [0.0, 0.0, 0.0]
+      },
+      {
+        "name": "dark",
+        "hex": "#555555",
+        "rgb": [85, 85, 85],
+        "hsl": [0.0, 0.0, 33.3],
+        "lab": [36.1, -0.0, 0.0],
+        "lch": [36.1, 0.0, 158.2]
+      },
+      {
+        "name": "light",
+        "hex": "#aaaaaa",
+        "rgb": [170, 170, 170],
+        "hsl": [0.0, 0.0, 66.7],
+        "lab": [69.6, -0.0, 0.0],
+        "lch": [69.6, 0.0, 158.2]
+      },
+      {
+        "name": "lightest",
+        "hex": "#ffffff",
+        "rgb": [255, 255, 255],
+        "hsl": [0.0, 0.0, 100.0],
+        "lab": [100.0, -0.0, 0.0],
+        "lch": [100.0, 0.0, 158.2]
+      }
+    ]
   }
-]
+}

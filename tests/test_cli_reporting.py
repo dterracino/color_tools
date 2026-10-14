@@ -10,6 +10,7 @@ Covers:
 from __future__ import annotations
 
 import io
+import json
 import tempfile
 import unittest
 from argparse import Namespace
@@ -23,6 +24,7 @@ from color_tools.cli_commands.reporting import (
     handle_verification_flags,
 )
 from color_tools.constants import ColorConstants
+from tests.palette_document_fixtures import palette_document
 
 
 class TestGetAvailablePalettes(unittest.TestCase):
@@ -81,9 +83,14 @@ class TestGetAvailablePalettes(unittest.TestCase):
             palettes_dir.mkdir()
             palette_json = palettes_dir / "test_palette.json"
             palette_json.write_text(
-                '[{"name": "testred", "hex": "#FF0000", "rgb": [255, 0, 0], '
-                '"hsl": [0.0, 100.0, 50.0], "lab": [53.0, 80.0, 67.0], '
-                '"lch": [53.0, 104.0, 40.0]}]',
+                json.dumps(palette_document("test_palette", [{
+                    "name": "testred",
+                    "hex": "#FF0000",
+                    "rgb": [255, 0, 0],
+                    "hsl": [0.0, 100.0, 50.0],
+                    "lab": [53.0, 80.0, 67.0],
+                    "lch": [53.0, 104.0, 40.0],
+                }])),
                 encoding='utf-8',
             )
             result = get_available_palettes(tmp)
@@ -218,11 +225,17 @@ class TestGenerateUserHashes(unittest.TestCase):
             palettes_dir.mkdir(parents=True)
             palette_file = palettes_dir / "user-test.json"
             palette_file.write_text(
-                '[{"name": "Test", "hex": "#123456"}]',
+                json.dumps(palette_document(
+                    "user-test",
+                    [{"name": "Test", "hex": "#123456"}],
+                )),
                 encoding="utf-8",
             )
             example_file = palettes_dir / "user-palette.example.json"
-            example_file.write_text("[]", encoding="utf-8")
+            example_file.write_text(
+                json.dumps(palette_document("user-palette.example", [])),
+                encoding="utf-8",
+            )
 
             with patch("sys.stdout", io.StringIO()):
                 generate_user_hashes(tmp)
@@ -236,7 +249,10 @@ class TestGenerateUserHashes(unittest.TestCase):
             self.assertEqual(ColorConstants.verify_all_user_data(tmp), (True, []))
 
             palette_file.write_text(
-                '[{"name": "Changed", "hex": "#654321"}]',
+                json.dumps(palette_document(
+                    "user-test",
+                    [{"name": "Changed", "hex": "#654321"}],
+                )),
                 encoding="utf-8",
             )
             is_valid, errors = ColorConstants.verify_all_user_data(tmp)

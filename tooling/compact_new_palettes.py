@@ -3,28 +3,23 @@
 
 import json
 from pathlib import Path
+from typing import cast
+
+from tools.convert_palettes import serialize_palette_document
 
 def compact_palette(filepath: Path) -> None:
     """Compact a palette file to use single-line arrays."""
     with open(filepath, 'r') as f:
         data = json.load(f)
     
-    # Write with compact arrays
-    with open(filepath, 'w', encoding='utf-8') as f:
-        f.write('[\n')
-        for i, color in enumerate(data):
-            f.write('  {\n')
-            f.write(f'    "name": "{color["name"]}",\n')
-            f.write(f'    "hex": "{color["hex"]}",\n')
-            f.write(f'    "rgb": {json.dumps(color["rgb"])},\n')
-            f.write(f'    "hsl": {json.dumps(color["hsl"])},\n')
-            f.write(f'    "lab": {json.dumps(color["lab"])},\n')
-            f.write(f'    "lch": {json.dumps(color["lch"])}\n')
-            if i < len(data) - 1:
-                f.write('  },\n')
-            else:
-                f.write('  }\n')
-        f.write(']\n')
+    if not isinstance(data, dict):
+        raise ValueError(f"Expected palette document in {filepath}")
+    document = cast(dict[str, object], data)
+    filepath.write_text(
+        serialize_palette_document(document),
+        encoding="utf-8",
+        newline="\n",
+    )
     
     print(f"✓ Compacted {filepath.name}")
 

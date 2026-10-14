@@ -190,6 +190,20 @@ class TestFilamentCommand(unittest.TestCase):
         self.assertRegex(stdout, r"^\d+\n$")
         self.assertGreater(int(stdout), 0)
 
+    def test_filament_has_td_count(self) -> None:
+        """filament --has-td composes with --count."""
+        from color_tools.filament_palette import FilamentPalette
+
+        exit_code, stdout, _ = self.run_cli(
+            "filament", "--all-filaments", "--has-td", "--count"
+        )
+        expected = sum(
+            record.td_value is not None
+            for record in FilamentPalette.load_default().records
+        )
+        self.assertEqual(exit_code, 0)
+        self.assertEqual(int(stdout), expected)
+
     def test_filament_nearest_with_color_filter(self) -> None:
         """filament --nearest should apply the existing color-name filter."""
         exit_code, stdout, _ = self.run_cli(

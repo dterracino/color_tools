@@ -2,7 +2,12 @@
 """Test script to verify palette loading and nearest-color matching."""
 
 from pathlib import Path
-from color_tools.palette import Palette, load_colors
+from color_tools.palette import Palette, load_palette
+
+
+def _load_genesis(genesis_file: Path) -> Palette:
+    """Load a Genesis palette document from its containing data directory."""
+    return load_palette(genesis_file.stem, genesis_file.parent.parent)
 
 def test_genesis_palette(genesis_file: Path = Path('color_tools/data/palettes/genesis.json')) -> bool:
     """Test loading and displaying Genesis palette information"""
@@ -11,7 +16,7 @@ def test_genesis_palette(genesis_file: Path = Path('color_tools/data/palettes/ge
         return False
         
     try:
-        colors = load_colors(genesis_file)
+        colors = _load_genesis(genesis_file).records
         
         print("Genesis palette information:")
         print(f"  Total colors: {len(colors)}")
@@ -26,7 +31,7 @@ def test_genesis_palette(genesis_file: Path = Path('color_tools/data/palettes/ge
 def test_palette_creation(genesis_file: Path = Path('color_tools/data/palettes/genesis.json')) -> bool:
     """Test creating a Palette object from the Genesis data"""
     try:
-        palette = Palette(load_colors(genesis_file))
+        palette = _load_genesis(genesis_file)
         if not palette.records:
             raise ValueError("Genesis palette contains no colors")
         print(f"✓ Palette object created with {len(palette.records)} colors")

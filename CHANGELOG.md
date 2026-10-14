@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+- Added a HueForge filament-library JSON exporter with deterministic UUIDv5
+  identifiers, required-TD validation, and typed control over the exported
+  `Owned` value through `HueForgeExportOptions`. The filament CLI now provides
+  `--has-td` for querying, counting, nearest matching, and exporting only
+  records with transmission-distance values.
+- Plain-text `.hex` palette export now defaults to lowercase values and accepts
+  `HexExportOptions(uppercase=True)` for uppercase output through Python.
+
 ### Added
 
 - **Bambu Lab filament expansion** — add 8 PETG Matte and 7 PLA Tough+
@@ -174,10 +182,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the Pyright `tests` execution environment to retain focused unit coverage.
   Strict mode, other diagnostics, and production private-API checks remain
   enabled.
-- **User palette file format** — user palette records now require only `name`
-  and `hex`; RGB, HSL, LAB, and LCH values are calculated from hex at load
-  time, and extra fields are ignored. Palette files ending in `example.json`
-  are excluded from discovery. This intentionally changes the previously
+- **Versioned palette documents** — migrate all 29 bundled palettes and user
+  palettes to one `schema_version: 1` envelope with required `id` and `name`,
+  optional `description` and `release_year`, and an indexed palette definition.
+  Metadata IDs must exactly match filename stems; legacy root arrays and
+  unsupported palette variants are rejected with focused errors. User color
+  records still require only `name` and `hex`; RGB,
+  HSL, LAB, and LCH are calculated from hex at load time, and extra derived
+  fields are ignored. Files ending in `example.json` remain excluded from
+  discovery. Package the user data, palettes, examples, and integrity sidecars
+  explicitly in wheels. This intentionally replaces the previously
   undocumented user-palette format and is a breaking change.
 
 ### Fixed

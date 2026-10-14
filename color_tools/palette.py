@@ -47,6 +47,7 @@ from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, rgb_to_hsl, rgb_to_hex, lab_to_lch
 from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
 from color_tools._palette_utils import get_palette_files, rounded_key, should_prefer_source
+from color_tools._palette_document import parse_indexed_palette_document
 from color_tools._color_utils import parse_hex, validate_rgb
 from color_tools._record_swatches import (
     render_record_swatch as _render_record_swatch,
@@ -420,7 +421,8 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     
     Built-in palettes are loaded from ``data/palettes/{name}.json``.
     User palettes are loaded from ``data/user/palettes/user-{name}.json`` and
-    must be requested with the ``user-`` prefix. User palette records require
+    must be requested with the ``user-`` prefix. Built-in and user palettes use
+    the same versioned document envelope. User palette color records require
     only ``name`` and ``hex``; all other color-space values are calculated from
     the hex value when loaded. Files ending in ``example.json`` are excluded
     from palette discovery.
@@ -481,14 +483,26 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     
     if name.startswith("user-"):
         # User palette requested
-        user_palette_file = data_dir / "user" / "palettes" / f"{name}.json"
-        if user_palette_file.exists():
-            palette_file = user_palette_file
+        user_palettes_dir = data_dir / "user" / "palettes"
+        palette_file = next(
+            (
+                path
+                for path in get_palette_files(user_palettes_dir, "user-*.json")
+                if path.name == f"{name}.json"
+            ),
+            None,
+        )
     else:
         # Core palette requested
-        core_palette_file = data_dir / "palettes" / f"{name}.json"
-        if core_palette_file.exists():
-            palette_file = core_palette_file
+        core_palettes_dir = data_dir / "palettes"
+        palette_file = next(
+            (
+                path
+                for path in get_palette_files(core_palettes_dir, "*.json")
+                if path.name == f"{name}.json"
+            ),
+            None,
+        )
     
     if palette_file is None:
         # Build list of available palettes from both locations
@@ -525,17 +539,20 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     except json.JSONDecodeError as e:
         raise ValueError(f"Invalid JSON in palette file {palette_file}: {e}") from e
     
-    if not isinstance(data, list):
-        raise ValueError(f"Expected array of colors at root level in {palette_file}")
+    colors = parse_indexed_palette_document(
+        data,
+        expected_id=palette_file.stem,
+        source_file=str(palette_file),
+    )
     
     if name.startswith("user-"):
         records = _parse_user_palette_records(
-            cast(list[object], data),
+            colors,
             palette_file.name,
         )
     else:
         records = _parse_color_records(
-            cast(list[_ColorRecordData], data),
+            cast(list[_ColorRecordData], colors),
             str(palette_file),
         )
     

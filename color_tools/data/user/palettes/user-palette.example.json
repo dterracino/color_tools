@@ -1,14 +1,25 @@
-[
-  {
-    "name": "black",
-    "hex": "#000000"
+{
+  "schema_version": 1,
+  "metadata": {
+    "id": "user-palette.example",
+    "name": "My Custom Palette",
+    "description": "An example user-defined color palette."
   },
-  {
-    "name": "blue",
-    "hex": "#0000ff"
-  },
-  {
-    "name": "white",
-    "hex": "#ffffff"
+  "palette": {
+    "type": "indexed",
+    "colors": [
+      {
+        "name": "black",
+        "hex": "#000000"
+      },
+      {
+        "name": "blue",
+        "hex": "#0000ff"
+      },
+      {
+        "name": "white",
+        "hex": "#ffffff"
+      }
+    ]
   }
-]
+}

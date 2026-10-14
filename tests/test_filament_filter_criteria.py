@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import unittest
+from typing import cast
 
 from color_tools.filament_filter_criteria import FilamentFilterCriteria
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
@@ -38,6 +39,7 @@ class TestFilamentFilterCriteria(unittest.TestCase):
             finish="Glossy",
             color="Blue",
             hex="#0000FF",
+            td_value=2.5,
             source="filaments.json",
         )
         self.palette = FilamentPalette(
@@ -114,6 +116,30 @@ class TestFilamentFilterCriteria(unittest.TestCase):
         """The scalar legacy color argument preserves its public behavior."""
         results = self.palette.filter(color=" custom RED ", owned=False)
         self.assertEqual(results, [self.user_red])
+
+    def test_td_availability_filter(self):
+        """TD availability composes with the other criteria fields."""
+        self.assertEqual(
+            self.palette.filter(has_td=True, owned=False),
+            [self.blue],
+        )
+        self.assertEqual(
+            self.palette.filter(has_td=False, owned=False),
+            [self.core_red, self.user_red],
+        )
+        self.assertEqual(
+            self.palette.filter(
+                type_name="PETG",
+                has_td=True,
+                owned=False,
+            ),
+            [self.blue],
+        )
+
+    def test_has_td_requires_a_boolean(self):
+        """TD criteria reject truthy non-Boolean values."""
+        with self.assertRaisesRegex(TypeError, "has_td"):
+            FilamentFilterCriteria(has_td=cast(bool, 1))
 
     def test_color_exclusion_uses_complete_criteria(self):
         """Color participates in the same AND semantics as other fields."""

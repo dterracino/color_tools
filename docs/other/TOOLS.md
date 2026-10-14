@@ -24,7 +24,9 @@ This directory contains palette-related utilities.
 
 **Status:** 🔄 **KEEP (Occasional)**
 
-**Purpose:** Converts existing palette files to a new metadata format with compact formatting. Adds metadata like `name`, `description`, `native_resolution`, `display_aspect_ratio`, `pixel_aspect_ratio`, `creator`, `year`, `bit_depth`, etc.
+**Purpose:** Converts registered bundled palettes to the canonical
+`schema_version: 1` indexed document, including approved identity metadata and
+compact color-coordinate arrays.
 
 **Usage:** Run when adding new palettes or converting palette format.
 
@@ -33,7 +35,9 @@ python tools/convert_palettes.py
 python tools/convert_palettes.py path/to/palette.json
 ```
 
-**Notes:** Has comprehensive metadata definitions for CGA, EGA, VGA, Web, NES, GameBoy variants, Commodore 64, SMS, TurboGrafx-16, and Virtual Boy.
+**Notes:** Contains the approved metadata for all 29 registered bundled
+palettes. It does not process user palettes or the experimental files under
+`data/palettes/new/`.
 
 ---
 
@@ -61,9 +65,11 @@ python tools/convert_palettes.py path/to/palette.json
 
 **Status:** 🗑️ **RETIRE**
 
-**Purpose:** Reverts palette files from metadata format back to simple array format.
+**Purpose:** Extracts indexed colors from palette documents into the obsolete
+root-array format.
 
-**Notes:** One-time utility created during format transition. No longer needed unless the metadata format decision is reversed.
+**Notes:** One-time historical utility. Its output is not accepted by the
+current palette loader and should not be used for active palette files.
 
 ---
 

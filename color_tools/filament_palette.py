@@ -709,6 +709,7 @@ class FilamentPalette:
             type_name=criteria.type_name_values,
             finish=criteria.finish_values,
             color=criteria.color_values,
+            has_td=criteria.has_td,
         )
 
     def _filter_records(
@@ -736,6 +737,7 @@ class FilamentPalette:
                     record.type,
                     record.finish,
                     record.color,
+                    record.td_value,
                 )
             ]
         if expanded_exclude is not None and not expanded_exclude.is_empty:
@@ -747,6 +749,7 @@ class FilamentPalette:
                     record.type,
                     record.finish,
                     record.color,
+                    record.td_value,
                 )
             ]
         return results
@@ -845,7 +848,8 @@ class FilamentPalette:
         type_name: Optional[Union[str, List[str]]] = None,
         finish: Optional[Union[str, List[str]]] = None,
         color: Optional[str] = None,
-        owned: Optional[bool] = None
+        owned: Optional[bool] = None,
+        has_td: bool | None = None,
     ) -> List[FilamentRecord]:
         """
         Filter filaments by multiple criteria.
@@ -866,6 +870,8 @@ class FilamentPalette:
             color: A single color name to match (case-insensitive).
             owned: Filter to owned filaments only. None (default) = auto-detect,
                    True = owned only, False = all filaments.
+            has_td: True selects records with TD values, False selects records
+                    without TD values, and None does not filter by TD.
         
         Returns:
             A list of FilamentRecord objects matching the criteria.
@@ -875,6 +881,7 @@ class FilamentPalette:
             type_name=type_name,
             finish=finish,
             color=color if color else None,
+            has_td=has_td,
         )
         return self._filter_records(include, None, owned)
 

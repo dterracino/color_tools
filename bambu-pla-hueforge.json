@@ -1,0 +1,643 @@
+{
+    "Filaments": [
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#00AE42",
+            "Name": "Bambu Green",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{eb1614d7-d046-5735-8e43-dacd40a13399}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F7E6DE",
+            "Name": "Beige",
+            "Owned": true,
+            "Transmissivity": 3.4,
+            "Type": "PLA",
+            "uuid": "{e52ed222-8629-5916-a045-caf51893c32b}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#000000",
+            "Name": "Black",
+            "Owned": true,
+            "Transmissivity": 0.1,
+            "Type": "PLA",
+            "uuid": "{0324959e-0a2d-5800-a09d-650570228dd6}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#0A2989",
+            "Name": "Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{070e65b4-e3f9-586b-a296-3e88557736a4}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#5B6579",
+            "Name": "Blue Gray",
+            "Owned": true,
+            "Transmissivity": 2.0,
+            "Type": "PLA",
+            "uuid": "{4741f069-dfef-525c-a7ae-b76bd03a716b}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#5B6579",
+            "Name": "Blue Grey",
+            "Owned": true,
+            "Transmissivity": 3.1,
+            "Type": "PLA",
+            "uuid": "{7d670a4c-9936-5981-896d-5641cec9dc55}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#BECF00",
+            "Name": "Bright Green",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{a5b14138-2c8c-5f30-a92e-c9e3e86b3c65}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#847D48",
+            "Name": "Bronze",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{17153028-21ed-51a7-8d13-6db2c6c9c4ea}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#9D432C",
+            "Name": "Brown",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{d3eb42bf-372e-503a-9785-1a35e5e0d33c}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#0056B8",
+            "Name": "Cobalt Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{5ce95b5b-1773-5e02-aa55-a3e227489424}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#6F5034",
+            "Name": "Cocoa Brown",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{3adb6297-6555-5a47-b527-3d32e50ed3df}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#0086D6",
+            "Name": "Cyan",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{524075a8-bfd8-5036-a6ab-1de6a17473ec}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#545454",
+            "Name": "Dark Gray",
+            "Owned": true,
+            "Transmissivity": 0.1,
+            "Type": "PLA",
+            "uuid": "{9c45efd9-cc96-5d86-9881-c4bbd76f0029}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#E4BD68",
+            "Name": "Gold",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{f576071b-2575-5dc9-9cc7-d692ffc10e93}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#8E9089",
+            "Name": "Gray",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{a32d782a-f02b-5c4b-a1d1-9b9013191091}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F5547C",
+            "Name": "Hot Pink",
+            "Owned": true,
+            "Transmissivity": 8,
+            "Type": "PLA",
+            "uuid": "{e1db1e54-a153-5602-98d6-e19edadf6718}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#482960",
+            "Name": "Indigo Purple",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{f1c1aa90-312b-50d1-be80-f16d9f0d4f31}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#FFFFFF",
+            "Name": "Jade White",
+            "Owned": true,
+            "Transmissivity": 6.1,
+            "Type": "PLA",
+            "uuid": "{d62efae3-b9ac-5ee9-8eed-f183f2981f55}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#D1D3D5",
+            "Name": "Light Gray",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{0be066f7-25ee-54a2-867e-9337eac60e8e}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#EC008C",
+            "Name": "Magenta",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{76b5c3d0-e739-5cb5-909b-3bd6af31c7b0}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#9D2235",
+            "Name": "Maroon Red",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{8d295915-0819-5960-805e-88ff0b88622d}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#3F8E43",
+            "Name": "Mistletoe Green",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{8230510e-a466-5e64-83cd-e716e69d44e3}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#FF6A13",
+            "Name": "Orange",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{48a6f2f2-c997-54eb-a009-da51e8fe371d}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F55A74",
+            "Name": "Pink",
+            "Owned": true,
+            "Transmissivity": 8,
+            "Type": "PLA",
+            "uuid": "{25b5cc62-4daa-5ae7-aab2-25958260bf2b}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#FF9016",
+            "Name": "Pumpkin Orange",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{b73880ea-61ba-51e0-b0b7-a2d9b2c314ca}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#5E43B7",
+            "Name": "Purple",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{f6e9c777-6ca7-5a56-8400-ceaecfeaacc4}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#C12E1F",
+            "Name": "Red",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{d20f3ad9-4862-5762-bdeb-eeaf1f5e2fcf}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#A6A9AA",
+            "Name": "Silver",
+            "Owned": true,
+            "Transmissivity": 0.5,
+            "Type": "PLA",
+            "uuid": "{2cf822e5-822a-5111-afec-062e7544decb}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#FEC600",
+            "Name": "Sunflower Yellow",
+            "Owned": true,
+            "Transmissivity": 6,
+            "Type": "PLA",
+            "uuid": "{f60309a3-c788-5141-b8cb-5dcce7a68213}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#00B1B7",
+            "Name": "Turquoise",
+            "Owned": true,
+            "Transmissivity": 1.4,
+            "Type": "PLA",
+            "uuid": "{a3bd8aba-ebc9-5da4-aa61-92efed4d0ccc}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F4EE2A",
+            "Name": "Yellow",
+            "Owned": true,
+            "Transmissivity": 6,
+            "Type": "PLA",
+            "uuid": "{6bf05d74-0506-545b-840b-daf62d92399c}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#C2E189",
+            "Name": "Apple Green",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{d2f5096b-179f-5c08-a826-883686a51329}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#9B9EA0",
+            "Name": "Ash Gray",
+            "Owned": true,
+            "Transmissivity": 1.5,
+            "Type": "PLA",
+            "uuid": "{bee0f96b-4f34-5d8a-b42e-8a69d40662a1}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#CBC6B8",
+            "Name": "Bone White",
+            "Owned": true,
+            "Transmissivity": 6.1,
+            "Type": "PLA",
+            "uuid": "{983e2af3-49d8-5e48-9bee-fbed0617975b}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#AE835B",
+            "Name": "Caramel",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{b1773dc5-0b62-52de-9763-860f76b2c001}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#000000",
+            "Name": "Charcoal",
+            "Owned": true,
+            "Transmissivity": 0.6,
+            "Type": "PLA",
+            "uuid": "{cc98f471-c2a6-5df5-83b5-54ab79d350c2}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#042F56",
+            "Name": "Dark Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{9a990b30-986b-5d48-b78f-e79abd22c9ad}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#7D6556",
+            "Name": "Dark Brown",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{4b1d6585-2e42-5be8-94f3-05f6dfacbc40}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#4D3324",
+            "Name": "Dark Chocolate",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{70cb97a8-43a2-5d22-892c-b5fcbabfdc94}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#68724D",
+            "Name": "Dark Green",
+            "Owned": true,
+            "Transmissivity": 0.1,
+            "Type": "PLA",
+            "uuid": "{743ce00f-ec82-563a-a971-757bf508e066}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#BB3D43",
+            "Name": "Dark Red",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{eafd8586-9fb2-5e9e-a1fd-cc8ed9024656}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#E8DBB7",
+            "Name": "Desert Tan",
+            "Owned": true,
+            "Transmissivity": 1,
+            "Type": "PLA",
+            "uuid": "{41faa07b-9595-52c6-94b8-b212e3ba68ab}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#61C680",
+            "Name": "Grass Green",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{e5cb5d30-cf9f-5c91-bbdf-dd7bd6c2209d}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#A3D8E1",
+            "Name": "Ice Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{a3d74ca7-91a6-597b-b0cf-f978f80040bc}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#FFFFFF",
+            "Name": "Ivory White",
+            "Owned": true,
+            "Transmissivity": 6.1,
+            "Type": "PLA",
+            "uuid": "{ed4729e5-5062-5d2d-8446-b157c35ec539}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#D3B7A7",
+            "Name": "Latte Brown",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{c407113b-7759-57c9-b782-a01da2eea590}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F7D959",
+            "Name": "Lemon Yellow",
+            "Owned": true,
+            "Transmissivity": 6,
+            "Type": "PLA",
+            "uuid": "{e8cc8a34-e09c-521a-b351-3dff92eac0a6}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#AE96D4",
+            "Name": "Lilac Purple",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{02ed690b-9666-5370-ac54-d918884e6fe8}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F99963",
+            "Name": "Mandarin Orange",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{132eaae7-c0db-53b0-ac59-903585473119}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#0078BF",
+            "Name": "Marine Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{b978fd67-a6b1-51ea-bb53-576027ce4faf}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#757575",
+            "Name": "Nardo Gray",
+            "Owned": true,
+            "Transmissivity": 0.7,
+            "Type": "PLA",
+            "uuid": "{78f7a9f1-196b-5dad-89fa-debacbf5c686}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#950051",
+            "Name": "Plum",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{0b378ef1-ee80-5104-9d39-a17e4ccbed46}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#E8AFCF",
+            "Name": "Sakura Pink",
+            "Owned": true,
+            "Transmissivity": 8,
+            "Type": "PLA",
+            "uuid": "{eb96e12d-22db-5e15-8df3-c16268db39c1}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#DE4343",
+            "Name": "Scarlet Red",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{03ba602e-18fb-554a-87db-64f0c3c09efb}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#56B7E6",
+            "Name": "Sky Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{43ae0701-2042-5295-a9f3-866b1a0acb2d}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#B15533",
+            "Name": "Terracotta",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{26d931b5-b4e8-586e-a895-07bf1993fee0}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#A8C6EE",
+            "Name": "Baby Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{01c22628-c6e1-5290-9ba9-ad0ba25b9682}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#008BDA",
+            "Name": "Blue",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{37c83619-1512-59d7-b6eb-bb7066605c39}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#018814",
+            "Name": "Candy Green",
+            "Owned": true,
+            "Transmissivity": 2,
+            "Type": "PLA",
+            "uuid": "{5634f4a4-dd91-568d-9e8d-395b9d5eca2d}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#D02727",
+            "Name": "Candy Red",
+            "Owned": true,
+            "Transmissivity": 0.7,
+            "Type": "PLA",
+            "uuid": "{850494a9-4bf3-58af-9b41-633eeced3d4c}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F3CFB2",
+            "Name": "Champagne",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{b5d5f940-f467-5f19-a292-db95217dc2f7}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F4A925",
+            "Name": "Gold",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{531cd54b-8462-5c7d-b8e4-c9c1bcc8c7e4}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#96DCB9",
+            "Name": "Mint",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{79406f87-4b11-5d40-9cff-05867ea18162}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#F7ADA6",
+            "Name": "Pink",
+            "Owned": true,
+            "Transmissivity": 8,
+            "Type": "PLA",
+            "uuid": "{f9fef444-da5b-5604-b0c2-d890f467c93b}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#8671CB",
+            "Name": "Purple",
+            "Owned": true,
+            "Transmissivity": 3,
+            "Type": "PLA",
+            "uuid": "{a125ac71-4ec0-5350-8080-87c0620a50ea}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#BA9594",
+            "Name": "Rose Gold",
+            "Owned": true,
+            "Transmissivity": 5,
+            "Type": "PLA",
+            "uuid": "{32e80a08-9510-51f8-a6e0-8b4cab21f7be}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#C8C8C8",
+            "Name": "Silver",
+            "Owned": true,
+            "Transmissivity": 0.5,
+            "Type": "PLA",
+            "uuid": "{8c77c20e-dff7-5022-a27b-33c1d142b208}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#5F6367",
+            "Name": "Titan Gray",
+            "Owned": true,
+            "Transmissivity": 4,
+            "Type": "PLA",
+            "uuid": "{b9bf4156-36f3-58f0-a21d-d0b9abbdf090}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#FFFFFF",
+            "Name": "White",
+            "Owned": true,
+            "Transmissivity": 6.1,
+            "Type": "PLA",
+            "uuid": "{ae1034bf-43d2-5ce0-8e8e-f705bd5e804c}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#000000",
+            "Name": "Black",
+            "Owned": true,
+            "Transmissivity": 0.6,
+            "Type": "PLA",
+            "uuid": "{e8b7415a-57c5-533d-9ae4-4af4228ce519}"
+        },
+        {
+            "Brand": "Bambu Lab",
+            "Color": "#AFB1AE",
+            "Name": "Gray",
+            "Owned": true,
+            "Transmissivity": 1.6,
+            "Type": "PLA",
+            "uuid": "{38a8f66c-e40e-50a0-ae9c-736501add341}"
+        }
+    ]
+}

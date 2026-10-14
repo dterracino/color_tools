@@ -11,8 +11,10 @@ import os
 import tempfile
 import unittest
 from pathlib import Path
+from typing import cast
 
-from color_tools.exporters import get_exporter
+from color_tools.export import export_colors
+from color_tools.exporters import HexExportOptions, get_exporter
 from color_tools.palette import ColorRecord
 
 
@@ -181,14 +183,44 @@ class TestHexExporter(unittest.TestCase):
         result = self.exporter.export_colors(self.colors, output)
         self.assertTrue(Path(result).exists())
 
-    def test_file_content_uppercase_no_hash(self):
-        """Each line is uppercase hex without # prefix."""
+    def test_file_content_lowercase_no_hash(self):
+        """Each line is lowercase hex without # prefix by default."""
         output = os.path.join(self.tmp.name, "colors.hex")
         self.exporter.export_colors(self.colors, output)
+        lines = Path(output).read_text(encoding='utf-8').splitlines()
+        self.assertEqual(lines[0], "ff0000")
+        self.assertEqual(lines[1], "00ff00")
+        self.assertEqual(lines[2], "0000ff")
+
+    def test_uppercase_option(self):
+        """Python callers can request uppercase output."""
+        output = os.path.join(self.tmp.name, "uppercase.hex")
+        self.exporter.export_colors(
+            self.colors,
+            output,
+            options=HexExportOptions(uppercase=True),
+        )
         lines = Path(output).read_text(encoding='utf-8').splitlines()
         self.assertEqual(lines[0], "FF0000")
         self.assertEqual(lines[1], "00FF00")
         self.assertEqual(lines[2], "0000FF")
+
+    def test_public_facade_forwards_uppercase_option(self):
+        """The public color export facade accepts typed HEX options."""
+        output = os.path.join(self.tmp.name, "facade-uppercase.hex")
+        export_colors(
+            self.colors,
+            "hex",
+            output,
+            options=HexExportOptions(uppercase=True),
+        )
+        lines = Path(output).read_text(encoding="utf-8").splitlines()
+        self.assertEqual(lines, ["FF0000", "00FF00", "0000FF"])
+
+    def test_uppercase_option_requires_boolean(self):
+        """Truthy integers are not accepted as casing options."""
+        with self.assertRaisesRegex(TypeError, "uppercase"):
+            HexExportOptions(uppercase=cast(bool, 1))
 
     def test_file_line_count_matches_colors(self):
         """File has exactly one line per color."""

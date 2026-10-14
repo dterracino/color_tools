@@ -429,19 +429,31 @@ collections rather than system-display simulations.
 
 ### Creating a User Palette
 
-Create a JSON array of color records in `data/user/palettes/`. User palette filenames must begin with `user-`; use the full filename stem when loading the palette. Each color entry requires only `name` and `hex`; RGB, HSL, LAB, and LCH values are calculated from the hex color when loaded. Any other fields in the file are ignored and are not written back. Files ending in `example.json` are skipped during palette discovery. For example, save this as `data/user/palettes/user-mycustom.json`:
+Create a versioned palette document in `data/user/palettes/`. User palette
+filenames must begin with `user-`; use the full filename stem when loading the
+palette. The required metadata ID must exactly match that filename stem. Each
+entry in `palette.colors` requires only `name` and `hex`; RGB, HSL, LAB, and LCH
+values are calculated from the hex color when loaded. Supplied derived fields
+are ignored. Files ending in `example.json` are skipped during palette
+discovery. For example, save this as
+`data/user/palettes/user-mycustom.json`:
 
 ```json
-[
-  {
-    "name": "Primary Red",
-    "hex": "#FF0000"
+{
+  "schema_version": 1,
+  "metadata": {
+    "id": "user-mycustom",
+    "name": "My Custom Palette",
+    "description": "A small palette for my project."
   },
-  {
-    "name": "Primary Green",
-    "hex": "#00FF00"
+  "palette": {
+    "type": "indexed",
+    "colors": [
+      {"name": "Primary Red", "hex": "#FF0000"},
+      {"name": "Primary Green", "hex": "#00FF00"}
+    ]
   }
-]
+}
 ```
 
 Then load it with:
@@ -464,7 +476,9 @@ quantized = quantize_image_to_palette(
 
 The `user-` prefix keeps user palette names separate from built-in palette names: `user-gameboy` does not replace `gameboy`. When using a custom data directory with the global `--json DIR` option, keep the same layout beneath that directory (`DIR/palettes/` and `DIR/user/palettes/`).
 
-Example files named `*example.json` are ignored in the available-palette list. Copy or rename an example to `user-mycustom.json` before using it.
+Example files named `*example.json` are ignored in the available-palette list.
+Copy or rename an example to `user-mycustom.json`, then change its
+`metadata.id` to `user-mycustom` before using it.
 
 Use `data/palettes/` only when adding or maintaining a built-in palette in the source distribution; those files are covered by the project's data-integrity checks.
 

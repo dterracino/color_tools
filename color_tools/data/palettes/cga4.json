@@ -1,34 +1,46 @@
-[
-  {
-    "name": "black",
-    "hex": "#000000",
-    "rgb": [0, 0, 0],
-    "hsl": [0.0, 0.0, 0.0],
-    "lab": [0.0, 0.0, 0.0],
-    "lch": [0.0, 0.0, 0.0]
+{
+  "schema_version": 1,
+  "metadata": {
+    "id": "cga4",
+    "name": "CGA 4-Color",
+    "description": "A four-color mode of IBM's Color Graphics Adapter.",
+    "release_year": 1981
   },
-  {
-    "name": "very light vivid cyan",
-    "hex": "#55ffff",
-    "rgb": [85, 255, 255],
-    "hsl": [180.0, 100.0, 66.7],
-    "lab": [92.0, -42.4, -12.7],
-    "lch": [92.0, 44.3, 196.7]
-  },
-  {
-    "name": "light vivid purple",
-    "hex": "#ff55ff",
-    "rgb": [255, 85, 255],
-    "hsl": [300.0, 100.0, 66.7],
-    "lab": [65.7, 82.6, -52.2],
-    "lch": [65.7, 97.7, 327.7]
-  },
-  {
-    "name": "white",
-    "hex": "#ffffff",
-    "rgb": [255, 255, 255],
-    "hsl": [0.0, 0.0, 100.0],
-    "lab": [100.0, -0.0, 0.0],
-    "lch": [100.0, 0.0, 158.2]
+  "palette": {
+    "type": "indexed",
+    "colors": [
+      {
+        "name": "black",
+        "hex": "#000000",
+        "rgb": [0, 0, 0],
+        "hsl": [0.0, 0.0, 0.0],
+        "lab": [0.0, 0.0, 0.0],
+        "lch": [0.0, 0.0, 0.0]
+      },
+      {
+        "name": "very light vivid cyan",
+        "hex": "#55ffff",
+        "rgb": [85, 255, 255],
+        "hsl": [180.0, 100.0, 66.7],
+        "lab": [92.0, -42.4, -12.7],
+        "lch": [92.0, 44.3, 196.7]
+      },
+      {
+        "name": "light vivid purple",
+        "hex": "#ff55ff",
+        "rgb": [255, 85, 255],
+        "hsl": [300.0, 100.0, 66.7],
+        "lab": [65.7, 82.6, -52.2],
+        "lch": [65.7, 97.7, 327.7]
+      },
+      {
+        "name": "white",
+        "hex": "#ffffff",
+        "rgb": [255, 255, 255],
+        "hsl": [0.0, 0.0, 100.0],
+        "lab": [100.0, -0.0, 0.0],
+        "lch": [100.0, 0.0, 158.2]
+      }
+    ]
   }
-]
+}

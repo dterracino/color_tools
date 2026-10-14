@@ -7,6 +7,7 @@ from tempfile import TemporaryDirectory
 
 from color_tools.palette import load_palette
 from color_tools.cli_commands.reporting import get_available_palettes
+from tests.palette_document_fixtures import palette_document
 
 
 class TestUserPalettes(unittest.TestCase):
@@ -52,32 +53,32 @@ class TestUserPalettes(unittest.TestCase):
         # Write core palette
         core_file = self.test_data_dir / "palettes" / "test_core.json"
         with open(core_file, 'w', encoding='utf-8') as f:
-            json.dump(self.core_palette_data, f, indent=2)
+            json.dump(palette_document("test_core", self.core_palette_data), f, indent=2)
 
         core_example_file = self.test_data_dir / "palettes" / "test.example.json"
         with open(core_example_file, 'w', encoding='utf-8') as f:
-            json.dump(self.core_palette_data, f, indent=2)
+            json.dump(palette_document("test.example", self.core_palette_data), f, indent=2)
         
         # Write user palette  
         user_file = self.test_data_dir / "user" / "palettes" / "user-test_user.json"
         with open(user_file, 'w', encoding='utf-8') as f:
-            json.dump(self.user_palette_data, f, indent=2)
+            json.dump(palette_document("user-test_user", self.user_palette_data), f, indent=2)
             
         # Write user override (different from core palette due to user- prefix)
         override_file = self.test_data_dir / "user" / "palettes" / "user-test_override.json"
         with open(override_file, 'w', encoding='utf-8') as f:
-            json.dump(self.user_override_data, f, indent=2)
+            json.dump(palette_document("user-test_override", self.user_override_data), f, indent=2)
             
         # Write non-prefixed file (should be ignored)
         ignored_file = self.test_data_dir / "user" / "palettes" / "ignored_palette.json"
         with open(ignored_file, 'w', encoding='utf-8') as f:
-            json.dump(self.user_palette_data, f, indent=2)
+            json.dump(palette_document("ignored_palette", self.user_palette_data), f, indent=2)
 
         example_file = (
             self.test_data_dir / "user" / "palettes" / "user-palette.example.json"
         )
         with open(example_file, 'w', encoding='utf-8') as f:
-            json.dump(self.user_palette_data, f, indent=2)
+            json.dump(palette_document("user-palette.example", self.user_palette_data), f, indent=2)
     
     def tearDown(self):
         """Clean up temporary directory."""
@@ -137,14 +138,14 @@ class TestUserPalettes(unittest.TestCase):
             self.test_data_dir / "user" / "palettes" / "user-test_user.json"
         )
         palette_path.write_text(
-            json.dumps([{
+            json.dumps(palette_document("user-test_user", [{
                 "name": "UserBlue",
                 "hex": "#0000FF",
                 "rgb": [1, 2, 3],
                 "hsl": ["invalid"],
                 "lab": None,
                 "lch": {"stale": True},
-            }]),
+            }])),
             encoding="utf-8",
         )
         original_contents = palette_path.read_text(encoding="utf-8")
@@ -161,7 +162,10 @@ class TestUserPalettes(unittest.TestCase):
             self.test_data_dir / "user" / "palettes" / "user-invalid-fields.json"
         )
         palette_path.write_text(
-            json.dumps([{"name": "MissingHex"}]),
+            json.dumps(palette_document(
+                "user-invalid-fields",
+                [{"name": "MissingHex"}],
+            )),
             encoding="utf-8",
         )
 
@@ -174,7 +178,10 @@ class TestUserPalettes(unittest.TestCase):
             self.test_data_dir / "user" / "palettes" / "user-invalid-hex.json"
         )
         palette_path.write_text(
-            json.dumps([{"name": "Bad", "hex": "#nothex"}]),
+            json.dumps(palette_document(
+                "user-invalid-hex",
+                [{"name": "Bad", "hex": "#nothex"}],
+            )),
             encoding="utf-8",
         )
 
@@ -237,7 +244,7 @@ class TestUserPalettes(unittest.TestCase):
             load_palette("user-badformat", self.test_data_dir)
         
         error_msg = str(cm.exception)
-        self.assertIn("Expected array of colors", error_msg)
+        self.assertIn("schema_version", error_msg)
     
     def test_empty_directories(self):
         """Test behavior with empty palette directories."""

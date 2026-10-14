@@ -1,307 +1,131 @@
 #!/usr/bin/env python3
-"""
-Palette conversion tool for color_tools.
+"""Convert bundled palette arrays to the versioned indexed document schema."""
 
-Converts existing palette files to new metadata format with compact formatting.
-"""
+from __future__ import annotations
 
 import json
+import re
 import sys
 from pathlib import Path
-from typing import cast
+from typing import NotRequired, TypedDict, cast
 
-# Palette metadata definitions
-PALETTE_METADATA = {
-    "cga4": {
-        "name": "CGA 4-Color",
-        "description": "4-color palette from IBM Color Graphics Adapter (2-bit)",
-        "native_resolution": [320, 200],
-        "display_aspect_ratio": "4:3",  # Standard TV display
-        "pixel_aspect_ratio": "1.2:1",  # Non-square pixels
-        "creator": "IBM",
-        "year": 1981,
-        "bit_depth": 2,
-        "total_colors": 4,
-        "simultaneous_colors": 4,
-        "tags": ["vintage", "cga", "low-res", "ibm"]
-    },
-    "cga16": {
-        "name": "CGA 16-Color", 
-        "description": "16-color palette from IBM Color Graphics Adapter (4-bit)",
-        "native_resolution": [160, 100],  # Corrected resolution
-        "display_aspect_ratio": "4:3",
-        "pixel_aspect_ratio": "2.4:1",  # Very wide pixels
-        "creator": "IBM",
-        "year": 1981,
-        "bit_depth": 4,
-        "total_colors": 16,
-        "simultaneous_colors": 16,
-        "tags": ["vintage", "cga", "low-res", "ibm"]
-    },
-    "ega16": {
-        "name": "EGA 16-Color",
-        "description": "16-color palette from IBM Enhanced Graphics Adapter (4-bit)",
-        "native_resolution": [640, 350],
-        "display_aspect_ratio": "4:3",
-        "pixel_aspect_ratio": "1.37:1",  # Slightly wide pixels
-        "creator": "IBM", 
-        "year": 1984,
-        "bit_depth": 4,
-        "total_colors": 16,
-        "simultaneous_colors": 16,
-        "tags": ["vintage", "ega", "ibm"]
-    },
-    "ega64": {
-        "name": "EGA 64-Color",
-        "description": "64-color palette from IBM Enhanced Graphics Adapter (6-bit)",
-        "native_resolution": [640, 350], 
-        "display_aspect_ratio": "4:3",
-        "pixel_aspect_ratio": "1.37:1",
-        "creator": "IBM",
-        "year": 1984,
-        "bit_depth": 6,
-        "total_colors": 64,
-        "simultaneous_colors": 16,  # Could select 16 from 64
-        "tags": ["vintage", "ega", "ibm"]
-    },
-    "vga": {
-        "name": "VGA 256-Color",
-        "description": "256-color palette from IBM Video Graphics Array (8-bit)",
-        "native_resolution": [640, 480],
-        "display_aspect_ratio": "4:3",
-        "pixel_aspect_ratio": "1:1",  # Square pixels
-        "creator": "IBM",
-        "year": 1987, 
-        "bit_depth": 8,
-        "total_colors": 256,
-        "simultaneous_colors": 256,
-        "tags": ["vintage", "vga", "ibm"]
-    },
-    "web": {
-        "name": "Web Safe Colors",
-        "description": "216-color web-safe palette for early internet browsers",
-        "native_resolution": None,
-        "display_aspect_ratio": None,
-        "pixel_aspect_ratio": None,
-        "creator": "W3C",
-        "year": 1996,
-        "bit_depth": 8,
-        "total_colors": 216,
-        "simultaneous_colors": 216,
-        "tags": ["web", "browser", "safe", "internet"]
-    },
-    "nes": {
-        "name": "NES System Palette",
-        "description": "Nintendo Entertainment System full color palette",
-        "native_resolution": [256, 240],
-        "display_aspect_ratio": "4:3",  # NTSC TV
-        "pixel_aspect_ratio": "8:7",    # Slightly wide pixels
-        "creator": "Nintendo",
-        "year": 1983,
-        "bit_depth": 6,  # 2 bits per color channel (RGB)
-        "total_colors": 64,  # Actually 54 unique colors
-        "simultaneous_colors": 25,  # 4 palettes × 4 colors each + universal background
-        "tags": ["vintage", "nintendo", "nes", "console", "gaming"]
-    },
-    "gameboy": {
-        "name": "Game Boy Original",
-        "description": "Original Game Boy 4-shade monochrome palette",
-        "native_resolution": [160, 144], 
-        "display_aspect_ratio": "10:9",  # LCD screen ratio
-        "pixel_aspect_ratio": "1:1",     # Square pixels
-        "creator": "Nintendo",
-        "year": 1989,
-        "bit_depth": 2,
-        "total_colors": 4,
-        "simultaneous_colors": 4,
-        "tags": ["vintage", "nintendo", "gameboy", "handheld", "monochrome"]
-    },
-    "gameboy-dmg": {
-        "name": "Game Boy DMG-01",
-        "description": "Game Boy DMG-01 original hardware palette variations",
-        "native_resolution": [160, 144],
-        "display_aspect_ratio": "10:9",
-        "pixel_aspect_ratio": "1:1", 
-        "creator": "Nintendo",
-        "year": 1989,
-        "bit_depth": 2,
-        "total_colors": 4,
-        "simultaneous_colors": 4,
-        "tags": ["vintage", "nintendo", "gameboy", "dmg", "handheld"]
-    },
-    "gameboy-light": {
-        "name": "Game Boy Light",
-        "description": "Game Boy Light backlit screen palette (Japan exclusive)",
-        "native_resolution": [160, 144],
-        "display_aspect_ratio": "10:9",
-        "pixel_aspect_ratio": "1:1",
-        "creator": "Nintendo", 
-        "year": 1998,
-        "bit_depth": 2,
-        "total_colors": 4,
-        "simultaneous_colors": 4,
-        "tags": ["vintage", "nintendo", "gameboy", "light", "handheld", "backlit"]
-    },
-    "gameboy-pocket": {
-        "name": "Game Boy Pocket",
-        "description": "Game Boy Pocket (MGB-001) palette variations",
-        "native_resolution": [160, 144],
-        "display_aspect_ratio": "10:9",
-        "pixel_aspect_ratio": "1:1",
-        "creator": "Nintendo",
-        "year": 1996,
-        "bit_depth": 2,
-        "total_colors": 4,
-        "simultaneous_colors": 4,
-        "tags": ["vintage", "nintendo", "gameboy", "pocket", "handheld"]
-    },
-    "commodore64": {
-        "name": "Commodore 64",
-        "description": "Commodore 64 VIC-II chip 16-color palette (4-bit)",
-        "native_resolution": [320, 200],
-        "display_aspect_ratio": "4:3",  # PAL/NTSC TV
-        "pixel_aspect_ratio": "1.2:1",  # Non-square pixels like CGA
-        "creator": "Commodore",
-        "year": 1982,
-        "bit_depth": 4,
-        "total_colors": 16,
-        "simultaneous_colors": 16,
-        "tags": ["vintage", "commodore", "c64", "vic-ii"]
-    },
-    "sms": {
-        "name": "Sega Master System",
-        "description": "Sega Master System VDP color palette (6-bit)",
-        "native_resolution": [256, 192],
-        "display_aspect_ratio": "4:3",
-        "pixel_aspect_ratio": "1.33:1",  # Slightly wide pixels
-        "creator": "Sega",
-        "year": 1986,
-        "bit_depth": 6,  # 2 bits per RGB channel
-        "total_colors": 64,
-        "simultaneous_colors": 32,  # As you mentioned - key limitation!
-        "tags": ["vintage", "sega", "sms", "console", "gaming"]
-    },
-    "turbografx16": {
-        "name": "TurboGrafx-16",
-        "description": "TurboGrafx-16/PC Engine 512-color palette (9-bit)",
-        "native_resolution": [256, 224],  # NTSC resolution
-        "display_aspect_ratio": "4:3",
-        "pixel_aspect_ratio": "8:7",     # Similar to NES
-        "creator": "NEC",
-        "year": 1987,
-        "bit_depth": 9,  # 3 bits per RGB channel
-        "total_colors": 512,
-        "simultaneous_colors": 256,  # Could display 256 from 512 palette
-        "tags": ["vintage", "nec", "turbografx", "pcengine", "console"]
-    },
-    "virtualboy": {
-        "name": "Virtual Boy",
-        "description": "Nintendo Virtual Boy red monochrome LED display palette",
-        "native_resolution": [384, 224],
-        "display_aspect_ratio": "12:7",  # Wide aspect ratio for stereoscopic display
-        "pixel_aspect_ratio": "1:1",     # Square pixels
-        "creator": "Nintendo",
-        "year": 1995,
-        "bit_depth": 2,  # 4 shades of red
-        "total_colors": 4,
-        "simultaneous_colors": 4,
-        "tags": ["vintage", "nintendo", "virtualboy", "handheld", "stereoscopic", "monochrome", "red"]
-    }
+
+class _Metadata(TypedDict):
+    """Metadata authored for one bundled palette."""
+
+    name: str
+    description: str
+    release_year: NotRequired[int]
+
+
+SYSTEM_METADATA: dict[str, _Metadata] = {
+    "amstrad-cpc": {"name": "Amstrad CPC", "description": "An 8-bit home computer family developed by Amstrad.", "release_year": 1984},
+    "apple2": {"name": "Apple II", "description": "An 8-bit home computer introduced by Apple Computer.", "release_year": 1977},
+    "bbc-micro": {"name": "BBC Micro", "description": "An 8-bit microcomputer designed by Acorn Computers for the BBC Computer Literacy Project.", "release_year": 1981},
+    "cga4": {"name": "CGA 4-Color", "description": "A four-color mode of IBM's Color Graphics Adapter.", "release_year": 1981},
+    "cga16": {"name": "CGA 16-Color", "description": "The full RGBI color set of IBM's Color Graphics Adapter.", "release_year": 1981},
+    "colecovision": {"name": "ColecoVision", "description": "A home video game console released by Coleco.", "release_year": 1982},
+    "commodore64": {"name": "Commodore 64", "description": "An 8-bit home computer released by Commodore.", "release_year": 1982},
+    "crayola": {"name": "Crayola Colors", "description": "A collection of named crayon colors used by Crayola."},
+    "ega16": {"name": "EGA 16-Color", "description": "The standard 16-color set of IBM's Enhanced Graphics Adapter.", "release_year": 1984},
+    "ega64": {"name": "EGA 64-Color", "description": "The complete color domain of IBM's Enhanced Graphics Adapter.", "release_year": 1984},
+    "gameboy": {"name": "GB Studio", "description": "The four-color authoring environment used to create Game Boy games with GB Studio."},
+    "gameboy-dmg": {"name": "Nintendo Game Boy", "description": "The original monochrome handheld game console released by Nintendo.", "release_year": 1989},
+    "gameboy-light": {"name": "Nintendo Game Boy Light", "description": "A backlit Game Boy model released by Nintendo in Japan.", "release_year": 1998},
+    "gameboy-pocket": {"name": "Nintendo Game Boy Pocket", "description": "A smaller monochrome Game Boy model released by Nintendo.", "release_year": 1996},
+    "intellivision": {"name": "Intellivision", "description": "A home video game console released by Mattel Electronics.", "release_year": 1979},
+    "macintosh": {"name": "Apple Macintosh", "description": "The original Macintosh personal computer introduced by Apple Computer.", "release_year": 1984},
+    "msx1": {"name": "MSX1", "description": "The first generation of the MSX home computer standard.", "release_year": 1983},
+    "nes": {"name": "Nintendo Entertainment System", "description": "An 8-bit home video game console released by Nintendo.", "release_year": 1983},
+    "pico8": {"name": "PICO-8", "description": "A fantasy console for creating, sharing, and playing small games.", "release_year": 2015},
+    "sg-1000": {"name": "Sega SG-1000", "description": "Sega's first home video game console.", "release_year": 1983},
+    "sms": {"name": "Sega Master System", "description": "A home video game console released by Sega.", "release_year": 1986},
+    "tandy16": {"name": "Tandy 16-Color", "description": "The 16-color set used by enhanced Tandy computer graphics modes."},
+    "ti-99-4a": {"name": "TI-99/4A", "description": "A 16-bit home computer released by Texas Instruments.", "release_year": 1981},
+    "tic80": {"name": "TIC-80", "description": "A free and open-source fantasy console for making small games."},
+    "vga": {"name": "VGA", "description": "IBM's Video Graphics Array display standard.", "release_year": 1987},
+    "vic-20": {"name": "Commodore VIC-20", "description": "An 8-bit home computer released by Commodore.", "release_year": 1980},
+    "virtualboy": {"name": "Nintendo Virtual Boy", "description": "A stereoscopic tabletop video game console released by Nintendo.", "release_year": 1995},
+    "web": {"name": "Web-Safe Colors", "description": "A color set designed for consistent display by early web browsers."},
+    "zx-spectrum": {"name": "ZX Spectrum", "description": "An 8-bit home computer developed by Sinclair Research.", "release_year": 1982},
 }
 
 
-def convert_palette_file(input_path: Path, output_path: Path | None = None) -> None:
-    """Convert a palette file to the new metadata format."""
-    if output_path is None:
-        output_path = input_path
-    
-    print(f"Converting {input_path.name}...")
-    
-    # Load existing palette
-    with open(input_path, 'r') as f:
-        data = json.load(f)
-    
-    # Handle both old format (array) and already converted format (dict)
+_ARRAY_PATTERN = re.compile(
+    r'("(?:rgb|hsl|lab|lch)": )\[\s*([^\]]+?)\s*\]',
+    re.MULTILINE,
+)
+
+
+def _extract_colors(data: object, source: Path) -> list[object]:
+    """Extract colors from the legacy array or current indexed document."""
     if isinstance(data, list):
-        colors = cast(list[object], data)
-    elif isinstance(data, dict) and 'palette' in data:
-        print(f"  ⚠ File already converted, skipping...")
-        return
-    else:
-        print(f"  ❌ Unknown format in {input_path}")
-        return
-    
-    # Get palette name from filename
-    palette_name = input_path.stem
-    metadata = PALETTE_METADATA.get(palette_name, {
-        "name": palette_name.title(),
-        "description": f"{palette_name.title()} color palette",
-        "native_resolution": None,
-        "display_aspect_ratio": None,
-        "pixel_aspect_ratio": None,
-        "creator": "Unknown",
-        "year": None,
-        "bit_depth": None,
-        "total_colors": len(colors),
-        "simultaneous_colors": len(colors),
-        "tags": ["palette"]
-    })
-    
-    # Write with compact formatting for colors, expanded for metadata
-    with open(output_path, 'w') as f:
-        # Custom formatting: metadata expanded, palette colors compact
-        f.write('{\n')
-        f.write('  "format_version": "1.0",\n')
-        f.write('  "metadata": {\n')
-        
-        for i, (key, value) in enumerate(metadata.items()):
-            comma = ',' if i < len(metadata) - 1 else ''
-            if isinstance(value, list):
-                if value and isinstance(value[0], str):
-                    # Tags array - compact format
-                    f.write(f'    "{key}": {json.dumps(value)}{comma}\n')
-                else:
-                    # Resolution array - compact format  
-                    f.write(f'    "{key}": {json.dumps(value)}{comma}\n')
-            else:
-                f.write(f'    "{key}": {json.dumps(value)}{comma}\n')
-        
-        f.write('  },\n')
-        f.write('  "palette": [\n')
-        
-        for i, color in enumerate(colors):
-            comma = ',' if i < len(colors) - 1 else ''
-            # Write each color on a single line
-            f.write(f'    {json.dumps(color, separators=(",", ": "))}{comma}\n')
-        
-        f.write('  ]\n')
-        f.write('}\n')
-    
-    print(f"  ✓ Converted {len(colors)} colors")
-    print(f"  ✓ Saved to {output_path}")
+        return cast(list[object], data)
+    if isinstance(data, dict):
+        document = cast(dict[object, object], data)
+        palette = document.get("palette")
+        if isinstance(palette, dict):
+            colors = cast(dict[object, object], palette).get("colors")
+            if isinstance(colors, list):
+                return cast(list[object], colors)
+    raise ValueError(f"Unsupported palette structure in {source}")
+
+
+def _compact_color_arrays(text: str) -> str:
+    """Keep small color-coordinate arrays readable on one line."""
+    def replace(match: re.Match[str]) -> str:
+        values: object = json.loads(f"[{match.group(2)}]")
+        return f"{match.group(1)}{json.dumps(values)}"
+
+    return _ARRAY_PATTERN.sub(replace, text)
+
+
+def build_palette_document(
+    palette_id: str,
+    colors: list[object],
+) -> dict[str, object]:
+    """Build a schema-version-1 document for a registered bundled palette."""
+    metadata = SYSTEM_METADATA.get(palette_id)
+    if metadata is None:
+        raise ValueError(f"No approved metadata for palette {palette_id!r}")
+    return {
+        "schema_version": 1,
+        "metadata": {"id": palette_id, **metadata},
+        "palette": {"type": "indexed", "colors": colors},
+    }
+
+
+def serialize_palette_document(document: dict[str, object]) -> str:
+    """Serialize a palette document with compact color-coordinate arrays."""
+    serialized = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
+    return _compact_color_arrays(serialized)
+
+
+def convert_palette_file(path: Path) -> None:
+    """Convert one registered bundled palette to schema version 1."""
+    data: object = json.loads(path.read_text(encoding="utf-8"))
+    colors = _extract_colors(data, path)
+    document = build_palette_document(path.stem, colors)
+    path.write_text(
+        serialize_palette_document(document),
+        encoding="utf-8",
+        newline="\n",
+    )
+    print(f"Converted {path.name}: {len(colors)} colors")
 
 
 def main() -> None:
-    """Convert all palette files or specific ones."""
+    """Convert specified palettes, or every registered bundled palette."""
     if len(sys.argv) > 1:
-        # Convert specific files
-        for arg in sys.argv[1:]:
-            path = Path(arg)
-            if path.exists():
-                convert_palette_file(path)
-            else:
-                print(f"File not found: {path}")
+        paths = [Path(argument) for argument in sys.argv[1:]]
     else:
-        # Convert all palette files
-        script_dir = Path(__file__).parent
-        palettes_dir = script_dir.parent / "color_tools" / "data" / "palettes"
-        
-        if not palettes_dir.exists():
-            print(f"Palettes directory not found: {palettes_dir}")
-            return
-        
-        for palette_file in sorted(palettes_dir.glob("*.json")):
-            convert_palette_file(palette_file)
+        palette_dir = Path(__file__).parents[1] / "color_tools" / "data" / "palettes"
+        paths = [palette_dir / f"{palette_id}.json" for palette_id in SYSTEM_METADATA]
+
+    for path in paths:
+        if not path.is_file():
+            raise FileNotFoundError(path)
+        convert_palette_file(path)
 
 
 if __name__ == "__main__":

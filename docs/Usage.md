@@ -489,10 +489,11 @@ converted to legal, unique GLSL identifiers for constants and defines.
 
 ```python
 from color_tools import FilamentPalette, Palette, export_filaments, export_colors
-from color_tools.exporters import get_exporter, list_export_formats
+from color_tools.exporters import HexExportOptions, get_exporter, list_export_formats
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
 from color_tools.exporters.swatch_image_exporter import SwatchImageOptions
+from color_tools.exporters import HueForgeExportOptions
 
 # Discover currently usable color exporters
 formats = list_export_formats("colors")
@@ -533,6 +534,27 @@ filament_palette = FilamentPalette.load_default()
 matte_filaments = filament_palette.filter(finish="Matte")
 export_filaments(matte_filaments, "csv", "matte_filaments.csv")
 export_colors(color_palette.records, "hex", "all_colors.hex")
+
+# HEX files are lowercase by default; Python callers may request uppercase
+export_colors(
+  color_palette.records,
+  "hex",
+  "uppercase.hex",
+  options=HexExportOptions(uppercase=True),
+)
+
+# HueForge requires TD for every exported filament
+with_td = [
+  filament
+  for filament in filament_palette.records
+  if filament.td_value is not None
+]
+export_filaments(
+  with_td,
+  "hueforge",
+  "personal_library.json",
+  options=HueForgeExportOptions(owned=True),
+)
 ```
 
 Call `export_colors()` for an ordered list of `ColorRecord` objects when palette-level metadata
@@ -542,6 +564,19 @@ calls, use `get_exporter(...).export_palette(palette_data, ...)`. Each format pr
 only the metadata fields it supports, such as name, author, description, columns, tags,
 or custom properties.
 Formats that do not support palette metadata safely fall back to raw color export.
+
+The filament CLI can filter and export in one operation. This command searches
+the complete database, selects Bambu Lab PLA filaments with TD values, and
+writes a HueForge library:
+
+```bash
+python -m color_tools filament --all-filaments --maker "Bambu Lab" --type PLA --has-td --export hueforge --output bambu-pla-hueforge.json
+```
+
+Omit `--all-filaments` when the query should honor the configured owned-filament
+list. Other query filters can be combined with `--has-td`. HueForge export is
+strict: if the final selection contains a filament without TD, no file is
+written and the command reports an error.
 
 ### Data Structures
 
@@ -817,6 +852,7 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--type NAME [NAME ...]`: Filter by one or more filament types (e.g., --type PLA "PLA+"). Use "*" to bypass this filter.
 - `--finish NAME [NAME ...]`: Filter by one or more finish types (e.g., --finish Basic "Silk+"). Use "*" to bypass this filter.
 - `--color NAME`: Filter by color name
+- `--has-td`: Filter to filaments that have a transmission-distance value
 - `--count`: Print only the number of filaments matching the filters
 - `--exclude-maker NAME [NAME ...]`: With `--nearest`, exclude matching makers
 - `--exclude-type NAME [NAME ...]`: With `--nearest`, exclude matching filament types
@@ -827,6 +863,35 @@ Values within one exclusion option use OR semantics. Different exclusion fields 
 AND semantics, so `--exclude-maker "Bambu Lab" --exclude-type PETG` excludes Bambu Lab
 PETG records rather than excluding every Bambu Lab and every PETG record. Exclusion
 options require `--nearest`.
+
+**Exporting Filaments:**
+
+- `--list-export-formats`: List the registered filament export formats
+- `--export FORMAT`: Export the filtered records using a registered format
+- `--output FILE`: Write to this file instead of generating a timestamped name
+
+The filter and export options form one query. For example, this writes all
+Bambu Lab PLA records that have TD values to a HueForge filament library:
+
+```bash
+python -m color_tools filament --all-filaments --maker "Bambu Lab" --type PLA --has-td --export hueforge --output bambu-pla-hueforge.json
+```
+
+`--all-filaments` means search the full database even when an owned-filament
+list is configured. Leave it out to export only the matching owned records.
+HueForge requires TD for every record, so use `--has-td` unless another filter
+already guarantees that every selected filament has a TD value. The exporter
+rejects the entire operation rather than silently omitting invalid records.
+
+Other formats use the same workflow:
+
+```bash
+# Discover available formats
+python -m color_tools filament --list-export-formats
+
+# Export matching matte PLA records as generic CSV
+python -m color_tools filament --all-filaments --type PLA --finish Matte --export csv --output matte-pla.csv
+```
 
 **Owned Filaments (v6.0.0+):**
 
@@ -848,7 +913,10 @@ python -m color_tools filament --nearest --value 128 0 128 --maker "Bambu" --typ
 python -m color_tools filament --nearest --value 0 255 0 --finish "Matte" --maker "*" --type "*" --limit 10
 ```
 
-**Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`) is provided, the command displays matching filaments. Use "*" as a wildcard to bypass individual filters while keeping others active.
+**Note:** When any filter argument (`--maker`, `--type`, `--finish`, `--color`,
+or `--has-td`) is provided without `--export` or `--count`, the command displays
+matching filaments. Use "*" as a wildcard to bypass individual text filters
+while keeping others active.
 
 #### Owned Filaments Tracking (v6.0.0+)
 
@@ -1249,7 +1317,14 @@ python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
 
 **Available Palettes:** Use `color-tools color --palette list` or `color-tools image --list-palettes` to see all 29 bundled palettes plus any custom user palettes.
 
-User palettes belong in `data/user/palettes/` and must have filenames beginning with `user-` (for example, `user-mycustom.json`, used as `user-mycustom`). Each entry needs only `name` and `hex`; other color values are calculated when loaded. Files ending in `example.json` are ignored during discovery. Both palette-list commands work without the optional image dependencies. The global `--json DIR` option also applies to image palette listing and quantization.
+User palettes belong in `data/user/palettes/` and use the same versioned
+document envelope as bundled palettes. Filenames must begin with `user-` (for
+example, `user-mycustom.json`, used as `user-mycustom`), and `metadata.id` must
+exactly match the filename stem. Each entry in `palette.colors` needs only
+`name` and `hex`; other color values are calculated when loaded. Files ending
+in `example.json` are ignored during discovery. Both palette-list commands work
+without the optional image dependencies. The global `--json DIR` option also
+applies to image palette listing and quantization.
 
 ### Global Arguments
 

@@ -12,12 +12,13 @@ from __future__ import annotations
 import json
 import sys
 from pathlib import Path
-from typing import Any
+from typing import Any, cast
 
 # Add parent directory to path so we can import color_tools
 sys.path.insert(0, str(Path(__file__).parent.parent))
 
 from color_tools.conversions import rgb_to_hsl, rgb_to_lab, rgb_to_lch, hex_to_rgb, rgb_to_hex
+from tools.convert_palettes import build_palette_document, serialize_palette_document
 
 
 def create_color_record(name: str, rgb: tuple[int, int, int]) -> dict[str, Any]:
@@ -178,8 +179,12 @@ def save_palette(palette_name: str, colors: list[dict[str, Any]]) -> None:
     
     output_file = output_dir / f"{palette_name}.json"
     
-    with open(output_file, 'w') as f:
-        json.dump(colors, f, indent=2)
+    document = build_palette_document(palette_name, cast(list[object], colors))
+    output_file.write_text(
+        serialize_palette_document(document),
+        encoding="utf-8",
+        newline="\n",
+    )
     
     print(f"✓ Generated {palette_name}.json ({len(colors)} colors)")
 

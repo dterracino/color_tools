@@ -3,10 +3,10 @@
 ## Status
 
 - Created: 2026-10-13.
-- Status: design direction and discussion record; richer profile elements are
-  not yet approved for implementation.
-- Near-term objective: migrate the existing bundled indexed palettes to a
-  stable, versioned document envelope during the 7.0.0 breaking release.
+- Status: the schema-version-1 indexed envelope is implemented; richer profile
+  elements remain a design direction and are not approved for implementation.
+- Completed 7.0.0 objective: migrate bundled and user indexed palettes to one
+  stable, versioned document envelope.
 - Future objective: support palette references, generated bit-depth color
   domains, display profiles, color-processing styles, and renderer
   postprocessing without another root-level file-format change.
@@ -33,7 +33,7 @@ usable palette. The bundled package-data format may change even when the normal
 library API remains source compatible. Direct consumers of bundled JSON files
 must be treated as affected by the 7.0.0 schema change.
 
-## Proposed near-term indexed schema
+## Implemented indexed schema
 
 Use `schema_version`, not `format_version`, to identify the document schema.
 The initial value should be the integer `1` rather than a semantic-version
@@ -99,10 +99,10 @@ all of them.
 Metadata should describe the definition rather than encode rendering behavior.
 Initial fields include:
 
-- `id`: stable machine-readable identity
-- `name`: human-readable name
-- `description`: concise description of the represented system or subject, not
-  its rendering characteristics
+- `id`: required stable machine-readable identity
+- `name`: required human-readable name
+- `description`: optional concise description of the represented system or
+  subject, not its rendering characteristics
 - `release_year`: optional historical year
 - future source, attribution, or descriptive tags if a concrete need arises
 
@@ -401,11 +401,11 @@ Before implementation is considered complete, audit and update:
 The generic JSON exporter is an interchange format and does not have to become
 identical to the bundled authoritative palette-document schema.
 
-The lightweight user-palette format may remain a root array of `name` and
-`hex` records for compatibility. Bundled palette definitions and simple user
-palettes already have different validation and storage requirements. Whether
-users should also be allowed to author the richer versioned document is a
-separate public-contract decision.
+User palettes use the same versioned document envelope as bundled palettes.
+Their indexed color entries remain lightweight: users author `name` and `hex`,
+and the loader derives the other color spaces. The earlier root-array user
+format was never released or documented and is not retained. User palette
+metadata IDs are required to match their `user-*.json` filename stems.
 
 Loaders should reject unknown required structures and unsupported palette
 types with specific errors. They should tolerate future optional top-level
@@ -413,20 +413,19 @@ sections when those sections are irrelevant to the requested operation.
 
 ## Proposed implementation sequence
 
-### Current 7.0.0 work
+### Completed 7.0.0 work
 
-1. Approve the minimal indexed document envelope.
-2. Add focused typed parsing for `schema_version`, `metadata`, and the indexed
-   palette definition.
-3. Preserve the existing public result of `load_palette()`.
-4. Support only materialized `indexed` palette definitions in this revision;
-   do not implement reference resolution or add `tms9918.json`.
-5. Decide whether legacy root arrays remain accepted for bundled/custom core
-   paths, user palettes, or both.
-6. Update every bundled palette generator to emit the new envelope.
-7. Migrate every current bundled indexed palette consistently.
-8. Update direct JSON consumers, tests, documentation, and hashes.
-9. Validate source-tree and installed-wheel behavior.
+1. Approved the minimal indexed document envelope.
+2. Added focused typed parsing for `schema_version`, `metadata`, and the
+   indexed palette definition.
+3. Preserved the existing public result of `load_palette()`.
+4. Supported only materialized `indexed` palette definitions in this revision;
+   reference resolution and `tms9918.json` remain deferred.
+5. Rejected legacy root arrays for both bundled and user palettes.
+6. Updated bundled palette generators to emit the new envelope.
+7. Migrated every current bundled indexed palette consistently.
+8. Updated direct JSON consumers, tests, documentation, and hashes.
+9. Validated source-tree and installed-wheel behavior.
 
 ### Future revision discussion
 
@@ -443,11 +442,9 @@ sections when those sections are irrelevant to the requested operation.
 
 ## Open decisions
 
-- Is `metadata.id` required, and must it match the filename?
 - Do references resolve by file stem, metadata ID, or a namespaced identifier?
 - Are user-palette references supported?
 - Are reference chains allowed?
-- Which metadata fields are required versus optional?
 - How are multiple hardware video modes represented?
 - How are PAL, NTSC, and regional variants represented?
 - Which display fields describe hardware, and which describe renderer policy?

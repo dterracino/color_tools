@@ -477,6 +477,11 @@ Examples:
         help="Filter by color name (also applies to --nearest)"
     )
     filament_parser.add_argument(
+        "--has-td",
+        action="store_true",
+        help="Filter to filaments that have a transmission-distance value",
+    )
+    filament_parser.add_argument(
         "--exclude-maker",
         nargs='+',
         type=str,
@@ -511,7 +516,7 @@ Examples:
         "--export",
         type=str,
         metavar="FORMAT",
-        help="Export filtered filaments to file (formats: autoforge, csv, json)"
+        help="Export filtered filaments to file (see --list-export-formats)"
     )
     filament_parser.add_argument(
         "--output",

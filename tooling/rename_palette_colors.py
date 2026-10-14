@@ -7,6 +7,7 @@ generated from RGB values.
 
 import json
 from pathlib import Path
+from typing import cast
 from color_tools.naming import generate_color_name
 
 
@@ -24,10 +25,21 @@ def rename_palette_colors(palette_path: Path) -> dict:
     
     # Load palette
     with open(palette_path, 'r', encoding='utf-8') as f:
-        colors = json.load(f)
+        data: object = json.load(f)
+
+    if not isinstance(data, dict):
+        raise ValueError(f"Expected palette document in {palette_path}")
+    document = cast(dict[str, object], data)
+    palette = document.get("palette")
+    if not isinstance(palette, dict):
+        raise ValueError(f"Missing palette definition in {palette_path}")
+    colors = cast(dict[str, object], palette).get("colors")
+    if not isinstance(colors, list):
+        raise ValueError(f"Missing palette colors in {palette_path}")
+    color_records = cast(list[dict[str, object]], colors)
     
     # Collect all RGB values for near-match uniqueness checking
-    all_rgbs = [tuple(c['rgb']) for c in colors]
+    all_rgbs = [tuple(cast(list[int], color['rgb'])) for color in color_records]
     
     # Stats tracking
     stats = {
@@ -38,9 +50,9 @@ def rename_palette_colors(palette_path: Path) -> dict:
     }
     
     # Rename each color
-    for color in colors:
-        old_name = color['name']
-        rgb = tuple(color['rgb'])
+    for color in color_records:
+        old_name = cast(str, color['name'])
+        rgb = tuple(cast(list[int], color['rgb']))
         
         # Generate new name
         new_name, match_type = generate_color_name(rgb, palette_colors=all_rgbs)
@@ -56,10 +68,10 @@ def rename_palette_colors(palette_path: Path) -> dict:
     
     # Save updated palette
     with open(palette_path, 'w', encoding='utf-8') as f:
-        json.dump(colors, f, indent=2, ensure_ascii=False)
+        json.dump(document, f, indent=2, ensure_ascii=False)
     
     print(f"  Stats: {stats['exact']} exact, {stats['near']} near, {stats['generated']} generated")
-    print(f"  Renamed: {stats['renamed']}/{len(colors)} colors")
+    print(f"  Renamed: {stats['renamed']}/{len(color_records)} colors")
     
     return stats
 

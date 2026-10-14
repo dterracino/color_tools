@@ -69,7 +69,7 @@ Supported filters are `"colors"`, `"filaments"`, and `"both"`.
 | `css` | `.css` | Colors | No | CSS custom properties |
 | `csv` | `.csv` | Both | No | All record fields |
 | `gpl` | `.gpl` | Colors | Yes | GIMP palette |
-| `hex` | `.hex` | Colors | No | One `RRGGBB` value per line |
+| `hex` | `.hex` | Colors | No | One lowercase `rrggbb` value per line by default |
 | `jasc_pal` | `.pal` | Colors | No | JASC Paint Shop Pro palette |
 | `json` | `.json` | Both | Yes for palettes | All record fields |
 | `kpl` | `.kpl` | Colors | Yes | Krita native palette |
@@ -159,6 +159,29 @@ export_filaments(filaments, "autoforge", "filaments.csv")
 ```
 
 The argument order is records, format identifier, then optional output path.
+Exporter-specific options can be supplied by keyword. For example, HueForge
+exports mark selected filaments as owned by default:
+
+```python
+from color_tools import export_filaments
+from color_tools.exporters import HueForgeExportOptions
+
+with_td = [
+    filament
+    for filament in filaments
+    if filament.td_value is not None
+]
+
+export_filaments(
+    with_td,
+    "hueforge",
+    "personal_library.json",
+    options=HueForgeExportOptions(owned=False),
+)
+```
+
+HueForge requires a TD value for every filament. The exporter rejects a
+selection containing missing TD values rather than inventing transmissivity.
 
 ## CLI Usage
 
@@ -170,10 +193,21 @@ python -m color_tools filament --list-export-formats
 # Export colors or filtered filaments.
 python -m color_tools color --export json --output colors.json
 python -m color_tools filament --maker "Bambu Lab" --export autoforge --output bambu.csv
+
+# Export all Bambu Lab PLA records that have TD values to HueForge JSON.
+python -m color_tools filament --all-filaments --maker "Bambu Lab" --type PLA --has-td --export hueforge --output bambu-pla-hueforge.json
 ```
 
 CLI exports use the backward-compatible facade and default exporter settings. Exporter-specific
 typed options are currently available through the Python API.
+
+Filament filters and export options are applied in the same command. Use
+`--all-filaments` to prevent an existing owned-filaments file from narrowing
+the query, then combine `--maker`, `--type`, `--finish`, `--color`, and
+`--has-td` as needed. HueForge export requires `--has-td` whenever the selected
+catalog may contain records without TD values. Every exported HueForge record
+is marked owned by default; use the typed Python option when creating an
+unowned catalog.
 
 ## Adding an Exporter
 

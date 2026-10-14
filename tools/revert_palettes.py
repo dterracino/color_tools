@@ -12,7 +12,14 @@ def revert_palette_file(filepath: Path) -> None:
     
     # Extract just the palette array
     if isinstance(data, dict) and 'palette' in data:
-        palette_array = cast(dict[str, object], data)['palette']
+        palette = cast(dict[str, object], data)['palette']
+        if not isinstance(palette, dict):
+            print(f"Unknown palette definition in {filepath}")
+            return
+        palette_array = cast(dict[str, object], palette).get('colors')
+        if not isinstance(palette_array, list):
+            print(f"No indexed colors in {filepath}")
+            return
     elif isinstance(data, list):
         # Already in simple format
         return

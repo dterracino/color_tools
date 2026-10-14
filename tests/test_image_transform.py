@@ -10,11 +10,14 @@ Covers:
 - is_indexed_mode() PILLOW_AVAILABLE=False path
 - analyze_noise_level sigma branches (iterable, scalar, noisy assessment)
 """
+import json
 import os
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
+
+from tests.palette_document_fixtures import palette_document
 
 
 # ---------------------------------------------------------------------------
@@ -344,7 +347,10 @@ class TestQuantizeImageToPalette(unittest.TestCase):
             palette_dir = Path(temp_dir) / "user" / "palettes"
             palette_dir.mkdir(parents=True)
             (palette_dir / "user-basic.json").write_text(
-                '[{"name":"Custom Ink","hex":"#112233"}]',
+                json.dumps(palette_document(
+                    "user-basic",
+                    [{"name": "Custom Ink", "hex": "#112233"}],
+                )),
                 encoding="utf-8",
             )
             result = quantize_image_to_palette(

@@ -40,7 +40,11 @@ from color_tools.exporters.registry import (
 from color_tools.exporters.autoforge_exporter import AutoForgeExporter
 from color_tools.exporters.csv_exporter import CSVExporter
 from color_tools.exporters.gpl_exporter import GPLExporter
-from color_tools.exporters.hex_exporter import HexExporter
+from color_tools.exporters.hex_exporter import HexExporter, HexExportOptions
+from color_tools.exporters.hueforge_exporter import (
+    HueForgeExporter,
+    HueForgeExportOptions,
+)
 from color_tools.exporters.jascpal_exporter import JascPalExporter
 from color_tools.exporters.json_exporter import JSONExporter
 from color_tools.exporters.lospec_exporter import LospecExporter
@@ -87,6 +91,9 @@ __all__ = [
     "GLSLExporter",
     "GLSLExportOptions",
     "HexExporter",
+    "HexExportOptions",
+    "HueForgeExporter",
+    "HueForgeExportOptions",
     "JascPalExporter",
     "JSONExporter",
     "LospecExporter",

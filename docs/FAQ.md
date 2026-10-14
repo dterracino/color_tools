@@ -404,22 +404,31 @@ Both commands show the same information: palette names and the number of colors 
 Yes! Create custom palettes in `data/user/palettes/` with `user-` prefix:
 
 ```json
-// data/user/palettes/user-mycustom.json
-[
-  {
-    "name": "MyRed",
-    "hex": "#FF0000"
+{
+  "schema_version": 1,
+  "metadata": {
+    "id": "user-mycustom",
+    "name": "My Custom Palette",
+    "description": "A small palette for my project."
   },
-  {
-    "name": "MyBlue",
-    "hex": "#0000FF"
+  "palette": {
+    "type": "indexed",
+    "colors": [
+      {"name": "MyRed", "hex": "#FF0000"},
+      {"name": "MyBlue", "hex": "#0000FF"}
+    ]
   }
-]
+}
 ```
 
-**Important:** User palette files **must** start with `user-` prefix for security and clarity.
+**Important:** User palette files **must** start with the `user-` prefix, and
+`metadata.id` must exactly match the filename stem. For the example above, the
+filename is `user-mycustom.json` and the ID is `user-mycustom`.
 
-Only `name` and `hex` are read for each palette color. RGB, HSL, LAB, and LCH values are calculated from hex when loaded, so they should not be added to the file. Files ending in `example.json` are ignored by palette discovery; copy or rename the example to a usable `user-<name>.json` filename.
+Each entry in `palette.colors` needs only `name` and `hex`. RGB, HSL, LAB, and
+LCH values are calculated from hex when loaded, so they should not be added to
+the file. Files ending in `example.json` are ignored by palette discovery; copy
+or rename the example and update its metadata ID before using it.
 
 **Features:**
 

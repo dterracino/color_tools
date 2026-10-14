@@ -179,6 +179,7 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
                 type_name=None if args.type == ["*"] else args.type,
                 finish=None if args.finish == ["*"] else args.finish,
                 color=args.color,
+                has_td=getattr(args, "has_td", False) or None,
             )
             exclude = FilamentFilterCriteria(
                 maker=args.exclude_maker,
@@ -224,15 +225,25 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
             sys.exit(1)
         sys.exit(0)
 
-    if args.maker or args.type or args.finish or args.color or args.export or args.count:
+    has_td = getattr(args, "has_td", False)
+    if (
+        args.maker
+        or args.type
+        or args.finish
+        or args.color
+        or has_td
+        or args.export
+        or args.count
+    ):
         # Filter filaments (or get all if no filters and exporting)
-        if args.maker or args.type or args.finish or args.color:
+        if args.maker or args.type or args.finish or args.color or has_td:
             results = filament_palette.filter(
                 maker=args.maker,
                 type_name=args.type,
                 finish=args.finish,
                 color=args.color,
-                owned=owned_filter
+                owned=owned_filter,
+                has_td=has_td or None,
             )
         elif args.export:
             # Export: respect owned filtering unless --all-filaments
@@ -246,7 +257,8 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
                 type_name=args.type,
                 finish=args.finish,
                 color=args.color,
-                owned=owned_filter
+                owned=owned_filter,
+                has_td=has_td or None,
             )
         
         if args.count:

@@ -7,11 +7,14 @@ calculated with the production conversion functions.
 
 from __future__ import annotations
 
-import json
 from pathlib import Path
-from typing import TypedDict
+from typing import TypedDict, cast
 
 from color_tools.conversions import lab_to_lch, rgb_to_hex, rgb_to_hsl, rgb_to_lab
+from tools.convert_palettes import (
+    build_palette_document,
+    serialize_palette_document,
+)
 
 
 type RGB = tuple[int, int, int]
@@ -257,25 +260,16 @@ def build_palette(definitions: tuple[ColorDefinition, ...]) -> list[_PaletteReco
     return records
 
 
-def _serialize_palette(records: list[_PaletteRecord]) -> str:
-    """Serialize records with compact numeric arrays matching bundled data."""
-    blocks: list[str] = []
-    for record in records:
-        blocks.append(
-            "\n".join(
-                (
-                    "  {",
-                    f'    "name": {json.dumps(record["name"])},',
-                    f'    "hex": {json.dumps(record["hex"])},',
-                    f'    "rgb": {json.dumps(record["rgb"])},',
-                    f'    "hsl": {json.dumps(record["hsl"])},',
-                    f'    "lab": {json.dumps(record["lab"])},',
-                    f'    "lch": {json.dumps(record["lch"])}',
-                    "  }",
-                )
-            )
-        )
-    return "[\n" + ",\n".join(blocks) + "\n]\n"
+def _serialize_palette(
+    palette_name: str,
+    records: list[_PaletteRecord],
+) -> str:
+    """Serialize records in the canonical bundled palette document."""
+    document = build_palette_document(
+        palette_name,
+        cast(list[object], records),
+    )
+    return serialize_palette_document(document)
 
 
 def write_palettes(output_dir: Path) -> tuple[Path, ...]:
@@ -285,7 +279,7 @@ def write_palettes(output_dir: Path) -> tuple[Path, ...]:
     for palette_name, definitions in PALETTES.items():
         output_path = output_dir / f"{palette_name}.json"
         output_path.write_text(
-            _serialize_palette(build_palette(definitions)),
+            _serialize_palette(palette_name, build_palette(definitions)),
             encoding="utf-8",
             newline="\n",
         )

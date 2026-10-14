@@ -273,7 +273,9 @@ def export_colors_json(
 def export_filaments(
     filaments: list[FilamentRecord],
     format_name: str,
-    output_path: Path | str | None = None
+    output_path: Path | str | None = None,
+    *,
+    options: ExportOptionsBase | None = None,
 ) -> str:
     """
     Export filaments to specified format.
@@ -285,6 +287,7 @@ def export_filaments(
         filaments: List of FilamentRecord objects to export
         format_name: Export format ('autoforge', 'csv', 'json', etc.)
         output_path: Output file path (auto-generated if None)
+        options: Optional exporter-specific configuration
     
     Returns:
         Path to the exported file
@@ -311,13 +314,15 @@ def export_filaments(
         raise ValueError(f"Format '{format_name}' does not support filaments")
     
     # Delegate to exporter
-    return exporter.export_filaments(filaments, output_path)
+    return exporter.export_filaments(filaments, output_path, options)
 
 
 def export_colors(
     colors: list[ColorRecord],
     format_name: str,
-    output_path: Path | str | None = None
+    output_path: Path | str | None = None,
+    *,
+    options: ExportOptionsBase | None = None,
 ) -> str:
     """
     Export colors to specified format.
@@ -329,6 +334,7 @@ def export_colors(
         colors: List of ColorRecord objects to export
         format_name: Export format ('csv', 'json', 'gpl', etc.)
         output_path: Output file path (auto-generated if None)
+        options: Optional exporter-specific configuration
     
     Returns:
         Path to the exported file
@@ -355,4 +361,4 @@ def export_colors(
         raise ValueError(f"Format '{format_name}' does not support colors")
     
     # Delegate to exporter
-    return exporter.export_colors(colors, output_path)
+    return exporter.export_colors(colors, output_path, options)

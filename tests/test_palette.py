@@ -5,6 +5,7 @@ import sys
 import json
 import tempfile
 from pathlib import Path
+from typing import cast
 
 # Add parent directory to path for imports
 parent_dir = Path(__file__).parent.parent.parent
@@ -21,6 +22,7 @@ from color_tools.filament_palette import (
     FilamentPalette,
     FilamentRecord,
 )
+from tests.palette_document_fixtures import palette_document
 
 
 class TestColorRecord(unittest.TestCase):
@@ -504,27 +506,79 @@ class TestLoadPalette(unittest.TestCase):
                 # This will raise JSONDecodeError which should be caught
             # The actual function wraps this in ValueError
     
-    def test_non_list_palette_data_raises_value_error(self):
-        """Test that palette file with non-list root raises ValueError."""
-        import tempfile
-        import json
-        
-        # Create a temporary directory with invalid structure
+    def test_legacy_root_array_is_rejected(self):
+        """Unversioned root arrays are not accepted as palette documents."""
         with tempfile.TemporaryDirectory() as tmpdir:
-            bad_file = Path(tmpdir) / "palettes" / "notlist.json"
-            bad_file.parent.mkdir(parents=True, exist_ok=True)
-            
-            # Write JSON object instead of array
-            with open(bad_file, 'w') as f:
-                json.dump({"colors": []}, f)
-            
-            # We'll test the validation logic directly
-            with open(bad_file, 'r') as f:
-                data = json.load(f)
-            
-            # This should not be a list
-            self.assertNotIsInstance(data, list)
-            # The actual function would raise ValueError here
+            palette_dir = Path(tmpdir) / "palettes"
+            palette_dir.mkdir(parents=True)
+            (palette_dir / "legacy.json").write_text("[]", encoding="utf-8")
+
+            with self.assertRaisesRegex(ValueError, "palette document"):
+                load_palette("legacy", tmpdir)
+
+    def test_palette_metadata_id_must_match_filename(self):
+        """Document identity cannot disagree with its lookup filename."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            palette_dir = Path(tmpdir) / "palettes"
+            palette_dir.mkdir(parents=True)
+            document = palette_document("different", [])
+            (palette_dir / "expected.json").write_text(
+                json.dumps(document),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "must match filename stem"):
+                load_palette("expected", tmpdir)
+
+    def test_description_and_release_year_are_optional(self):
+        """Only metadata identity and display name are required."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            palette_dir = Path(tmpdir) / "palettes"
+            palette_dir.mkdir(parents=True)
+            document = palette_document("minimal", [])
+            metadata = cast(dict[str, object], document["metadata"])
+            metadata.pop("description")
+            (palette_dir / "minimal.json").write_text(
+                json.dumps(document),
+                encoding="utf-8",
+            )
+
+            palette = load_palette("minimal", tmpdir)
+            self.assertEqual(palette.records, [])
+
+    def test_optional_description_is_validated_when_present(self):
+        """An authored description must still be a non-empty string."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            palette_dir = Path(tmpdir) / "palettes"
+            palette_dir.mkdir(parents=True)
+            document = palette_document("bad-description", [])
+            metadata = cast(dict[str, object], document["metadata"])
+            metadata["description"] = ""
+            (palette_dir / "bad-description.json").write_text(
+                json.dumps(document),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "metadata.description"):
+                load_palette("bad-description", tmpdir)
+
+    def test_unsupported_palette_type_is_rejected(self):
+        """Schema version 1 currently supports only indexed palettes."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            palette_dir = Path(tmpdir) / "palettes"
+            palette_dir.mkdir(parents=True)
+            document = palette_document("reference", [])
+            palette = document["palette"]
+            assert isinstance(palette, dict)
+            palette["type"] = "reference"
+            palette["reference"] = "ega16"
+            (palette_dir / "reference.json").write_text(
+                json.dumps(document),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "Unsupported palette type"):
+                load_palette("reference", tmpdir)
 
 
 class TestParseColorRecords(unittest.TestCase):

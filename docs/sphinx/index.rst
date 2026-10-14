@@ -161,6 +161,7 @@ Export System
    color_tools.exporters.glsl_exporter
    color_tools.exporters.gpl_exporter
    color_tools.exporters.hex_exporter
+   color_tools.exporters.hueforge_exporter
    color_tools.exporters.jascpal_exporter
    color_tools.exporters.json_exporter
    color_tools.exporters.kpl_exporter

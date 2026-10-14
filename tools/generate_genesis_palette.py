@@ -117,8 +117,21 @@ def generate_genesis_palette() -> list[_GenesisColorData]:
 
 def save_genesis_palette(colors: list[_GenesisColorData], output_path: Path) -> None:
     """Save the Genesis palette to a JSON file."""
+    document: dict[str, object] = {
+        "schema_version": 1,
+        "metadata": {
+            "id": "genesis",
+            "name": "Sega Genesis",
+            "description": "A home video game console released by Sega.",
+            "release_year": 1988,
+        },
+        "palette": {
+            "type": "indexed",
+            "colors": colors,
+        },
+    }
     with open(output_path, 'w') as f:
-        json.dump(colors, f, indent=2)
+        json.dump(document, f, indent=2)
     
     print(f"Generated {len(colors)} colors for Sega Genesis palette")
     print(f"Saved to: {output_path}")

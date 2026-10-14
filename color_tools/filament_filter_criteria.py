@@ -27,16 +27,18 @@ def _normalize_filter_field(value: _FilterField | None) -> frozenset[str] | None
 
 @dataclass(frozen=True, slots=True)
 class FilamentFilterCriteria:
-    """Case-insensitive maker, type, finish, and color matching criteria.
+    """Reusable filament metadata matching criteria.
 
-    Multiple values within one field use OR semantics. Active fields are
-    combined with AND semantics.
+    Text fields are case-insensitive. Multiple values within one text field
+    use OR semantics. Active fields, including TD availability, are combined
+    with AND semantics.
     """
 
     maker: _FilterField | None = field(default=None, compare=False)
     type_name: _FilterField | None = field(default=None, compare=False)
     finish: _FilterField | None = field(default=None, compare=False)
     color: _FilterField | None = field(default=None, compare=False)
+    has_td: bool | None = None
     _makers: frozenset[str] | None = field(init=False, repr=False)
     _type_names: frozenset[str] | None = field(init=False, repr=False)
     _finishes: frozenset[str] | None = field(init=False, repr=False)
@@ -44,6 +46,8 @@ class FilamentFilterCriteria:
 
     def __post_init__(self) -> None:
         """Cache normalized values once for repeated record matching."""
+        if self.has_td is not None and type(self.has_td) is not bool:
+            raise TypeError("has_td must be a bool or None")
         maker = _freeze_filter_field(self.maker)
         type_name = _freeze_filter_field(self.type_name)
         finish = _freeze_filter_field(self.finish)
@@ -83,6 +87,7 @@ class FilamentFilterCriteria:
         type_name: str,
         finish: str | None,
         color: str,
+        td_value: float | None = None,
     ) -> bool:
         """Return whether all active fields match the supplied attributes."""
         if self._makers is not None and maker.strip().casefold() not in self._makers:
@@ -94,6 +99,8 @@ class FilamentFilterCriteria:
                 return False
         if self._colors is not None and color.strip().casefold() not in self._colors:
             return False
+        if self.has_td is not None and (td_value is not None) is not self.has_td:
+            return False
         return True
 
     @property
@@ -104,4 +111,5 @@ class FilamentFilterCriteria:
             and self._type_names is None
             and self._finishes is None
             and self._colors is None
+            and self.has_td is None
         )

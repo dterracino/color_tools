@@ -114,7 +114,15 @@ include = ["color_tools", "color_tools.*"]
 exclude = ["color_tools.data*", "tests*", "test_*"]
 
 [tool.setuptools.package-data]
-color_tools = ["py.typed", "data/*.json", "data/palettes/*.json"]
+color_tools = [
+    "py.typed",
+    "data/*.json",
+    "data/palettes/*.json",
+    "data/user/*.json",
+    "data/user/*.sha256",
+    "data/user/palettes/*.json",
+    "data/user/palettes/*.sha256",
+]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
