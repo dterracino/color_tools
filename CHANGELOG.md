@@ -234,6 +234,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Complete override-report capture** — capture filament and maker-synonym
+  override messages alongside color overrides, restore both logger levels and
+  handlers after success or failure, and report loader failures once on
+  standard error.
 - **Palette matching consistency** — calculate LCH distance with hue taken from
   the third coordinate and wrapped across zero degrees. Multiple-result color
   searches now apply the same exact-distance user-source preference as

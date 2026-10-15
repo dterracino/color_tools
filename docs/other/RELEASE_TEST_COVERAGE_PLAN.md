@@ -361,13 +361,13 @@ Suggested homes: the existing format-specific exporter tests.
 
 Target: `color_tools/cli_commands/reporting.py`
 
-- [ ] Capture and label color name/RGB override messages.
-- [ ] Capture and label exact/RGB filament override messages.
-- [ ] Capture and label synonym replacement and extension messages.
-- [ ] Report no overrides when no messages are emitted.
-- [ ] Summarize records by source for both colors and filaments.
-- [ ] A loader failure prints one focused error and exits with status 1.
-- [ ] Logging levels and handlers are restored even after a failure.
+- [x] Capture and label color name/RGB override messages.
+- [x] Capture and label exact/RGB filament override messages.
+- [x] Capture and label synonym replacement and extension messages.
+- [x] Report no overrides when no messages are emitted.
+- [x] Summarize records by source for both colors and filaments.
+- [x] A loader failure prints one focused error and exits with status 1.
+- [x] Logging levels and handlers are restored even after a failure.
 
 The implementation currently contains fallback branches after selecting the
 default palettes that appear unreachable. Confirm this during implementation;
@@ -473,7 +473,7 @@ Work in bounded batches so failures identify the responsible area:
 5. [x] Exporter base and format-specific edge cases.
 6. [x] Filament and conversion CLI routes.
 7. [x] MCP conversion routes.
-8. [ ] Override reporting.
+8. [x] Override reporting.
 9. [ ] Supported image edge cases.
 10. [ ] Focused terminal and Qt workflow coverage.
 11. [ ] Review remaining uncovered branches and classify each as required,

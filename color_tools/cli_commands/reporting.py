@@ -22,6 +22,18 @@ from ..palette import (
 from ..filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 
 
+class _OverrideCaptureHandler(logging.Handler):
+    """Collect formatted override messages for one report invocation."""
+
+    def __init__(self, messages: list[str]) -> None:
+        super().__init__()
+        self._messages = messages
+
+    def emit(self, record: LogRecord) -> None:
+        """Append one formatted log record to the report message list."""
+        self._messages.append(self.format(record))
+
+
 def show_override_report(json_dir: str | None = None) -> None:
     """
     Show detailed report of user overrides and exit.
@@ -32,41 +44,29 @@ def show_override_report(json_dir: str | None = None) -> None:
     Args:
         json_dir: Optional directory containing JSON files. If None, uses package default.
     """
-    # Set up logging to capture override messages
     log_messages: list[str] = []
-    
-    class ListHandler(logging.Handler):
-        def emit(self, record: LogRecord) -> None:
-            log_messages.append(self.format(record))
-    
-    # Configure logging to capture override info
-    logger = logging.getLogger('color_tools.palette')
-    logger.setLevel(logging.INFO)
-    handler = ListHandler()
-    logger.addHandler(handler)
+    handler = _OverrideCaptureHandler(log_messages)
+    loggers = (
+        logging.getLogger("color_tools.palette"),
+        logging.getLogger("color_tools.filament_palette"),
+    )
+    original_levels = tuple(logger.level for logger in loggers)
+    for logger in loggers:
+        logger.setLevel(logging.INFO)
+        logger.addHandler(handler)
     
     print("User Override Report")
     print("=" * 50)
     
     try:
-        # Load colors and capture override messages
-        palette = Palette.load_default() if json_dir is None else None
-        if palette is None and json_dir:
+        if json_dir is None:
+            palette = Palette.load_default()
+            filament_palette = FilamentPalette.load_default()
+        else:
             colors = load_colors(json_dir)
             palette = Palette(colors)
-        elif palette is None:
-            colors = load_colors()
-            palette = Palette(colors)
-        
-        # Load filaments and capture override messages  
-        filament_palette = FilamentPalette.load_default() if json_dir is None else None
-        if filament_palette is None and json_dir:
             filaments = load_filaments(json_dir)
             synonyms = load_maker_synonyms(json_dir)
-            filament_palette = FilamentPalette(filaments, synonyms)
-        elif filament_palette is None:
-            filaments = load_filaments()
-            synonyms = load_maker_synonyms()  
             filament_palette = FilamentPalette(filaments, synonyms)
         
         # Display captured log messages
@@ -109,12 +109,13 @@ def show_override_report(json_dir: str | None = None) -> None:
         for source, count in sorted(filament_sources.items()):
             print(f"    {source}: {count} records")
         
-    except Exception as e:
-        print(f"\nError loading data: {e}")
+    except Exception as error:
+        print(f"Error loading override report data: {error}", file=sys.stderr)
         sys.exit(1)
     finally:
-        # Clean up logging
-        logger.removeHandler(handler)
+        for logger, original_level in zip(loggers, original_levels):
+            logger.removeHandler(handler)
+            logger.setLevel(original_level)
 
 
 def _user_data_files(data_dir: Path) -> list[tuple[Path, str]]:
