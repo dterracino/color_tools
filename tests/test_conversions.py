@@ -5,6 +5,8 @@ import sys
 from pathlib import Path
 from typing import cast
 
+import color_tools
+
 try:
     import numpy as np
 except ImportError:  # pragma: no cover - optional dependency in some environments
@@ -570,6 +572,15 @@ class TestWinHSLBackwardCompatAlias(unittest.TestCase):
 class TestRGBCMYConversions(unittest.TestCase):
     """Test RGB to CMY and CMY to RGB conversions."""
 
+    def test_cmy_conversions_are_exported_from_package_root(self):
+        """The package root should retain the public CMY and CMYK API."""
+        self.assertIs(color_tools.rgb_to_cmy, rgb_to_cmy)
+        self.assertIs(color_tools.cmy_to_rgb, cmy_to_rgb)
+        self.assertIs(color_tools.rgb_to_cmyk, rgb_to_cmyk)
+        self.assertIs(color_tools.cmyk_to_rgb, cmyk_to_rgb)
+        for name in ("rgb_to_cmy", "cmy_to_rgb", "rgb_to_cmyk", "cmyk_to_rgb"):
+            self.assertIn(name, color_tools.__all__)
+
     def test_rgb_to_cmy_primary_colors(self):
         """Test RGB to CMY conversion for primary colors."""
         # Red: only Cyan (absorbs red) is 0; Magenta and Yellow are full
@@ -633,6 +644,27 @@ class TestRGBCMYConversions(unittest.TestCase):
             self.assertLessEqual(m, 100.0)
             self.assertGreaterEqual(y, 0.0)
             self.assertLessEqual(y, 100.0)
+
+    def test_cmy_to_rgb_rejects_invalid_percentages(self):
+        """CMY inputs must contain three finite percentages in range."""
+        invalid_values: tuple[object, ...] = (
+            (-0.1, 0.0, 0.0),
+            (0.0, 100.1, 0.0),
+            (0.0, float("nan"), 0.0),
+            (0.0, 0.0, float("inf")),
+            (0.0, True, 0.0),
+            (0.0, "50", 0.0),
+            (0.0, 0.0),
+            (0.0, 0.0, 0.0, 0.0),
+            "0,0,0",
+        )
+        for value in invalid_values:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                cmy_to_rgb(cast(tuple[int | float, int | float, int | float], value))
+
+    def test_cmy_to_rgb_accepts_integer_or_float_lists(self):
+        """CMY accepts either tuple or list containers with numeric channels."""
+        self.assertEqual(cmy_to_rgb([0, 50.0, 100]), (255, 128, 0))
 
 
 class TestRGBCMYKConversions(unittest.TestCase):
@@ -723,6 +755,28 @@ class TestRGBCMYKConversions(unittest.TestCase):
         self.assertEqual(cmy_black, (100.0, 100.0, 100.0))
         # CMYK uses only K
         self.assertEqual(cmyk_black, (0.0, 0.0, 0.0, 100.0))
+
+    def test_cmyk_to_rgb_rejects_invalid_percentages(self):
+        """CMYK inputs must contain four finite percentages in range."""
+        invalid_values: tuple[object, ...] = (
+            (-0.1, 0.0, 0.0, 0.0),
+            (0.0, 100.1, 0.0, 0.0),
+            (0.0, 0.0, float("nan"), 0.0),
+            (0.0, 0.0, 0.0, float("inf")),
+            (0.0, 0.0, 0.0, False),
+            (0.0, 0.0, "50", 0.0),
+            (0.0, 0.0, 0.0),
+            (0.0, 0.0, 0.0, 0.0, 0.0),
+            "0,0,0,0",
+        )
+        for value in invalid_values:
+            with self.subTest(value=value), self.assertRaises(ValueError):
+                cmyk_to_rgb(
+                    cast(
+                        tuple[int | float, int | float, int | float, int | float],
+                        value,
+                    )
+                )
 
 
 if __name__ == '__main__':

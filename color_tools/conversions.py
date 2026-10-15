@@ -4,6 +4,7 @@ Color space conversion functions.
 Handles conversions between:
 - sRGB (0-255) ↔ XYZ ↔ LAB ↔ LCH
 - sRGB ↔ HSL (various formats)
+- sRGB ↔ CMY and CMYK percentages
 - Gamma correction (sRGB companding)
 
 All conversions use D65 illuminant and proper color science math.
@@ -31,7 +32,7 @@ Example:
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING, Tuple
+from typing import TYPE_CHECKING, Tuple, cast
 import math
 import colorsys
 
@@ -550,6 +551,31 @@ def hsl_to_rgb(hsl: Tuple[float, float, float]) -> Tuple[int, int, int]:
 # CMY Conversions
 # ============================================================================
 
+def _validate_percentage_channels(
+    value: object,
+    *,
+    space: str,
+    count: int,
+) -> tuple[float, ...]:
+    """Validate and normalize percentage-based color-space components."""
+    if not isinstance(value, (tuple, list)):
+        raise ValueError(f"{space} must be a tuple or list of {count} components")
+    components = cast(tuple[object, ...] | list[object], value)
+    if len(components) != count:
+        raise ValueError(f"{space} must contain exactly {count} components")
+
+    channels: list[float] = []
+    for index, component in enumerate(components, 1):
+        if isinstance(component, bool) or not isinstance(component, (int, float)):
+            raise ValueError(f"{space} component {index} must be a number")
+        channel = float(component)
+        if not math.isfinite(channel):
+            raise ValueError(f"{space} component {index} must be finite")
+        if not 0.0 <= channel <= ColorConstants.XYZ_SCALE_FACTOR:
+            raise ValueError(f"{space} component {index} must be between 0 and 100")
+        channels.append(channel)
+    return tuple(channels)
+
 def rgb_to_cmy(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     """
     Convert RGB (0-255) to CMY (C: 0-100, M: 0-100, Y: 0-100).
@@ -586,7 +612,9 @@ def rgb_to_cmy(rgb: Tuple[int, int, int]) -> Tuple[float, float, float]:
     return (round(c, 4), round(m, 4), round(y, 4))
 
 
-def cmy_to_rgb(cmy: Tuple[float, float, float]) -> Tuple[int, int, int]:
+def cmy_to_rgb(
+    cmy: tuple[int | float, int | float, int | float] | list[int | float],
+) -> Tuple[int, int, int]:
     """
     Convert CMY (C: 0-100, M: 0-100, Y: 0-100) to RGB (0-255).
 
@@ -603,6 +631,10 @@ def cmy_to_rgb(cmy: Tuple[float, float, float]) -> Tuple[int, int, int]:
     Returns:
         RGB tuple (0-255 for each component)
 
+    Raises:
+        ValueError: Unless input contains three finite numeric percentages in
+            the inclusive 0-100 range. Values are not clipped.
+
     Example:
         >>> cmy_to_rgb((0.0, 100.0, 100.0))   # cyan=0, full magenta+yellow → red
         (255, 0, 0)
@@ -611,7 +643,7 @@ def cmy_to_rgb(cmy: Tuple[float, float, float]) -> Tuple[int, int, int]:
         >>> cmy_to_rgb((0.0, 0.0, 0.0))       # no ink → white
         (255, 255, 255)
     """
-    c, m, y = cmy
+    c, m, y = _validate_percentage_channels(cmy, space="CMY", count=3)
     r = (1.0 - c / ColorConstants.XYZ_SCALE_FACTOR) * ColorConstants.RGB_MAX
     g = (1.0 - m / ColorConstants.XYZ_SCALE_FACTOR) * ColorConstants.RGB_MAX
     b = (1.0 - y / ColorConstants.XYZ_SCALE_FACTOR) * ColorConstants.RGB_MAX
@@ -680,7 +712,10 @@ def rgb_to_cmyk(rgb: Tuple[int, int, int]) -> Tuple[float, float, float, float]:
     )
 
 
-def cmyk_to_rgb(cmyk: Tuple[float, float, float, float]) -> Tuple[int, int, int]:
+def cmyk_to_rgb(
+    cmyk: tuple[int | float, int | float, int | float, int | float]
+    | list[int | float],
+) -> Tuple[int, int, int]:
     """
     Convert CMYK (C: 0-100, M: 0-100, Y: 0-100, K: 0-100) to RGB (0-255).
 
@@ -697,6 +732,10 @@ def cmyk_to_rgb(cmyk: Tuple[float, float, float, float]) -> Tuple[int, int, int]
     Returns:
         RGB tuple (0-255 for each component)
 
+    Raises:
+        ValueError: Unless input contains four finite numeric percentages in
+            the inclusive 0-100 range. Values are not clipped.
+
     Example:
         >>> cmyk_to_rgb((0.0, 100.0, 100.0, 0.0))   # red
         (255, 0, 0)
@@ -705,7 +744,7 @@ def cmyk_to_rgb(cmyk: Tuple[float, float, float, float]) -> Tuple[int, int, int]
         >>> cmyk_to_rgb((0.0, 0.0, 0.0, 0.0))       # white
         (255, 255, 255)
     """
-    c, m, y, k = cmyk
+    c, m, y, k = _validate_percentage_channels(cmyk, space="CMYK", count=4)
     scale = ColorConstants.XYZ_SCALE_FACTOR  # 100.0
     k_factor = 1.0 - k / scale
     r = ColorConstants.RGB_MAX * (1.0 - c / scale) * k_factor

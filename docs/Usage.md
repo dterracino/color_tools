@@ -171,6 +171,10 @@ gameboy_image.save("gameboy_style.png")
 - `rgb_to_cmy()`, `cmy_to_rgb()` - RGB ↔ CMY conversion (0-100% per channel; no black)
 - `rgb_to_cmyk()`, `cmyk_to_rgb()` - RGB ↔ CMYK conversion (0-100% per channel; K extracts black)
 
+CMY and CMYK inputs are strictly validated finite percentages in the inclusive
+0-100 range. These are generic mathematical conversions, not ICC-managed print
+separations or predictions for a particular printer, ink, and paper.
+
 #### Distance Metrics
 
 - `delta_e_2000()` - CIEDE2000 (recommended)

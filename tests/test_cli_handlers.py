@@ -430,6 +430,28 @@ class TestHandleConvertCommand(unittest.TestCase):
         code, _ = self._run_capture(args)
         self.assertEqual(code, 0)
 
+    def test_cmy_to_rgb_by_value_exits_0(self) -> None:
+        """CMY percentages are accepted by the convert command."""
+        args = self._make_args(value=[0.0, 50.0, 100.0], from_space='cmy', to_space='rgb')
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn("RGB(255, 128, 0)", output)
+
+    def test_invalid_cmy_or_cmyk_percentage_exits_2(self) -> None:
+        """The CLI should report invalid percentages instead of clipping."""
+        for space, value in (
+            ("cmy", [-1.0, 50.0, 100.0]),
+            ("cmyk", [0.0, 50.0, 100.0, float("inf")]),
+        ):
+            with self.subTest(space=space):
+                error_output = io.StringIO()
+                with patch("sys.stderr", error_output):
+                    code, _ = self._run_capture(
+                        self._make_args(value=value, from_space=space, to_space="rgb")
+                    )
+                self.assertEqual(code, 2)
+                self.assertIn(f"Error: {space.upper()} component", error_output.getvalue())
+
 
 # ---------------------------------------------------------------------------
 # Color

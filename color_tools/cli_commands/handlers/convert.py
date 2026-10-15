@@ -131,42 +131,46 @@ def handle_convert_command(args: Namespace) -> None:
 
             val = tuple(float(v) for v in value)
 
-        # ------ Convert source space → RGB (intermediate) ------
-        triple = (val[0], val[1], val[2])
-        if from_space == "rgb":
-            rgb = (int(val[0]), int(val[1]), int(val[2]))
-        elif from_space == "hsl":
-            rgb = hsl_to_rgb(triple)
-        elif from_space == "lab":
-            rgb = lab_to_rgb(triple)
-        elif from_space == "lch":
-            rgb = lch_to_rgb(triple)
-        elif from_space == "cmy":
-            rgb = cmy_to_rgb(triple)
-        elif from_space == "cmyk":
-            cmyk = tuple(val)
-            if len(cmyk) != 4:
-                raise ValueError("CMYK input requires four components")
-            rgb = cmyk_to_rgb((cmyk[0], cmyk[1], cmyk[2], cmyk[3]))
-        else:
-            print(f"Error: Unsupported source space '{from_space}'", file=sys.stderr)
-            sys.exit(2)
+        try:
+            # ------ Convert source space → RGB (intermediate) ------
+            triple = (val[0], val[1], val[2])
+            if from_space == "rgb":
+                rgb = (int(val[0]), int(val[1]), int(val[2]))
+            elif from_space == "hsl":
+                rgb = hsl_to_rgb(triple)
+            elif from_space == "lab":
+                rgb = lab_to_rgb(triple)
+            elif from_space == "lch":
+                rgb = lch_to_rgb(triple)
+            elif from_space == "cmy":
+                rgb = cmy_to_rgb(triple)
+            elif from_space == "cmyk":
+                cmyk = tuple(val)
+                if len(cmyk) != 4:
+                    raise ValueError("CMYK input requires four components")
+                rgb = cmyk_to_rgb((cmyk[0], cmyk[1], cmyk[2], cmyk[3]))
+            else:
+                print(f"Error: Unsupported source space '{from_space}'", file=sys.stderr)
+                sys.exit(2)
 
-        # ------ Convert RGB → target space ------
-        if to_space == "rgb":
-            result = rgb
-        elif to_space == "hsl":
-            result = rgb_to_hsl(rgb)
-        elif to_space == "lab":
-            result = rgb_to_lab(rgb)
-        elif to_space == "lch":
-            result = rgb_to_lch(rgb)
-        elif to_space == "cmy":
-            result = rgb_to_cmy(rgb)
-        elif to_space == "cmyk":
-            result = rgb_to_cmyk(rgb)
-        else:
-            print(f"Error: Unsupported target space '{to_space}'", file=sys.stderr)
+            # ------ Convert RGB → target space ------
+            if to_space == "rgb":
+                result = rgb
+            elif to_space == "hsl":
+                result = rgb_to_hsl(rgb)
+            elif to_space == "lab":
+                result = rgb_to_lab(rgb)
+            elif to_space == "lch":
+                result = rgb_to_lch(rgb)
+            elif to_space == "cmy":
+                result = rgb_to_cmy(rgb)
+            elif to_space == "cmyk":
+                result = rgb_to_cmyk(rgb)
+            else:
+                print(f"Error: Unsupported target space '{to_space}'", file=sys.stderr)
+                sys.exit(2)
+        except ValueError as error:
+            print(f"Error: {error}", file=sys.stderr)
             sys.exit(2)
 
         print(f"Converted {from_space.upper()}{val} -> {to_space.upper()}{result}")

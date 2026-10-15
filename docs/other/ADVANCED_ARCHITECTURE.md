@@ -194,27 +194,77 @@ The four standard rendering intents become crucial for intelligent conversions:
 - **CMYK:** Simulate actual print appearance (including paper color)
 - **LED:** Show actual LED spectrum limitations
 
-## Missing Color Spaces to Add
+## Color-Space Support Status
 
-### **High Priority:**
+Use the following structure when evaluating a proposed color space. Calling a
+space "supported" is otherwise ambiguous: conversion, matching, record
+storage, interchange, and device-managed rendering are different capabilities.
 
-1. **CMYK** - Essential for print workflows
-2. **Adobe RGB** - Professional photography standard
-3. **Wavelength** - Unique scientific/educational feature
-4. **RGBA** - Web/graphics essential
+1. **Status:** proposed, partial, implemented, or deferred.
+2. **Implemented scope:** representations, ranges, conversions, and public
+   entry points that exist now.
+3. **Validation contract:** accepted containers, numeric types, ranges, and
+   error behavior.
+4. **Explicit exclusions:** nearby features that are intentionally not part of
+   the implementation.
+5. **Expansion trigger:** a concrete user workflow that would justify making
+   the space more prominent.
 
-### **Medium Priority:**
+### CMY and CMYK
 
-5. **CMY** - Subtractive color without black
-6. **ProPhoto RGB** - Extended gamut photography
-7. **Rec2020** - Video/broadcast standard
-8. **KML Colors** - Geographic applications (AABBGGRR format)
+**Status:** Implemented as bounded conversion spaces.
 
-### **Lower Priority:**
+**Implemented scope:**
 
-9. **BGR** - Graphics API compatibility (trivial conversion)
-10. **Spectral data** - Full spectrum representation
-11. **Multi-ink** - Variable ink channels for specialty printing
+- `rgb_to_cmy()` and `cmy_to_rgb()` convert between strict 8-bit encoded sRGB
+  and three percentages in the inclusive 0-100 range.
+- `rgb_to_cmyk()` and `cmyk_to_rgb()` provide the corresponding generic
+  four-channel conversion, extracting or applying a K channel.
+- All four functions are exported from `color_tools` and documented in the
+  conversion API.
+- The `convert` CLI, interactive wizard, and MCP conversion tool accept CMY and
+  CMYK. MCP color analysis also reports both representations.
+- RGB inputs follow the library's strict RGB contract. CMY and CMYK inputs must
+  be tuple/list containers containing the exact number of finite numeric
+  percentages; invalid values raise `ValueError` and are never clipped.
+
+**Explicit exclusions:**
+
+- No ICC profiles, printer/paper/ink characterization, black-generation
+  strategy, total-area coverage, rendering intents, or print-gamut prediction.
+  These are generic mathematical conversions, not production color separation.
+- No CMY or CMYK distance metric. Neither representation is perceptually
+  uniform; perceptual matching continues to use LAB/LCH and Delta E.
+- No stored CMY/CMYK fields on `ColorRecord` or `FilamentRecord`. Both values
+  are inexpensive derivatives of RGB and can be calculated on demand.
+- No CMY/CMYK input for palette matching, harmony generation, or the `color`
+  command's `--space` option. Those workflows can explicitly convert to RGB or
+  LAB first.
+- No CMY/CMYK-specific palette exporter or image color mode.
+- No rich `ColorValue` object or conversion-quality metadata is introduced by
+  this bounded implementation.
+
+**Expansion trigger:** Add one of the excluded capabilities only when a real
+workflow requires it. For example, accepting CMY in palette matching should
+convert the query through RGB to LAB and retain a perceptual distance metric;
+production print support would require ICC-aware tooling rather than extending
+the generic formulas.
+
+### Remaining Candidates
+
+These remain proposals and should use the same status structure before work is
+approved:
+
+| Candidate | Potential use | Current status |
+| --- | --- | --- |
+| Adobe RGB | Professional photography | Proposed |
+| RGBA | Graphics and compositing | Partial alpha parsing only; representation deferred |
+| ProPhoto RGB | Extended-gamut photography | Proposed |
+| Rec. 2020 | Video and broadcast | Proposed |
+| KML colors | Geographic interchange | Proposed |
+| BGR | Graphics API compatibility | Proposed; conversion is trivial |
+| Spectral data | Scientific and educational analysis | Research only |
+| Multi-ink | Specialty printing | Deferred pending a device/profile model |
 
 ## Real-World Application Examples
 
@@ -286,7 +336,7 @@ def convert_color(color: ColorValue, target_space: str, **kwargs) -> ConversionR
 
 1. **Phase 1:** Add new ColorValue/ConversionResult classes alongside existing code
 2. **Phase 2:** Implement rich conversion functions for existing color spaces
-3. **Phase 3:** Add new color spaces (CMYK, Adobe RGB, wavelength)
+3. **Phase 3:** Add justified device-managed or extended-gamut color spaces
 4. **Phase 4:** Add alpha channel support and real-world applications
 5. **Phase 5:** Eventually deprecate (but not remove) simple tuple API
 

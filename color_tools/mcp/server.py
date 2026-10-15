@@ -192,8 +192,8 @@ def _rgb_from_space(value: list[float], space: ColorSpace, clamp: bool) -> tuple
     if space == "hsl":
         return hsl_to_rgb(tuple(value))  # type: ignore[arg-type]
     if space == "cmy":
-        return cmy_to_rgb(tuple(value))  # type: ignore[arg-type]
-    return cmyk_to_rgb(tuple(value))  # type: ignore[arg-type]
+        return cmy_to_rgb((value[0], value[1], value[2]))
+    return cmyk_to_rgb((value[0], value[1], value[2], value[3]))
 
 
 def _lab_from_space(value: list[float], space: ColorSpace) -> tuple[float, float, float]:

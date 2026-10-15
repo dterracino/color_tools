@@ -103,6 +103,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Completed CMY/CMYK conversion contracts** — restore the four conversion
+  functions promised by 6.4.0 to the package-root API, strictly validate
+  inverse-conversion component counts and finite 0-100 percentages without
+  clipping, and apply the same errors through CLI and MCP conversion paths.
+  Document these as bounded mathematical conversion spaces rather than
+  perceptual matching spaces or ICC-managed print separations.
+
 - **Configurable HEX export case** — plain-text `.hex` palette export now
   defaults to lowercase values and accepts `HexExportOptions(uppercase=True)`
   for uppercase output through Python.

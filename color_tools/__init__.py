@@ -107,6 +107,12 @@ from .conversions import (
     rgb_to_winhsl240,  # winHSL240: Windows OS (Paint, Win32 GDI) — H 0-239, S/L 0-240
     rgb_to_winhsl255,  # winHSL255: Microsoft Office — H 0-254, S/L 0-255
     rgb_to_winhsl,  # Alias for rgb_to_winhsl240 (backward compatibility)
+
+    # RGB ↔ subtractive percentage models
+    rgb_to_cmy,
+    cmy_to_rgb,
+    rgb_to_cmyk,
+    cmyk_to_rgb,
 )
 
 # ============================================================================
@@ -336,6 +342,10 @@ __all__ = [
     "rgb_to_winhsl240",
     "rgb_to_winhsl255",
     "rgb_to_winhsl",
+    "rgb_to_cmy",
+    "cmy_to_rgb",
+    "rgb_to_cmyk",
+    "cmyk_to_rgb",
     
     # Distance metrics
     "delta_e_2000",

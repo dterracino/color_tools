@@ -150,7 +150,7 @@ Currently `console_level` defaults to `INFO` and can only be changed via the Pyt
 
 ---
 
-## `conversions.py` — CMYK color space
+## `conversions.py` — CMY and CMYK color spaces (implemented)
 
 CMYK (Cyan / Magenta / Yellow / Key-Black) is the standard model for print production and is
 directly relevant to the project's physical-color focus (filaments, physical media).  No stdlib
@@ -166,16 +166,22 @@ M  = (1 − G' − K) / (1 − K)
 Y  = (1 − B' − K) / (1 − K)
 ```
 
-**Planned API:**
+**Implemented API:**
 
 | Function | Signature | Output range |
 | --- | --- | --- |
+| `rgb_to_cmy(rgb)` | `tuple[int,int,int]` → `tuple[float,float,float]` | C/M/Y 0–100% |
+| `cmy_to_rgb(cmy)` | three numeric percentages → `tuple[int,int,int]` | R/G/B 0–255 |
 | `rgb_to_cmyk(rgb)` | `tuple[int,int,int]` → `tuple[float,float,float,float]` | C/M/Y/K 0–100% |
 | `cmyk_to_rgb(cmyk)` | `tuple[float,float,float,float]` → `tuple[int,int,int]` | R/G/B 0–255 |
 
-- Note: this is the only planned 4-tuple conversion in the library.
-- Export from `color_tools` top-level and add to `__all__`.
-- Add `--to cmyk` / `--from cmyk` support to the `convert` CLI command.
-- Unit tests: black → (0, 0, 0, 100); white → (0, 0, 0, 0); red → (0, 100, 100, 0).
-- Caveat: this is *device-independent* CMYK (no ICC profile).  Document clearly so users don't
-  expect print-accurate ink percentages — those require ICC profile transformation.
+- All four functions are exported from `color_tools` and included in `__all__`.
+- The CLI, interactive wizard, and MCP conversion tool support both spaces.
+- Inverse conversion validates exact component counts, finite numeric values,
+  and the inclusive 0-100 range without clipping.
+- This is generic mathematical CMY/CMYK, not device- or ICC-managed color.
+  Print-accurate separations require printer, ink, paper, and profile data.
+- Matching metrics, record fields, harmony inputs, ICC profiles, and dedicated
+  exporters are explicitly outside this bounded implementation. See
+  [Advanced Color Architecture Discussion](ADVANCED_ARCHITECTURE.md#cmy-and-cmyk)
+  for the reusable color-space status pattern and expansion criteria.

@@ -373,7 +373,9 @@ for the tool catalog and client configuration.
 | **CMYK** | Subtractive print model (with black) | C/M/Y/K: 0-100% each |
 
 **Use LAB or LCH for color matching** - they're designed to match human perception.
-**Use CMYK for print workflows** - the K channel produces richer blacks than CMY alone.
+**Use CMYK for basic print-model calculations** - the K channel produces richer
+blacks than CMY alone. These generic conversions are not ICC-managed color
+separations; production printing requires a device and media profile.
 
 ## 📏 Distance Metrics
 

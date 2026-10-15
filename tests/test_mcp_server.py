@@ -14,7 +14,12 @@ from mcp.client.stdio import StdioServerParameters, stdio_client
 from color_tools.config import config_context
 from color_tools.conversions import rgb_to_xyz
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
-from color_tools.mcp.server import mcp, _filament_palette, _filament_palette_for_mode
+from color_tools.mcp.server import (
+    _filament_palette,
+    _filament_palette_for_mode,
+    convert_color,
+    mcp,
+)
 
 
 class TestMCPServer(unittest.IsolatedAsyncioTestCase):
@@ -154,6 +159,13 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         )
         self.assertEqual(rgb["source_value"], [255.0, 128.0, 64.0])
         self.assertEqual(len(rgb["target_value"]), 3)
+
+    def test_convert_color_rejects_invalid_cmy_percentages(self) -> None:
+        """MCP conversion should share the strict CMY/CMYK input contract."""
+        with self.assertRaisesRegex(ValueError, "CMY component 1"):
+            convert_color("cmy", "rgb", -0.1, 0.0, 0.0)
+        with self.assertRaisesRegex(ValueError, "CMYK component 4"):
+            convert_color("cmyk", "rgb", 0.0, 0.0, 0.0, 100.1)
 
     async def test_compare_colors_returns_all_metrics(self) -> None:
         """Identical colors should have zero distance in every metric."""
