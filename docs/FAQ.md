@@ -29,7 +29,7 @@ Color Tools offers:
 - **Zero dependencies** for the core module (pure Python standard library)
 - **Perceptually accurate** color matching using CIEDE2000 and other professional formulas
 - **Specialized databases** for CSS colors and 3D printing filaments
-- **Thread-safe** configuration for multi-threaded applications
+- **Context-safe** frozen configuration for threads and asynchronous tasks
 - **Data integrity verification** via SHA-256 hashing
 - **Optional image processing** for CVD simulation and retro palette conversion
 
@@ -192,15 +192,22 @@ Maker synonyms allow you to search using common abbreviations or alternate names
 - "Paramount" → "Paramount 3D"
 - "BBL" → "Bambu Lab"
 
-### What are dual-color filaments?
+### What are multi-color filaments?
 
-Some filaments (especially silk) have two colors that appear different depending on viewing angle. The hex code shows both: `#333333-#666666`. You can choose how to handle them:
+Some filaments contain two or more ordered source colors, often because their
+appearance changes with viewing angle. The `hex` field stores every component,
+for example `#333333-#666666`. Select how records resolve to one effective color
+for matching:
 
 ```bash
---dual-color-mode first  # Use first color (default)
---dual-color-mode last   # Use second color
---dual-color-mode mix    # Blend both colors in LAB space
+--multi-color-mode first      # Use the first component (default)
+--multi-color-mode last       # Use the last component
+--multi-color-mode srgb_mean  # Average encoded-sRGB channels
 ```
+
+All components remain available through `FilamentRecord.rgb_components`.
+The mean is a practical color-selection model, not a prediction of physical
+pigment mixing.
 
 ### How do I find alternatives for unavailable filaments?
 
@@ -340,7 +347,8 @@ Install with the `[image]` extra:
 pip install color-match-tools[image]
 ```
 
-This adds Pillow for image manipulation.
+This installs the complete image extra, including Pillow, NumPy, image-analysis
+libraries, HEIC/SVG support, and the optional Adobe ASE dependency.
 
 ### What is CVD (Color Vision Deficiency)?
 
@@ -481,7 +489,11 @@ For personal use, create user data files:
 - `user-filaments.json` for custom filaments
 - `user-synonyms.json` for custom maker synonyms
 
-For contributing to the core database, submit a pull request with your additions to the main data files.
+For contributing to the bundled filament database, use the
+[filament data issue form](https://github.com/dterracino/color_tools/issues/new?template=filament_data.yml);
+no Git or JSON editing is required. Contributors who prefer a code change
+should follow [CONTRIBUTING.md](../CONTRIBUTING.md) and include the source and
+review details described there rather than editing protected data casually.
 
 ### How do I update hashes after modifying data files?
 
@@ -491,7 +503,8 @@ Use the automated tooling:
 python tooling/update_hashes.py --autoupdate
 ```
 
-See [Hash_Update_Guide.md](https://github.com/dterracino/color_tools/blob/main/docs/Hash_Update_Guide.md) for detailed instructions.
+See [Troubleshooting: Data Integrity Verification](Troubleshooting.md#data-integrity-verification)
+for verification behavior and recovery guidance.
 
 ### Where do I report bugs or request features?
 

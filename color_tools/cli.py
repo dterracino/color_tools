@@ -180,7 +180,7 @@ Examples:
         help="Minimum log level written to the log file (default: DEBUG)"
     )
 
-    # Create subparsers for the three main commands
+    # Create subparsers for the supported commands
     subparsers = parser.add_subparsers(dest="command", help="Command to execute")
     
     # ==================== COLOR SUBCOMMAND ====================
@@ -254,7 +254,7 @@ Examples:
         "--export",
         type=str,
         metavar="FORMAT",
-        help="Export colors to file (formats: csv, json)"
+        help="Export colors to file (see --list-export-formats)"
     )
     color_parser.add_argument(
         "--output",

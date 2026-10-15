@@ -13,9 +13,9 @@ Two Vercel serverless functions serve daily SVG badge images embedded in the REA
 | `GET /api/color_of_day` | SVG swatch for today's CSS color |
 | `GET /api/filament_of_day` | SVG swatch for today's 3D printing filament |
 
-Both endpoints are **stateless and deterministic** — the same date always returns the same color.
-No database, no authentication, no side effects. The color is selected by hashing the ISO date
-string with SHA-256 and taking `hash % count`.
+Both endpoints are **stateless and deterministic** — the same date always returns the same
+color or filament selection. There is no authentication and no persistent state. The record is
+selected by hashing the ISO date string with SHA-256 and taking `hash % count`.
 
 ## Architecture
 

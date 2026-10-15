@@ -69,10 +69,12 @@ Array of filament objects with manufacturer info and color data:
 
 **Field Descriptions:**
 
-- **id** (string, required): Unique semantic identifier generated from maker-type-finish-color
+- **id** (string, required for bundled records): Unique record identifier
   - Example: `"bambu-lab-pla-silk-plus-red"`
-  - Format: lowercase, hyphen-separated, URL-safe (+ becomes -plus)
-  - Human-readable and stable (barring manufacturer rebranding)
+  - Bundled IDs are preserved once assigned because ownership tracking and
+    deterministic exports use them as identity keys.
+  - User records may omit the field for ordinary searching, but should provide
+    a unique, stable ID when used with ownership tracking or HueForge export.
   
 - **maker** (string, required): Manufacturer name (canonical form)
   
@@ -84,7 +86,7 @@ Array of filament objects with manufacturer info and color data:
   
 - **hex** (string, required): Hex color code
   - Single color: `"#RRGGBB"`
-  - Dual color (silk/mixed): `"#RRGGBB-#RRGGBB"` (dash-separated)
+  - Multi-color: `"#RRGGBB-#RRGGBB"` (ordered, dash-separated components)
   
 - **td_value** (number or null): Transmission distance in millimeters when
   known. It is not a percentage or a normalized value; see
@@ -189,7 +191,7 @@ If no `.sha256` file exists, user files work without verification - giving you f
 
 ### owned-filaments.json - Filament Ownership Tracking
 
-**NEW in v6.0.0:** Track which filaments you own for personalized color matching.
+Track which filaments you own for personalized color matching.
 
 When you create an `owned-filaments.json` file with filament IDs, all filament searches automatically default to your owned filaments only - perfect for finding the best match from what you already have on hand!
 
@@ -200,9 +202,9 @@ When you create an `owned-filaments.json` file with filament IDs, all filament s
 ```json
 {
   "owned_filaments": [
-    "bambu-lab_pla-matte_jet-black",
-    "polymaker_polyterra-pla_charcoal-black",
-    "hatchbox_pla_true-red"
+    "bambu-lab-pla-matte-charcoal",
+    "polymaker-pla-polylite-black",
+    "bambu-lab-pla-basic-red"
   ]
 }
 ```
@@ -221,7 +223,7 @@ When you create an `owned-filaments.json` file with filament IDs, all filament s
 
 ```bash
 # Add filaments you own
-color-tools filament --add-owned "bambu-lab_pla-matte_jet-black"
+color-tools filament --add-owned "bambu-lab-pla-matte-charcoal"
 
 # List your owned filaments
 color-tools filament --list-owned
@@ -233,7 +235,7 @@ color-tools filament --nearest --value 255 128 64
 color-tools filament --nearest --value 255 128 64 --all-filaments
 
 # Remove a filament from owned list
-color-tools filament --remove-owned "bambu-lab_pla-matte_jet-black"
+color-tools filament --remove-owned "bambu-lab-pla-matte-charcoal"
 ```
 
 **Python API:**
@@ -254,9 +256,9 @@ filament, distance = palette.nearest_filament((255, 128, 64), owned=True)
 filament, distance = palette.nearest_filament((255, 128, 64), owned=False)
 
 # Manage owned filaments programmatically
-palette.add_owned("bambu-lab_pla-matte_white")  # Adds and saves
+palette.add_owned("bambu-lab-pla-matte-charcoal")  # Adds and saves
 owned_list = palette.list_owned()  # Returns FilamentRecord objects
-palette.remove_owned("bambu-lab_pla-matte_white")  # Removes and saves
+palette.remove_owned("bambu-lab-pla-matte-charcoal")  # Removes and saves
 ```
 
 **Use Cases:**
@@ -295,18 +297,10 @@ User Override Report
 Override Details:
   Colors: User colors override 1 core colors by name: [('red', 'colors.json', 'user-colors.json')]
   Colors: User colors override 1 core colors by RGB: [('my_red (255, 0, 0)', 'red (colors.json)', 'user-colors.json')]
-
-Summary:
-  Total colors: 142
-  Total filaments: 585
-
-Active Sources:
-  Colors:
-    colors.json: 141 records
-    user-colors.json: 1 records
-  Filaments:
-    filaments.json: 585 records
 ```
+
+The report also includes current record totals and active source files. Those
+counts depend on the installed release and which optional user files are active.
 
 #### **Source Information in Output:**
 

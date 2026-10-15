@@ -53,7 +53,7 @@ A comprehensive Python library for color science operations, color space convers
 - **Gamut Checking**: Verify if colors are representable in sRGB
 - **Agent Integration** *(with [mcp] extra)*: Typed MCP tools for color analysis, conversion,
   perceptual comparison, palette search, filament matching, gamut mapping, and CVD transforms
-- **Thread-Safe**: Configurable runtime settings per thread
+- **Context-Safe Configuration**: Frozen runtime settings isolated through `ContextVar`
 - **Color Science Integrity**: Built-in verification of color constants
 
 ## 🎨 Demos
@@ -229,6 +229,9 @@ color-tools harmony --type triadic --hex "#E0006B" --mood calm --tone dark
 
 # Find matching 3D printing filaments
 color-tools filament --nearest --value 255 128 64
+
+# Export Bambu Lab PLA records with TD values to a HueForge library
+color-tools filament --all-filaments --maker "Bambu Lab" --type PLA --has-td --export hueforge --output bambu-pla-hueforge.json
 
 # Convert between color spaces
 color-tools convert --from rgb --to lab --value 255 128 64
@@ -439,6 +442,7 @@ Export colors and filaments to various formats for use with external tools:
 | `glsl` | GLSL shader source (`.glsl`) | Colors | Yes | None |
 | `gpl` | GIMP Palette (`.gpl`) | Colors | Yes | None |
 | `hex` | Plain HEX list (`.hex`) | Colors | No | None |
+| `hueforge` | HueForge filament library (`.json`) | Filaments | No | None |
 | `jasc_pal` | JASC Paint Shop Pro palette (`.pal`) | Colors | No | None |
 | `json` | Generic JSON (`.json`) | Colors and filaments | Yes for palettes | None |
 | `kpl` | Krita palette (`.kpl`) | Colors | Yes | None |
@@ -455,6 +459,11 @@ Export colors and filaments to various formats for use with external tools:
 `list_export_formats()` returns only formats whose optional dependencies are installed by default.
 Pass `available_only=False` to include unavailable formats. Install `color-match-tools[image]`
 for ASE and presentation swatch images.
+
+Plain `.hex` files use lowercase values by default. Python callers can pass
+`HexExportOptions(uppercase=True)` for uppercase output. HueForge requires a TD
+value for every selected filament; use the CLI `--has-td` filter or filter the
+records explicitly in Python before export.
 
 ### Export Examples
 
@@ -494,8 +503,15 @@ get_exporter("swatch_image").export_palette(
 
 # Export filament records
 filaments = FilamentPalette.load_default()
-bambu_pla = filaments.filter(maker="Bambu Lab", type_name="PLA")
+bambu_pla = filaments.filter(maker="Bambu Lab", type_name="PLA", owned=False)
 get_exporter("autoforge").export_filaments(bambu_pla, "bambu_pla.csv")
+
+# HueForge accepts only records with TD values
+bambu_pla_with_td = [record for record in bambu_pla if record.td_value is not None]
+get_exporter("hueforge").export_filaments(
+    bambu_pla_with_td,
+    "bambu_pla_hueforge.json",
+)
 ```
 
 The functions in `color_tools.export`, including `export_colors()` and `export_filaments()`,
@@ -513,18 +529,18 @@ from color_tools.exporters.base import PaletteExporter, ExporterMetadata
 @register_exporter
 class MyExporter(PaletteExporter):
     @property
-  def metadata(self) -> ExporterMetadata:
+    def metadata(self) -> ExporterMetadata:
         return ExporterMetadata(
-      name="myformat",
-      description="My custom format",
-      file_extension="txt",
+            name="myformat",
+            description="My custom format",
+            file_extension="txt",
             supports_colors=True,
             supports_filaments=False,
         )
 
-  def _export_colors_impl(self, colors, output_path) -> str:
-    # Write the file and return its path.
-    return str(output_path)
+    def _export_colors_impl(self, colors, output_path) -> str:
+        # Write the file and return its path.
+        return str(output_path)
 ```
 
 See [exporters/gpl_exporter.py](https://github.com/dterracino/color_tools/blob/main/color_tools/exporters/gpl_exporter.py) for a complete example.
@@ -571,9 +587,10 @@ color-tools --log-file debug.log --log-level DEBUG filament --nearest --hex "#FF
 
 See [Usage Guide](https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#logging) for the full API reference.
 
-## �🔒 Data Integrity
+## 🔒 Data Integrity
 
-All core data files are protected with SHA-256 hashes:
+Core data, registered system palettes, and selected user files are protected
+with SHA-256 hashes:
 
 ```bash
 python -m color_tools --verify-all

@@ -8,15 +8,36 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-- Added a HueForge filament-library JSON exporter with deterministic UUIDv5
-  identifiers, required-TD validation, and typed control over the exported
-  `Owned` value through `HueForgeExportOptions`. The filament CLI now provides
-  `--has-td` for querying, counting, nearest matching, and exporting only
-  records with transmission-distance values.
-- Plain-text `.hex` palette export now defaults to lowercase values and accepts
-  `HexExportOptions(uppercase=True)` for uppercase output through Python.
+### In Progress
+
+- **Image type detection and palette extraction** — added disabled work-in-progress modules for
+  classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
+  sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
+- **Dominance analysis improvements** - under development in dominant.py; currently commented out.
+
+## [7.0.0] - 2026-10-14
 
 ### Added
+
+- **Complete Sphinx API inventory** — document the optional desktop GUI and
+  MCP modules alongside the existing library surfaces, expand the current data
+  model reference, and make the Sphinx coverage build scan the full supported
+  package independently of the hand-maintained module index. Documentation CI
+  now installs every documented optional feature and fails on Sphinx warnings
+  or undocumented supported objects.
+
+- **Unified coverage workflow** — configure pytest, pytest-cov, and branch
+  coverage consistently for local commands, CI, and VS Code's Testing coverage
+  UI. Development installs now include the required test runner and coverage
+  plugin, while reports remain scoped to supported `color_tools` modules and
+  exclude the explicitly disabled image prototypes.
+
+- **HueForge filament export** — added a HueForge filament-library JSON exporter
+  with deterministic UUIDv5 identifiers, required TD/nonempty unique ID
+  validation, and typed control over the exported `Owned` value through
+  `HueForgeExportOptions`. The filament CLI now provides
+  `--has-td` for querying, counting, nearest matching, and exporting only
+  records with transmission-distance values.
 
 - **Bambu Lab filament expansion** — add 8 PETG Matte and 7 PLA Tough+
   colors from the approved Bambu Lab source tables, increasing the bundled
@@ -81,6 +102,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   document the representation as image stylization rather than exact output.
 
 ### Changed
+
+- **Configurable HEX export case** — plain-text `.hex` palette export now
+  defaults to lowercase values and accepts `HexExportOptions(uppercase=True)`
+  for uppercase output through Python.
 
 - **Windows-safe hash utility output** — replace emoji status markers in
   `tooling/update_hashes.py` with ASCII text so its autoupdate path works in
@@ -313,13 +338,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Filament manager interactive alias** — `color-tools filament --interactive`
   now launches the owned-filament manager; the existing `--manage` option remains
   supported.
-
-### In Progress
-
-- **Image type detection and palette extraction** — added disabled work-in-progress modules for
-  classifying line drawings, clip art, and photographs (`image/detection.py`) and extracting,
-  sorting, and filtering image palettes with multiple strategies (`image/palette_extractor.py`).
-- **Dominance analysis improvements** - under development in dominant.py; currently commented out.
 
 ## [6.16.0] - 2026-10-07
 

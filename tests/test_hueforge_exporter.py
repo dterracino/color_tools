@@ -127,6 +127,46 @@ class TestHueForgeExporter(unittest.TestCase):
                 )
             self.assertFalse(output_path.exists())
 
+    def test_missing_id_rejects_export_before_writing(self) -> None:
+        """HueForge UUID generation requires a stable, non-empty source ID."""
+        missing_id = FilamentRecord(
+            id="",
+            maker="Test Co",
+            type="PLA",
+            finish=None,
+            color="Unidentified",
+            hex="#123456",
+            td_value=4.0,
+            source="test.json",
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "not-written.json"
+            with self.assertRaisesRegex(ValueError, "non-empty ID"):
+                export_filaments([missing_id], "hueforge", output_path)
+            self.assertFalse(output_path.exists())
+
+    def test_duplicate_ids_reject_export_before_writing(self) -> None:
+        """Distinct records cannot share the UUID input identity."""
+        duplicate_id = FilamentRecord(
+            id=self.filament.id,
+            maker="Other Co",
+            type="PETG",
+            finish=None,
+            color="Also Tealie",
+            hex="#336699",
+            td_value=6.0,
+            source="test.json",
+        )
+        with tempfile.TemporaryDirectory() as tmpdir:
+            output_path = Path(tmpdir) / "not-written.json"
+            with self.assertRaisesRegex(ValueError, "duplicate ID"):
+                export_filaments(
+                    [self.filament, duplicate_id],
+                    "hueforge",
+                    output_path,
+                )
+            self.assertFalse(output_path.exists())
+
 
 if __name__ == "__main__":
     unittest.main()

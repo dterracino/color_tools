@@ -108,7 +108,8 @@ API documentation is auto-generated from docstrings in the source code:
 
 ### Version Management
 
-The version number in `conf.py` should match `pyproject.toml` and `color_tools/__init__.py`.
+Sphinx reads the release number from `color_tools.__version__`; keep that value
+in sync with the authoritative package version in `pyproject.toml`.
 
 ## 🐛 Troubleshooting
 

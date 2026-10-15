@@ -11,6 +11,7 @@ from __future__ import annotations
 
 import json
 import uuid
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from typing import TYPE_CHECKING, TypedDict, cast
@@ -37,7 +38,12 @@ class _HueForgeFilament(TypedDict):
 
 @dataclass(slots=True)
 class HueForgeExportOptions(ExportOptionsBase):
-    """Configure whether exported filaments are marked as owned."""
+    """Configure whether exported filaments are marked as owned.
+
+    ``owned`` defaults to true because a generated HueForge library normally
+    represents the caller's available filament collection. Set it to false to
+    create entries that HueForge should not initially mark as owned.
+    """
 
     owned: bool = True
 
@@ -49,7 +55,17 @@ class HueForgeExportOptions(ExportOptionsBase):
 
 @register_exporter
 class HueForgeExporter(PaletteExporter):
-    """Export filament records as a HueForge filament-library document."""
+    """Export filament records as a HueForge filament-library document.
+
+    Every record must have a TD value and a nonempty, unique Color Tools ID.
+    Stable HueForge UUIDs are derived from those IDs with UUIDv5, so repeated
+    exports of the same records retain their identities.
+
+    The exporter raises ``ValueError`` rather than silently omitting records
+    without TD values. Callers can prefilter with
+    ``FilamentFilterCriteria(has_td=True)`` or use the CLI's ``--has-td``
+    option.
+    """
 
     @property
     def metadata(self) -> ExporterMetadata:
@@ -97,6 +113,28 @@ class HueForgeExporter(PaletteExporter):
         owned: bool,
     ) -> str:
         """Validate and write one HueForge filament-library document."""
+        filament_ids = [filament.id.strip() for filament in filaments]
+        missing_id_count = filament_ids.count("")
+        if missing_id_count:
+            raise ValueError(
+                "HueForge requires a non-empty ID for every filament so UUIDs "
+                f"remain unique; {missing_id_count} selected filament(s) have no ID"
+            )
+
+        duplicate_ids = sorted(
+            filament_id
+            for filament_id, count in Counter(filament_ids).items()
+            if count > 1
+        )
+        if duplicate_ids:
+            preview = ", ".join(duplicate_ids[:3])
+            if len(duplicate_ids) > 3:
+                preview += ", ..."
+            raise ValueError(
+                "HueForge requires unique filament IDs so UUIDs remain unique; "
+                f"found {len(duplicate_ids)} duplicate ID(s): {preview}"
+            )
+
         missing_td = [
             filament.id
             for filament in filaments

@@ -47,6 +47,7 @@ class PaintNetExporter(PaletteExporter):
 
     @property
     def metadata(self) -> ExporterMetadata:
+        """Return metadata describing the Paint.NET exporter."""
         return ExporterMetadata(
             name="paintnet",
             description="Paint.NET palette format",

@@ -31,7 +31,7 @@ jobs:
       - name: Install dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -e ".[docs,image]"
+          pip install -e ".[all,docs]"
       
       - name: Build Sphinx documentation
         run: |
@@ -39,7 +39,8 @@ jobs:
           # Clean any previous builds
           rm -rf _build api
           # Build with autosummary regeneration
-          python -m sphinx -b html . _build/html --keep-going -E -a
+          python -m sphinx -b html . _build/html --keep-going -W -E -a
+          python -m sphinx -b coverage . _build/coverage --keep-going -W -E -a
       
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v4

@@ -41,9 +41,10 @@ For comprehensive guides and CLI usage:
 CLI Commands
 ~~~~~~~~~~~~
 
-The CLI provides six main commands:
+The CLI provides eight commands:
 
 * **color** - Search CSS colors by name or find nearest color
+* **harmony** - Generate styled LCH color harmonies
 * **filament** - Search 3D printing filaments with filtering (maker, type, finish)
 * **convert** - Convert between color spaces and check gamut
 * **name** - Generate descriptive names for RGB colors
@@ -58,22 +59,35 @@ The CLI provides six main commands:
 
 See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md>`__ for detailed CLI examples.
 
-Data Classes
-~~~~~~~~~~~~
+Selected Data Models
+~~~~~~~~~~~~~~~~~~~~
 
-The library uses immutable dataclasses (frozen) to represent colors, filaments, and results:
+The library uses typed dataclasses and models to represent colors, filaments,
+export configuration, and results. Record and result types are immutable where
+their contracts require it; export metadata and option objects remain mutable.
 
 * **ColorRecord** - CSS colors with precomputed values in all color spaces
 * **FilamentRecord** - 3D printing filaments retaining source RGB components and an effective color
+* **FilamentFilterCriteria** - Reusable maker, type, finish, color, and TD filters
+* **HarmonyColor / HarmonyResult** - Ideal and displayable LCH harmony results
 * **ColorValidationRecord** - Color name/hex validation results with fuzzy matching
+* **PaletteMetadata / PaletteExportData** - Palette-level export metadata and ordered colors
+* **HexExportOptions / HueForgeExportOptions** - Typed per-export behavior
 * **ColorCluster** - Image color clusters from k-means analysis *(requires [image] extra)*
 * **ColorChange** - Luminance redistribution results for HueForge *(requires [image] extra)*
 
-All data classes have comprehensive docstrings with attribute descriptions and examples.
-See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#data-classes-quick-reference>`__ for a quick reference table.
+The module pages below are the authoritative class and function inventory.
+See the `Usage Guide <https://github.com/dterracino/color_tools/blob/main/docs/Usage.md#selected-data-models-and-export-options>`__ for a quick reference table.
 
 Core API Reference
 ------------------
+
+Public Package API
+~~~~~~~~~~~~~~~~~~
+
+The package root contains the supported convenience imports intended for most
+library users. The owning module pages below provide the detailed API grouped
+by responsibility.
 
 Color Science
 ~~~~~~~~~~~~~
@@ -235,8 +249,8 @@ Logging *(optional* ``[logging]`` *extra for colorized output)*
 
    color_tools.logging_config
 
-Optional Features
-~~~~~~~~~~~~~~~~~
+Interactive Terminal Features *(requires* ``[interactive]`` *extra)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. autosummary::
    :toctree: api
@@ -244,6 +258,30 @@ Optional Features
 
    color_tools.interactive_manager
    color_tools.interactive_wizard
+
+Desktop Filament Manager *(requires* ``[gui]`` *extra)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.filament_manager_gui
+   color_tools.filament_export_dialog
+
+Model Context Protocol *(requires* ``[mcp]`` *extra)*
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.mcp
+   color_tools.mcp.models
+   color_tools.mcp.server
+
+.. automodule:: color_tools
+   :no-members:
 
 Indices and tables
 ==================

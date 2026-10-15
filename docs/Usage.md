@@ -178,6 +178,7 @@ gameboy_image.save("gameboy_style.png")
 - `delta_e_94()` - CIE94
 - `delta_e_76()` - CIE76
 - `delta_e_cmc()` - CMC color difference
+- `delta_e_hyab()` - HyAB distance for large or dissimilar color differences
 - `euclidean()` - Simple Euclidean distance
 
 #### Gamut Operations
@@ -263,7 +264,8 @@ family.
 - `filament_palette.find_by_type()` - Get all filaments of a type
 
 `FilamentFilterCriteria` accepts one string or an iterable for `maker`, `type_name`,
-`finish`, and `color`. Values within a field use OR semantics; active fields use AND semantics.
+`finish`, and `color`, plus `has_td=True` or `False`. Values within a text field use
+OR semantics; active fields use AND semantics.
 Matching, including maker synonyms, ignores case and surrounding whitespace. An exclusion
 removes a record only when every active exclusion field matches. Empty exclusion criteria
 exclude nothing. The existing filtering and nearest-search methods remain available with
@@ -303,7 +305,7 @@ Available format identifiers:
 - Colors: `ase`, `aseprite`, `css`, `glsl`, `gpl`, `hex`, `jasc_pal`, `kpl`, `lospec`,
   `paintnet`, `palette_lut`, `python`, `riff_pal`, `scribus`, `sketchpalette`, `soc`,
   `swatch_image`
-- Filaments: `autoforge`
+- Filaments: `autoforge`, `hueforge`
 
 `ase` requires the `swatch` package and `swatch_image` requires Pillow. Both are installed by
 the `[image]` extra. By default, `list_export_formats()` omits formats whose dependencies are
@@ -600,21 +602,33 @@ print(filament.type)    # e.g., "PLA"
 print(filament.finish)  # e.g., "PolyMax"
 print(filament.color)   # e.g., "Red"
 print(filament.hex)     # e.g., "#ED2F20"
-print(filament.rgb)     # e.g., (237, 47, 32)
-print(filament.lab)     # e.g., (48.2, 68.1, 54.3) - computed on demand
-print(filament.lch)     # e.g., (48.2, 87.4, 38.6) - computed on demand
+print(filament.rgb_components)  # ordered source colors
+print(filament.rgb)     # effective RGB captured at construction
+print(filament.lab)     # LAB derived from the effective RGB at construction
+print(filament.effective_hex)  # normalized effective color
+print(filament.td_value)  # transmission distance in millimeters, or None
 print(filament.other_names)  # e.g., ["Classic Red"] or None
 ```
 
-#### Data Classes Quick Reference
+#### Selected Data Models and Export Options
 
-All data classes are immutable (frozen) with comprehensive docstrings. See [API Documentation](https://dterracino.github.io/color_tools/) for full details.
+Record and result dataclasses are immutable where their contracts require it.
+Export metadata and option objects are mutable so callers can configure an
+operation before use. See [API Documentation](https://dterracino.github.io/color_tools/)
+for the authoritative class and function inventory.
 
 | Class | Module | Purpose | Key Fields | Full Docs |
 | ------- | -------- | --------- | ------------ | ----------- |
 | **ColorRecord** | `palette` | Named CSS color with precomputed color space values | `name`, `hex`, `rgb`, `lab`, `lch`, `hsl` | [API](https://dterracino.github.io/color_tools/api/color_tools.palette.html#color_tools.palette.ColorRecord) |
-| **FilamentRecord** | `filament_palette` | 3D printing filament color (handles dual-color variants) | `maker`, `type`, `color`, `hex`, `rgb` (property), `lab`, `lch` | [API](https://dterracino.github.io/color_tools/api/color_tools.filament_palette.html#color_tools.filament_palette.FilamentRecord) |
+| **FilamentRecord** | `filament_palette` | 3D printing filament color with ordered multi-color support | `id`, `maker`, `type`, `color`, `hex`, `rgb_components`, `rgb`, `lab`, `td_value` | [API](https://dterracino.github.io/color_tools/api/color_tools.filament_palette.html#color_tools.filament_palette.FilamentRecord) |
+| **FilamentFilterCriteria** | `filament_filter_criteria` | Reusable case-insensitive filament filters | `maker`, `type_name`, `finish`, `color`, `has_td` | [API](https://dterracino.github.io/color_tools/api/color_tools.filament_filter_criteria.html#color_tools.filament_filter_criteria.FilamentFilterCriteria) |
+| **HarmonyColor** | `harmony` | One ideal LCH harmony color and its displayable sRGB result | `ideal_lch`, `mapped_lch`, `rgb`, `hex`, `gamut_delta_e` | [API](https://dterracino.github.io/color_tools/api/color_tools.harmony.html#color_tools.harmony.HarmonyColor) |
+| **HarmonyResult** | `harmony` | Complete immutable harmony-generation result | `scheme`, `base_lch`, `colors`, `mood`, `tone` | [API](https://dterracino.github.io/color_tools/api/color_tools.harmony.html#color_tools.harmony.HarmonyResult) |
 | **ColorValidationRecord** | `validation` | Color name/hex validation results with fuzzy matching | `is_match`, `name_match`, `name_confidence`, `delta_e`, `message` | [API](https://dterracino.github.io/color_tools/api/color_tools.validation.html#color_tools.validation.ColorValidationRecord) |
+| **PaletteMetadata** | `exporters.palette_metadata` | Descriptive palette-level export metadata | `name`, `author`, `description`, `columns`, `tags`, `properties` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.palette_metadata.html#color_tools.exporters.palette_metadata.PaletteMetadata) |
+| **PaletteExportData** | `exporters.palette_export_data` | Ordered colors plus palette-level metadata | `colors`, `metadata` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.palette_export_data.html#color_tools.exporters.palette_export_data.PaletteExportData) |
+| **HexExportOptions** | `exporters.hex_exporter` | Plain-text HEX output casing | `uppercase` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hex_exporter.html#color_tools.exporters.hex_exporter.HexExportOptions) |
+| **HueForgeExportOptions** | `exporters.hueforge_exporter` | Initial HueForge owned state | `owned` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hueforge_exporter.html#color_tools.exporters.hueforge_exporter.HueForgeExportOptions) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
 | **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
 
@@ -624,7 +638,9 @@ All data classes are immutable (frozen) with comprehensive docstrings. See [API 
 - LAB values: `(L, a, b)` where L is 0-100, a/b are roughly -128 to +127
 - LCH values: `(L, C, H)` where L is 0-100, C is 0-100+, H is 0-360°
 - HSL values: `(H, S, L)` where H is 0-360°, S/L are 0-100%
-- FilamentRecord's `rgb`, `lab`, and `lch` are computed properties (not stored)
+- `FilamentRecord.rgb_components`, `rgb`, and `lab` are derived once and stored
+  when the immutable record is constructed; they do not change with later
+  configuration updates.
 - Validation uses fuzzy matching - install `[fuzzy]` extra for improved results: `pip install color-match-tools[fuzzy]`
 - Image classes require `[image]` extra: `pip install color-match-tools[image]`
 
@@ -632,7 +648,8 @@ All data classes are immutable (frozen) with comprehensive docstrings. See [API 
 
 ## CLI Usage
 
-The CLI provides three main commands: `color`, `filament`, and `convert`.
+The CLI provides `color`, `harmony`, `filament`, `convert`, `name`, `validate`,
+`cvd`, and `image` commands.
 
 ### Color Command
 
@@ -672,13 +689,17 @@ python -m color_tools color --nearest --value 70 15 45 --space lab --metric cmc 
 - `--name NAME`: Find exact color by name (case-insensitive)
 - `--nearest`: Find the closest color to specified value
 - `--value V1 V2 V3`: Color value tuple (format depends on `--space`)
+- `--hex COLOR`: Hex input shortcut; always interpreted as RGB
 - `--space {rgb,hsl,lab,lch}`: Interpret `--value` in this color space
   (default: `lab`; `--hex` is always RGB)
-- `--metric {euclidean,de76,de94,de2000,cmc,cmc21,cmc11}`: Distance metric (default: de2000)
+- `--metric {euclidean,de76,de94,de2000,cmc,cmc21,cmc11,hyab}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--limit N`: Return at most N nearest colors instead of just one (default: 1, max: 50)
 - `--palette NAME`: Use retro/classic palette instead of CSS colors (use `--palette list` to see all available)
+- `--list-export-formats`: List registered color export formats
+- `--export FORMAT`: Export the selected palette (see `--list-export-formats`)
+- `--output FILE`: Set the export filename instead of generating one
 
 #### Custom Palettes
 
@@ -698,7 +719,7 @@ python -m color_tools color --palette vga --nearest --value 100 200 150 --space 
 python -m color_tools color --palette web --nearest --value 123 200 88 --space rgb
 ```
 
-**Available Palettes:**
+**Common Palettes:**
 
 - `cga4` - CGA 4-color (Palette 1, high intensity): Black, Light Cyan, Light Magenta, White
 - `cga16` - CGA 16-color (full RGBI palette)
@@ -706,6 +727,9 @@ python -m color_tools color --palette web --nearest --value 123 200 88 --space r
 - `ega64` - EGA 64-color (full 6-bit RGB palette)
 - `vga` - VGA 256-color (Mode 13h palette)
 - `web` - Web-safe 216-color palette (6×6×6 RGB cube)
+
+Run `color-tools color --palette list` for the authoritative list of all
+bundled and user palettes.
 
 ### Harmony Command
 
@@ -779,9 +803,10 @@ python -m color_tools filament --nearest --hex "#ed1c24" --exclude-finish "Silk"
 python -m color_tools filament --nearest --hex "#ed1c24" --exclude-maker "Bambu Lab" --exclude-type PETG
 ```
 
-#### Handle Dual-Color Filaments
+#### Handle Multi-Color Filaments
 
-Some filaments have two colors (e.g., "#333333-#666666"). Control how these are handled:
+Some filaments have multiple ordered colors (for example,
+`#333333-#666666`). Control how they resolve to one effective matching color:
 
 ```bash
 # Use first color (default)
@@ -834,7 +859,8 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 
 - `--nearest`: Find nearest filament to RGB color
 - `--value R G B`: RGB color value (0-255 for each component)
-- `--metric {euclidean,de76,de94,de2000,cmc}`: Distance metric (default: de2000)
+- `--hex COLOR`: Hex input shortcut for `--value`
+- `--metric {euclidean,de76,de94,de2000,cmc,hyab}`: Distance metric (default: de2000)
 - `--cmc-l FLOAT`: CMC lightness parameter (default: 2.0)
 - `--cmc-c FLOAT`: CMC chroma parameter (default: 1.0)
 - `--limit N`: Return at most N nearest filaments instead of just one (default: 1, max: 50)
@@ -926,14 +952,14 @@ Track which filaments you own for personalized color matching. When you create a
 
 ```bash
 # Add filaments you own
-python -m color_tools filament --add-owned "bambu-lab_pla-matte_jet-black"
-python -m color_tools filament --add-owned "polymaker_polyterra-pla_charcoal-black"
+python -m color_tools filament --add-owned "bambu-lab-pla-matte-charcoal"
+python -m color_tools filament --add-owned "polymaker-pla-polylite-black"
 
 # List your owned filaments
 python -m color_tools filament --list-owned
 
 # Remove a filament from your owned list
-python -m color_tools filament --remove-owned "bambu-lab_pla-matte_jet-black"
+python -m color_tools filament --remove-owned "bambu-lab-pla-matte-charcoal"
 ```
 
 **Search Behavior with Owned Filaments:**
@@ -1311,7 +1337,7 @@ python -m color_tools image --file photo.jpg --redistribute-luminance --colors 8
 - `--cvd-simulate TYPE`: Simulate color vision deficiency (protanopia, deuteranopia, tritanopia)
 - `--cvd-correct TYPE`: Apply CVD correction for specified deficiency
 - `--quantize-palette NAME`: Convert to specified retro palette
-- `--metric {de2000,de94,de76,cmc,euclidean,hsl_euclidean}`: Color distance metric (default: de2000)
+- `--metric {de2000,de94,de76,cmc,euclidean,hsl_euclidean,hyab}`: Color distance metric (default: de2000)
 - `--dither`: Apply Floyd-Steinberg dithering for palette quantization
 - `--list-palettes`: List all available retro palettes with color counts
 
@@ -1334,8 +1360,11 @@ These arguments work with all commands:
 - `--verify-constants`: Verify integrity of color science constants before proceeding
 - `--verify-data`: Verify integrity of core data files before proceeding
 - `--verify-matrices`: Verify integrity of transformation matrices before proceeding
-- `--verify-all`: Verify integrity of constants, data files, and matrices before proceeding
+- `--verify-all`: Verify constants, matrices, core data, system palettes, and hashed user files
+- `--verify-user-data`: Verify user data files and user palettes that have `.sha256` sidecars
+- `--generate-user-hashes`: Generate sidecar hashes for active user data and user palettes, then exit
 - `--check-overrides`: Show report of user overrides (user-colors.json, user-filaments.json) and exit
+- `--interactive`, `-i`: Launch the guided CLI wizard (requires the `[interactive]` extra)
 - `--log-file PATH`: Write log output to this file (enables rotating file logging)
 - `--log-level LEVEL`: Minimum level written to the log file — `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` (default: `DEBUG`)
 - `--version`: Show version number and exit

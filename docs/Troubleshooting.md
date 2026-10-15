@@ -83,6 +83,7 @@ Use one of the supported metrics:
 - `de94` - CIE94 Delta E
 - `de2000` - CIEDE2000 Delta E (recommended)
 - `cmc` - CMC color difference
+- `hyab` - Hybrid lightness/chroma distance for large color differences
 
 ### Out of Gamut Warnings
 
@@ -96,7 +97,7 @@ Use one of the supported metrics:
 
 ### Import Errors (Image Module)
 
-**Cause:** Pillow is not installed.
+**Cause:** The optional image dependencies are not installed.
 
 **Solution:**
 
@@ -124,7 +125,8 @@ Note: The validation module will fall back to built-in Levenshtein matching if `
 
 ## Data Integrity Verification
 
-Core data files are protected with SHA-256 hashes to ensure integrity.
+Core data, registered system palettes, and selected user files are protected
+with SHA-256 hashes to ensure integrity.
 
 ### Verification Commands
 
@@ -138,7 +140,7 @@ python -m color_tools --verify-constants
 # Verify transformation matrices only
 python -m color_tools --verify-matrices
 
-# Verify everything (constants, data files, and matrices)
+# Verify constants, matrices, core data, system palettes, and hashed user files
 python -m color_tools --verify-all
 ```
 
@@ -147,7 +149,8 @@ python -m color_tools --verify-all
 **For Data Files:**
 
 1. **Accidental modification** - Restore from git: `git checkout color_tools/data/`
-2. **Intentional update** - Regenerate hashes using tooling (see [Hash_Update_Guide.md](https://github.com/dterracino/color_tools/blob/main/docs/Hash_Update_Guide.md))
+2. **Intentional update** - Review the changes, then regenerate hashes with
+   `python tooling/update_hashes.py --autoupdate`.
 
 **For Constants:**
 
@@ -200,9 +203,10 @@ The tool uses indexed lookups for fast color matching:
 **For batch operations:**
 
 ```python
-# Efficient: Pre-filter, then search
+# Efficient: Pre-filter, build a smaller searchable palette, then reuse it
 palette = FilamentPalette.load_default()
-pla_filaments = palette.filter(type_name="PLA")  # Filter once
+pla_records = palette.filter(type_name="PLA", owned=False)
+pla_filaments = FilamentPalette(pla_records)
 for color in colors_to_match:
     nearest, dist = pla_filaments.nearest_filament(color)  # Search smaller set
 ```

@@ -95,6 +95,22 @@ autosummary_generate = True
 autosummary_generate_overwrite = True
 autosummary_mock_imports = []
 
+# Check the complete supported package, not only modules already present in the
+# hand-maintained autosummary tree. This makes the coverage builder report a
+# newly added public module when it has not yet been added to index.rst.
+coverage_modules = ["color_tools"]
+coverage_ignore_modules = [
+    r"^_(?!color_utils$)",
+    r"^(?:color_tools\.)?api$",  # Reserved for the future REST API.
+    r"^(?:detection|dominant|palette_extractor)$",  # Disabled image work.
+]
+coverage_ignore_classes = [
+    r"^FilamentManagerWindow$",
+    r"^InteractiveFilamentManager$",
+]
+coverage_show_missing_items = True
+coverage_statistics_to_report = True
+
 # Intersphinx mapping for cross-references
 intersphinx_mapping = {
     'python': ('https://docs.python.org/3', None),

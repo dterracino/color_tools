@@ -138,8 +138,9 @@ dmypy.json
 # Cython debug symbols
 cython_debug/
 
-# VS Code settings
-.vscode/
+# VS Code settings (share test configuration, keep machine-specific files private)
+.vscode/*
+!.vscode/settings.json
 
 # Vercel
 .vercel/

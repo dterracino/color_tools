@@ -454,6 +454,7 @@ class FilamentManagerWindow(_QMainWindow):
         return True
 
     def closeEvent(self, event: QCloseEvent) -> None:
+        """Confirm pending ownership changes before closing the window."""
         if self._confirm_pending_changes("closing"):
             event.accept()
         else:

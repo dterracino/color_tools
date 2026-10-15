@@ -37,7 +37,9 @@ Adds RapidFuzz for better color name validation (validation module has built-in 
 pip install color-match-tools[image]
 ```
 
-Adds Pillow for image transformations (CVD simulation/correction, palette quantization), color analysis, k-means clustering, and Hueforge optimization.
+Adds Pillow, NumPy, scikit-image, scikit-learn, OpenCV, CairoSVG,
+pillow-heif, and `swatch` for image conversion and transforms, color analysis,
+palette quantization, HEIC/SVG support, and Adobe ASE export.
 
 **With interactive filament library manager:**
 
@@ -79,7 +81,9 @@ Copilot and other MCP-compatible agents.
 pip install color-match-tools[all]
 ```
 
-Installs everything: fuzzy matching + image processing + terminal and desktop filament managers + logging + MCP.
+Installs all optional user-facing features: fuzzy matching, image processing,
+terminal and desktop filament managers, logging, and MCP. Development and
+documentation tools remain separate under `[dev]` and `[docs]`.
 
 All variants install `color-tools` as the canonical command and `color_tools` as
 a backward-compatible alias. Both commands invoke the same CLI as
@@ -104,7 +108,7 @@ This installs:
 
 - Base package in "editable" mode (modify code while using it)
 - All optional dependencies (fuzzy matching, image processing, terminal and desktop UIs, logging, and MCP)
-- Development tools (coverage, pyright, build, twine)
+- Development tools (pytest, pytest-cov, coverage, pyright, build, twine)
 
 **Minimal development setup (base only):**
 
@@ -120,22 +124,26 @@ The core module uses **only Python standard library** - **zero external dependen
 **Optional dependencies:**
 
 - `[fuzzy]`: rapidfuzz >= 3.0.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
-- `[image]`: Pillow >= 10.0.0 for image processing features
+- `[image]`: Pillow, NumPy, scikit-image, pillow-heif, CairoSVG, OpenCV,
+  scikit-learn, and `swatch` for image processing and ASE export
 - `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
 - `[gui]`: PySide6 >= 6.6.0 for the desktop filament library manager
 - `[logging]`: Rich >= 13.0.0 for colorized console log output (plain StreamHandler used as fallback)
 - `[mcp]`: MCP >= 2.0.0 for typed agent tools over stdio
 - `[all]`: All of the above (fuzzy + image + interactive + gui + logging + MCP)
+- `[dev]`: pytest, pytest-cov, Coverage.py, Pyright, build, and Twine for
+  development and release checks
+- `[docs]`: Sphinx and documentation extensions for building the API reference
 
 **Requirements files (for development/manual installation):**
 
 - `requirements.txt`: Base package (currently empty - zero dependencies)
 - `requirements-fuzzy.txt`: Base + RapidFuzz dependency
-- `requirements-image.txt`: Base + Pillow
+- `requirements-image.txt`: Base + the complete `[image]` extra
 - `requirements-interactive.txt`: Base + prompt_toolkit
 - `requirements-gui.txt`: Base + PySide6
 - `requirements-mcp.txt`: Base + MCP SDK
-- `requirements-dev.txt`: All of above + development tools (coverage, pyright, build, twine)
+- `requirements-dev.txt`: All user-facing extras plus development and documentation tools
 
 The validation module works without RapidFuzz using a built-in Levenshtein distance implementation. Install RapidFuzz for better fuzzy matching performance:
 
@@ -175,7 +183,8 @@ The automated tooling provides:
 - After adding new constants to `ColorConstants` class
 - After modifying transformation matrices in `matrices.py`
 
-See [Hash_Update_Guide.md](https://github.com/dterracino/color_tools/blob/main/docs/Hash_Update_Guide.md) for detailed workflows and troubleshooting.
+See [Troubleshooting: Data Integrity Verification](Troubleshooting.md#data-integrity-verification)
+for verification behavior and recovery guidance.
 
 ---
 

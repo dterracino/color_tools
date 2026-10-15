@@ -142,6 +142,7 @@ class TemplateEditor(QPlainTextEdit):
     """Plain-text editor with four-space tabs and automatic line indentation."""
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
+        """Handle indentation-friendly Tab and Enter key presses."""
         if event.key() == Qt.Key.Key_Tab:
             cursor = self.textCursor()
             cursor.insertText("    ")
@@ -175,6 +176,7 @@ class TemplateTagHighlighter(QSyntaxHighlighter):
         self._tag_format.setFontWeight(700)
 
     def highlightBlock(self, text: str) -> None:
+        """Apply tag highlighting to one Qt text block."""
         for match in _TAG_HIGHLIGHT_PATTERN.finditer(text):
             self.setFormat(match.start(), match.end() - match.start(), self._tag_format)
 

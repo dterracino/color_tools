@@ -81,7 +81,9 @@ dev = [
     "pyright>=1.1.0",
     "build>=1.0.0",
     "twine>=4.0.0",
-    "coverage>=7.0.0",
+    "pytest>=8.0.0",
+    "pytest-cov>=6.0.0",
+    "coverage[toml]>=7.7.0",
 ]
 
 # Everything (all optional user-facing features)
@@ -126,3 +128,27 @@ color_tools = [
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["color_tools"]
+omit = [
+    "main.py",
+    "color_tools/image/detection.py",
+    "color_tools/image/dominant.py",
+    "color_tools/image/palette_extractor.py",
+    "tests/*",
+    "demos/*",
+    "scripts/*",
+    "tooling/*",
+    "tools/*",
+    "docs/*",
+    "build/*",
+]
+
+[tool.coverage.report]
+show_missing = true
+skip_empty = true
+
+[tool.coverage.xml]
+output = "coverage.xml"

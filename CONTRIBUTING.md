@@ -82,21 +82,43 @@ pip install -e ".[interactive]"
 
 ```bash
 python -m color_tools --verify-all
-python -m unittest discover tests
+python -m pytest
 ```
 
 ## Running Tests
 
 ```bash
 # Run all tests
-python -m unittest discover tests
+python -m pytest
 
 # Run a specific test file
-python -m unittest tests.test_conversions
+python -m pytest tests/test_conversions.py
 
 # Run a specific test case
-python -m unittest tests.test_conversions.TestRGBConversions.test_rgb_to_lab
+python -m pytest tests/test_conversions.py::TestRGBConversions::test_rgb_to_lab
 ```
+
+### Test Coverage
+
+The shared coverage configuration in `pyproject.toml` measures the
+`color_tools` package with branch coverage and excludes repository-only tools,
+demos, documentation, tests, and the explicitly disabled image prototypes from
+the product coverage percentage. Supported image functionality, including
+`image/dominance.py`, remains in scope.
+
+From a terminal, generate the same report used by CI:
+
+```bash
+python -m pytest --cov=color_tools --cov-branch --cov-report=term-missing --cov-report=xml
+```
+
+This prints missing lines and writes `coverage.xml` for compatible coverage
+viewers. In VS Code, select the repository `.venv` interpreter, open the
+**Testing** view, and choose **Run Tests with Coverage**. The workspace is
+configured for pytest discovery, and the Python extension displays file,
+line, and branch coverage directly in the Testing UI. Install development
+dependencies with `pip install -r requirements-dev.txt` if that command reports
+that `pytest-cov` is unavailable.
 
 All tests must pass before submitting a pull request. CI runs the suite on
 Python 3.12, 3.13, and 3.14, and checks strict repository typing on Python 3.12.
@@ -105,7 +127,7 @@ dependencies, to reproduce that typing check:
 
 ```bash
 python -m pip install -r requirements-dev.txt
-python -m pip install pytest "pygame>=2.5.0" "moderngl>=5.10.0"
+python -m pip install "pygame>=2.5.0" "moderngl>=5.10.0"
 pyright --project pyrightconfig.json --warnings
 ```
 
@@ -144,7 +166,7 @@ how small. Use the appropriate category: `Added`, `Changed`, `Deprecated`, `Remo
 
 Before opening a PR, confirm:
 
-- [ ] All tests pass: `python -m unittest discover tests`
+- [ ] All tests pass: `python -m pytest`
 - [ ] No Pyright/type errors (check Problems panel in VS Code)
 - [ ] `CHANGELOG.md` updated under `[Unreleased]`
 - [ ] New features have tests
