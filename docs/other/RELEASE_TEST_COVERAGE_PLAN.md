@@ -258,21 +258,21 @@ too large.
 
 Target: `color_tools/exporters/base.py`
 
-- [ ] Reject exporter metadata with an empty name, description, or extension.
-- [ ] Reject an extension beginning with a dot.
-- [ ] Reject an `options_type` that does not inherit `ExportOptionsBase`.
-- [ ] Missing-dependency errors cover no extra, one extra, and multiple extras,
+- [x] Reject exporter metadata with an empty name, description, or extension.
+- [x] Reject an extension beginning with a dot.
+- [x] Reject an `options_type` that does not inherit `ExportOptionsBase`.
+- [x] Missing-dependency errors cover no extra, one extra, and multiple extras,
   with correct wording and public attributes.
-- [ ] Unsupported color, palette, and filament operations raise focused
+- [x] Unsupported color, palette, and filament operations raise focused
   `NotImplementedError` exceptions.
-- [ ] Export options are rejected when the exporter accepts none.
-- [ ] Options of the wrong class identify expected and actual types.
-- [ ] Palette export falls back to color export when metadata is unsupported.
-- [ ] Options-aware palette export falls back to options-aware color export.
-- [ ] An exporter declaring support without implementing the corresponding hook
+- [x] Export options are rejected when the exporter accepts none.
+- [x] Options of the wrong class identify expected and actual types.
+- [x] Palette export falls back to color export when metadata is unsupported.
+- [x] Options-aware palette export falls back to options-aware color export.
+- [x] An exporter declaring support without implementing the corresponding hook
   fails clearly for colors, filaments, and options-aware variants.
-- [ ] Missing dependencies are checked before any output is written.
-- [ ] Generated filenames contain the data type, format, timestamp shape, and
+- [x] Missing dependencies are checked before any output is written.
+- [x] Generated filenames contain the data type, format, timestamp shape, and
   extension.
 
 Suggested home: `tests/test_export.py` or a focused exporter-base test module.
@@ -341,17 +341,18 @@ Suggested home: `tests/test_mcp_server.py`.
 
 Targets: KPL, Python, swatch-image, and HueForge exporters
 
-- [ ] KPL validation and optional-value branches, including both accepted
+- [x] KPL validation and optional-value branches, including both accepted
   metadata shapes and malformed values.
-- [ ] Python exporter naming, quoting, optional metadata, duplicate handling,
+- [x] Python exporter naming, quoting, optional metadata, duplicate handling,
   empty input, and each supported output structure.
-- [ ] Swatch-image layout boundaries, label/no-label modes, font fallback,
-  pagination/wrapping, empty input, invalid dimensions, and file-write errors.
-- [ ] HueForge error previews append an ellipsis when more than three duplicate
+- [x] Swatch-image layout boundaries, label/no-label modes, font fallback,
+  multi-row layout/wrapping, empty input, narrow-width handling, and file-write
+  errors.
+- [x] HueForge error previews append an ellipsis when more than three duplicate
   IDs are present.
-- [ ] HueForge error previews append an ellipsis when more than three records
+- [x] HueForge error previews append an ellipsis when more than three records
   lack TD values.
-- [ ] Plain HEX export remains lowercase by default and uppercase only through
+- [x] Plain HEX export remains lowercase by default and uppercase only through
   `HexExportOptions(uppercase=True)`.
 
 Suggested homes: the existing format-specific exporter tests.
@@ -469,7 +470,7 @@ Work in bounded batches so failures identify the responsible area:
 2. [x] Integrity and hash verification failures.
 3. [x] Palette and filament matching matrices.
 4. [x] Importer base, registry, and malformed formats.
-5. [ ] Exporter base and format-specific edge cases.
+5. [x] Exporter base and format-specific edge cases.
 6. [ ] Filament and conversion CLI routes.
 7. [ ] MCP conversion routes.
 8. [ ] Override reporting.

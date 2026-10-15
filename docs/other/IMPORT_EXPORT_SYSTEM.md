@@ -3,7 +3,9 @@
 ## Status
 
 - **Export system:** Implemented as a registry-driven plugin architecture.
-- **Import system:** Not implemented; the proposal remains documented below.
+- **Import system:** A registry-driven color-palette importer is implemented
+  for GPL, HEX, JASC PAL, and RIFF PAL. Filament import and supported
+  persistence into user data are not implemented.
 
 The export implementation is code-driven. There are no `export-formats.json` or
 `user-export-formats.json` files. Each concrete exporter declares its behavior through
@@ -27,6 +29,25 @@ color_tools/
 The registry stores exporter classes and returns a fresh stateless instance from
 `get_exporter()`. Optional dependencies are declared in metadata and checked only when the
 exporter is used. `list_export_formats()` omits unavailable exporters by default.
+
+## Current Import Architecture
+
+```text
+color_tools/
+  importers/
+    __init__.py                     # Public package API and built-in registration
+    base.py                         # PaletteImporter and importer metadata
+    registry.py                     # Registration, lookup, and content detection
+    *_importer.py                   # One implementation per format
+```
+
+The current importer framework supports color palettes only. A
+`PaletteImporter` returns `PaletteExportData`, which can be passed directly to
+a compatible exporter for format conversion. GPL, HEX, JASC PAL, and RIFF PAL
+are registered; JASC and RIFF use content detection because both use `.pal`.
+
+There is not yet a filament importer base, filament transfer-data model, import
+CLI, or supported persistence workflow for merging imports into user files.
 
 ### Export Operations
 
@@ -65,17 +86,21 @@ Supported filters are `"colors"`, `"filaments"`, and `"both"`.
 | Identifier | Extension | Data | Palette metadata | Notes |
 | --- | --- | --- | --- | --- |
 | `ase` | `.ase` | Colors | Yes | Adobe Swatch Exchange; requires `swatch` |
+| `aseprite` | `.aseprite` | Colors | Yes | Aseprite native swatch document |
 | `autoforge` | `.csv` | Filaments | No | AutoForge filament library |
 | `css` | `.css` | Colors | No | CSS custom properties |
 | `csv` | `.csv` | Both | No | All record fields |
+| `glsl` | `.glsl` | Colors | Yes | GLSL shader source-code palette |
 | `gpl` | `.gpl` | Colors | Yes | GIMP palette |
 | `hex` | `.hex` | Colors | No | One lowercase `rrggbb` value per line by default |
+| `hueforge` | `.json` | Filaments | No | HueForge filament library; requires TD values |
 | `jasc_pal` | `.pal` | Colors | No | JASC Paint Shop Pro palette |
 | `json` | `.json` | Both | Yes for palettes | All record fields |
 | `kpl` | `.kpl` | Colors | Yes | Krita native palette |
 | `lospec` | `.json` | Colors | Yes | Lospec-compatible JSON |
 | `paintnet` | `.txt` | Colors | No | PAINT.NET palette |
 | `palette_lut` | `.png` | Colors | No | One-pixel-high GPU LUT |
+| `python` | `.py` | Colors | Yes | Python source-code palette |
 | `riff_pal` | `.pal` | Colors | No | Microsoft RIFF palette |
 | `scribus` | `.xml` | Colors | Yes | Scribus XML palette |
 | `sketchpalette` | `.sketchpalette` | Colors | No | Sketch Palettes plugin |
@@ -222,22 +247,15 @@ unowned catalog.
 Use lazy imports inside the export implementation for optional third-party dependencies so the
 base package remains importable without extras.
 
-## Future Import System
+## Future Import and User-Data Persistence
 
-No general import framework or import CLI currently exists. A future implementation may provide:
+The post-7.0 design for filament import, import/export symmetry, HueForge
+ownership handling, and safe writes to user-managed data is captured in the
+[Post-7.0 import/export update](POST_7_IMPORT_EXPORT_UPDATE.md).
 
-- HueForge and AutoForge filament imports.
-- Explicit field mapping and value transformations.
-- Validation before writing user-managed data.
-- Duplicate detection across core and user records.
-- `skip`, `update`, and `replace` merge strategies.
-- Dry-run reports and atomic writes.
-- User-data imports by default, with protected core-data updates requiring explicit confirmation
-  and hash regeneration.
-
-The import design should be specified from verified external format documentation before coding.
-It should not reuse the exporter registry unless a shared abstraction removes real complexity;
-import and export have different validation, conflict-resolution, and persistence concerns.
+The format importer, catalog reconciliation, and user-file persistence stages
+remain separate responsibilities. Third-party format support must be based on
+verified documentation and representative files.
 
 ## Open Questions
 
@@ -246,4 +264,4 @@ import and export have different validation, conflict-resolution, and persistenc
 - Which exporter-specific options should become available through the CLI?
 - Should third-party applications be able to register exporters through Python entry points?
 
-**Last updated:** 2026-08-11
+**Last updated:** 2026-10-15

@@ -884,6 +884,16 @@ provenance fields to the library schema.
 
 ## Post-import follow-up tasks
 
+### Generalized import/export and user-data persistence (post-7.0.0)
+
+Add filament import, format-to-format filament conversion, and safe persistence
+into `user-colors.json`, `user-filaments.json`, and `owned-filaments.json`.
+Keep external-format parsing, catalog reconciliation, and user-file writes as
+separate responsibilities. The complete motivation, proposed architecture,
+HueForge ownership and identity issues, safety contract, and open decisions are
+recorded in the
+[Post-7.0 import/export update](POST_7_IMPORT_EXPORT_UPDATE.md).
+
 ### Harmony-based filament recommendations
 
 Add a public API and CLI workflow that accepts a base color and harmony type,
