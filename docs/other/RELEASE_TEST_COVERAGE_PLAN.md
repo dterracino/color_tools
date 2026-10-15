@@ -284,34 +284,34 @@ Targets: `color_tools/cli_commands/handlers/filament.py`,
 
 Filament CLI:
 
-- [ ] `--limit` without `--nearest` exits with status 2.
-- [ ] Empty and populated `--list-owned` output and exit successfully.
-- [ ] Add-owned and remove-owned success paths show the selected filament.
-- [ ] Add-owned and remove-owned failures print to stderr and exit with status
+- [x] `--limit` without `--nearest` exits with status 2.
+- [x] Empty and populated `--list-owned` output and exit successfully.
+- [x] Add-owned and remove-owned success paths show the selected filament.
+- [x] Add-owned and remove-owned failures print to stderr and exit with status
   1.
-- [ ] Export without filters respects automatic owned filtering.
-- [ ] Export with `--all-filaments` uses all records.
-- [ ] Export with maker/type/finish/color/TD filters uses only matching records.
-- [ ] Exporter validation failures print to stderr and exit with status 1.
-- [ ] `--has-td` works for listing, counting, nearest matching, and exporting.
-- [ ] `--count` remains mutually exclusive with every other operation.
-- [ ] The manager and GUI dispatch branches forward the selected data path.
+- [x] Export without filters respects automatic owned filtering.
+- [x] Export with `--all-filaments` uses all records.
+- [x] Export with maker/type/finish/color/TD filters uses only matching records.
+- [x] Exporter validation failures print to stderr and exit with status 1.
+- [x] `--has-td` works for listing, counting, nearest matching, and exporting.
+- [x] `--count` remains mutually exclusive with every other operation.
+- [x] The manager and GUI dispatch branches forward the selected data path.
 
 Conversion CLI:
 
-- [ ] Gamut checking rejects simultaneous or missing `--value`/`--hex` input.
-- [ ] Gamut checking rejects a non-three-component value.
-- [ ] Invalid hex errors reach the CLI error boundary.
-- [ ] LCH gamut input is converted to LAB.
-- [ ] Out-of-gamut output includes the nearest LAB and RGB values.
-- [ ] RGB, HSL, LAB, LCH, CMY, and CMYK source routes are exercised through the
+- [x] Gamut checking rejects simultaneous or missing `--value`/`--hex` input.
+- [x] Gamut checking rejects a non-three-component value.
+- [x] Invalid hex errors reach the CLI error boundary.
+- [x] LCH gamut input is converted to LAB.
+- [x] Out-of-gamut output includes the nearest LAB and RGB values.
+- [x] RGB, HSL, LAB, LCH, CMY, and CMYK source routes are exercised through the
   handler.
-- [ ] RGB, HSL, LAB, LCH, CMY, and CMYK target routes are exercised through the
+- [x] RGB, HSL, LAB, LCH, CMY, and CMYK target routes are exercised through the
   handler.
-- [ ] Invalid CMY/CMYK ranges print the conversion error and exit with status 2.
-- [ ] `--value` without `--from`, missing conversion input, and incorrect
+- [x] Invalid CMY/CMYK ranges print the conversion error and exit with status 2.
+- [x] `--value` without `--from`, missing conversion input, and incorrect
   component counts exit with status 2.
-- [ ] Successful output identifies both spaces and the result.
+- [x] Successful output identifies both spaces and the result.
 
 Do not force coverage of unsupported-space branches that `argparse` makes
 unreachable. Confirm that they are unreachable and remove redundant checks if
@@ -471,7 +471,7 @@ Work in bounded batches so failures identify the responsible area:
 3. [x] Palette and filament matching matrices.
 4. [x] Importer base, registry, and malformed formats.
 5. [x] Exporter base and format-specific edge cases.
-6. [ ] Filament and conversion CLI routes.
+6. [x] Filament and conversion CLI routes.
 7. [ ] MCP conversion routes.
 8. [ ] Override reporting.
 9. [ ] Supported image edge cases.
