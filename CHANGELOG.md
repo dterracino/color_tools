@@ -238,6 +238,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the third coordinate and wrapped across zero degrees. Multiple-result color
   searches now apply the same exact-distance user-source preference as
   single-result searches and filament matching.
+- **RIFF PAL container boundaries** — limit chunk discovery to the byte range
+  declared by the RIFF header. Bytes trailing the container are ignored and
+  can no longer be interpreted as palette chunks.
 - **Test resource cleanup** — close Pillow images opened by HyAB and blend
   output tests. Close superseded logging handlers during repeated
   `setup_logging` calls instead of only detaching them, and verify the previous

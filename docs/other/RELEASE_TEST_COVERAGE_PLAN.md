@@ -210,24 +210,24 @@ Suggested homes: `tests/test_constants.py` and `tests/test_cli_reporting.py`.
 Targets: `color_tools/importers/base.py`,
 `color_tools/importers/registry.py`
 
-- [ ] Reject importer metadata with an empty name, description, extension list,
+- [x] Reject importer metadata with an empty name, description, extension list,
   empty extension, or extension beginning with a dot.
-- [ ] Missing-dependency errors cover no extra, one extra, and multiple extras,
+- [x] Missing-dependency errors cover no extra, one extra, and multiple extras,
   with correct singular/plural wording and public attributes.
-- [ ] `import_palette()` rejects a missing path and a directory.
-- [ ] `can_import()` returns false for the wrong extension, a missing/non-file
+- [x] `import_palette()` rejects a missing path and a directory.
+- [x] `can_import()` returns false for the wrong extension, a missing/non-file
   path, and an unavailable importer.
-- [ ] The default format detector accepts a valid matching file.
-- [ ] `_ensure_dependencies()` raises the documented exception.
-- [ ] Duplicate importer registration is rejected.
-- [ ] Unknown explicit format names list available formats.
-- [ ] Available-only format and extension listings exclude unavailable
+- [x] The default format detector accepts a valid matching file.
+- [x] `_ensure_dependencies()` raises the documented exception.
+- [x] Duplicate importer registration is rejected.
+- [x] Unknown explicit format names list available formats.
+- [x] Available-only format and extension listings exclude unavailable
   importers; unfiltered listings retain them.
-- [ ] Detection rejects a missing input file.
-- [ ] Detection reports an extension with no registered importer.
-- [ ] Detection reports no recognizing candidate.
-- [ ] Detection reports ambiguous recognizing candidates.
-- [ ] Explicit format selection and automatic detection both delegate to the
+- [x] Detection rejects a missing input file.
+- [x] Detection reports an extension with no registered importer.
+- [x] Detection reports no recognizing candidate.
+- [x] Detection reports ambiguous recognizing candidates.
+- [x] Explicit format selection and automatic detection both delegate to the
   selected importer.
 
 Use temporary registry state or patching that is restored after every test so
@@ -239,16 +239,16 @@ Suggested home: `tests/test_importers.py`.
 
 Targets: GPL, HEX, JASC PAL, and RIFF PAL importers
 
-- [ ] Cover case-insensitive supported extensions.
-- [ ] Cover empty input where the format permits or rejects it.
-- [ ] Reject invalid or missing format signatures/headers.
-- [ ] Reject malformed component counts and nonnumeric channels.
-- [ ] Reject RGB channels outside 0-255.
-- [ ] Cover comments, blank lines, and optional names where supported.
-- [ ] Cover declared-count mismatches and premature EOF.
-- [ ] Cover trailing bytes/records according to each format's contract.
-- [ ] Cover shared-extension detection between JASC PAL and RIFF PAL.
-- [ ] Assert imported names, RGB values, source metadata, and palette metadata,
+- [x] Cover case-insensitive supported extensions.
+- [x] Cover empty input where the format permits or rejects it.
+- [x] Reject invalid or missing format signatures/headers.
+- [x] Reject malformed component counts and nonnumeric channels.
+- [x] Reject RGB channels outside 0-255.
+- [x] Cover comments, blank lines, and optional names where supported.
+- [x] Cover declared-count mismatches and premature EOF.
+- [x] Cover trailing bytes/records according to each format's contract.
+- [x] Cover shared-extension detection between JASC PAL and RIFF PAL.
+- [x] Assert imported names, RGB values, source metadata, and palette metadata,
   not merely the number of records.
 
 Suggested home: `tests/test_importers.py`, split by format if that file becomes
@@ -468,7 +468,7 @@ Work in bounded batches so failures identify the responsible area:
 1. [ ] Palette schema and core/user loader failures.
 2. [x] Integrity and hash verification failures.
 3. [x] Palette and filament matching matrices.
-4. [ ] Importer base, registry, and malformed formats.
+4. [x] Importer base, registry, and malformed formats.
 5. [ ] Exporter base and format-specific edge cases.
 6. [ ] Filament and conversion CLI routes.
 7. [ ] MCP conversion routes.

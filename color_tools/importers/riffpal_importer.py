@@ -155,7 +155,7 @@ class RiffPalImporter(PaletteImporter):
             )
 
         data_chunk = self._find_data_chunk(
-            data
+            data[:expected_total_size]
         )
 
         if data_chunk is None:
