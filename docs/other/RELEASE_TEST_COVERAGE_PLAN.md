@@ -1,0 +1,496 @@
+# Color Tools 7.0.0 test coverage completion plan
+
+Status: planned, not yet implemented  
+Captured: 2026-10-15  
+Scope: final local test-coverage work before the 7.0.0 release review
+
+This document records the actionable gaps found in the final branch-coverage
+review. It is a checklist for the next implementation pass, not authorization
+to commit, push, tag, publish, or release.
+
+The goal is meaningful behavioral coverage of public contracts and likely
+failure modes. Reaching 100% as a number is not a goal. Abstract method bodies,
+unreachable parser states, and platform-owned behavior should not receive
+artificial tests merely to change the percentage.
+
+## Baseline
+
+The suite was rerun from a fresh temporary coverage database so older or
+third-party coverage records could not affect the result:
+
+```powershell
+$env:COVERAGE_FILE = Join-Path $env:TEMP 'color-tools-release-review.coverage'
+.\.venv\Scripts\python.exe -m pytest --cov=color_tools --cov-branch --cov-report= -q
+.\.venv\Scripts\python.exe -m coverage report --include='color_tools/*' --show-missing --skip-covered --skip-empty
+```
+
+Results:
+
+- 1,549 tests passed and 2 skipped.
+- 14,607 subtests passed.
+- 8,576 statements were measured; 1,280 were not covered.
+- 2,578 branches were measured; 372 were not covered.
+- Combined statement and branch coverage was 82%.
+- Twenty source files were completely covered and omitted from the detailed
+  report by `--skip-covered`.
+
+The repository's ordinary `.coverage` file was not replaced during this
+review. Project reports should remain scoped to `color_tools/*`, because
+optional GUI dependencies can contribute synthetic or third-party filenames to
+a raw coverage database.
+
+## Completion rules
+
+- [ ] Test observable behavior through public entry points where practical.
+- [ ] Use small deterministic fixtures instead of the complete bundled data set
+  when exercising individual branches.
+- [ ] Assert returned values, output, error type, and relevant error text; do
+  not use execution-only tests where a stronger assertion is available.
+- [ ] Do not calculate expected conversion values with the helper under test.
+- [ ] Keep parameterized/subtest matrices readable and identify the failed case.
+- [ ] If a branch is genuinely unreachable, remove or simplify it when safe.
+- [ ] Exclude a line from coverage only when it is necessarily abstract,
+  interpreter/platform-owned, or otherwise impossible to exercise in supported
+  use, and record the reason in the code.
+- [ ] Run focused tests after each area, then the complete suite with branch
+  coverage.
+- [ ] Run strict Pyright and the existing documentation checks after any source
+  cleanup prompted by the tests.
+
+## Priority 0: complete before release
+
+### 1. Palette document schema failures
+
+Target: `color_tools/_palette_document.py`
+
+Valid checked-in palette documents are covered, but most negative schema
+branches are not. Add a compact invalid-document matrix covering:
+
+- [ ] Missing, non-integer, and unsupported `schema_version`.
+- [ ] Missing or non-object `metadata`.
+- [ ] Missing, non-string, empty, and whitespace-only `metadata.id` values.
+- [ ] A metadata ID that does not match the filename stem.
+- [ ] Missing, non-string, empty, and whitespace-only `metadata.name` values.
+- [ ] Invalid optional `metadata.description` values, including empty strings.
+- [ ] Invalid optional `metadata.release_year` values; explicitly reject a
+  Boolean as well as strings and floats.
+- [ ] Missing or non-object `palette`.
+- [ ] Missing, unknown, or non-string `palette.type`.
+- [ ] Missing or non-array `palette.colors`.
+- [ ] Non-string object keys when the parser is called directly with a Python
+  mapping. JSON files cannot express this case, but the helper accepts an
+  `object` and validates it.
+- [ ] Error messages include the source filename and the relevant field.
+
+Suggested home: `tests/test_palette_documents.py`.
+
+### 2. Core and user data loading failures
+
+Targets: `color_tools/palette.py`, `color_tools/filament_palette.py`
+
+- [ ] Reject a non-array core colors document.
+- [ ] Reject a non-array user colors document.
+- [ ] Reject a non-array core filaments document.
+- [ ] Reject a non-array user filaments document.
+- [ ] Cover color records with missing required fields, short coordinate arrays,
+  invalid RGB values, and invalid hex values with source and index context.
+- [ ] Cover filament records with each required field missing.
+- [ ] Cover invalid filament field types and values with source and index
+  context.
+- [ ] Reject the removed `hex2` field with the migration-oriented error.
+- [ ] Reject a non-object owned-filament document.
+- [ ] Reject a non-list `owned_filaments` value.
+- [ ] Reject owned-filament lists containing non-string IDs.
+- [ ] Cover an exact user-filament override.
+- [ ] Cover a different filament with the same effective RGB.
+- [ ] Cover user-color overrides by name and by RGB, including the associated
+  log records.
+- [ ] Confirm input files remain unchanged after both successful and failed
+  loads.
+
+Suggested homes: `tests/test_palette.py`, `tests/test_user_overrides.py`, and
+`tests/test_owned_filaments.py`.
+
+### 3. Maker-synonym merging
+
+Target: `color_tools/filament_palette.py`
+
+- [ ] Missing core synonym file produces an empty base mapping.
+- [ ] Identical user synonyms leave the canonical entry unchanged.
+- [ ] Disjoint user synonyms replace the canonical entry and report an
+  override.
+- [ ] Partially overlapping synonyms extend the entry without duplicates and
+  report the old/new counts.
+- [ ] A previously unknown maker is added.
+- [ ] Canonical names and synonyms match case-insensitively with surrounding
+  whitespace normalized for matching.
+
+Suggested home: `tests/test_synonyms.py`.
+
+### 4. Palette matching behavior
+
+Target: `color_tools/palette.py`
+
+- [ ] `nearest_color()` in LCH, including hue wraparound.
+- [ ] `nearest_colors()` in HSL, including hue wraparound.
+- [ ] `nearest_colors()` in LCH, including hue wraparound.
+- [ ] Both single- and multiple-result APIs with DE76 aliases.
+- [ ] Both APIs with DE94 aliases.
+- [ ] Both APIs with CMC/default and `decmc` aliases.
+- [ ] Both APIs with CMC 2:1 and CMC 1:1 shorthands.
+- [ ] Custom CMC lightness/chroma parameters are passed through.
+- [ ] HyAB remains covered in both APIs.
+- [ ] An unknown metric raises the documented `ValueError`.
+- [ ] Count is bounded to 1 through 50.
+- [ ] Exact-distance ties prefer a user source consistently.
+
+Expected results should be independently pinned or assembled from lower-level
+reference functions rather than duplicating the selection implementation.
+
+Suggested homes: `tests/test_palette.py` and `tests/test_hyab.py`.
+
+### 5. Filament matching and hue filtering
+
+Targets: `color_tools/filament_palette.py`,
+`color_tools/filament_filter_criteria.py`
+
+- [ ] Hue distance wraps correctly across zero degrees.
+- [ ] An achromatic target bypasses hue filtering.
+- [ ] Achromatic candidates remain eligible for chromatic targets.
+- [ ] Chromatic candidates inside and outside the maximum hue delta are
+  selected correctly.
+- [ ] An empty result after hue filtering raises the focused guidance message.
+- [ ] DE2000/CIEDE2000, DE94/CIE94, DE76/CIE76, Euclidean, CMC/DECMC, and HyAB
+  aliases resolve correctly.
+- [ ] Custom CMC parameters affect the distance function.
+- [ ] An unknown metric raises the documented `ValueError`.
+- [ ] A distance failure for one candidate does not discard valid candidates.
+- [ ] All failed candidate calculations raise `No valid filaments found`.
+- [ ] Equal-distance results prefer user data; otherwise stable ordering is
+  preserved.
+- [ ] Count is bounded to 1 through 50.
+- [ ] Scalar, list, and `None` filter inputs are normalized correctly.
+- [ ] Include/exclude criteria, owned state, TD presence, maker aliases, and
+  multi-color mode interact correctly in a small combined fixture.
+
+Suggested homes: `tests/test_filament_filter_criteria.py` and
+`tests/test_filament_collections.py`.
+
+### 6. Integrity and user-hash failure behavior
+
+Targets: `color_tools/constants.py`, `color_tools/cli_commands/reporting.py`
+
+- [ ] `verify_data_file()` returns false for a missing file.
+- [ ] Each missing or modified core file produces its own focused error:
+  colors, filaments, maker synonyms, and a registered system palette.
+- [ ] Multiple failed core files accumulate errors instead of stopping at the
+  first failure.
+- [ ] Generating a hash for a missing user file raises `FileNotFoundError`.
+- [ ] Saving a hash for a missing user file raises `FileNotFoundError`.
+- [ ] Saving with a supplied hash does not recalculate it.
+- [ ] A user file without a sidecar is accepted as unverified.
+- [ ] Missing user files, hash mismatches, empty sidecars, malformed sidecars,
+  and unreadable sidecars return focused verification errors.
+- [ ] User data files and user palettes are both included in aggregate
+  verification.
+- [ ] Example user palettes remain excluded.
+- [ ] A missing user directory is a successful no-op.
+- [ ] Hash generation reports an individual failure and continues processing
+  other files.
+- [ ] `--verify-constants`, `--verify-matrices`, `--verify-data`, and
+  `--verify-user-data` failure paths print to stderr and exit with status 1.
+- [ ] Successful user verification uses correct singular and plural labels for
+  both data files and palettes.
+- [ ] `--verify-all` enables every intended verification category.
+
+Suggested homes: `tests/test_constants.py` and `tests/test_cli_reporting.py`.
+
+### 7. Importer framework contracts
+
+Targets: `color_tools/importers/base.py`,
+`color_tools/importers/registry.py`
+
+- [ ] Reject importer metadata with an empty name, description, extension list,
+  empty extension, or extension beginning with a dot.
+- [ ] Missing-dependency errors cover no extra, one extra, and multiple extras,
+  with correct singular/plural wording and public attributes.
+- [ ] `import_palette()` rejects a missing path and a directory.
+- [ ] `can_import()` returns false for the wrong extension, a missing/non-file
+  path, and an unavailable importer.
+- [ ] The default format detector accepts a valid matching file.
+- [ ] `_ensure_dependencies()` raises the documented exception.
+- [ ] Duplicate importer registration is rejected.
+- [ ] Unknown explicit format names list available formats.
+- [ ] Available-only format and extension listings exclude unavailable
+  importers; unfiltered listings retain them.
+- [ ] Detection rejects a missing input file.
+- [ ] Detection reports an extension with no registered importer.
+- [ ] Detection reports no recognizing candidate.
+- [ ] Detection reports ambiguous recognizing candidates.
+- [ ] Explicit format selection and automatic detection both delegate to the
+  selected importer.
+
+Use temporary registry state or patching that is restored after every test so
+the global registry cannot leak between cases.
+
+Suggested home: `tests/test_importers.py`.
+
+### 8. Individual importer malformed-file matrices
+
+Targets: GPL, HEX, JASC PAL, and RIFF PAL importers
+
+- [ ] Cover case-insensitive supported extensions.
+- [ ] Cover empty input where the format permits or rejects it.
+- [ ] Reject invalid or missing format signatures/headers.
+- [ ] Reject malformed component counts and nonnumeric channels.
+- [ ] Reject RGB channels outside 0-255.
+- [ ] Cover comments, blank lines, and optional names where supported.
+- [ ] Cover declared-count mismatches and premature EOF.
+- [ ] Cover trailing bytes/records according to each format's contract.
+- [ ] Cover shared-extension detection between JASC PAL and RIFF PAL.
+- [ ] Assert imported names, RGB values, source metadata, and palette metadata,
+  not merely the number of records.
+
+Suggested home: `tests/test_importers.py`, split by format if that file becomes
+too large.
+
+### 9. Exporter framework contracts
+
+Target: `color_tools/exporters/base.py`
+
+- [ ] Reject exporter metadata with an empty name, description, or extension.
+- [ ] Reject an extension beginning with a dot.
+- [ ] Reject an `options_type` that does not inherit `ExportOptionsBase`.
+- [ ] Missing-dependency errors cover no extra, one extra, and multiple extras,
+  with correct wording and public attributes.
+- [ ] Unsupported color, palette, and filament operations raise focused
+  `NotImplementedError` exceptions.
+- [ ] Export options are rejected when the exporter accepts none.
+- [ ] Options of the wrong class identify expected and actual types.
+- [ ] Palette export falls back to color export when metadata is unsupported.
+- [ ] Options-aware palette export falls back to options-aware color export.
+- [ ] An exporter declaring support without implementing the corresponding hook
+  fails clearly for colors, filaments, and options-aware variants.
+- [ ] Missing dependencies are checked before any output is written.
+- [ ] Generated filenames contain the data type, format, timestamp shape, and
+  extension.
+
+Suggested home: `tests/test_export.py` or a focused exporter-base test module.
+
+### 10. 7.0 CLI behavior
+
+Targets: `color_tools/cli_commands/handlers/filament.py`,
+`color_tools/cli_commands/handlers/convert.py`
+
+Filament CLI:
+
+- [ ] `--limit` without `--nearest` exits with status 2.
+- [ ] Empty and populated `--list-owned` output and exit successfully.
+- [ ] Add-owned and remove-owned success paths show the selected filament.
+- [ ] Add-owned and remove-owned failures print to stderr and exit with status
+  1.
+- [ ] Export without filters respects automatic owned filtering.
+- [ ] Export with `--all-filaments` uses all records.
+- [ ] Export with maker/type/finish/color/TD filters uses only matching records.
+- [ ] Exporter validation failures print to stderr and exit with status 1.
+- [ ] `--has-td` works for listing, counting, nearest matching, and exporting.
+- [ ] `--count` remains mutually exclusive with every other operation.
+- [ ] The manager and GUI dispatch branches forward the selected data path.
+
+Conversion CLI:
+
+- [ ] Gamut checking rejects simultaneous or missing `--value`/`--hex` input.
+- [ ] Gamut checking rejects a non-three-component value.
+- [ ] Invalid hex errors reach the CLI error boundary.
+- [ ] LCH gamut input is converted to LAB.
+- [ ] Out-of-gamut output includes the nearest LAB and RGB values.
+- [ ] RGB, HSL, LAB, LCH, CMY, and CMYK source routes are exercised through the
+  handler.
+- [ ] RGB, HSL, LAB, LCH, CMY, and CMYK target routes are exercised through the
+  handler.
+- [ ] Invalid CMY/CMYK ranges print the conversion error and exit with status 2.
+- [ ] `--value` without `--from`, missing conversion input, and incorrect
+  component counts exit with status 2.
+- [ ] Successful output identifies both spaces and the result.
+
+Do not force coverage of unsupported-space branches that `argparse` makes
+unreachable. Confirm that they are unreachable and remove redundant checks if
+doing so improves the handler.
+
+Suggested home: `tests/test_cli_handlers.py`.
+
+## Priority 1: valuable before release
+
+### 11. MCP conversion matrix
+
+Target: `color_tools/mcp/server.py`
+
+- [ ] Wrong component counts for RGB, XYZ, LAB, LCH, HSL, CMY, and CMYK.
+- [ ] Fractional RGB components are rejected.
+- [ ] Every supported source space reaches its conversion branch.
+- [ ] Every supported target space reaches its conversion branch.
+- [ ] Same-space conversions still validate the supplied value.
+- [ ] Clamp behavior is passed through for RGB-producing conversions.
+- [ ] Invalid CMY/CMYK percentages return the public MCP error contract.
+- [ ] Tool-level conversion results contain the expected source, target, input,
+  and output fields.
+
+Suggested home: `tests/test_mcp_server.py`.
+
+### 12. Format-specific exporters
+
+Targets: KPL, Python, swatch-image, and HueForge exporters
+
+- [ ] KPL validation and optional-value branches, including both accepted
+  metadata shapes and malformed values.
+- [ ] Python exporter naming, quoting, optional metadata, duplicate handling,
+  empty input, and each supported output structure.
+- [ ] Swatch-image layout boundaries, label/no-label modes, font fallback,
+  pagination/wrapping, empty input, invalid dimensions, and file-write errors.
+- [ ] HueForge error previews append an ellipsis when more than three duplicate
+  IDs are present.
+- [ ] HueForge error previews append an ellipsis when more than three records
+  lack TD values.
+- [ ] Plain HEX export remains lowercase by default and uppercase only through
+  `HexExportOptions(uppercase=True)`.
+
+Suggested homes: the existing format-specific exporter tests.
+
+### 13. Override reporting
+
+Target: `color_tools/cli_commands/reporting.py`
+
+- [ ] Capture and label color name/RGB override messages.
+- [ ] Capture and label exact/RGB filament override messages.
+- [ ] Capture and label synonym replacement and extension messages.
+- [ ] Report no overrides when no messages are emitted.
+- [ ] Summarize records by source for both colors and filaments.
+- [ ] A loader failure prints one focused error and exits with status 1.
+- [ ] Logging levels and handlers are restored even after a failure.
+
+The implementation currently contains fallback branches after selecting the
+default palettes that appear unreachable. Confirm this during implementation;
+remove them rather than constructing artificial tests if they cannot occur.
+
+Suggested home: `tests/test_cli_reporting.py`.
+
+### 14. Supported image APIs
+
+Targets: `color_tools/image/__init__.py`, `image/conversion.py`,
+`image/basic.py`, `image/dominance.py`, and the supported exporters that use
+them
+
+- [ ] Lazy image exports load only their owning modules.
+- [ ] A missing optional dependency preserves its precise import cause.
+- [ ] An unrelated import failure is not disguised as a missing dependency.
+- [ ] Unsupported image modes and invalid dimensions fail clearly.
+- [ ] Alpha/transparency branches retain the documented behavior.
+- [ ] Conversion mode and output-mode branches use small known pixel fixtures.
+- [ ] Dominance filters cover threshold boundaries, empty selections, fallback
+  selection, ordering, and invalid arguments.
+- [ ] Multi-color block and gradient swatches cover minimum dimensions and
+  single-color fallback.
+
+The dominance module is large. Select behavioral boundaries and known
+regressions; do not mirror its implementation merely to cover every numerical
+line.
+
+Suggested homes: the existing `tests/test_image_*.py` modules.
+
+## Priority 2: focused smoke coverage, not exhaustive interaction coverage
+
+### 15. Interactive terminal workflows
+
+Current baseline:
+
+- `interactive_manager.py`: approximately 22%.
+- `interactive_wizard.py`: approximately 35%.
+
+Minimum useful coverage:
+
+- [ ] Initial menu dispatch.
+- [ ] Quit and cancel paths.
+- [ ] Invalid input followed by retry.
+- [ ] Empty search/selection handling.
+- [ ] Add and remove owned-filament operations.
+- [ ] Export confirmation, success, cancellation, and failure.
+- [ ] Wizard completion returns the expected criteria/options.
+- [ ] User-visible messages describe the selected operation and failure.
+
+Prefer testing focused decision helpers. If substantial terminal input/output
+logic cannot be isolated without fragile mocks, first extract a small cohesive
+helper rather than building a monolithic scripted-session test.
+
+Suggested homes: `tests/test_interactive_manager.py` and
+`tests/test_interactive_wizard.py`.
+
+### 16. Optional Qt workflows
+
+Current baseline:
+
+- `filament_export_dialog.py`: approximately 74%.
+- `filament_manager_gui.py`: approximately 80%.
+
+Minimum useful coverage where the supported Qt environment permits:
+
+- [ ] Dialog initialization from current filters and export formats.
+- [ ] Option collection and validation.
+- [ ] Empty selection and invalid destination handling.
+- [ ] Save-path cancellation.
+- [ ] Export success and failure reporting.
+- [ ] Owned-filament mutations refresh the visible model.
+- [ ] Closing/canceling does not modify user data.
+
+Platform-owned paint, event-loop, and native-dialog internals are not coverage
+targets. Keep these tests deterministic and headless-compatible.
+
+## Low-value gaps and cleanup decisions
+
+- [ ] Review uncovered abstract method bodies. Exercise the concrete contract
+  through minimal test subclasses; do not directly call abstract placeholders
+  solely for coverage.
+- [ ] Remove the redundant CMYK length check in the conversion handler if the
+  earlier source-space validation makes it impossible to reach.
+- [ ] Remove unreachable fallback branches in override reporting after
+  confirming they cannot occur.
+- [ ] Decide whether tiny `__main__.py` wrappers need subprocess smoke tests.
+  Their current 0% result is visible but not a significant library risk.
+- [ ] Narrow broad exception handling discovered during coverage work where a
+  focused exception contract is possible. Add a regression test for the
+  intended failure, not for silently swallowing arbitrary exceptions.
+- [ ] Do not spend release time covering disabled work-in-progress image
+  prototypes that are explicitly excluded from supported coverage.
+
+## Execution sequence
+
+Work in bounded batches so failures identify the responsible area:
+
+1. [ ] Palette schema and core/user loader failures.
+2. [ ] Integrity and hash verification failures.
+3. [ ] Palette and filament matching matrices.
+4. [ ] Importer base, registry, and malformed formats.
+5. [ ] Exporter base and format-specific edge cases.
+6. [ ] Filament and conversion CLI routes.
+7. [ ] MCP conversion routes.
+8. [ ] Override reporting.
+9. [ ] Supported image edge cases.
+10. [ ] Focused terminal and Qt workflow coverage.
+11. [ ] Review remaining uncovered branches and classify each as required,
+    unreachable/dead, abstract, platform-dependent, or intentionally deferred.
+12. [ ] Run the complete release validation suite.
+
+## Final validation record
+
+Fill this section in after implementation rather than replacing the baseline
+above.
+
+- Focused test results: pending.
+- Full pytest result: pending.
+- Final statement/branch coverage: pending.
+- Strict Pyright: pending.
+- Sphinx coverage and warning-as-error HTML build: pending.
+- `git diff --check`: pending.
+- Remaining uncovered release risks: pending.
+- Deferred platform/optional-feature paths: pending.
+- Commit, push, tag, publish, and release: user-owned; not performed by the
+  assistant.

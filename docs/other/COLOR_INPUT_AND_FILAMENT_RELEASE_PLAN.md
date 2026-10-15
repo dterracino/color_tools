@@ -750,6 +750,12 @@ Reject invalid tolerance/iteration values with a defined error contract.
 
 ## Workstream 4: critical regression coverage
 
+The final pre-release branch-coverage audit and concrete implementation
+checklist are recorded in
+[RELEASE_TEST_COVERAGE_PLAN.md](RELEASE_TEST_COVERAGE_PLAN.md). Use that
+document for the remaining coverage pass; the table below preserves the broader
+behavioral requirements established earlier in the release.
+
 Write tests reproducing current failures first; demonstrate they fail on the
 unfixed code, then implement. Expected values must not be calculated by the exact
 helper under test. Use pinned reference cases plus independently assembled
