@@ -66,21 +66,21 @@ Target: `color_tools/_palette_document.py`
 Valid checked-in palette documents are covered, but most negative schema
 branches are not. Add a compact invalid-document matrix covering:
 
-- [ ] Missing, non-integer, and unsupported `schema_version`.
-- [ ] Missing or non-object `metadata`.
-- [ ] Missing, non-string, empty, and whitespace-only `metadata.id` values.
-- [ ] A metadata ID that does not match the filename stem.
-- [ ] Missing, non-string, empty, and whitespace-only `metadata.name` values.
-- [ ] Invalid optional `metadata.description` values, including empty strings.
-- [ ] Invalid optional `metadata.release_year` values; explicitly reject a
+- [x] Missing, non-integer, and unsupported `schema_version`.
+- [x] Missing or non-object `metadata`.
+- [x] Missing, non-string, empty, and whitespace-only `metadata.id` values.
+- [x] A metadata ID that does not match the filename stem.
+- [x] Missing, non-string, empty, and whitespace-only `metadata.name` values.
+- [x] Invalid optional `metadata.description` values, including empty strings.
+- [x] Invalid optional `metadata.release_year` values; explicitly reject a
   Boolean as well as strings and floats.
-- [ ] Missing or non-object `palette`.
-- [ ] Missing, unknown, or non-string `palette.type`.
-- [ ] Missing or non-array `palette.colors`.
-- [ ] Non-string object keys when the parser is called directly with a Python
+- [x] Missing or non-object `palette`.
+- [x] Missing, unknown, or non-string `palette.type`.
+- [x] Missing or non-array `palette.colors`.
+- [x] Non-string object keys when the parser is called directly with a Python
   mapping. JSON files cannot express this case, but the helper accepts an
   `object` and validates it.
-- [ ] Error messages include the source filename and the relevant field.
+- [x] Error messages include the source filename and the relevant field.
 
 Suggested home: `tests/test_palette_documents.py`.
 
@@ -88,24 +88,24 @@ Suggested home: `tests/test_palette_documents.py`.
 
 Targets: `color_tools/palette.py`, `color_tools/filament_palette.py`
 
-- [ ] Reject a non-array core colors document.
-- [ ] Reject a non-array user colors document.
-- [ ] Reject a non-array core filaments document.
-- [ ] Reject a non-array user filaments document.
-- [ ] Cover color records with missing required fields, short coordinate arrays,
+- [x] Reject a non-array core colors document.
+- [x] Reject a non-array user colors document.
+- [x] Reject a non-array core filaments document.
+- [x] Reject a non-array user filaments document.
+- [x] Cover color records with missing required fields, short coordinate arrays,
   invalid RGB values, and invalid hex values with source and index context.
-- [ ] Cover filament records with each required field missing.
+- [x] Cover filament records with each required field missing.
 - [ ] Cover invalid filament field types and values with source and index
   context.
-- [ ] Reject the removed `hex2` field with the migration-oriented error.
-- [ ] Reject a non-object owned-filament document.
-- [ ] Reject a non-list `owned_filaments` value.
-- [ ] Reject owned-filament lists containing non-string IDs.
+- [x] Reject the removed `hex2` field with the migration-oriented error.
+- [x] Reject a non-object owned-filament document.
+- [x] Reject a non-list `owned_filaments` value.
+- [x] Reject owned-filament lists containing non-string IDs.
 - [ ] Cover an exact user-filament override.
 - [ ] Cover a different filament with the same effective RGB.
 - [ ] Cover user-color overrides by name and by RGB, including the associated
   log records.
-- [ ] Confirm input files remain unchanged after both successful and failed
+- [x] Confirm input files remain unchanged after both successful and failed
   loads.
 
 Suggested homes: `tests/test_palette.py`, `tests/test_user_overrides.py`, and

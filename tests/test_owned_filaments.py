@@ -97,6 +97,18 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
             with self.assertRaises(ValueError) as ctx:
                 load_owned_filaments(path)
             self.assertIn("list", str(ctx.exception))
+
+    def test_load_owned_filaments_rejects_non_string_ids(self):
+        """Owned filament identifiers must all be strings."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "owned-filaments.json"
+            path.write_text(
+                json.dumps({"owned_filaments": ["valid-id", 42]}),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "IDs to be strings"):
+                load_owned_filaments(path)
     
     def test_save_owned_filaments(self):
         """Test saving owned filaments."""

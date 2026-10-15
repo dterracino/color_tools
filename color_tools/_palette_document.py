@@ -73,7 +73,7 @@ def _validate_metadata(
 ) -> None:
     """Validate identity and descriptive metadata for a palette document."""
     palette_id = metadata.get("id")
-    if not isinstance(palette_id, str) or not palette_id:
+    if not isinstance(palette_id, str) or not palette_id.strip():
         raise ValueError(
             f"Missing or invalid 'metadata.id' in {source_file}: "
             "expected non-empty string"

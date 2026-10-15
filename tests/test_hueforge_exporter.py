@@ -61,7 +61,7 @@ class TestHueForgeExporter(unittest.TestCase):
 
         expected_uuid = uuid.uuid5(
             uuid.NAMESPACE_URL,
-            "color-tools:filament:test-co_pla_tealie",
+            f"color-tools:filament:{self.filament.id}",
         )
         self.assertEqual(result, str(output_path))
         self.assertEqual(
