@@ -20,6 +20,7 @@ from color_tools.mcp.server import (
     convert_color,
     mcp,
 )
+from color_tools.mcp.models import ColorSpace
 
 
 class TestMCPServer(unittest.IsolatedAsyncioTestCase):
@@ -166,6 +167,173 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
             convert_color("cmy", "rgb", -0.1, 0.0, 0.0)
         with self.assertRaisesRegex(ValueError, "CMYK component 4"):
             convert_color("cmyk", "rgb", 0.0, 0.0, 0.0, 100.1)
+
+    def test_convert_color_rejects_wrong_component_count_for_every_space(
+        self,
+    ) -> None:
+        """Every source space enforces its three- or four-component shape."""
+        for source in ("rgb", "xyz", "lab", "lch", "hsl", "cmy"):
+            with self.subTest(source=source):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    f"{source.upper()} requires 3 components",
+                ):
+                    convert_color(
+                        cast(ColorSpace, source),
+                        "rgb",
+                        0.0,
+                        0.0,
+                        0.0,
+                        0.0,
+                    )
+
+        with self.assertRaisesRegex(ValueError, "CMYK requires 4 components"):
+            convert_color("cmyk", "rgb", 0.0, 0.0, 0.0)
+
+    def test_convert_color_rejects_fractional_rgb_components(self) -> None:
+        """RGB input remains integer-only even though MCP numbers are floats."""
+        with self.assertRaisesRegex(ValueError, "RGB components must be integers"):
+            convert_color("rgb", "lab", 12.5, 34.0, 56.0)
+
+    def test_convert_color_exercises_every_source_space(self) -> None:
+        """Each declared source reaches a successful conversion branch."""
+        cases: tuple[tuple[ColorSpace, tuple[float, ...]], ...] = (
+            ("rgb", (51.0, 102.0, 153.0)),
+            ("xyz", (11.866, 12.506, 31.925)),
+            ("lab", (42.0, 0.0, 0.0)),
+            ("lch", (42.0, 0.0, 0.0)),
+            ("hsl", (210.0, 50.0, 40.0)),
+            ("cmy", (80.0, 60.0, 40.0)),
+            ("cmyk", (66.7, 33.3, 0.0, 40.0)),
+        )
+        for source, components in cases:
+            with self.subTest(source=source):
+                fourth = components[3] if len(components) == 4 else None
+                result = convert_color(
+                    source,
+                    "rgb",
+                    components[0],
+                    components[1],
+                    components[2],
+                    fourth,
+                )
+                self.assertEqual(result.source_space, source)
+                self.assertEqual(result.target_space, "rgb")
+                self.assertEqual(len(result.target_value), 3)
+
+    def test_convert_color_exercises_every_target_space(self) -> None:
+        """Each declared target reaches a successful conversion branch."""
+        targets: tuple[ColorSpace, ...] = (
+            "rgb",
+            "xyz",
+            "lab",
+            "lch",
+            "hsl",
+            "cmy",
+            "cmyk",
+        )
+        for target in targets:
+            with self.subTest(target=target):
+                result = convert_color("rgb", target, 51.0, 102.0, 153.0)
+                self.assertEqual(result.target_space, target)
+                self.assertEqual(len(result.target_value), 4 if target == "cmyk" else 3)
+
+    def test_same_space_conversion_still_validates_input(self) -> None:
+        """The identity shortcut must not bypass source validation."""
+        with self.assertRaisesRegex(ValueError, "RGB components must be integers"):
+            convert_color("rgb", "rgb", 1.5, 2.0, 3.0)
+        with self.assertRaisesRegex(ValueError, "CMY component 1"):
+            convert_color("cmy", "cmy", 101.0, 0.0, 0.0)
+
+    def test_clamp_option_reaches_rgb_producing_converters(self) -> None:
+        """XYZ, LAB, and LCH RGB conversion receives the caller's clamp flag."""
+        with patch(
+            "color_tools.mcp.server.xyz_to_rgb",
+            return_value=(1, 2, 3),
+        ) as xyz_converter:
+            convert_color("xyz", "rgb", 10.0, 20.0, 30.0, clamp_rgb=False)
+            xyz_converter.assert_called_once_with((10.0, 20.0, 30.0), clamp=False)
+
+        for source, components in (
+            ("lab", (50.0, 0.0, 0.0)),
+            ("lch", (50.0, 0.0, 0.0)),
+        ):
+            with self.subTest(source=source):
+                with patch(
+                    "color_tools.mcp.server.lab_to_rgb",
+                    return_value=(1, 2, 3),
+                ) as lab_converter:
+                    convert_color(
+                        cast(ColorSpace, source),
+                        "rgb",
+                        components[0],
+                        components[1],
+                        components[2],
+                        clamp_rgb=False,
+                    )
+                    lab_converter.assert_called_once_with(
+                        (50.0, 0.0, 0.0),
+                        clamp=False,
+                    )
+
+    def test_unclamped_out_of_gamut_source_rejects_rgb_dependent_target(
+        self,
+    ) -> None:
+        """Non-RGB derived targets cannot consume unclamped out-of-gamut RGB."""
+        with self.assertRaisesRegex(
+            ValueError,
+            "Out-of-gamut source requires clamp_rgb=true",
+        ):
+            convert_color(
+                "lab",
+                "hsl",
+                50.0,
+                150.0,
+                100.0,
+                clamp_rgb=False,
+            )
+
+    async def test_invalid_percentages_use_public_mcp_error_contract(self) -> None:
+        """Validation failures become MCP tool errors without structured output."""
+        cases = (
+            ("cmy", (-0.1, 0.0, 0.0, None), "CMY component 1"),
+            ("cmyk", (0.0, 0.0, 0.0, 100.1), "CMYK component 4"),
+        )
+        async with Client(mcp, raise_exceptions=False) as client:
+            for source, components, expected in cases:
+                with self.subTest(source=source):
+                    arguments: dict[str, object] = {
+                        "source_space": source,
+                        "target_space": "rgb",
+                        "component_1": components[0],
+                        "component_2": components[1],
+                        "component_3": components[2],
+                    }
+                    if components[3] is not None:
+                        arguments["component_4"] = components[3]
+                    result = await client.call_tool("convert_color", arguments)
+                    self.assertTrue(result.is_error)
+                    self.assertIsNone(result.structured_content)
+                    self.assertIn(expected, str(result.content[0]))
+
+    async def test_conversion_tool_returns_complete_public_result(self) -> None:
+        """The wire result identifies its source, target, input, and output."""
+        result = await self.call_tool(
+            "convert_color",
+            {
+                "source_space": "hsl",
+                "target_space": "cmyk",
+                "component_1": 210.0,
+                "component_2": 50.0,
+                "component_3": 40.0,
+            },
+        )
+        self.assertEqual(result["source_space"], "hsl")
+        self.assertEqual(result["source_value"], [210.0, 50.0, 40.0])
+        self.assertEqual(result["target_space"], "cmyk")
+        self.assertEqual(len(result["target_value"]), 4)
+        self.assertIn("in_srgb_gamut", result)
+        self.assertIn("rgb_was_clamped", result)
 
     async def test_compare_colors_returns_all_metrics(self) -> None:
         """Identical colors should have zero distance in every metric."""

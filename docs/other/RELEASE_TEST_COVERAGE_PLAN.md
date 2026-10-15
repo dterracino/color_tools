@@ -325,14 +325,14 @@ Suggested home: `tests/test_cli_handlers.py`.
 
 Target: `color_tools/mcp/server.py`
 
-- [ ] Wrong component counts for RGB, XYZ, LAB, LCH, HSL, CMY, and CMYK.
-- [ ] Fractional RGB components are rejected.
-- [ ] Every supported source space reaches its conversion branch.
-- [ ] Every supported target space reaches its conversion branch.
-- [ ] Same-space conversions still validate the supplied value.
-- [ ] Clamp behavior is passed through for RGB-producing conversions.
-- [ ] Invalid CMY/CMYK percentages return the public MCP error contract.
-- [ ] Tool-level conversion results contain the expected source, target, input,
+- [x] Wrong component counts for RGB, XYZ, LAB, LCH, HSL, CMY, and CMYK.
+- [x] Fractional RGB components are rejected.
+- [x] Every supported source space reaches its conversion branch.
+- [x] Every supported target space reaches its conversion branch.
+- [x] Same-space conversions still validate the supplied value.
+- [x] Clamp behavior is passed through for RGB-producing conversions.
+- [x] Invalid CMY/CMYK percentages return the public MCP error contract.
+- [x] Tool-level conversion results contain the expected source, target, input,
   and output fields.
 
 Suggested home: `tests/test_mcp_server.py`.
@@ -472,7 +472,7 @@ Work in bounded batches so failures identify the responsible area:
 4. [x] Importer base, registry, and malformed formats.
 5. [x] Exporter base and format-specific edge cases.
 6. [x] Filament and conversion CLI routes.
-7. [ ] MCP conversion routes.
+7. [x] MCP conversion routes.
 8. [ ] Override reporting.
 9. [ ] Supported image edge cases.
 10. [ ] Focused terminal and Qt workflow coverage.
