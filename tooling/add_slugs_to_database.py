@@ -108,7 +108,7 @@ def main():
     print("Next steps:")
     print("  1. Review: tooling/filaments_with_slugs.json")
     print("  2. If satisfied, update color_tools/data/filaments.json with the slugged version")
-    print("  3. Regenerate data integrity hash in constants.py")
+    print("  3. Regenerate hashes with: python tooling/update_hashes.py --autoupdate")
 
 
 if __name__ == '__main__':

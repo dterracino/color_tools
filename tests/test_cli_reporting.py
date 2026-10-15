@@ -24,6 +24,7 @@ from color_tools.cli_commands.reporting import (
     handle_verification_flags,
 )
 from color_tools.constants import ColorConstants
+from color_tools._integrity_hashes import MATRICES_EXPECTED_HASH
 from tests.palette_document_fixtures import palette_document
 
 
@@ -153,6 +154,135 @@ class TestHandleVerificationFlags(unittest.TestCase):
         self.assertTrue(args.verify_matrices)
         self.assertTrue(args.verify_user_data)
 
+    def test_verify_constants_failure_exits_1_with_hashes(self) -> None:
+        """A constants mismatch reports both digests and exits unsuccessfully."""
+        args = self._make_args(verify_constants=True)
+        captured = io.StringIO()
+        with (
+            patch("sys.stderr", captured),
+            patch.object(ColorConstants, "verify_integrity", return_value=False),
+            patch.object(ColorConstants, "expected_hash", return_value="expected"),
+            patch.object(ColorConstants, "compute_hash", return_value="actual"),
+            self.assertRaises(SystemExit) as context,
+        ):
+            handle_verification_flags(args)
+        self.assertEqual(context.exception.code, 1)
+        self.assertIn("ColorConstants integrity check FAILED", captured.getvalue())
+        self.assertIn("Expected hash: expected", captured.getvalue())
+        self.assertIn("Current hash:  actual", captured.getvalue())
+
+    def test_verify_matrices_failure_exits_1_with_hashes(self) -> None:
+        """A matrix mismatch reports expected/current hashes and exits 1."""
+        args = self._make_args(verify_matrices=True)
+        captured = io.StringIO()
+        with (
+            patch("sys.stderr", captured),
+            patch.object(ColorConstants, "verify_matrices_integrity", return_value=False),
+            patch.object(ColorConstants, "compute_matrices_hash", return_value="actual"),
+            self.assertRaises(SystemExit) as context,
+        ):
+            handle_verification_flags(args)
+        self.assertEqual(context.exception.code, 1)
+        self.assertIn("Transformation matrices integrity check FAILED", captured.getvalue())
+        self.assertIn(MATRICES_EXPECTED_HASH, captured.getvalue())
+        self.assertIn("Current hash:  actual", captured.getvalue())
+
+    def test_verify_data_failure_prints_all_errors_and_exits_1(self) -> None:
+        """Core-data verification exposes every accumulated error."""
+        args = self._make_args(verify_data=True)
+        captured = io.StringIO()
+        errors = ["colors failed", "palette failed"]
+        with (
+            patch("sys.stderr", captured),
+            patch.object(
+                ColorConstants,
+                "verify_all_data_files",
+                return_value=(False, errors),
+            ),
+            self.assertRaises(SystemExit) as context,
+        ):
+            handle_verification_flags(args)
+        self.assertEqual(context.exception.code, 1)
+        self.assertIn("Data file integrity check FAILED", captured.getvalue())
+        self.assertIn("colors failed", captured.getvalue())
+        self.assertIn("palette failed", captured.getvalue())
+
+    def test_verify_user_data_failure_prints_all_errors_and_exits_1(self) -> None:
+        """User-data verification exposes every accumulated error."""
+        args = self._make_args(verify_user_data=True)
+        captured = io.StringIO()
+        errors = ["user colors failed", "user palette failed"]
+        with (
+            patch("sys.stderr", captured),
+            patch.object(
+                ColorConstants,
+                "verify_all_user_data",
+                return_value=(False, errors),
+            ),
+            self.assertRaises(SystemExit) as context,
+        ):
+            handle_verification_flags(args)
+        self.assertEqual(context.exception.code, 1)
+        self.assertIn("User data file integrity check FAILED", captured.getvalue())
+        self.assertIn("user colors failed", captured.getvalue())
+        self.assertIn("user palette failed", captured.getvalue())
+
+    def test_user_verification_uses_singular_labels(self) -> None:
+        """One hashed data file and palette use singular summary labels."""
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            user_dir = data_dir / "user"
+            palette_dir = user_dir / "palettes"
+            palette_dir.mkdir(parents=True)
+            color_file = user_dir / "user-colors.json"
+            palette_file = palette_dir / "user-test.json"
+            for path in (color_file, palette_file):
+                path.write_text("[]", encoding="utf-8")
+                path.with_suffix(path.suffix + ".sha256").write_text(
+                    "hash",
+                    encoding="utf-8",
+                )
+            args = self._make_args(verify_user_data=True, json=tmp, command="color")
+            captured = io.StringIO()
+            with (
+                patch("sys.stdout", captured),
+                patch.object(ColorConstants, "verify_all_user_data", return_value=(True, [])),
+            ):
+                result = handle_verification_flags(args)
+
+        self.assertFalse(result)
+        self.assertIn("1 user data file, 1 user palette", captured.getvalue())
+
+    def test_user_verification_uses_plural_labels(self) -> None:
+        """Multiple hashed data files and palettes use plural summary labels."""
+        with tempfile.TemporaryDirectory() as tmp:
+            data_dir = Path(tmp)
+            user_dir = data_dir / "user"
+            palette_dir = user_dir / "palettes"
+            palette_dir.mkdir(parents=True)
+            paths = (
+                user_dir / "user-colors.json",
+                user_dir / "user-filaments.json",
+                palette_dir / "user-one.json",
+                palette_dir / "user-two.json",
+            )
+            for path in paths:
+                path.write_text("[]", encoding="utf-8")
+                path.with_suffix(path.suffix + ".sha256").write_text(
+                    "hash",
+                    encoding="utf-8",
+                )
+            args = self._make_args(verify_user_data=True, json=tmp, command="color")
+            captured = io.StringIO()
+            with (
+                patch("sys.stdout", captured),
+                patch.object(ColorConstants, "verify_all_user_data", return_value=(True, [])),
+            ):
+                result = handle_verification_flags(args)
+
+        self.assertFalse(result)
+        self.assertIn("2 user data files, 2 user palettes", captured.getvalue())
+
     def test_generate_user_hashes_calls_sys_exit(self):
         """generate_user_hashes=True calls sys.exit(0) after generating."""
         captured = io.StringIO()
@@ -192,6 +322,17 @@ class TestGenerateUserHashes(unittest.TestCase):
             with self.assertRaises(SystemExit) as ctx:
                 generate_user_hashes('/nonexistent/path/xyz')
         self.assertEqual(ctx.exception.code, 1)
+
+    def test_file_path_instead_of_directory_exits_1(self) -> None:
+        """The custom JSON location must identify a directory."""
+        with tempfile.TemporaryDirectory() as tmp:
+            path = Path(tmp) / "data.json"
+            path.write_text("[]", encoding="utf-8")
+            captured = io.StringIO()
+            with patch("sys.stderr", captured), self.assertRaises(SystemExit) as context:
+                generate_user_hashes(str(path))
+        self.assertEqual(context.exception.code, 1)
+        self.assertIn("--json must be a directory", captured.getvalue())
 
     def test_generates_hash_file_for_user_colors(self):
         """Creates a .sha256 file when user-colors.json is present in user/ dir.
@@ -259,6 +400,64 @@ class TestGenerateUserHashes(unittest.TestCase):
             self.assertFalse(is_valid)
             self.assertEqual(len(errors), 1)
             self.assertIn("Hash mismatch for user-test.json", errors[0])
+
+    def test_individual_hash_failure_does_not_stop_other_files(self) -> None:
+        """One failed user file does not prevent later sidecars being generated."""
+        with tempfile.TemporaryDirectory() as tmp:
+            user_dir = Path(tmp) / "user"
+            user_dir.mkdir()
+            color_file = user_dir / "user-colors.json"
+            filament_file = user_dir / "user-filaments.json"
+            color_file.write_text("[]", encoding="utf-8")
+            filament_file.write_text("[]", encoding="utf-8")
+            captured_out = io.StringIO()
+            captured_err = io.StringIO()
+            original_save = ColorConstants.save_user_data_hash
+
+            def save_with_one_failure(path: Path) -> Path:
+                if Path(path).name == "user-colors.json":
+                    raise OSError("read-only file")
+                return original_save(path)
+
+            with (
+                patch("sys.stdout", captured_out),
+                patch("sys.stderr", captured_err),
+                patch.object(
+                    ColorConstants,
+                    "save_user_data_hash",
+                    side_effect=save_with_one_failure,
+                ),
+            ):
+                generate_user_hashes(tmp)
+
+            self.assertFalse(color_file.with_suffix(".json.sha256").exists())
+            self.assertTrue(filament_file.with_suffix(".json.sha256").exists())
+            self.assertIn("Failed to generate hash for user-colors.json", captured_err.getvalue())
+            self.assertIn("Generated 1 hash file", captured_out.getvalue())
+
+    def test_palette_hash_failure_reports_no_generated_files(self) -> None:
+        """A failed palette hash is reported and reaches the empty-result summary."""
+        with tempfile.TemporaryDirectory() as tmp:
+            palette_dir = Path(tmp) / "user" / "palettes"
+            palette_dir.mkdir(parents=True)
+            palette_file = palette_dir / "user-test.json"
+            palette_file.write_text("[]", encoding="utf-8")
+            captured_out = io.StringIO()
+            captured_err = io.StringIO()
+            with (
+                patch("sys.stdout", captured_out),
+                patch("sys.stderr", captured_err),
+                patch.object(
+                    ColorConstants,
+                    "save_user_data_hash",
+                    side_effect=OSError("read-only file"),
+                ),
+            ):
+                generate_user_hashes(tmp)
+
+        self.assertIn("Failed to generate hash for user-test.json", captured_err.getvalue())
+        self.assertIn("No user files found to generate hashes for", captured_out.getvalue())
+        self.assertIn("Create user data files or user palettes first", captured_out.getvalue())
 
 
 class TestShowOverrideReport(unittest.TestCase):

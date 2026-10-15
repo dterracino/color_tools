@@ -1,291 +1,129 @@
-# Hash Integrity System - Update Guide
+# Hash integrity system update guide
 
-This document explains how to update SHA-256 hashes when data files or constants change in the color_tools project.
+Color Tools uses SHA-256 hashes to detect accidental changes to protected
+bundled data, system palettes, color-science constants, and color-vision
+transformation matrices. User data uses optional sidecar hashes under the user
+data directory.
 
-## Overview
+## Generated integrity manifest
 
-The color_tools project uses SHA-256 hashes to protect critical data from accidental or malicious modification. Three types of integrity verification are provided:
+Expected hashes for bundled project data are stored in the private generated
+module `color_tools/_integrity_hashes.py`. It contains only declarative values:
 
-1. **ColorConstants Hash** - Protects color science constants
-2. **Data File Hashes** - Protects core JSON data files  
-3. **Transformation Matrices Hash** - Protects CVD transformation matrices
+- `CORE_DATA_HASHES` for `colors.json`, `filaments.json`, and
+  `maker_synonyms.json`.
+- `SYSTEM_PALETTE_HASHES` for every JSON file in
+  `color_tools/data/palettes`.
+- `MATRICES_EXPECTED_HASH` for the supported color-vision matrices.
+- `COLOR_CONSTANTS_EXPECTED_HASH` for the uppercase values owned by
+  `ColorConstants`.
 
-## When to Update Hashes
+Do not edit the manifest manually. Hash regeneration does not edit
+`constants.py`.
 
-### Palette Files Changed
+All file hashing normalizes CRLF line endings to LF before calculating SHA-256,
+so normal Windows line-ending conversion does not invalidate protected JSON
+files.
 
-**Files affected:** `color_tools/data/palettes/*.json`
+## Inspect hashes without writing
 
-**Steps:**
+From the repository root:
 
-1. Regenerate individual palette hashes in `constants.py`
-2. Update `ColorConstants._EXPECTED_HASH` (since you added new constants)
-3. Verify with `--verify-all`
+```powershell
+.\.venv\Scripts\python.exe tooling/update_hashes.py
+```
 
-### Main Data Files Changed
+The default mode discovers the current system palettes, calculates every
+protected hash, displays the proposed manifest values, and makes no changes.
 
-**Files affected:**
+Narrow read-only reports are also available:
+
+```powershell
+.\.venv\Scripts\python.exe tooling/update_hashes.py --filaments-only
+.\.venv\Scripts\python.exe tooling/update_hashes.py --palettes-only
+.\.venv\Scripts\python.exe tooling/update_hashes.py --constants-only
+```
+
+## Regenerate bundled hashes
+
+Use automatic update mode after intentionally changing protected data,
+palettes, constants, or matrices:
+
+```powershell
+.\.venv\Scripts\python.exe tooling/update_hashes.py --autoupdate
+```
+
+The tool:
+
+1. Calculates every protected hash.
+2. Validates that all three core data files and at least one system palette are
+   present.
+3. Discovers every `*.json` file in the system palette directory; there is no
+   second hand-maintained palette list.
+4. Displays all proposed values.
+5. Requires explicit confirmation.
+6. Renders the complete manifest deterministically.
+7. Atomically replaces only `color_tools/_integrity_hashes.py`.
+
+Cancellation leaves every file unchanged. Repeating regeneration without
+source changes produces byte-for-byte identical manifest contents.
+
+After regeneration, run:
+
+```powershell
+.\.venv\Scripts\python.exe -m color_tools --verify-all
+```
+
+The checked-in tests also verify that the manifest contains exactly the bundled
+system palette files and that every value is a lowercase 64-character SHA-256
+digest.
+
+## When regeneration is required
+
+Regenerate the manifest after intentionally changing any of the following:
 
 - `color_tools/data/colors.json`
 - `color_tools/data/filaments.json`
 - `color_tools/data/maker_synonyms.json`
+- Any `color_tools/data/palettes/*.json` file
+- Uppercase constants owned by `ColorConstants`
+- Protected transformation matrices in `color_tools/matrices.py`
 
-**Steps:**
+Adding or removing a system palette requires no updater registry edit. Palette
+registration is the generated `SYSTEM_PALETTE_HASHES` mapping itself.
 
-1. Regenerate individual data file hashes in `constants.py`
-2. Update `ColorConstants._EXPECTED_HASH` (since you modified constants)
-3. Verify with `--verify-all`
+## User data sidecars
 
-### Color Science Constants Changed
+User files are not added to the generated project manifest. Users can create
+optional `.sha256` sidecars with the public CLI:
 
-**Files affected:** `color_tools/constants.py` (ColorConstants class values)
-
-**⚠️ IMPORTANT: TO BE CLEAR, THE CONSTANTS FILE SHOULD NOT CHANGE. THESE ARE DEFINED COLOR SCIENCE CONSTANTS.**
-
-The color science constants (D65 white point, transformation matrices, Delta E coefficients, etc.) are from international standards (CIE, sRGB spec) and should never be modified unless there's an error in the implementation or a standards update.
-
-**The main reason the ColorConstants hash changes is because the constants.py file contains hash values for other files (data files, palette files). When those file hashes are updated, the constants.py file content changes, requiring a new hash.**
-
-**Steps:**
-
-1. Regenerate `ColorConstants._EXPECTED_HASH`
-2. Verify with `--verify-constants`
-
-### Transformation Matrices Changed
-
-**Files affected:** `color_tools/matrices.py` (matrix constant values)
-
-**Steps:**
-
-1. Regenerate `MATRICES_EXPECTED_HASH` in `constants.py`
-2. Update `ColorConstants._EXPECTED_HASH` (since you modified constants)
-3. Verify with `--verify-matrices`
-
-## Hash Generation Commands
-
-### Individual Palette File Hashes
-
-```bash
-# Generate hash for a specific palette file
-python -c "
-import hashlib
-from pathlib import Path
-palette_file = Path('color_tools/data/palettes/cga4.json')
-hash_val = hashlib.sha256(palette_file.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
-print(f'CGA4_PALETTE_HASH = \"{hash_val}\"')
-"
+```powershell
+.\.venv\Scripts\python.exe -m color_tools --generate-user-hashes
 ```
 
-### All Palette File Hashes
+For a custom data directory:
 
-```bash
-# Generate hashes for all palette files
-python -c "
-import hashlib
-from pathlib import Path
-
-palette_files = {
-    'amstrad-cpc.json': 'AMSTRAD_CPC_PALETTE_HASH',
-    'apple2.json': 'APPLE2_PALETTE_HASH',
-    'bbc-micro.json': 'BBC_MICRO_PALETTE_HASH',
-    'cga4.json': 'CGA4_PALETTE_HASH',
-    'cga16.json': 'CGA16_PALETTE_HASH',
-    'colecovision.json': 'COLECOVISION_PALETTE_HASH',
-    'commodore64.json': 'COMMODORE64_PALETTE_HASH',
-    'crayola.json': 'CRAYOLA_PALETTE_HASH',
-    'ega16.json': 'EGA16_PALETTE_HASH',
-    'ega64.json': 'EGA64_PALETTE_HASH',
-    'gameboy.json': 'GAMEBOY_PALETTE_HASH',
-    'gameboy-dmg.json': 'GAMEBOY_DMG_PALETTE_HASH',
-    'gameboy-light.json': 'GAMEBOY_LIGHT_PALETTE_HASH',
-    'gameboy-pocket.json': 'GAMEBOY_POCKET_PALETTE_HASH',
-    'intellivision.json': 'INTELLIVISION_PALETTE_HASH',
-    'macintosh.json': 'MACINTOSH_PALETTE_HASH',
-    'msx1.json': 'MSX1_PALETTE_HASH',
-    'nes.json': 'NES_PALETTE_HASH',
-    'pico8.json': 'PICO8_PALETTE_HASH',
-    'sg-1000.json': 'SG_1000_PALETTE_HASH',
-    'sms.json': 'SMS_PALETTE_HASH',
-    'tandy16.json': 'TANDY16_PALETTE_HASH',
-    'ti-99-4a.json': 'TI_99_4A_PALETTE_HASH',
-    'tic80.json': 'TIC80_PALETTE_HASH',
-    'vga.json': 'VGA_PALETTE_HASH',
-    'vic-20.json': 'VIC_20_PALETTE_HASH',
-    'virtualboy.json': 'VIRTUALBOY_PALETTE_HASH',
-    'web.json': 'WEB_PALETTE_HASH',
-    'zx-spectrum.json': 'ZX_SPECTRUM_PALETTE_HASH',
-}
-
-palettes_dir = Path('color_tools/data/palettes')
-for filename, const_name in palette_files.items():
-    filepath = palettes_dir / filename
-    if filepath.exists():
-        hash_val = hashlib.sha256(filepath.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
-        print(f'{const_name} = \"{hash_val}\"')
-    else:
-        print(f'# {const_name} = \"\" # File not found: {filename}')
-"
+```powershell
+.\.venv\Scripts\python.exe -m color_tools --json PATH --generate-user-hashes
 ```
 
-### All Main Data File Hashes
+This processes existing user color, filament, and synonym files plus active
+`user-*.json` palettes. Copyable example palettes are excluded. A user file
+without a sidecar remains usable and is treated as unverified.
 
-```bash
-# Generate hashes for main data files
-python -c "
-import hashlib
-from pathlib import Path
+Verify user sidecars with:
 
-data_files = {
-    'colors.json': 'COLORS_JSON_HASH',
-    'filaments.json': 'FILAMENTS_JSON_HASH', 
-    'maker_synonyms.json': 'MAKER_SYNONYMS_JSON_HASH',
-}
-
-data_dir = Path('color_tools/data')
-for filename, const_name in data_files.items():
-    filepath = data_dir / filename
-    hash_val = hashlib.sha256(filepath.read_bytes().replace(b'\r\n', b'\n')).hexdigest()
-    print(f'{const_name} = \"{hash_val}\"')
-"
-```
-
-### Transformation Matrices Hash
-
-```bash
-# Generate transformation matrices hash
-python -c "
-from color_tools.constants import ColorConstants
-print(f'MATRICES_EXPECTED_HASH = \"{ColorConstants._compute_matrices_hash()}\"')
-"
-```
-
-### ColorConstants Hash
-
-```bash
-# Generate ColorConstants hash (do this AFTER updating other hashes)
-python -c "
-from color_tools.constants import ColorConstants
-print(f'_EXPECTED_HASH = \"{ColorConstants._compute_hash()}\"')
-"
-```
-
-## Update Process Workflow
-
-### When Multiple Files Change (e.g., after running compact_color_arrays.py)
-
-1. **Update individual file hashes** - Run commands above for changed files
-2. **Update constants.py** - Copy the new hash values into the file
-3. **Regenerate ColorConstants hash** - Run the ColorConstants hash command
-4. **Update _EXPECTED_HASH** - Copy the new ColorConstants hash into the file
-5. **Verify everything** - Run `python -m color_tools --verify-all`
-
-### Hash Update Script
-
-A helper script `tooling/update_hashes.py` is available to automate hash generation:
-
-#### Manual Mode (Default)
-
-```bash
-# Generate all hashes and show values to copy
-python tooling/update_hashes.py
-```
-
-This will display all hash values that you need to copy into `constants.py` manually.
-
-#### Automatic Update Mode
-
-```bash
-# Automatically update constants.py with new hashes
-python tooling/update_hashes.py --autoupdate
-```
-
-This will:
-
-- Generate all hash values
-- Ask for confirmation before modifying files
-- Automatically update `constants.py` with new hash values  
-- Generate the final ColorConstants hash
-- Provide verification commands
-
-**Safety features:**
-
-- Requires explicit confirmation before modifying files
-- Can be cancelled at any time (no files modified)
-- Shows exactly what will be updated before proceeding
-
-#### Constants-Only Mode
-
-```bash
-# Only generate the final ColorConstants hash
-python tooling/update_hashes.py --constants-only
-```
-
-Use this for the final step after manually updating hash values in `constants.py`.
-
-#### Script Capabilities
-
-The script will:
-
-- Scan for all data files and generate their hashes
-- Generate transformation matrices hash  
-- Generate ColorConstants hash
-- Display the values you need to copy into constants.py
-- Provide verification commands to run
-- Optionally update files automatically with confirmation
-
-## Important Notes
-
-### What Gets Hashed in ColorConstants
-
-The `ColorConstants._compute_hash()` method hashes:
-
-- All UPPERCASE constant values in the ColorConstants class
-- This includes color science constants AND file hash constants
-- Utility methods and private variables are NOT included
-
-### Adding New Constants
-
-When adding new constants to `ColorConstants`:
-
-1. Add your new constant (e.g., `NEW_PALETTE_HASH = "..."`)
-2. Regenerate `_EXPECTED_HASH` using the ColorConstants hash command above
-3. The new constant will automatically be included in future hash calculations
-
-### Matrix Hash Details
-
-The transformation matrices hash includes only:
-
-- The 6 main transformation matrices in `matrices.py`
-- Adding utility functions to `matrices.py` does NOT require hash updates
-- Only changes to matrix constant values require hash regeneration
-
-## Verification Commands
-
-```bash
-# Verify specific components
-python -m color_tools --verify-constants
-python -m color_tools --verify-data  
-python -m color_tools --verify-matrices
-
-# Verify everything
-python -m color_tools --verify-all
+```powershell
+.\.venv\Scripts\python.exe -m color_tools --verify-user-data
 ```
 
 ## Troubleshooting
 
-**Hash verification fails after file changes:**
+If bundled verification fails after an intentional change, rerun the updater
+and confirm the manifest replacement. If a newly added palette is absent, make
+sure it uses the `.json` suffix and is located directly in
+`color_tools/data/palettes`.
 
-- Make sure you updated the correct hash constant in `constants.py`
-- Regenerate ColorConstants hash AFTER updating individual file hashes
-- Check that file paths are correct in hash generation commands
-
-**New palette files not recognized:**
-
-- Add the new palette file to the palette_files dictionary in the commands above
-- Add the corresponding hash constant to `constants.py`
-- Regenerate ColorConstants hash to include the new constant
-
-**Script fails to find files:**
-
-- Make sure you're running commands from the project root directory
-- Check that file paths in the commands match your actual file structure
+If regeneration fails, no success-shaped partial manifest is written. Correct
+the reported missing file or invalid digest, rerun the tool, then run
+`--verify-all` before committing.

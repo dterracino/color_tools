@@ -180,28 +180,28 @@ Suggested homes: `tests/test_filament_filter_criteria.py` and
 
 Targets: `color_tools/constants.py`, `color_tools/cli_commands/reporting.py`
 
-- [ ] `verify_data_file()` returns false for a missing file.
-- [ ] Each missing or modified core file produces its own focused error:
+- [x] `verify_data_file()` returns false for a missing file.
+- [x] Each missing or modified core file produces its own focused error:
   colors, filaments, maker synonyms, and a registered system palette.
-- [ ] Multiple failed core files accumulate errors instead of stopping at the
+- [x] Multiple failed core files accumulate errors instead of stopping at the
   first failure.
-- [ ] Generating a hash for a missing user file raises `FileNotFoundError`.
-- [ ] Saving a hash for a missing user file raises `FileNotFoundError`.
-- [ ] Saving with a supplied hash does not recalculate it.
-- [ ] A user file without a sidecar is accepted as unverified.
-- [ ] Missing user files, hash mismatches, empty sidecars, malformed sidecars,
+- [x] Generating a hash for a missing user file raises `FileNotFoundError`.
+- [x] Saving a hash for a missing user file raises `FileNotFoundError`.
+- [x] Saving with a supplied hash does not recalculate it.
+- [x] A user file without a sidecar is accepted as unverified.
+- [x] Missing user files, hash mismatches, empty sidecars, malformed sidecars,
   and unreadable sidecars return focused verification errors.
-- [ ] User data files and user palettes are both included in aggregate
+- [x] User data files and user palettes are both included in aggregate
   verification.
-- [ ] Example user palettes remain excluded.
-- [ ] A missing user directory is a successful no-op.
-- [ ] Hash generation reports an individual failure and continues processing
+- [x] Example user palettes remain excluded.
+- [x] A missing user directory is a successful no-op.
+- [x] Hash generation reports an individual failure and continues processing
   other files.
-- [ ] `--verify-constants`, `--verify-matrices`, `--verify-data`, and
+- [x] `--verify-constants`, `--verify-matrices`, `--verify-data`, and
   `--verify-user-data` failure paths print to stderr and exit with status 1.
-- [ ] Successful user verification uses correct singular and plural labels for
+- [x] Successful user verification uses correct singular and plural labels for
   both data files and palettes.
-- [ ] `--verify-all` enables every intended verification category.
+- [x] `--verify-all` enables every intended verification category.
 
 Suggested homes: `tests/test_constants.py` and `tests/test_cli_reporting.py`.
 
@@ -466,7 +466,7 @@ targets. Keep these tests deterministic and headless-compatible.
 Work in bounded batches so failures identify the responsible area:
 
 1. [ ] Palette schema and core/user loader failures.
-2. [ ] Integrity and hash verification failures.
+2. [x] Integrity and hash verification failures.
 3. [ ] Palette and filament matching matrices.
 4. [ ] Importer base, registry, and malformed formats.
 5. [ ] Exporter base and format-specific edge cases.

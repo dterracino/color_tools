@@ -50,8 +50,8 @@ def main():
     print(f"  - Backup saved: {backup_path.name}")
     
     print(f"\n⚠️  IMPORTANT: You need to regenerate data file hashes!")
-    print(f"   Run: python -m color_tools --verify-data")
-    print(f"   This will fail, then update constants.py with new hash")
+    print(f"   Run: python tooling/update_hashes.py --autoupdate")
+    print(f"   Then verify: python -m color_tools --verify-data")
 
 
 if __name__ == '__main__':

@@ -158,6 +158,9 @@ python -m color_tools --verify-all
 2. **Malicious tampering** - Investigate and restore from a known good backup
 3. **Development changes** - If you're a maintainer, use: `python tooling/update_hashes.py --autoupdate`
 
+Expected hashes are generated in `color_tools/_integrity_hashes.py`; the updater
+does not edit `constants.py`.
+
 **For Matrices:**
 
 1. **Accidental modification** - Restore from git: `git checkout color_tools/matrices.py`

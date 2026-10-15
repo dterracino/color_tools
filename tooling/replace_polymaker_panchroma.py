@@ -119,7 +119,7 @@ def main():
     print("=" * 100)
     print()
     print("Next steps:")
-    print("  1. Regenerate data integrity hash in constants.py")
+    print("  1. Regenerate hashes with: python tooling/update_hashes.py --autoupdate")
     print("  2. Run tests to verify everything still works")
     print("  3. Test CLI commands with updated data")
     print()

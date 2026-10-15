@@ -103,6 +103,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Separated generated integrity hashes** — move protected core-data, system
+  palette, matrix, and color-constant digests out of `constants.py` into the
+  private generated `_integrity_hashes.py` manifest. The updater now discovers
+  every bundled system palette, renders the manifest deterministically, and
+  atomically replaces only that data-only module after confirmation.
+
 - **Completed CMY/CMYK conversion contracts** — restore the four conversion
   functions promised by 6.4.0 to the package-root API, strictly validate
   inverse-conversion component counts and finite 0-100 percentages without

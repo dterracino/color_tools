@@ -165,16 +165,16 @@ python tooling/update_hashes.py --autoupdate
 # Manual mode for review and control
 python tooling/update_hashes.py
 
-# Update only ColorConstants hash (after manual changes)
+# Display only the current ColorConstants hash
 python tooling/update_hashes.py --constants-only
 ```
 
 The automated tooling provides:
 
-- **Complete automation** - Updates all hash values with safety confirmations
-- **Two-step process** - Updates individual hashes first, then ColorConstants hash
-- **Debug output** - Shows exactly which constants were modified
-- **Safety features** - Requires explicit confirmation before modifying files
+- **Complete automation** - Discovers system palettes and updates every protected hash
+- **Separated generated data** - Rewrites only `color_tools/_integrity_hashes.py`
+- **Deterministic output** - Unchanged inputs produce byte-identical output
+- **Safety features** - Requires explicit confirmation and replaces the manifest atomically
 
 **When to use hash tooling:**
 

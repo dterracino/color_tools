@@ -61,7 +61,7 @@ tests prove they agree with the XYZ path within the documented tolerance.
 
 Store immutable matrix constants in `color_tools/constants.py` following the existing
 constant conventions. Adding uppercase constants requires regeneration of
-`ColorConstants._EXPECTED_HASH`.
+`COLOR_CONSTANTS_EXPECTED_HASH` in the generated integrity manifest.
 
 ### Signed Cube Root
 

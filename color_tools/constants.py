@@ -171,96 +171,27 @@ class ColorConstants:
         Returns:
             True if all constants match expected values, False if tampered with.
         """
-        return cls._compute_hash() == cls._EXPECTED_HASH
+        from ._integrity_hashes import COLOR_CONSTANTS_EXPECTED_HASH
+
+        return cls._compute_hash() == COLOR_CONSTANTS_EXPECTED_HASH
 
     @classmethod
     def expected_hash(cls) -> str:
         """Return the expected integrity hash for the color constants."""
-        return cls._EXPECTED_HASH
+        from ._integrity_hashes import COLOR_CONSTANTS_EXPECTED_HASH
+
+        return COLOR_CONSTANTS_EXPECTED_HASH
 
     @classmethod
     def compute_hash(cls) -> str:
         """Compute the current integrity hash for the color constants."""
         return cls._compute_hash()
     
-    # This hash is computed once when the constants are known to be correct
-    # Computed hash of all color science constants (SHA-256)
-    # NOTE: This hash is computed from the VALUES of all UPPERCASE constants
-    # using the _compute_hash() method, NOT from the entire file contents.
-    # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_hash())"
-    # Updated 2024-12-24: Added 4 new palette hashes (apple2, macintosh, gameboy-color, tandy16), compacted format
-    # Updated 2026-02-26: Added PICO8_PALETTE_HASH for official PICO-8 palette (16 colors)
-    # Updated 2026-02-26: Added MATRICES_EXPECTED_HASH for transformation matrices integrity verification
-    # Updated 2026-03-28: Updated MAKER_SYNONYMS_JSON_HASH after merge (BBL, BambuLab synonyms added)
-    # Updated 2026-04-22: Updated MATRICES_EXPECTED_HASH after adding ALL_SIMULATION and ALL_CORRECTION matrices
-    # Updated 2026-09-19: Updated FILAMENTS_JSON_HASH after adding 5 Bambu Lab PLA Pure filaments
-    # Updated 2026-10-12: Updated FILAMENTS_JSON_HASH after adding 15 Bambu Lab filaments
-    # Updated 2026-10-12: Updated FILAMENTS_JSON_HASH after adding 187 IEMAI filaments
-    # Updated 2026-10-13: Updated FILAMENTS_JSON_HASH after importing reviewed Overture data
-    # Updated 2026-10-13: Added the reviewed retro palette batch and retired
-    # unsupported legacy Game Boy palette hashes.
-    # Updated 2026-10-13: Migrated registered palettes to schema version 1.
-    _EXPECTED_HASH = "42d940a1ee157cea6c8a656cd4c16bea9f2a8e18b222b47c849d0828358ce42f"
-    # Updated for 6.3.0: Added WIN_HSL240_HUE_MAX, WIN_HSL240_SL_MAX, WIN_HSL255_HUE_MAX, WIN_HSL255_SL_MAX
-    
-    # ========================================================================
-    # Data File Integrity Hashes
-    # ========================================================================
-    # SHA-256 hashes of core data files for integrity verification
-    # These hashes are computed with CRLF normalization (\r\n → \n) for cross-platform consistency
-    # Updated 2025-12-03: Changed cyan to #00B7EB and magenta to #FF0090 to resolve RGB duplication with aqua/fuchsia
-    # Updated 2025-12-23: Imported 328 new filaments from HueForge data (20 new manufacturers, filtered null hex codes, deduplicated IDs)
-    # Updated 2026-07-11: Added 132 Anycubic filaments (PLA Basic/+/High Speed/Matte/Silk/Galaxy/Metal/Marble, PETG/Translucent)
-    
-    COLORS_JSON_HASH = "ca33f6055298d37c1ad469656d3ba0f2f15d506bbc6149cd42e696fc5c3a3d00"
-    FILAMENTS_JSON_HASH = "7c2e655d33892e507cbee2d986254abf24c633d27ee32af324c243812301fd86"
-    MAKER_SYNONYMS_JSON_HASH = "73df3893a98fb8439e8cc127eb9cd5ee763027c346ad9f528f8290514f999fe1"  # Updated 2026-03-28: Merged remote changes (BBL, BambuLab synonyms added)
-    
-    # Palette file hashes
-    AMSTRAD_CPC_PALETTE_HASH = "3e15198c586463efa489f4700fd0b46fa9c3188cb2cfee683e654f63135dbbdd"
-    APPLE2_PALETTE_HASH = "28c7c850e7c9d45fc67fde4115f56e7a604b840806788bcd4c605587cd078d04"
-    BBC_MICRO_PALETTE_HASH = "53bbdcd646108bd9ae3d7d19ad3878ee846097c2a354b83936256547feefdbce"
-    CGA4_PALETTE_HASH = "64506fee89e83aada7131974ca93d13c0002d9228bd5e74855aaf77ee0b0404a"
-    CGA16_PALETTE_HASH = "d44a43a82e2d72938f40968c26c5acfc251bd3ed9a1e0c191e0e9fcc5f37c3b4"
-    COLECOVISION_PALETTE_HASH = "eae34351a219bb408b171e82cfabc20054e2c585a8d817dbba5d2376572b2b7d"
-    COMMODORE64_PALETTE_HASH = "be627304af7de33857743f970917edca31a17ee26bc7019190510aaac5a8a5de"
-    CRAYOLA_PALETTE_HASH = "7180775412039129dd3ba5f4fc04f0602f627a4a47b55ee96b00f7516b04226e"
-    EGA16_PALETTE_HASH = "05c2dfac3b100bfaa05707c667622f80e70ba774da1dff03865b9d4b955bbaad"
-    EGA64_PALETTE_HASH = "8c24a5c8287fd1394febff4d26880b391ce7acffaee83f0d9b3f35680c45e8ff"
-    GAMEBOY_PALETTE_HASH = "c22e59c570f5614c7d4ec2800e2b66a2fe7d6bf7d60b7b1ee639fd992543f997"
-    GAMEBOY_DMG_PALETTE_HASH = "0a24b4cf81b3d8cb57d2b4603f9d9345fb5002163e4ebc53803f67ac9ea206b6"
-    GAMEBOY_LIGHT_PALETTE_HASH = "8905ab986c4b5c0bef17c029908f9c187245c458048b416f60799819de32b430"
-    GAMEBOY_POCKET_PALETTE_HASH = "13aa29eaae50f080d6bdd8075b09bb24264df3dcdb9f875f1aef4aec4c2887bc"
-    INTELLIVISION_PALETTE_HASH = "d8d42ece38ece1d22043a9193b439638ed880f2a2f16cf89a65ebf1d37299361"
-    MACINTOSH_PALETTE_HASH = "865450f3c38d460d60910f3f0648ff1ed7ad0660e59e8b08d6eb75d4555cb1f9"
-    MSX1_PALETTE_HASH = "5fd9b18b2c36faa47e656d22b267b9fbe504b8e77fab9ca351f494db3e766443"
-    NES_PALETTE_HASH = "69c08eeb438e2966c3aacfc38b65f1ce3ff4fb8f65c0840b68f2b7b5abf8c7a6"
-    PICO8_PALETTE_HASH = "7fbba487d99252155cc873351191bdabd8c912456d32472385c28a0beaab86be"
-    SG_1000_PALETTE_HASH = "bdd1201587df0cb5a426b57f2d2884e290917cd5fcdac7e1787aaa7b432ff1cf"
-    SMS_PALETTE_HASH = "40c0628427c3eacf56e7c6b22253a139748d48547010c0e1877c9f226c8703b7"
-    TANDY16_PALETTE_HASH = "571f894b83c7304fb8cf6b6f7e150c8284ce2c8b674b45a45a6a56a954ed3635"
-    TI_99_4A_PALETTE_HASH = "7a107e64b779a0181e26c21b44c6dea1e977bc5ecd36e0497d3bf1c897340960"
-    TIC80_PALETTE_HASH = "e7c58abc32ed61ddbfee9784161315c912a5be5a37ce4a36623fc7b59603d773"
-    VGA_PALETTE_HASH = "691faf4abe8cda8e02c83647937cf81f0ee3cd751e24c6e42b61a3ba5feb11a9"
-    VIC_20_PALETTE_HASH = "952d175bf73d8f20481eed3debc254958704ef9d7811ede5d0b95aba26a22b46"
-    VIRTUALBOY_PALETTE_HASH = "71f8ef9bc51c5bcb3dadef5b09d5df73b3aad4bbaa5e9402f89fa60cd0833fcb"
-    WEB_PALETTE_HASH = "9c6fe14ff63c513c26b2f9d8fc89b1d17c1ca966cc23b6646e9278c1b9674b4e"
-    ZX_SPECTRUM_PALETTE_HASH = "c731ce3cf36ec2143775812bf7ea051cf2012aae3e29c353c415033df1cc3588"
-    
     # User data files (optional, not verified) - now in user/ subdirectory
     USER_COLORS_JSON_FILENAME = "user/user-colors.json"
     USER_FILAMENTS_JSON_FILENAME = "user/user-filaments.json"
     USER_SYNONYMS_JSON_FILENAME = "user/user-synonyms.json"
     OWNED_FILAMENTS_JSON_FILENAME = "user/owned-filaments.json"
-    
-    # ========================================================================
-    # Transformation Matrices Integrity Hash
-    # ========================================================================
-    # SHA-256 hash of transformation matrices from matrices.py module
-    # This verifies the 6 CVD matrices haven't been modified
-    # To regenerate: python -c "from color_tools.constants import ColorConstants; print(ColorConstants._compute_matrices_hash())"
-    # Updated 2026-04-22: Added ALL_SIMULATION and ALL_CORRECTION combined matrices
-    MATRICES_EXPECTED_HASH: str = "8a86dd258153ce6a25507292c2e3d4dd0999734cf0784397a3814963ad7c2630"
     
     @staticmethod
     def verify_data_file(filepath: Path, expected_hash: str) -> bool:
@@ -289,37 +220,9 @@ class ColorConstants:
     @classmethod
     def _registered_palette_hashes(cls) -> tuple[tuple[str, str], ...]:
         """Return registered system palette filenames and expected hashes."""
-        return (
-            ("amstrad-cpc.json", cls.AMSTRAD_CPC_PALETTE_HASH),
-            ("apple2.json", cls.APPLE2_PALETTE_HASH),
-            ("bbc-micro.json", cls.BBC_MICRO_PALETTE_HASH),
-            ("cga4.json", cls.CGA4_PALETTE_HASH),
-            ("cga16.json", cls.CGA16_PALETTE_HASH),
-            ("colecovision.json", cls.COLECOVISION_PALETTE_HASH),
-            ("commodore64.json", cls.COMMODORE64_PALETTE_HASH),
-            ("crayola.json", cls.CRAYOLA_PALETTE_HASH),
-            ("ega16.json", cls.EGA16_PALETTE_HASH),
-            ("ega64.json", cls.EGA64_PALETTE_HASH),
-            ("gameboy.json", cls.GAMEBOY_PALETTE_HASH),
-            ("gameboy-dmg.json", cls.GAMEBOY_DMG_PALETTE_HASH),
-            ("gameboy-light.json", cls.GAMEBOY_LIGHT_PALETTE_HASH),
-            ("gameboy-pocket.json", cls.GAMEBOY_POCKET_PALETTE_HASH),
-            ("intellivision.json", cls.INTELLIVISION_PALETTE_HASH),
-            ("macintosh.json", cls.MACINTOSH_PALETTE_HASH),
-            ("msx1.json", cls.MSX1_PALETTE_HASH),
-            ("nes.json", cls.NES_PALETTE_HASH),
-            ("pico8.json", cls.PICO8_PALETTE_HASH),
-            ("sg-1000.json", cls.SG_1000_PALETTE_HASH),
-            ("sms.json", cls.SMS_PALETTE_HASH),
-            ("tandy16.json", cls.TANDY16_PALETTE_HASH),
-            ("ti-99-4a.json", cls.TI_99_4A_PALETTE_HASH),
-            ("tic80.json", cls.TIC80_PALETTE_HASH),
-            ("vga.json", cls.VGA_PALETTE_HASH),
-            ("vic-20.json", cls.VIC_20_PALETTE_HASH),
-            ("virtualboy.json", cls.VIRTUALBOY_PALETTE_HASH),
-            ("web.json", cls.WEB_PALETTE_HASH),
-            ("zx-spectrum.json", cls.ZX_SPECTRUM_PALETTE_HASH),
-        )
+        from ._integrity_hashes import SYSTEM_PALETTE_HASHES
+
+        return tuple(SYSTEM_PALETTE_HASHES.items())
 
     @classmethod
     def registered_palette_count(cls) -> int:
@@ -346,22 +249,30 @@ class ColorConstants:
             data_dir = Path(__file__).parent / "data"
         else:
             data_dir = Path(data_dir)
+
+        from ._integrity_hashes import CORE_DATA_HASHES
         
         errors: list[str] = []
         
         # Verify colors.json
         colors_path = data_dir / cls.COLORS_JSON_FILENAME
-        if not cls.verify_data_file(colors_path, cls.COLORS_JSON_HASH):
+        if not cls.verify_data_file(colors_path, CORE_DATA_HASHES[cls.COLORS_JSON_FILENAME]):
             errors.append(f"colors.json integrity check FAILED: {colors_path}")
         
         # Verify filaments.json
         filaments_path = data_dir / cls.FILAMENTS_JSON_FILENAME
-        if not cls.verify_data_file(filaments_path, cls.FILAMENTS_JSON_HASH):
+        if not cls.verify_data_file(
+            filaments_path,
+            CORE_DATA_HASHES[cls.FILAMENTS_JSON_FILENAME],
+        ):
             errors.append(f"filaments.json integrity check FAILED: {filaments_path}")
         
         # Verify maker_synonyms.json
         synonyms_path = data_dir / cls.MAKER_SYNONYMS_JSON_FILENAME
-        if not cls.verify_data_file(synonyms_path, cls.MAKER_SYNONYMS_JSON_HASH):
+        if not cls.verify_data_file(
+            synonyms_path,
+            CORE_DATA_HASHES[cls.MAKER_SYNONYMS_JSON_FILENAME],
+        ):
             errors.append(f"maker_synonyms.json integrity check FAILED: {synonyms_path}")
         
         # Verify palette files
@@ -384,8 +295,7 @@ class ColorConstants:
         ⚠️  When adding new matrices to matrices.py:
             1. Add the import here
             2. Add to matrices_dict below
-            3. Regenerate MATRICES_EXPECTED_HASH
-            4. Update _EXPECTED_HASH (you added a new constant)
+            3. Regenerate the integrity manifest
         
         Returns:
             SHA-256 hash of all matrix values
@@ -430,10 +340,9 @@ class ColorConstants:
         Returns:
             True if all matrices match expected values, False if tampered with.
         """
-        if cls.MATRICES_EXPECTED_HASH == "TO_BE_COMPUTED":
-            # Hash hasn't been set yet - skip verification
-            return True
-        return cls._compute_matrices_hash() == cls.MATRICES_EXPECTED_HASH
+        from ._integrity_hashes import MATRICES_EXPECTED_HASH
+
+        return cls._compute_matrices_hash() == MATRICES_EXPECTED_HASH
 
     @classmethod
     def compute_matrices_hash(cls) -> str:

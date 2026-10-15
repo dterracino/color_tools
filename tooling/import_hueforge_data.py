@@ -22,7 +22,6 @@ import sys
 from pathlib import Path
 from dataclasses import dataclass, field
 from typing import Optional
-import hashlib
 
 # Add parent directory to path
 parent_dir = Path(__file__).parent.parent
@@ -411,7 +410,6 @@ def print_preview(stats: ImportStats):
 def apply_import(
     stats: ImportStats,
     filaments_path: Path,
-    constants_path: Path
 ):
     """
     Actually apply the import changes.
@@ -419,7 +417,6 @@ def apply_import(
     Args:
         stats: Import statistics with changes to apply
         filaments_path: Path to filaments.json
-        constants_path: Path to constants.py
     """
     # Load current filaments
     with open(filaments_path, 'r', encoding='utf-8') as f:
@@ -459,18 +456,14 @@ def apply_import(
     with open(filaments_path, 'w', encoding='utf-8') as f:
         json.dump(current_data, f, indent=2, ensure_ascii=False)
     
-    # Regenerate hash
-    file_hash = hashlib.sha256(filaments_path.read_bytes()).hexdigest()
-    
     print(f"\n✅ Import complete!")
     print(f"  - Updated {len(stats.td_updates)} TD values")
     print(f"  - Added {len(stats.new_filaments)} new filaments")
     print(f"  - Total filaments: {len(current_data)}")
     print(f"\n📝 Next steps:")
-    print(f"  1. Update FILAMENTS_JSON_HASH in constants.py:")
-    print(f"     FILAMENTS_JSON_HASH = \"{file_hash}\"")
-    print(f"  2. Run tests to verify: python -m unittest discover tests")
-    print(f"  3. Update CHANGELOG.md with import details")
+    print("  1. Run: python tooling/update_hashes.py --autoupdate")
+    print("  2. Run tests to verify: python -m unittest discover tests")
+    print("  3. Update CHANGELOG.md with import details")
 
 
 def main():
@@ -486,7 +479,6 @@ def main():
     import_dir = root_dir / '.source_data' / 'import'
     index_path = import_dir / '_index.json'
     filaments_path = root_dir / 'color_tools' / 'data' / 'filaments.json'
-    constants_path = root_dir / 'color_tools' / 'constants.py'
     
     # Verify paths exist
     if not index_path.exists():
@@ -507,7 +499,7 @@ def main():
     # Apply if requested
     if args.apply:
         print("\nApplying changes...")
-        apply_import(stats, filaments_path, constants_path)
+        apply_import(stats, filaments_path)
     else:
         print("💡 This was a dry-run. No files were modified.")
 

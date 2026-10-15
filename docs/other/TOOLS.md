@@ -55,9 +55,10 @@ palettes. It does not process user palettes or the experimental files under
 
 **Status:** 🗑️ **RETIRE** (Superseded)
 
-**Purpose:** Generates SHA-256 hashes for palette files to update `constants.py`.
+**Purpose:** Legacy helper that prints SHA-256 hashes for a limited palette set.
 
-**Notes:** Functionality duplicated and improved in `tooling/update_hashes.py`. The newer script handles all hash types (data files, palettes, matrices, constants) and supports `--autoupdate` mode.
+**Notes:** Superseded by `tooling/update_hashes.py`, which discovers all system
+palettes and writes the generated integrity manifest.
 
 ---
 
@@ -491,7 +492,8 @@ python tooling/rename_palette_colors.py
 
 **Status:** ✅ **KEEP**
 
-**Purpose:** Generates and optionally auto-updates all SHA-256 hashes for the data integrity system (data files, palettes, matrices, constants).
+**Purpose:** Generates and optionally updates the private SHA-256 integrity
+manifest for data files, discovered system palettes, matrices, and constants.
 
 **Usage:**
 
@@ -499,14 +501,15 @@ python tooling/rename_palette_colors.py
 # View all hashes
 python tooling/update_hashes.py
 
-# Auto-update constants.py
+# Atomically update color_tools/_integrity_hashes.py
 python tooling/update_hashes.py --autoupdate
 
-# Generate only ColorConstants hash (final step)
+# Display only the ColorConstants hash
 python tooling/update_hashes.py --constants-only
 ```
 
-**Notes:** Primary hash management tool. Referenced in README and documentation.
+**Notes:** Primary hash management tool. The generated manifest is deterministic;
+the tool does not edit `constants.py` and does not maintain a second palette list.
 
 ---
 

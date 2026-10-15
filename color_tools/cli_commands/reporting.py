@@ -12,6 +12,7 @@ from logging import LogRecord
 from pathlib import Path
 
 from ..constants import ColorConstants
+from .._integrity_hashes import MATRICES_EXPECTED_HASH
 from .._palette_utils import get_palette_files
 from ..palette import (
     Palette,
@@ -295,7 +296,7 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
         if not ColorConstants.verify_matrices_integrity():
             print("ERROR: Transformation matrices integrity check FAILED!", file=sys.stderr)
             print("The CVD transformation matrices have been modified.", file=sys.stderr)
-            print(f"Expected hash: {ColorConstants.MATRICES_EXPECTED_HASH}", file=sys.stderr)
+            print(f"Expected hash: {MATRICES_EXPECTED_HASH}", file=sys.stderr)
             print(f"Current hash:  {ColorConstants.compute_matrices_hash()}", file=sys.stderr)
             sys.exit(1)
         print("✓ Transformation matrices integrity verified")

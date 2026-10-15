@@ -10,6 +10,10 @@ if str(parent_dir) not in sys.path:
     sys.path.insert(0, str(parent_dir))
 
 from color_tools.constants import ColorConstants
+from color_tools._integrity_hashes import (
+    COLOR_CONSTANTS_EXPECTED_HASH,
+    MATRICES_EXPECTED_HASH,
+)
 
 
 class TestColorConstants(unittest.TestCase):
@@ -132,6 +136,14 @@ class TestHashVerification(unittest.TestCase):
     def test_constants_integrity(self):
         """Test that ColorConstants haven't been tampered with."""
         self.assertTrue(ColorConstants.verify_integrity())
+
+    def test_public_constant_hash_accessors(self):
+        """Public hash accessors expose the stored and calculated digests."""
+        self.assertEqual(
+            ColorConstants.expected_hash(),
+            COLOR_CONSTANTS_EXPECTED_HASH,
+        )
+        self.assertEqual(ColorConstants.compute_hash(), ColorConstants._compute_hash())
     
     def test_matrices_integrity(self):
         """Test that transformation matrices haven't been tampered with."""
@@ -146,9 +158,15 @@ class TestHashVerification(unittest.TestCase):
     def test_matrices_hash_matches_expected(self):
         """Test that computed hash matches stored hash."""
         computed = ColorConstants._compute_matrices_hash()
-        expected = ColorConstants.MATRICES_EXPECTED_HASH
+        expected = MATRICES_EXPECTED_HASH
         self.assertEqual(computed, expected)
 
+    def test_public_matrix_hash_accessor(self):
+        """The public matrix accessor delegates to the canonical calculation."""
+        self.assertEqual(
+            ColorConstants.compute_matrices_hash(),
+            ColorConstants._compute_matrices_hash(),
+        )
 
 if __name__ == '__main__':
     unittest.main()

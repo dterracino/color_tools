@@ -18,8 +18,8 @@ Convert from:
 To:
     "rgb": [85, 255, 255]
 
-IMPORTANT: After running this script, you must regenerate ALL data file 
-hashes in constants.py since the file contents will change!
+IMPORTANT: After running this script, regenerate the integrity manifest because
+the protected file contents will change.
 
 Run: python tooling/compact_color_arrays.py
 """
@@ -135,7 +135,7 @@ def main():
     
     # Prompt for confirmation
     print("⚠️  WARNING: This will modify all color data files and requires updating")
-    print("   ALL hash values in constants.py afterwards!")
+    print("   the generated integrity manifest afterwards!")
     print()
     response = input("Are you sure you want to proceed? [y/N]: ").strip().lower()
     
@@ -182,7 +182,7 @@ def main():
     print(f"✓ Processed {len(all_files)} JSON files")
     print(f"✓ Total space saved: {total_saved:,} bytes")
     print()
-    print("⚠️  IMPORTANT: You must now regenerate ALL data file hashes in constants.py!")
+    print("⚠️  IMPORTANT: You must now regenerate the integrity manifest!")
     print("   The file contents have changed, so the SHA-256 hashes are now invalid.")
     print()
     print("   Files that need hash updates:")
@@ -191,8 +191,8 @@ def main():
     if palette_files:
         print("   - All palette files")
     print()
-    print("   Run verification to see which hashes need updating:")
-    print("   python -m color_tools --verify-all")
+    print("   Run: python tooling/update_hashes.py --autoupdate")
+    print("   Then verify: python -m color_tools --verify-all")
 
 if __name__ == "__main__":
     main()
