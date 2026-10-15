@@ -36,6 +36,11 @@ ImageFormat = Literal[
     "heic", "heif", "avif", "ico", "pcx", "ppm", "sgi", "tga"
 ]
 
+_BASE_FORMATS = [
+    "png", "jpg", "jpeg", "webp", "bmp", "gif", "tiff", "tif",
+    "avif", "ico", "pcx", "ppm", "sgi", "tga",
+]
+
 
 def convert_image(
     input_path: str | Path,
@@ -91,16 +96,16 @@ def convert_image(
         raise FileNotFoundError(f"Input file not found: {input_path}")
     
     # Determine output format
-    if output_path:
+    if output_path is not None:
         output_path = Path(output_path)
         # Infer format from output extension if not explicitly provided
         if output_format is None and output_path.suffix:
             output_format = output_path.suffix.lstrip('.').lower()
+        elif output_format is None:
+            output_format = "png"
     else:
-        # Auto-generate output path
         if output_format is None:
             output_format = "png"  # Default to PNG
-        output_path = input_path.with_suffix(f".{output_format}")
     
     # Normalize format string (lowercase and handle aliases)
     if output_format:
@@ -110,7 +115,7 @@ def convert_image(
             output_format = "jpeg"
         elif output_format == "tif":
             output_format = "tiff"
-    
+
     # Check HEIC support
     if output_format in ("heic", "heif") or input_path.suffix.lower() in (".heic", ".heif"):
         if not _HEIF_AVAILABLE:
@@ -119,6 +124,16 @@ def convert_image(
                 "Install with: pip install pillow-heif\n"
                 "Or reinstall with: pip install color-match-tools[image]"
             )
+
+    supported_output_formats = get_supported_formats()["output"]
+    if output_format not in supported_output_formats:
+        raise ValueError(
+            f"Unsupported output format: {output_format!r}. "
+            f"Supported formats: {', '.join(supported_output_formats)}"
+        )
+
+    if output_path is None:
+        output_path = input_path.with_suffix(f".{output_format}")
     
     # Open and convert image
     with Image.open(input_path) as img:
@@ -180,10 +195,8 @@ def get_supported_formats() -> dict[str, list[str]]:
     """
     # Pillow supported formats (common ones)
     base_formats = {
-        "input": ["png", "jpg", "jpeg", "webp", "bmp", "gif", "tiff", "tif", 
-                  "avif", "ico", "pcx", "ppm", "sgi", "tga"],
-        "output": ["png", "jpg", "jpeg", "webp", "bmp", "gif", "tiff", "tif",
-                   "avif", "ico", "pcx", "ppm", "sgi", "tga"],
+        "input": list(_BASE_FORMATS),
+        "output": list(_BASE_FORMATS),
     }
     
     # Add HEIC/HEIF if available

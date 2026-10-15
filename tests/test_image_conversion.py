@@ -9,6 +9,7 @@ from pathlib import Path
 import tempfile
 import shutil
 from typing import TYPE_CHECKING
+from unittest.mock import patch
 
 if TYPE_CHECKING:
     from PIL import Image
@@ -177,6 +178,45 @@ class TestConvertImage(unittest.TestCase):
         
         with Image.open(output) as result:
             self.assertEqual(result.mode, "RGB")
+
+    def test_rgba_to_bmp_composites_known_pixels_on_white(self):
+        """BMP output composites transparent RGBA pixels onto white."""
+        rgba_png = self.test_dir / "alpha-fixture.png"
+        image = Image.new("RGBA", (2, 1))
+        image.putdata([
+            (255, 0, 0, 0),
+            (255, 0, 0, 255),
+        ])
+        image.save(rgba_png, "PNG")
+
+        output = convert_image(rgba_png, output_format="bmp")
+
+        with Image.open(output) as result:
+            self.assertEqual(result.mode, "RGB")
+            self.assertEqual(
+                [result.getpixel((0, 0)), result.getpixel((1, 0))],
+                [(255, 255, 255), (255, 0, 0)],
+            )
+
+    def test_rgba_to_png_preserves_known_alpha_values(self):
+        """PNG output retains exact RGBA values rather than compositing them."""
+        rgba_png = self.test_dir / "preserve-alpha.png"
+        expected = [(12, 34, 56, 0), (78, 90, 123, 128)]
+        image = Image.new("RGBA", (2, 1))
+        image.putdata(expected)
+        image.save(rgba_png, "PNG")
+
+        output = convert_image(
+            rgba_png,
+            output_path=self.test_dir / "preserved.png",
+        )
+
+        with Image.open(output) as result:
+            self.assertEqual(result.mode, "RGBA")
+            self.assertEqual(
+                [result.getpixel((0, 0)), result.getpixel((1, 0))],
+                expected,
+            )
     
     def test_jpg_alias_normalized_to_jpeg(self):
         """Test that 'jpg' is normalized to 'jpeg'."""
@@ -279,6 +319,38 @@ class TestConversionEdgeCases(unittest.TestCase):
         
         with Image.open(output) as img:
             self.assertEqual(img.format, "TIFF")
+
+    def test_unsupported_output_format_raises_clear_value_error(self):
+        """Unsupported formats fail at the public boundary with context."""
+        for output_format, rendered in (
+            ("made-up", "'made-up'"),
+            ("", "''"),
+        ):
+            with self.subTest(output_format=output_format):
+                with self.assertRaisesRegex(
+                    ValueError,
+                    f"Unsupported output format: {rendered}",
+                ):
+                    convert_image(
+                        self.test_img,
+                        output_format=output_format,
+                    )
+
+    def test_missing_heif_dependency_keeps_specific_import_error(self):
+        """HEIF requests retain their actionable optional-dependency error."""
+        with patch("color_tools.image.conversion._HEIF_AVAILABLE", False):
+            with self.assertRaisesRegex(ImportError, "requires pillow-heif"):
+                convert_image(self.test_img, output_format="heic")
+
+    def test_suffixless_output_path_defaults_to_png(self):
+        """A suffixless explicit destination still uses the documented default."""
+        output = convert_image(
+            self.test_img,
+            output_path=self.test_dir / "converted",
+        )
+
+        with Image.open(output) as image:
+            self.assertEqual(image.format, "PNG")
 
 
 if __name__ == "__main__":

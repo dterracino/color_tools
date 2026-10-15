@@ -381,15 +381,15 @@ Targets: `color_tools/image/__init__.py`, `image/conversion.py`,
 `image/basic.py`, `image/dominance.py`, and the supported exporters that use
 them
 
-- [ ] Lazy image exports load only their owning modules.
-- [ ] A missing optional dependency preserves its precise import cause.
-- [ ] An unrelated import failure is not disguised as a missing dependency.
-- [ ] Unsupported image modes and invalid dimensions fail clearly.
-- [ ] Alpha/transparency branches retain the documented behavior.
-- [ ] Conversion mode and output-mode branches use small known pixel fixtures.
-- [ ] Dominance filters cover threshold boundaries, empty selections, fallback
+- [x] Lazy image exports load only their owning modules.
+- [x] A missing optional dependency preserves its precise import cause.
+- [x] An unrelated import failure is not disguised as a missing dependency.
+- [x] Unsupported image modes and invalid dimensions fail clearly.
+- [x] Alpha/transparency branches retain the documented behavior.
+- [x] Conversion mode and output-mode branches use small known pixel fixtures.
+- [x] Dominance filters cover threshold boundaries, empty selections, fallback
   selection, ordering, and invalid arguments.
-- [ ] Multi-color block and gradient swatches cover minimum dimensions and
+- [x] Multi-color block and gradient swatches cover minimum dimensions and
   single-color fallback.
 
 The dominance module is large. Select behavioral boundaries and known
@@ -474,7 +474,7 @@ Work in bounded batches so failures identify the responsible area:
 6. [x] Filament and conversion CLI routes.
 7. [x] MCP conversion routes.
 8. [x] Override reporting.
-9. [ ] Supported image edge cases.
+9. [x] Supported image edge cases.
 10. [ ] Focused terminal and Qt workflow coverage.
 11. [ ] Review remaining uncovered branches and classify each as required,
     unreachable/dead, abstract, platform-dependent, or intentionally deferred.

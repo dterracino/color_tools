@@ -234,6 +234,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Image conversion boundary errors** — reject unsupported output formats with
+  the documented `ValueError`, default suffixless explicit output paths to PNG,
+  and preserve the actionable `pillow-heif` dependency error for HEIC/HEIF
+  requests. Add exact alpha-preservation and white-compositing fixtures for
+  transparent conversion paths.
 - **Complete override-report capture** — capture filament and maker-synonym
   override messages alongside color overrides, restore both logger levels and
   handlers after success or failure, and report loader failures once on

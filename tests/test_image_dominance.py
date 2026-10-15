@@ -3,10 +3,12 @@
 from __future__ import annotations
 
 import unittest
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, cast
+from unittest.mock import patch
 
 if TYPE_CHECKING:
     from PIL import Image
+    from color_tools.image.dominance import SaliencyBackend
 
 try:
     from PIL import Image
@@ -302,6 +304,38 @@ class TestDominanceAnalysis(unittest.TestCase):
         with self.assertRaises(ValueError):
             self.dominant_colors(_make_transparent_image())
 
+    def test_alpha_threshold_includes_boundary_and_excludes_lower_alpha(self) -> None:
+        """Pixels at the alpha threshold participate; lower-alpha pixels do not."""
+        image = Image.new("RGBA", (2, 1))
+        image.putdata([
+            (255, 0, 0, 15),
+            (0, 0, 255, 16),
+        ])
+
+        colors = self.dominant_colors(
+            image,
+            count=2,
+            alpha_threshold=16,
+        )
+
+        self.assertEqual([color.rgb for color in colors], [(0, 0, 255)])
+
+    def test_zero_saliency_uses_centered_full_image_fallback(self) -> None:
+        """An empty saliency selection falls back to the full centered image."""
+        import numpy as np
+
+        with patch(
+            "color_tools.image.dominance._calculate_saliency_map",
+            return_value=np.zeros((4, 8), dtype=np.float64),
+        ):
+            analysis = self.analyze_dominant_colors(
+                _make_split_image(),
+                count=2,
+            )
+
+        self.assertEqual(analysis.focal_center, (0.5, 0.5))
+        self.assertEqual(analysis.focal_radius, 1.0)
+
     def test_invalid_count_raises_value_error(self) -> None:
         """count must be at least one."""
         with self.assertRaises(ValueError):
@@ -314,6 +348,81 @@ class TestDominanceAnalysis(unittest.TestCase):
                 _make_split_image(),
                 provisional_clusters=0,
             )
+
+    def test_invalid_analysis_arguments_raise_specific_value_errors(self) -> None:
+        """Every bounded public analysis option rejects values outside its domain."""
+        image = _make_split_image()
+        invalid_options: tuple[tuple[str, Callable[[], object]], ...] = (
+            ("merge_threshold", lambda: self.analyze_dominant_colors(
+                image, merge_threshold=-0.1,
+            )),
+            ("focal_weight", lambda: self.analyze_dominant_colors(
+                image, focal_weight=1.1,
+            )),
+            ("center_bias", lambda: self.analyze_dominant_colors(
+                image, center_bias=1.1,
+            )),
+            ("focal_saliency", lambda: self.analyze_dominant_colors(
+                image, focal_saliency=0.0,
+            )),
+            ("diversity_distance", lambda: self.analyze_dominant_colors(
+                image, diversity_distance=0.0,
+            )),
+            ("diversity_floor", lambda: self.analyze_dominant_colors(
+                image, diversity_floor=1.1,
+            )),
+            ("max_dimension", lambda: self.analyze_dominant_colors(
+                image, max_dimension=0,
+            )),
+            ("coarse_dimensions empty", lambda: self.analyze_dominant_colors(
+                image, coarse_dimensions=(),
+            )),
+            ("coarse_dimensions value", lambda: self.analyze_dominant_colors(
+                image, coarse_dimensions=(0,),
+            )),
+            ("alpha_threshold", lambda: self.analyze_dominant_colors(
+                image, alpha_threshold=256,
+            )),
+            ("grid_size", lambda: self.analyze_dominant_colors(
+                image, grid_size=0,
+            )),
+            ("minimum_cell_coverage", lambda: self.analyze_dominant_colors(
+                image, minimum_cell_coverage=1.1,
+            )),
+            ("kmeans_iterations", lambda: self.analyze_dominant_colors(
+                image, kmeans_iterations=0,
+            )),
+            (
+                "saliency_backend",
+                lambda: self.analyze_dominant_colors(
+                    image,
+                    saliency_backend=cast("SaliencyBackend", "unknown"),
+                ),
+            ),
+        )
+
+        for option, invoke in invalid_options:
+            with self.subTest(option=option):
+                with self.assertRaises(ValueError):
+                    invoke()
+
+    def test_diagnostics_are_ordered_by_descending_dominance(self) -> None:
+        """Candidate diagnostics expose a stable descending-dominance order."""
+        analysis = self.analyze_dominant_colors(
+            _make_limited_palette_image(),
+            count=4,
+        )
+
+        dominance = [item.dominance for item in analysis.diagnostics]
+        self.assertEqual(dominance, sorted(dominance, reverse=True))
+        self.assertEqual(
+            sorted(
+                item.selected_rank
+                for item in analysis.diagnostics
+                if item.selected_rank is not None
+            ),
+            [1, 2, 3, 4],
+        )
 
     def test_analysis_is_deterministic_for_simple_image(self) -> None:
         """Repeated analysis on the same image yields the same ordered colors."""
