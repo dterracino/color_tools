@@ -36,7 +36,9 @@ Example:
 """
 
 from __future__ import annotations
+import math
 from dataclasses import dataclass
+from functools import cmp_to_key
 from typing import Dict, List, Literal, Optional, Tuple, TypedDict, cast
 import json
 import logging
@@ -45,8 +47,8 @@ from collections.abc import Iterable
 
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, rgb_to_hsl, rgb_to_hex, lab_to_lch
-from color_tools.distance import euclidean, hsl_euclidean, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
-from color_tools._palette_utils import get_palette_files, rounded_key, should_prefer_source
+from color_tools.distance import euclidean, hsl_euclidean, hue_diff_deg, delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab
+from color_tools._palette_utils import compare_distance_matches, get_palette_files, rounded_key, should_prefer_source
 from color_tools._palette_document import parse_indexed_palette_document
 from color_tools._color_utils import parse_hex, validate_rgb
 from color_tools._record_swatches import (
@@ -61,7 +63,19 @@ _get_palette_files = get_palette_files
 # Set up logger for override tracking
 logger: logging.Logger = logging.getLogger(__name__)
 
-
+def _lch_euclidean(
+    lch1: tuple[float, float, float],
+    lch2: tuple[float, float, float],
+) -> float:
+    """Return Euclidean LCH distance with circular hue at tuple index two."""
+    lightness_delta = lch1[0] - lch2[0]
+    chroma_delta = lch1[1] - lch2[1]
+    hue_delta = hue_diff_deg(lch1[2], lch2[2])
+    return math.sqrt(
+        lightness_delta * lightness_delta
+        + chroma_delta * chroma_delta
+        + hue_delta * hue_delta
+    )
 class _ColorRecordData(TypedDict):
     """Validated shape of one color record loaded from JSON."""
 
@@ -794,8 +808,7 @@ class Palette:
         # LCH space - use Euclidean distance with hue wraparound
         if space.lower() == "lch":
             for r in self.records:
-                # LCH has circular hue like HSL, so we need special handling
-                d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
+                d = _lch_euclidean(value, r.lch)
                 if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
                     best_rec, best_d = r, d
             logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
@@ -873,7 +886,7 @@ class Palette:
             for r in self.records:
                 d = euclidean(tuple(map(float, value)), tuple(map(float, r.rgb)))
                 results.append((r, d))
-            results.sort(key=lambda x: x[1])
+            results.sort(key=cmp_to_key(compare_distance_matches))
             return results[:count]
 
         # HSL space - use circular hue distance
@@ -881,15 +894,15 @@ class Palette:
             for r in self.records:
                 d = hsl_euclidean(value, r.hsl)
                 results.append((r, d))
-            results.sort(key=lambda x: x[1])
+            results.sort(key=cmp_to_key(compare_distance_matches))
             return results[:count]
 
         # LCH space - use Euclidean distance with hue wraparound
         if space.lower() == "lch":
             for r in self.records:
-                d = hsl_euclidean(value, r.lch)  # hsl_euclidean handles circular hue properly
+                d = _lch_euclidean(value, r.lch)
                 results.append((r, d))
-            results.sort(key=lambda x: x[1])
+            results.sort(key=cmp_to_key(compare_distance_matches))
             return results[:count]
 
         # LAB space - choose the appropriate Delta E metric
@@ -921,7 +934,7 @@ class Palette:
                 d = fn(value, r.lab)  # type: ignore
             results.append((r, d))
         
-        results.sort(key=lambda x: x[1])
+        results.sort(key=cmp_to_key(compare_distance_matches))
         return results[:count]
 
     def get_override_info(self) -> Dict[str, Dict[str, Dict[str, Tuple[str, str]]]]:

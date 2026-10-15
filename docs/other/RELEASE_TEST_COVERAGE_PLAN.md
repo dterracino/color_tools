@@ -131,18 +131,18 @@ Suggested home: `tests/test_synonyms.py`.
 
 Target: `color_tools/palette.py`
 
-- [ ] `nearest_color()` in LCH, including hue wraparound.
-- [ ] `nearest_colors()` in HSL, including hue wraparound.
-- [ ] `nearest_colors()` in LCH, including hue wraparound.
-- [ ] Both single- and multiple-result APIs with DE76 aliases.
-- [ ] Both APIs with DE94 aliases.
-- [ ] Both APIs with CMC/default and `decmc` aliases.
-- [ ] Both APIs with CMC 2:1 and CMC 1:1 shorthands.
-- [ ] Custom CMC lightness/chroma parameters are passed through.
-- [ ] HyAB remains covered in both APIs.
-- [ ] An unknown metric raises the documented `ValueError`.
-- [ ] Count is bounded to 1 through 50.
-- [ ] Exact-distance ties prefer a user source consistently.
+- [x] `nearest_color()` in LCH, including hue wraparound.
+- [x] `nearest_colors()` in HSL, including hue wraparound.
+- [x] `nearest_colors()` in LCH, including hue wraparound.
+- [x] Both single- and multiple-result APIs with DE76 aliases.
+- [x] Both APIs with DE94 aliases.
+- [x] Both APIs with CMC/default and `decmc` aliases.
+- [x] Both APIs with CMC 2:1 and CMC 1:1 shorthands.
+- [x] Custom CMC lightness/chroma parameters are passed through.
+- [x] HyAB remains covered in both APIs.
+- [x] An unknown metric raises the documented `ValueError`.
+- [x] Count is bounded to 1 through 50.
+- [x] Exact-distance ties prefer a user source consistently.
 
 Expected results should be independently pinned or assembled from lower-level
 reference functions rather than duplicating the selection implementation.
@@ -154,23 +154,23 @@ Suggested homes: `tests/test_palette.py` and `tests/test_hyab.py`.
 Targets: `color_tools/filament_palette.py`,
 `color_tools/filament_filter_criteria.py`
 
-- [ ] Hue distance wraps correctly across zero degrees.
-- [ ] An achromatic target bypasses hue filtering.
-- [ ] Achromatic candidates remain eligible for chromatic targets.
-- [ ] Chromatic candidates inside and outside the maximum hue delta are
+- [x] Hue distance wraps correctly across zero degrees.
+- [x] An achromatic target bypasses hue filtering.
+- [x] Achromatic candidates remain eligible for chromatic targets.
+- [x] Chromatic candidates inside and outside the maximum hue delta are
   selected correctly.
-- [ ] An empty result after hue filtering raises the focused guidance message.
-- [ ] DE2000/CIEDE2000, DE94/CIE94, DE76/CIE76, Euclidean, CMC/DECMC, and HyAB
+- [x] An empty result after hue filtering raises the focused guidance message.
+- [x] DE2000/CIEDE2000, DE94/CIE94, DE76/CIE76, Euclidean, CMC/DECMC, and HyAB
   aliases resolve correctly.
-- [ ] Custom CMC parameters affect the distance function.
-- [ ] An unknown metric raises the documented `ValueError`.
-- [ ] A distance failure for one candidate does not discard valid candidates.
-- [ ] All failed candidate calculations raise `No valid filaments found`.
-- [ ] Equal-distance results prefer user data; otherwise stable ordering is
+- [x] Custom CMC parameters affect the distance function.
+- [x] An unknown metric raises the documented `ValueError`.
+- [x] A distance failure for one candidate does not discard valid candidates.
+- [x] All failed candidate calculations raise `No valid filaments found`.
+- [x] Equal-distance results prefer user data; otherwise stable ordering is
   preserved.
-- [ ] Count is bounded to 1 through 50.
-- [ ] Scalar, list, and `None` filter inputs are normalized correctly.
-- [ ] Include/exclude criteria, owned state, TD presence, maker aliases, and
+- [x] Count is bounded to 1 through 50.
+- [x] Scalar, list, and `None` filter inputs are normalized correctly.
+- [x] Include/exclude criteria, owned state, TD presence, maker aliases, and
   multi-color mode interact correctly in a small combined fixture.
 
 Suggested homes: `tests/test_filament_filter_criteria.py` and
@@ -467,7 +467,7 @@ Work in bounded batches so failures identify the responsible area:
 
 1. [ ] Palette schema and core/user loader failures.
 2. [x] Integrity and hash verification failures.
-3. [ ] Palette and filament matching matrices.
+3. [x] Palette and filament matching matrices.
 4. [ ] Importer base, registry, and malformed formats.
 5. [ ] Exporter base and format-specific edge cases.
 6. [ ] Filament and conversion CLI routes.

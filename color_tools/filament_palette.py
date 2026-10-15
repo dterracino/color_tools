@@ -27,7 +27,7 @@ from color_tools.conversions import rgb_to_lab, rgb_to_hex, lab_to_lch
 from color_tools._color_utils import parse_hex_colors
 from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_cmc, delta_e_hyab, euclidean
 from color_tools.config import get_config
-from color_tools._palette_utils import ensure_list, should_prefer_source
+from color_tools._palette_utils import compare_distance_matches, ensure_list
 from color_tools.filament_filter_criteria import FilamentFilterCriteria
 from color_tools._record_swatches import (
     render_record_swatch as _render_record_swatch,
@@ -572,19 +572,6 @@ def _resolve_distance_function(metric: str, cmc_l: float, cmc_c: float) -> Dista
     raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
 
 
-def _compare_filament_matches(left: _FilamentMatch, right: _FilamentMatch) -> int:
-    """Order matches by distance, preferring user sources for exact ties."""
-    if left[1] < right[1]:
-        return -1
-    if left[1] > right[1]:
-        return 1
-    if should_prefer_source(left[0].source, right[0].source):
-        return -1
-    if should_prefer_source(right[0].source, left[0].source):
-        return 1
-    return 0
-
-
 class FilamentPalette:
     """
     Filament palette with multiple indexing strategies for fast lookup.
@@ -1091,7 +1078,7 @@ class FilamentPalette:
         if not results:
             raise ValueError("No valid filaments found")
 
-        results.sort(key=cmp_to_key(_compare_filament_matches))
+        results.sort(key=cmp_to_key(compare_distance_matches))
         return results[:limited_count]
 
     @property

@@ -6,6 +6,19 @@ classes. This module is private and its helpers are not part of the public API.
 """
 
 from pathlib import Path
+from typing import Protocol, TypeVar
+
+
+class _SourcedRecord(Protocol):
+    """Structural type for records participating in source tie-breaking."""
+
+    @property
+    def source(self) -> str:
+        """Return the record's source filename."""
+        ...
+
+
+_RecordT = TypeVar("_RecordT", bound=_SourcedRecord)
 
 
 def get_palette_files(palette_dir: Path, pattern: str) -> list[Path]:
@@ -49,6 +62,22 @@ def should_prefer_source(new_source: str, current_source: str) -> bool:
     
     # Both are same type (core or user), don't prefer either
     return False
+
+
+def compare_distance_matches(
+    left: tuple[_RecordT, float],
+    right: tuple[_RecordT, float],
+) -> int:
+    """Order distance matches, preferring user sources for exact ties."""
+    if left[1] < right[1]:
+        return -1
+    if left[1] > right[1]:
+        return 1
+    if should_prefer_source(left[0].source, right[0].source):
+        return -1
+    if should_prefer_source(right[0].source, left[0].source):
+        return 1
+    return 0
 
 
 def rounded_key(nums: tuple[float, ...], ndigits: int = 2) -> str:

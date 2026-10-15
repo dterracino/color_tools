@@ -234,6 +234,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Palette matching consistency** — calculate LCH distance with hue taken from
+  the third coordinate and wrapped across zero degrees. Multiple-result color
+  searches now apply the same exact-distance user-source preference as
+  single-result searches and filament matching.
 - **Test resource cleanup** — close Pillow images opened by HyAB and blend
   output tests. Close superseded logging handlers during repeated
   `setup_logging` calls instead of only detaching them, and verify the previous
