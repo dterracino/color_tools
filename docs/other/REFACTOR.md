@@ -13,7 +13,7 @@
 | B1 | **Bug** | `"last"` dual-color mode silently broken | Low | High | Patch fix — no break |
 | B2 | **Bug** | `palette.colors` used in ~8 docstrings but doesn't exist | Low | High | Additive (new property) |
 | O1 | **Orphan** | `EXPORT_FORMATS` imported but unused in `export.py` | Trivial | Low | None |
-| O2 | **Orphan** | `FilamentPalette.get_override_info()` | Low | Medium | Pending filament override redesign |
+| O2 | **Orphan** | `FilamentPalette.get_override_info()` | Low | Medium | Resolved |
 | O3 | **Orphan** | Duplicate block in `determine_base_hue` | Trivial | Low | None |
 | D1 | **DRY** | Metric-resolution logic duplicated 4× | Medium | High | None |
 | D2 | **DRY** | `nearest_color` / `nearest_colors` are near-duplicates | Medium | High | Resolved for colors |
@@ -23,8 +23,8 @@
 | S1 | **SoC** | Module-level palette load in `validation.py` | Low | High | None |
 | S2 | **SoC** | `naming.py` loads `Palette.load_default()` on every call | Low | High | None |
 | S3 | **SoC** | `FilamentRecord.__post_init__` reaches into global config | Medium | Medium | Possible breaking change |
-| S4 | **SoC** | `get_override_info` loads a JSON file inside a class method | Low | Medium | None |
-| S5 | **SoC** | Filament/synonym reporting captures log messages | Low | Medium | Pending later override batches |
+| S4 | **SoC** | `get_override_info` loads a JSON file inside a class method | Low | Medium | Resolved |
+| S5 | **SoC** | Filament/synonym reporting captures log messages | Low | Medium | Resolved |
 | C1 | **Smell** | Bare `except:` in 4 locations | Low | High | None |
 | C2 | **Smell** | `object.__setattr__` on a frozen dataclass | Medium | Medium | None |
 | C3 | **Smell** | `XYZ_SCALE_FACTOR` overloaded to mean `100.0` in non-XYZ code | Low | Medium | None |
@@ -112,7 +112,7 @@ likely a leftover from when `export.py` contained its own format dictionary.
 
 ---
 
-### O2 — `FilamentPalette.get_override_info()` remains pending review
+### O2 — `FilamentPalette.get_override_info()` removed
 
 **Files:** `palette.py` (line 615), `filament_palette.py` (line 876)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** Internal — safe to remove or mark private
@@ -121,18 +121,11 @@ likely a leftover from when `export.py` contained its own format dictionary.
 redesign. `load_colors(include_report=True)` now returns authoritative structured
 events while both old and replacement records are available.
 
-`FilamentPalette.get_override_info()` still builds a diagnostic dictionary
-about user-vs-core conflicts and remains part of the pending filament override
-redesign.
-
-The `FilamentPalette` version also has an embedded `json.load()` call (see
-**S4**) and a bare `except: pass` (see **C1**), making it a maintenance
-liability.
-
-**Fix options:**
-
-1. Replace it with structured filament-load events, then remove it.
-2. Rename it to `_get_override_info()` if a temporary diagnostic helper remains useful.
+The 7.0 user-data redesign added authoritative structured reports to
+`load_filaments(include_report=True)` and
+`load_maker_synonyms(include_report=True)`. The obsolete method, its embedded
+file read, and its swallowed exception were removed. Reporting now consumes
+events captured while both old and replacement values are available.
 
 ---
 
@@ -708,8 +701,8 @@ pattern is already used by other functions in the codebase.
 **Larger, optional (architectural, evaluate ROI):**
 
 - **S3** Decouple `FilamentRecord` from global config
-- **S4 / S5** Improve override diagnostics architecture — completed for colors
-- **O2** Remove or privatize `get_override_info` methods — completed for colors
+- **S4 / S5** Improve override diagnostics architecture — completed
+- **O2** Remove or privatize `get_override_info` methods — completed
 - **C3** Add `PERCENT_SCALE` constant (requires hash regeneration)
 
 ---

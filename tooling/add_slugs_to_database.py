@@ -11,6 +11,9 @@ import re
 from pathlib import Path
 from collections import defaultdict
 
+# IMPORTANT: This legacy script has its own non-canonical ID generator.
+# Update it to use color_tools.generate_filament_id before running it again.
+
 
 def slugify(text: str) -> str:
     """Convert text to URL-friendly slug."""

@@ -4,6 +4,9 @@
 import json
 import re
 
+# IMPORTANT: This legacy standalone check duplicates ID generation logic.
+# Update it to use color_tools.generate_filament_id before running it again.
+
 
 def slugify(text: str) -> str:
     """Convert text to URL-friendly slug."""

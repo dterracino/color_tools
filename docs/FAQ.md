@@ -254,6 +254,7 @@ Create `data/user/user-filaments.json` with your custom filaments.
 ```json
 [
   {
+    "id": "my-company-pla-matte-custom-blue",
     "maker": "My Company",
     "type": "PLA",
     "finish": "Matte",
@@ -263,7 +264,16 @@ Create `data/user/user-filaments.json` with your custom filaments.
 ]
 ```
 
-If you use the same RGB value (`hex`) as a core filament, your filament will appear first in search results.
+Generate the ID rather than composing it by hand:
+
+```bash
+color-tools filament --generate-id --maker "My Company" --type PLA \
+  --finish Matte --color "Custom Blue"
+```
+
+The ID is the override key. Reusing a system filament ID replaces that complete
+record in place; a new ID appends a record. Equal RGB values are allowed and do
+not constitute overrides. Duplicate IDs in one user file are rejected.
 
 ### How do I add maker synonyms or change existing ones?
 
@@ -278,7 +288,9 @@ Create `data/user/user-synonyms.json` to add or completely replace maker synonym
 }
 ```
 
-**Important**: User synonyms completely replace core synonyms for that maker. In the example above, "Bambu" and "BBL" (core synonyms) would no longer work - only "CustomBambu" and "CB".
+For an existing maker, a disjoint user list replaces the system list. A list
+with at least one existing synonym extends the system list without duplicates;
+an equal list is unchanged.
 
 ### How can I see what user data is overriding core data?
 
@@ -292,8 +304,8 @@ This shows:
 
 - How many system and user colors loaded
 - Which colors were overridden by name and which were added
-- Which filaments are overridden by RGB
-- Which maker synonyms are replaced
+- Which filaments are replaced by ID and which are added
+- Which maker synonym lists are added, replaced, extended, or unchanged
 - Source files for all data
 
 ### What happens when my user file conflicts with core data?
@@ -304,8 +316,9 @@ Each user-data type defines its own conflict rules:
 - **Color RGB conflicts**: Reusing another color's RGB value is rejected
 - **Exact nearest-color ties**: A `user-*` source sorts first; other ties retain
   the merged record order
-- **Filament conflicts**: Existing filament behavior is reported separately
-- **Synonym conflicts**: Your synonyms completely replace core synonyms for that maker
+- **Filament ID conflicts**: Your complete record replaces the record with the
+  same ID; RGB and descriptive fields do not define conflicts
+- **Synonym conflicts**: Disjoint lists replace and overlapping lists extend
 
 Color merging therefore produces one deterministic record per normalized name
 and effective RGB value before lookups are built.
@@ -333,6 +346,13 @@ color-tools --verify-user-data
 
 # Verify everything (core + user data)
 color-tools --verify-all
+```
+
+Hash verification detects file changes. To validate JSON schemas, IDs, values,
+and the cumulative merge rules without writing anything, run:
+
+```bash
+color-tools --validate-user-files
 ```
 
 Hash files (`.sha256`) are created alongside user data files and active

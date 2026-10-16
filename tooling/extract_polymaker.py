@@ -14,6 +14,9 @@ from typing import List, Dict, Optional
 from collections import defaultdict
 from color_tools.conversions import parse_hex_colors, rgb_to_hex
 
+# IMPORTANT: This legacy script has its own non-canonical ID generator.
+# Update it to use color_tools.generate_filament_id before running it again.
+
 
 def slugify(text: str) -> str:
     """Convert text to URL-friendly slug."""

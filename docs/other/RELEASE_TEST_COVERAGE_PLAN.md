@@ -95,14 +95,14 @@ Targets: `color_tools/palette.py`, `color_tools/filament_palette.py`
 - [x] Cover color records with missing required fields, short coordinate arrays,
   invalid RGB values, and invalid hex values with source and index context.
 - [x] Cover filament records with each required field missing.
-- [ ] Cover invalid filament field types and values with source and index
+- [x] Cover invalid filament field types and values with source and index
   context.
 - [x] Reject the removed `hex2` field with the migration-oriented error.
 - [x] Reject a non-object owned-filament document.
 - [x] Reject a non-list `owned_filaments` value.
 - [x] Reject owned-filament lists containing non-string IDs.
-- [ ] Cover an exact user-filament override.
-- [ ] Cover a different filament with the same effective RGB.
+- [x] Cover an exact user-filament override by stable ID.
+- [x] Cover different filaments with the same effective RGB.
 - [x] Cover sequential user-color replacement by normalized name, unique
   additions, cumulative RGB collision rejection, strict authored fields, and
   structured load events without log-message capture.
@@ -116,13 +116,13 @@ Suggested homes: `tests/test_palette.py`, `tests/test_user_overrides.py`, and
 
 Target: `color_tools/filament_palette.py`
 
-- [ ] Missing core synonym file produces an empty base mapping.
-- [ ] Identical user synonyms leave the canonical entry unchanged.
-- [ ] Disjoint user synonyms replace the canonical entry and report an
+- [x] Missing core synonym file produces an empty base mapping.
+- [x] Identical user synonyms leave the canonical entry unchanged.
+- [x] Disjoint user synonyms replace the canonical entry and report an
   override.
-- [ ] Partially overlapping synonyms extend the entry without duplicates and
+- [x] Partially overlapping synonyms extend the entry without duplicates and
   report the old/new counts.
-- [ ] A previously unknown maker is added.
+- [x] A previously unknown maker is added.
 - [ ] Canonical names and synonyms match case-insensitively with surrounding
   whitespace normalized for matching.
 
@@ -362,13 +362,13 @@ Suggested homes: the existing format-specific exporter tests.
 
 Target: `color_tools/cli_commands/reporting.py`
 
-- [x] Capture and label color name/RGB override messages.
-- [x] Capture and label exact/RGB filament override messages.
-- [x] Capture and label synonym replacement and extension messages.
-- [x] Report no overrides when no messages are emitted.
+- [x] Display typed color name-replacement and addition events.
+- [x] Display typed filament ID-replacement and addition events.
+- [x] Display typed synonym replacement and extension events.
+- [x] Report no overrides when no loader events are returned.
 - [x] Summarize records by source for both colors and filaments.
 - [x] A loader failure prints one focused error and exits with status 1.
-- [x] Logging levels and handlers are restored even after a failure.
+- [x] Override reporting does not modify logging levels or handlers.
 
 The implementation currently contains fallback branches after selecting the
 default palettes that appear unreachable. Confirm this during implementation;
@@ -453,7 +453,7 @@ targets. Keep these tests deterministic and headless-compatible.
   solely for coverage.
 - [ ] Remove the redundant CMYK length check in the conversion handler if the
   earlier source-space validation makes it impossible to reach.
-- [ ] Remove unreachable fallback branches in override reporting after
+- [x] Remove unreachable fallback branches in override reporting after
   confirming they cannot occur.
 - [ ] Decide whether tiny `__main__.py` wrappers need subprocess smoke tests.
   Their current 0% result is visible but not a significant library risk.

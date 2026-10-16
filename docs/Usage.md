@@ -888,6 +888,9 @@ python -m color_tools filament --finish "*" --color "Black"    # All finishes, o
 - `--exclude-type NAME [NAME ...]`: With `--nearest`, exclude matching filament types
 - `--exclude-finish NAME [NAME ...]`: With `--nearest`, exclude matching finishes
 - `--exclude-color NAME`: With `--nearest`, exclude a matching color name
+- `--generate-id`: Generate a stable filament ID from exactly one `--maker`,
+  one `--type`, optional one `--finish`, and `--color`; report whether it is
+  available or would override an existing record
 
 Values within one exclusion option use OR semantics. Different exclusion fields use
 AND semantics, so `--exclude-maker "Bambu Lab" --exclude-type PETG` excludes Bambu Lab
@@ -1367,7 +1370,8 @@ These arguments work with all commands:
 - `--verify-all`: Verify constants, matrices, core data, system palettes, and hashed user files
 - `--verify-user-data`: Verify user data files and user palettes that have `.sha256` sidecars
 - `--generate-user-hashes`: Generate sidecar hashes for active user data and user palettes, then exit
-- `--check-overrides`: Show report of user overrides (user-colors.json, user-filaments.json) and exit
+- `--validate-user-files`: Validate the schemas and merge behavior of user-colors.json, user-filaments.json, and user-synonyms.json, then exit
+- `--check-overrides`: Show structured color, filament-ID, and maker-synonym changes, then exit
 - `--interactive`, `-i`: Launch the guided CLI wizard (requires the `[interactive]` extra)
 - `--log-file PATH`: Write log output to this file (enables rotating file logging)
 - `--log-level LEVEL`: Minimum level written to the log file — `DEBUG`, `INFO`, `WARNING`, `ERROR`, `CRITICAL` (default: `DEBUG`)

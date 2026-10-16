@@ -10,7 +10,6 @@ import unittest
 from pathlib import Path
 import tempfile
 import json
-import logging
 from typing import Callable, TypeVar
 
 from color_tools.palette import (
@@ -77,6 +76,7 @@ class TestUserOverrideSystem(unittest.TestCase):
         # Core filaments
         core_filaments = [
             {
+                "id": "bambu-lab-pla-matte-red",
                 "maker": "Bambu Lab",
                 "type": "PLA",
                 "finish": "Matte",
@@ -84,6 +84,7 @@ class TestUserOverrideSystem(unittest.TestCase):
                 "hex": "#FF0000"
             },
             {
+                "id": "test-maker-pla-glossy-blue",
                 "maker": "Test Maker",
                 "type": "PLA",
                 "finish": "Glossy", 
@@ -225,6 +226,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         # User filament with same RGB as core but different attributes
         user_filaments = [
             {
+                "id": "custom-maker-petg-silk-custom-red",
                 "maker": "Custom Maker",
                 "type": "PETG", 
                 "finish": "Silk",
@@ -253,6 +255,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         """Test that nearest_filament prioritizes user filaments."""
         user_filaments = [
             {
+                "id": "user-maker-abs-matte-user-blue",
                 "maker": "User Maker",
                 "type": "ABS",
                 "finish": "Matte",
@@ -277,6 +280,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         # User adds new filament for existing maker
         user_filaments = [
             {
+                "id": "bambu-lab-abs-silk-purple",
                 "maker": "Bambu Lab",
                 "type": "ABS",
                 "finish": "Silk",
@@ -303,6 +307,7 @@ class TestFilamentOverrides(TestUserOverrideSystem):
         """Test user filaments can add new makers without conflicts."""
         user_filaments = [
             {
+                "id": "new-maker-pla-plus-transparent-clear",
                 "maker": "New Maker",
                 "type": "PLA+",
                 "finish": "Transparent",
@@ -395,41 +400,55 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         # Should be replacement (core "TM" not present)
         self.assertEqual(synonyms["Test Maker"], ["NewTM", "TestMakerNew"])
         self.assertNotIn("TM", synonyms["Test Maker"])
+
+    def test_synonym_report_covers_unchanged_extended_and_added(self) -> None:
+        """Every supported synonym merge action is explicit and ordered."""
+        self._create_user_synonyms({
+            "Bambu Lab": ["BBL", "Bambu"],
+            "Test Maker": ["TM", "TestCo"],
+            "New Company": ["NC"],
+        })
+
+        synonyms, report = load_maker_synonyms(self.data_dir, include_report=True)
+
+        self.assertEqual(report.makers_unchanged, 1)
+        self.assertEqual(report.makers_extended, 1)
+        self.assertEqual(report.makers_added, 1)
+        self.assertEqual(
+            [event.action for event in report.events],
+            ["unchanged", "extended", "added"],
+        )
+        self.assertEqual(synonyms["Test Maker"], ["TM", "TestCo"])
+
+    def test_missing_core_synonym_file_starts_with_empty_mapping(self) -> None:
+        """A user synonym file can load when no system mapping exists."""
+        (self.data_dir / "maker_synonyms.json").unlink()
+        self._create_user_synonyms({"New Company": ["NC"]})
+
+        synonyms, report = load_maker_synonyms(self.data_dir, include_report=True)
+
+        self.assertEqual(synonyms, {"New Company": ["NC"]})
+        self.assertEqual(report.system_makers_loaded, 0)
+        self.assertEqual(report.makers_added, 1)
     
-    def test_synonym_override_detection_logging(self) -> None:
-        """Test that synonym overrides are properly logged."""
-        # Set up logging capture
-        log_stream: list[str] = []
-        
-        class ListHandler(logging.Handler):
-            def emit(self, record: logging.LogRecord) -> None:
-                log_stream.append(self.format(record))
-        
-        # Add handler to capture logs
-        logger = logging.getLogger("color_tools.filament_palette")
-        handler = ListHandler()
-        logger.addHandler(handler)
-        logger.setLevel(logging.INFO)
-        
-        try:
-            # Create override scenario
-            user_synonyms = {
-                "Bambu Lab": ["CustomBambu"],  # Replaces ["Bambu", "BBL"]
-                "New Maker": ["NM"]           # Addition, no conflict
-            }
-            self._create_user_synonyms(user_synonyms)
-            
-            # Load with overrides
-            self._load_with_custom_dir(load_maker_synonyms)
-            
-            # Check that override was logged
-            log_messages = ' '.join(log_stream)
-            self.assertIn("Bambu Lab", log_messages)
-            self.assertIn("override", log_messages.lower())
-            
-        finally:
-            # Clean up logger
-            logger.removeHandler(handler)
+    def test_synonym_override_detection_report(self) -> None:
+        """Synonym replacements and additions are returned as typed events."""
+        self._create_user_synonyms({
+            "Bambu Lab": ["CustomBambu"],
+            "New Maker": ["NM"],
+        })
+
+        _synonyms, report = load_maker_synonyms(
+            self.data_dir,
+            include_report=True,
+        )
+
+        self.assertEqual(report.makers_replaced, 1)
+        self.assertEqual(report.makers_added, 1)
+        self.assertEqual(
+            [(event.maker, event.action) for event in report.events],
+            [("Bambu Lab", "replaced"), ("New Maker", "added")],
+        )
 
 
 class TestOverrideReporting(TestUserOverrideSystem):
@@ -466,26 +485,26 @@ class TestOverrideReporting(TestUserOverrideSystem):
         """Test detection of filament overrides.""" 
         user_filaments = [
             {
+                "id": "bambu-lab-pla-matte-red",
                 "maker": "Custom Maker",
                 "type": "PETG",
                 "finish": "Silk", 
                 "color": "Custom Red",
-                "hex": "#FF0000"  # RGB override
+                "hex": "#F01010"
             }
         ]
         self._create_user_filaments(user_filaments)
         
-        filaments = self._load_with_custom_dir(load_filaments)
-        palette = FilamentPalette(filaments)
-        
-        overrides = palette.get_override_info()
-        
-        # Should detect filament RGB override
-        self.assertIn("filaments", overrides)
-        filament_overrides = overrides["filaments"]
-        
-        rgb_overrides = filament_overrides.get("rgb", {})
-        self.assertIn("(255, 0, 0)", rgb_overrides)
+        filaments, report = load_filaments(self.data_dir, include_report=True)
+
+        self.assertEqual(len(filaments), 2)
+        self.assertEqual(report.filaments_overridden_by_id, 1)
+        self.assertEqual(report.unique_user_filaments_loaded, 0)
+        self.assertEqual(report.events[0].record.maker, "Custom Maker")
+        replaced = report.events[0].replaced_record
+        self.assertIsNotNone(replaced)
+        assert replaced is not None
+        self.assertEqual(replaced.id, "bambu-lab-pla-matte-red")
     
     def test_synonym_override_detection(self) -> None:
         """Test detection of synonym overrides."""
@@ -495,20 +514,14 @@ class TestOverrideReporting(TestUserOverrideSystem):
         }
         self._create_user_synonyms(user_synonyms)
         
-        synonyms = self._load_with_custom_dir(load_maker_synonyms)
-        filaments = self._load_with_custom_dir(load_filaments) 
-        palette = FilamentPalette(filaments, synonyms)
-        
-        overrides = palette.get_override_info()
-        
-        # Should detect synonym override
-        self.assertIn("synonyms", overrides)
-        synonym_overrides = overrides["synonyms"]
-        
-        self.assertIn("Bambu Lab", synonym_overrides)
-        self.assertEqual(synonym_overrides["Bambu Lab"]["type"], "replaced")
-        self.assertEqual(synonym_overrides["Bambu Lab"]["old"], ["BBL", "Bambu", "BambuLab"])
-        self.assertEqual(synonym_overrides["Bambu Lab"]["new"], ["CustomBambu"])
+        _synonyms, report = load_maker_synonyms(self.data_dir, include_report=True)
+
+        self.assertEqual(report.makers_replaced, 1)
+        self.assertEqual(report.makers_added, 1)
+        event = report.events[0]
+        self.assertEqual(event.maker, "Bambu Lab")
+        self.assertEqual(event.previous_synonyms, ("Bambu", "BBL"))
+        self.assertEqual(event.effective_synonyms, ("CustomBambu",))
     
     def test_no_overrides_empty_report(self) -> None:
         """Test that no overrides results in empty report."""
@@ -526,9 +539,10 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         # User colors override core colors
         user_colors = [_user_color("red", "#DC143C")]
         
-        # User filaments override core filaments
+        # User filament replaces one core record by stable ID
         user_filaments = [
             {
+                "id": "test-maker-pla-glossy-blue",
                 "maker": "Custom Maker", 
                 "type": "PETG",
                 "finish": "Silk",
@@ -589,6 +603,7 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         user_colors = [_user_color("red", "#DC143C")]
         
         user_filaments = [{"maker": "User Maker", "type": "PETG", "finish": "Silk",
+                          "id": "bambu-lab-pla-matte-red",
                           "color": "User Red", "hex": "#FF0000"}]
         
         user_synonyms = {"Bambu Lab": ["UserBambu"]}
@@ -598,28 +613,21 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         self._create_user_synonyms(user_synonyms)
         
         # Load everything
-        filaments = self._load_with_custom_dir(load_filaments)
-        synonyms = self._load_with_custom_dir(load_maker_synonyms)
-        
-        filament_palette = FilamentPalette(filaments, synonyms)
-        
         # Get comprehensive override reports
         _colors, color_report = load_colors(self.data_dir, include_report=True)
-        filament_overrides = filament_palette.get_override_info()
+        _filaments, filament_report = load_filaments(self.data_dir, include_report=True)
+        _synonyms, synonym_report = load_maker_synonyms(self.data_dir, include_report=True)
         
         # Verify all overrides are detected
         self.assertEqual(color_report.colors_overridden_by_name, 1)
-        self.assertIn("filaments", filament_overrides)
-        self.assertIn("synonyms", filament_overrides)
+        self.assertEqual(filament_report.filaments_overridden_by_id, 1)
+        self.assertEqual(synonym_report.makers_replaced, 1)
         
         # Check specific overrides
         self.assertEqual(color_report.events[0].record.name, "red")
-        self.assertIn("(255, 0, 0)", filament_overrides["filaments"].get("rgb", {}))
-        self.assertIn("Bambu Lab", filament_overrides["synonyms"])
+        self.assertEqual(filament_report.events[0].record.id, "bambu-lab-pla-matte-red")
+        self.assertEqual(synonym_report.events[0].maker, "Bambu Lab")
 
 
 if __name__ == '__main__':
-    # Set up logging to see override messages during tests
-    logging.basicConfig(level=logging.INFO)
-    
     unittest.main()

@@ -114,6 +114,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   obsolete `Palette.get_override_info()` method is removed because a merged
   palette no longer contains the replaced records needed to reconstruct events.
 
+- **Deterministic filament and maker-synonym user data** — require canonical
+  stable filament IDs, replace complete filament records only by ID while
+  preserving list position, append new IDs in user order, and allow duplicate
+  colors as independent products. Add public ID generation/validation helpers,
+  `filament --generate-id`, structured filament and synonym load reports, and
+  the read-only global `--validate-user-files` command. The override report now
+  consumes loader events directly; the logging capture and obsolete
+  `FilamentPalette.get_override_info()` reconstruction are removed.
+
 - **Separated generated integrity hashes** — move protected core-data, system
   palette, matrix, and color-constant digests out of `constants.py` into the
   private generated `_integrity_hashes.py` manifest. The updater now discovers

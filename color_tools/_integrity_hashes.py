@@ -9,7 +9,7 @@ from __future__ import annotations
 
 CORE_DATA_HASHES: dict[str, str] = {
     "colors.json": "ca33f6055298d37c1ad469656d3ba0f2f15d506bbc6149cd42e696fc5c3a3d00",
-    "filaments.json": "7c2e655d33892e507cbee2d986254abf24c633d27ee32af324c243812301fd86",
+    "filaments.json": "22954d5b5df826a0344086b7e55d6827ecdebfd5505c223ba3e9c87410c833d4",
     "maker_synonyms.json": "73df3893a98fb8439e8cc127eb9cd5ee763027c346ad9f528f8290514f999fe1",
 }
 

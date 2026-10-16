@@ -26,6 +26,9 @@ OUR_DATA_DIR = Path(__file__).parent.parent / "color_tools" / "data"
 OUR_FILAMENTS_FILE = OUR_DATA_DIR / "filaments.json"
 OUR_SYNONYMS_FILE = OUR_DATA_DIR / "maker_synonyms.json"
 
+# IMPORTANT: This legacy script has its own non-canonical ID generator.
+# Update it to use color_tools.generate_filament_id before running it again.
+
 
 def extract_finish_from_name(color_name):
     """

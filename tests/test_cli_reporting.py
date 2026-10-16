@@ -22,6 +22,7 @@ from color_tools.cli_commands.reporting import (
     generate_user_hashes,
     show_override_report,
     handle_verification_flags,
+    validate_user_files,
 )
 from color_tools.constants import ColorConstants
 from color_tools._integrity_hashes import MATRICES_EXPECTED_HASH
@@ -110,6 +111,7 @@ class TestHandleVerificationFlags(unittest.TestCase):
             verify_matrices=False,
             verify_user_data=False,
             generate_user_hashes=False,
+            validate_user_files=False,
             check_overrides=False,
             json=None,
             command=None,
@@ -300,6 +302,85 @@ class TestHandleVerificationFlags(unittest.TestCase):
             with self.assertRaises(SystemExit) as ctx:
                 handle_verification_flags(args)
         self.assertEqual(ctx.exception.code, 0)
+
+    def test_validate_user_files_uses_exit_status(self) -> None:
+        """The global validation flag exits according to semantic validation."""
+        args = self._make_args(validate_user_files=True)
+        with (
+            patch(
+                "color_tools.cli_commands.reporting.validate_user_files",
+                return_value=False,
+            ),
+            self.assertRaises(SystemExit) as context,
+        ):
+            handle_verification_flags(args)
+        self.assertEqual(context.exception.code, 1)
+
+
+class TestValidateUserFiles(unittest.TestCase):
+    """Tests for semantic validation of all three user data files."""
+
+    def _write_core_files(self, data_dir: Path) -> None:
+        (data_dir / "colors.json").write_text(
+            json.dumps([{
+                "name": "Red", "hex": "#FF0000", "rgb": [255, 0, 0],
+                "hsl": [0.0, 100.0, 50.0], "lab": [53.24, 80.09, 67.2],
+                "lch": [53.24, 104.55, 40.0],
+            }]),
+            encoding="utf-8",
+        )
+        (data_dir / "filaments.json").write_text(
+            json.dumps([{
+                "id": "maker-pla-red", "maker": "Maker", "type": "PLA",
+                "finish": None, "color": "Red", "hex": "#FF0000",
+            }]),
+            encoding="utf-8",
+        )
+        (data_dir / "maker_synonyms.json").write_text(
+            json.dumps({"Maker": ["M"]}), encoding="utf-8"
+        )
+
+    def test_validates_all_active_files(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_core_files(data_dir)
+            user_dir = data_dir / "user"
+            user_dir.mkdir()
+            (user_dir / "user-colors.json").write_text(
+                json.dumps([{"name": "Blue", "hex": "#0000FF"}]), encoding="utf-8"
+            )
+            (user_dir / "user-filaments.json").write_text(
+                json.dumps([{
+                    "id": "maker-pla-blue", "maker": "Maker", "type": "PLA",
+                    "finish": None, "color": "Blue", "hex": "#0000FF",
+                }]),
+                encoding="utf-8",
+            )
+            (user_dir / "user-synonyms.json").write_text(
+                json.dumps({"Maker": ["M", "Brand"]}), encoding="utf-8"
+            )
+            output = io.StringIO()
+            with patch("sys.stdout", output):
+                result = validate_user_files(str(data_dir))
+
+        self.assertTrue(result)
+        self.assertEqual(output.getvalue().count(": valid"), 3)
+
+    def test_accumulates_errors_and_skips_missing_files(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_core_files(data_dir)
+            user_dir = data_dir / "user"
+            user_dir.mkdir()
+            (user_dir / "user-colors.json").write_text("{}", encoding="utf-8")
+            error = io.StringIO()
+            output = io.StringIO()
+            with patch("sys.stdout", output), patch("sys.stderr", error):
+                result = validate_user_files(str(data_dir))
+
+        self.assertFalse(result)
+        self.assertIn("user-colors.json", error.getvalue())
+        self.assertEqual(output.getvalue().count("Skipped"), 2)
 
 
 class TestGenerateUserHashes(unittest.TestCase):

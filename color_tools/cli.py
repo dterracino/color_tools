@@ -155,6 +155,11 @@ Examples:
         help="Generate .sha256 files for user data files and user palettes, then exit"
     )
     parser.add_argument(
+        "--validate-user-files",
+        action="store_true",
+        help="Validate user-colors.json, user-filaments.json, and user-synonyms.json, then exit",
+    )
+    parser.add_argument(
         "--check-overrides",
         action="store_true",
         help="Show report of user overrides (user/user-colors.json, user/user-filaments.json) and exit"
@@ -339,6 +344,11 @@ Examples:
         description="Search and query 3D printing filament database"
     )
     
+    filament_parser.add_argument(
+        "--generate-id",
+        action="store_true",
+        help="Generate a stable filament ID from one maker, type, optional finish, and color",
+    )
     filament_parser.add_argument(
         "--nearest", 
         action="store_true", 

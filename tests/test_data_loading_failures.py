@@ -8,7 +8,7 @@ from tempfile import TemporaryDirectory
 from typing import Callable
 import unittest
 
-from color_tools.filament_palette import load_filaments
+from color_tools.filament_palette import load_filaments, load_maker_synonyms
 from color_tools.palette import load_colors
 
 
@@ -228,7 +228,7 @@ class TestDataLoadingFailures(unittest.TestCase):
 
     def test_filament_missing_each_required_field(self) -> None:
         """Every required filament field produces indexed source context."""
-        for field in ("maker", "type", "color", "hex"):
+        for field in ("id", "maker", "type", "color", "hex"):
             with self.subTest(field=field), TemporaryDirectory() as directory:
                 record = _valid_filament()
                 record.pop(field)
@@ -237,7 +237,7 @@ class TestDataLoadingFailures(unittest.TestCase):
                 self._assert_unchanged_after_failure(
                     path,
                     load_filaments,
-                    rf"Missing required key ['\"]{field}['\"].*index 0.*filaments.json",
+                    rf"index 0.*filaments.json.*missing required field\(s\): {field}",
                 )
 
     def test_filament_invalid_hex_has_indexed_source_context(self) -> None:
@@ -265,6 +265,74 @@ class TestDataLoadingFailures(unittest.TestCase):
                 load_filaments,
                 r"hex2 was removed; put all components in hex",
             )
+
+    def test_user_filament_unknown_fields_are_rejected(self) -> None:
+        """User filaments use the same focused schema as system records."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_json(data_dir / "filaments.json", [_valid_filament()])
+            user_path = data_dir / "user" / "user-filaments.json"
+            record = _valid_filament()
+            record["note"] = "not supported"
+            self._write_json(user_path, [record])
+            self._assert_unchanged_after_failure(
+                user_path,
+                lambda _path: load_filaments(data_dir),
+                r"unknown field\(s\): note",
+            )
+
+    def test_duplicate_user_filament_ids_are_rejected(self) -> None:
+        """One user file cannot define the same stable ID twice."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_json(data_dir / "filaments.json", [_valid_filament()])
+            user_path = data_dir / "user" / "user-filaments.json"
+            first = _valid_filament()
+            first["id"] = "custom-pla-blue"
+            second = dict(first)
+            second["hex"] = "#0000FF"
+            self._write_json(user_path, [first, second])
+            self._assert_unchanged_after_failure(
+                user_path,
+                lambda _path: load_filaments(data_dir),
+                "duplicate id 'custom-pla-blue'",
+            )
+
+    def test_user_filament_override_preserves_position_and_allows_shared_rgb(self) -> None:
+        """IDs replace records in place while unrelated equal colors remain valid."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            first = _valid_filament()
+            second = _valid_filament()
+            second.update({"id": "test-pla-blue", "color": "Blue", "hex": "#0000FF"})
+            self._write_json(data_dir / "filaments.json", [first, second])
+            replacement = dict(first)
+            replacement.update({"maker": "User", "color": "Replacement", "hex": "#0000FF"})
+            addition = dict(first)
+            addition.update({"id": "user-pla-blue", "maker": "User", "color": "Also Blue", "hex": "#0000FF"})
+            self._write_json(data_dir / "user" / "user-filaments.json", [replacement, addition])
+
+            records, report = load_filaments(data_dir, include_report=True)
+
+            self.assertEqual([record.id for record in records], ["test-pla-red", "test-pla-blue", "user-pla-blue"])
+            self.assertEqual(records[0].maker, "User")
+            self.assertEqual(report.filaments_overridden_by_id, 1)
+            self.assertEqual(report.unique_user_filaments_loaded, 1)
+            self.assertEqual([record.rgb for record in records], [(0, 0, 255)] * 3)
+
+    def test_synonym_values_are_strictly_validated(self) -> None:
+        """Maker synonym files reject duplicate and non-string aliases."""
+        for values in (["Alias", "alias"], ["Alias", 3]):
+            with self.subTest(values=values), TemporaryDirectory() as directory:
+                data_dir = Path(directory)
+                self._write_json(data_dir / "maker_synonyms.json", {"Maker": ["M"]})
+                user_path = data_dir / "user" / "user-synonyms.json"
+                self._write_json(user_path, {"Maker": values})
+                self._assert_unchanged_after_failure(
+                    user_path,
+                    lambda _path: load_maker_synonyms(data_dir),
+                    "user-synonyms.json",
+                )
 
     def test_successful_loads_do_not_rewrite_source_files(self) -> None:
         """Successful color and filament loads are read-only."""

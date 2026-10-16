@@ -7,8 +7,6 @@ Functions for generating override reports and managing hash files for user data 
 from __future__ import annotations
 import argparse
 import sys
-import logging
-from logging import LogRecord
 from pathlib import Path
 
 from ..constants import ColorConstants
@@ -20,67 +18,41 @@ from ..palette import (
     load_palette,
 )
 from ..color_load_report import ColorLoadReport
+from ..filament_load_report import FilamentLoadReport
+from ..synonym_load_report import SynonymLoadReport
 from ..filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
-
-
-class _OverrideCaptureHandler(logging.Handler):
-    """Collect formatted override messages for one report invocation."""
-
-    def __init__(self, messages: list[str]) -> None:
-        super().__init__()
-        self._messages = messages
-
-    def emit(self, record: LogRecord) -> None:
-        """Append one formatted log record to the report message list."""
-        self._messages.append(self.format(record))
 
 
 def show_override_report(json_dir: str | None = None) -> None:
     """
     Show detailed report of user overrides and exit.
     
-    Analyzes user-colors.json and user-filaments.json to show what core data
-    is being overridden, including conflicts by name and RGB values.
+    Analyze all three user data files using the same merge reports returned by
+    the public loaders.
     
     Args:
         json_dir: Optional directory containing JSON files. If None, uses package default.
     """
-    log_messages: list[str] = []
-    handler = _OverrideCaptureHandler(log_messages)
-    loggers = (logging.getLogger("color_tools.filament_palette"),)
-    original_levels = tuple(logger.level for logger in loggers)
-    for logger in loggers:
-        logger.setLevel(logging.INFO)
-        logger.addHandler(handler)
-    
     print("User Override Report")
     print("=" * 50)
     
     try:
         if json_dir is None:
             colors, color_report = load_colors(include_report=True)
-            palette = Palette(colors)
-            filament_palette = FilamentPalette.load_default()
+            filaments, filament_report = load_filaments(include_report=True)
+            synonyms, synonym_report = load_maker_synonyms(include_report=True)
         else:
             colors, color_report = load_colors(json_dir, include_report=True)
-            palette = Palette(colors)
-            filaments = load_filaments(json_dir)
-            synonyms = load_maker_synonyms(json_dir)
-            filament_palette = FilamentPalette(filaments, synonyms)
+            filaments, filament_report = load_filaments(json_dir, include_report=True)
+            synonyms, synonym_report = load_maker_synonyms(json_dir, include_report=True)
+        palette = Palette(colors)
+        filament_palette = FilamentPalette(filaments, synonyms)
         
         _print_color_load_report(color_report)
+        _print_filament_load_report(filament_report)
+        _print_synonym_load_report(synonym_report)
 
-        # Filament and synonym reporting still uses their existing log events.
-        if log_messages:
-            print("\nFilament and Synonym Override Details:")
-            for msg in log_messages:
-                if "User filaments override" in msg:
-                    print(f"  Filaments: {msg}")
-                elif "User synonyms override" in msg:
-                    print(f"  Synonyms: {msg}")
-                elif "User synonyms extend" in msg:
-                    print(f"  Synonyms: {msg}")
-        elif color_report.colors_overridden_by_name == 0:
+        if not color_report.events and not filament_report.events and not synonym_report.events:
             print("\nNo user overrides detected.")
         
         # Count sources
@@ -108,13 +80,9 @@ def show_override_report(json_dir: str | None = None) -> None:
         for source, count in sorted(filament_sources.items()):
             print(f"    {source}: {count} records")
         
-    except Exception as error:
+    except (OSError, ValueError) as error:
         print(f"Error loading override report data: {error}", file=sys.stderr)
         sys.exit(1)
-    finally:
-        for logger, original_level in zip(loggers, original_levels):
-            logger.removeHandler(handler)
-            logger.setLevel(original_level)
 
 
 def _print_color_load_report(report: ColorLoadReport) -> None:
@@ -141,6 +109,43 @@ def _print_color_load_report(report: ColorLoadReport) -> None:
             f"  Overrode {replaced.name} ({replaced.hex}, {replaced.source}) "
             f"with {event.record.name} ({event.record.hex}, {event.record.source})"
         )
+
+
+def _print_filament_load_report(report: FilamentLoadReport) -> None:
+    """Print filament counts and ID-based user changes."""
+    print("\nFilament Loading:")
+    print(f"  System filaments loaded: {report.system_filaments_loaded}")
+    print(f"  User filaments loaded: {report.user_filaments_loaded}")
+    print(f"  Filaments overridden by ID: {report.filaments_overridden_by_id}")
+    print(f"  Unique user filaments loaded: {report.unique_user_filaments_loaded}")
+    print(f"  Total filaments available: {report.total_filaments_available}")
+    if report.events:
+        print("\nFilament Changes:")
+    for event in report.events:
+        if event.action == "added":
+            print(f"  Added {event.record.id}: {event.record}")
+        else:
+            replaced = event.replaced_record
+            if replaced is None:
+                raise RuntimeError("An overridden filament event requires a replaced record")
+            print(f"  Overrode {event.record.id} ({replaced.source} -> {event.record.source})")
+
+
+def _print_synonym_load_report(report: SynonymLoadReport) -> None:
+    """Print maker-synonym counts and merge changes."""
+    print("\nMaker Synonym Loading:")
+    print(f"  System makers loaded: {report.system_makers_loaded}")
+    print(f"  User makers loaded: {report.user_makers_loaded}")
+    print(f"  Makers added: {report.makers_added}")
+    print(f"  Makers replaced: {report.makers_replaced}")
+    print(f"  Makers extended: {report.makers_extended}")
+    print(f"  Makers unchanged: {report.makers_unchanged}")
+    print(f"  Total makers available: {report.total_makers_available}")
+    changed = [event for event in report.events if event.action != "unchanged"]
+    if changed:
+        print("\nMaker Synonym Changes:")
+    for event in changed:
+        print(f"  {event.action.title()} {event.maker}: {list(event.effective_synonyms)}")
 
 
 def _user_data_files(data_dir: Path) -> list[tuple[Path, str]]:
@@ -283,6 +288,53 @@ def get_available_palettes(json_path: Path | str | None = None) -> list[tuple[st
     return palette_data
 
 
+def validate_user_files(json_dir: str | None = None) -> bool:
+    """Validate all active user data files through their production loaders."""
+    data_dir = Path(json_dir) if json_dir else Path(__file__).parent.parent / "data"
+    if not data_dir.exists():
+        print(f"Error: Data directory does not exist: {data_dir}", file=sys.stderr)
+        return False
+    if not data_dir.is_dir():
+        print(f"Error: --json must be a directory: {data_dir}", file=sys.stderr)
+        return False
+
+    checks = (
+        (
+            data_dir / ColorConstants.USER_COLORS_JSON_FILENAME,
+            lambda: load_colors(data_dir, include_report=True),
+        ),
+        (
+            data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME,
+            lambda: load_filaments(data_dir, include_report=True),
+        ),
+        (
+            data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME,
+            lambda: load_maker_synonyms(data_dir, include_report=True),
+        ),
+    )
+    valid = True
+    found = 0
+    print("Validating user data files...")
+    print("=" * 50)
+    for path, check in checks:
+        if not path.exists():
+            print(f"- Skipped {path.name}: not found")
+            continue
+        found += 1
+        try:
+            check()
+        except (OSError, ValueError) as error:
+            valid = False
+            print(f"✗ {path.name}: {error}", file=sys.stderr)
+        else:
+            print(f"✓ {path.name}: valid")
+    if valid:
+        print(f"\n✓ User data validation passed ({found} active file(s))")
+    else:
+        print("\n✗ User data validation failed", file=sys.stderr)
+    return valid
+
+
 def handle_verification_flags(args: argparse.Namespace) -> bool:
     """
     Handle all verification flags and early-exit conditions.
@@ -306,6 +358,9 @@ def handle_verification_flags(args: argparse.Namespace) -> bool:
     if args.generate_user_hashes:
         generate_user_hashes(args.json)
         sys.exit(0)
+
+    if getattr(args, "validate_user_files", False):
+        sys.exit(0 if validate_user_files(args.json) else 1)
     
     # Verify constants integrity if requested
     if args.verify_constants:

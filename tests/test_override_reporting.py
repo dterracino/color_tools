@@ -3,15 +3,15 @@
 from __future__ import annotations
 
 import io
-import logging
 import unittest
-from collections.abc import Callable
 from unittest.mock import patch
 
 from color_tools.cli_commands.reporting import show_override_report
 from color_tools.color_load_report import ColorLoadEvent, ColorLoadReport
 from color_tools.filament_palette import FilamentRecord
+from color_tools.filament_load_report import FilamentLoadEvent, FilamentLoadReport
 from color_tools.palette import ColorRecord
+from color_tools.synonym_load_report import SynonymLoadEvent, SynonymLoadReport
 
 
 def _color(name: str, rgb: tuple[int, int, int], source: str) -> ColorRecord:
@@ -33,31 +33,29 @@ def _filament(identifier: str, source: str) -> FilamentRecord:
 
 
 class TestOverrideReporting(unittest.TestCase):
-    """Verify override categories, summaries, failures, and logger cleanup."""
+    """Verify structured override categories, summaries, and failures."""
 
     def _run_with_loaders(
         self,
         *,
-        color_loader: Callable[
-            [str], tuple[list[ColorRecord], ColorLoadReport]
-        ],
-        filament_loader: Callable[[str], list[FilamentRecord]],
-        synonym_loader: Callable[[str], dict[str, list[str]]],
+        color_result: tuple[list[ColorRecord], ColorLoadReport],
+        filament_result: tuple[list[FilamentRecord], FilamentLoadReport],
+        synonym_result: tuple[dict[str, list[str]], SynonymLoadReport],
     ) -> tuple[str, str]:
         stdout = io.StringIO()
         stderr = io.StringIO()
         with (
             patch(
                 "color_tools.cli_commands.reporting.load_colors",
-                return_value=color_loader("test-data"),
+                return_value=color_result,
             ),
             patch(
                 "color_tools.cli_commands.reporting.load_filaments",
-                side_effect=filament_loader,
+                return_value=filament_result,
             ),
             patch(
                 "color_tools.cli_commands.reporting.load_maker_synonyms",
-                side_effect=synonym_loader,
+                return_value=synonym_result,
             ),
             patch("sys.stdout", stdout),
             patch("sys.stderr", stderr),
@@ -65,59 +63,43 @@ class TestOverrideReporting(unittest.TestCase):
             show_override_report("test-data")
         return stdout.getvalue(), stderr.getvalue()
 
-    def test_every_override_message_is_captured_and_labeled(self) -> None:
-        def _load_colors(
-            _path: str,
-        ) -> tuple[list[ColorRecord], ColorLoadReport]:
-            original = _color("red", (255, 0, 0), "colors.json")
-            replacement = _color("red", (220, 20, 60), "user-colors.json")
-            return [replacement], ColorLoadReport(
-                system_colors_loaded=1,
-                user_colors_loaded=1,
-                total_colors_available=1,
-                events=(ColorLoadEvent("overridden", replacement, original),),
-            )
-
-        def _load_filaments(_path: str) -> list[FilamentRecord]:
-            logger = logging.getLogger("color_tools.filament_palette")
-            logger.info("User filaments override 1 core filaments exactly: exact")
-            logger.info("User filaments override 1 core filaments by RGB: rgb")
-            return [_filament("red", "user-filaments.json")]
-
-        def _load_synonyms(_path: str) -> dict[str, list[str]]:
-            logger = logging.getLogger("color_tools.filament_palette")
-            logger.info("User synonyms override 1 core makers: replacement")
-            logger.info("User synonyms extend 1 core makers: extension")
-            return {}
+    def test_every_structured_change_is_labeled(self) -> None:
+        original_color = _color("red", (255, 0, 0), "colors.json")
+        replacement_color = _color("red", (220, 20, 60), "user-colors.json")
+        original_filament = _filament("red", "filaments.json")
+        replacement_filament = _filament("red", "user-filaments.json")
 
         stdout, stderr = self._run_with_loaders(
-            color_loader=_load_colors,
-            filament_loader=_load_filaments,
-            synonym_loader=_load_synonyms,
+            color_result=([replacement_color], ColorLoadReport(
+                1, 1, 1,
+                (ColorLoadEvent("overridden", replacement_color, original_color),),
+            )),
+            filament_result=([replacement_filament], FilamentLoadReport(
+                1, 1, 1,
+                (FilamentLoadEvent("overridden", replacement_filament, original_filament),),
+            )),
+            synonym_result=({"Maker": ["Alias"]}, SynonymLoadReport(
+                1, 1, 1,
+                (SynonymLoadEvent("replaced", "Maker", ("Alias",), ("Old",), ("Alias",)),),
+            )),
         )
 
         self.assertEqual(stderr, "")
         self.assertIn("Colors overridden by name: 1", stdout)
         self.assertIn("Overrode red (#FF0000, colors.json)", stdout)
         self.assertIn(
-            "Filaments: User filaments override 1 core filaments exactly",
-            stdout,
+            "Overrode red (filaments.json -> user-filaments.json)", stdout,
         )
-        self.assertIn(
-            "Filaments: User filaments override 1 core filaments by RGB",
-            stdout,
-        )
-        self.assertIn("Synonyms: User synonyms override 1 core makers", stdout)
-        self.assertIn("Synonyms: User synonyms extend 1 core makers", stdout)
+        self.assertIn("Replaced Maker: ['Alias']", stdout)
 
     def test_report_states_when_no_overrides_are_emitted(self) -> None:
         stdout, stderr = self._run_with_loaders(
-            color_loader=lambda _path: (
+            color_result=(
                 [_color("red", (255, 0, 0), "colors.json")],
                 ColorLoadReport(1, 0, 1),
             ),
-            filament_loader=lambda _path: [_filament("red", "filaments.json")],
-            synonym_loader=lambda _path: {},
+            filament_result=([_filament("red", "filaments.json")], FilamentLoadReport(1, 0, 1)),
+            synonym_result=({}, SynonymLoadReport(0, 0, 0)),
         )
 
         self.assertEqual(stderr, "")
@@ -126,7 +108,7 @@ class TestOverrideReporting(unittest.TestCase):
 
     def test_summary_counts_color_and_filament_sources(self) -> None:
         stdout, _stderr = self._run_with_loaders(
-            color_loader=lambda _path: (
+            color_result=(
                 [
                     _color("red", (255, 0, 0), "colors.json"),
                     _color("green", (0, 255, 0), "colors.json"),
@@ -134,12 +116,15 @@ class TestOverrideReporting(unittest.TestCase):
                 ],
                 ColorLoadReport(2, 1, 3),
             ),
-            filament_loader=lambda _path: [
-                _filament("first", "filaments.json"),
-                _filament("second", "user-filaments.json"),
-                _filament("third", "user-filaments.json"),
-            ],
-            synonym_loader=lambda _path: {},
+            filament_result=(
+                [
+                    _filament("first", "filaments.json"),
+                    _filament("second", "user-filaments.json"),
+                    _filament("third", "user-filaments.json"),
+                ],
+                FilamentLoadReport(1, 2, 3),
+            ),
+            synonym_result=({}, SynonymLoadReport(0, 0, 0)),
         )
 
         self.assertIn("Total colors: 3", stdout)
@@ -169,31 +154,17 @@ class TestOverrideReporting(unittest.TestCase):
             "Error loading override report data: invalid user colors\n",
         )
 
-    def test_logger_levels_and_handlers_are_restored_after_failure(self) -> None:
-        filament_logger = logging.getLogger("color_tools.filament_palette")
-        sentinel = logging.NullHandler()
-        original_filament_level = filament_logger.level
-        filament_logger.setLevel(logging.ERROR)
-        filament_logger.addHandler(sentinel)
-
-        try:
-            before_filament_handlers = list(filament_logger.handlers)
-            with (
-                patch(
-                    "color_tools.cli_commands.reporting.load_colors",
-                    side_effect=OSError("unreadable"),
-                ),
-                patch("sys.stdout", io.StringIO()),
-                patch("sys.stderr", io.StringIO()),
-                self.assertRaises(SystemExit),
-            ):
-                show_override_report("test-data")
-
-            self.assertEqual(filament_logger.level, logging.ERROR)
-            self.assertEqual(filament_logger.handlers, before_filament_handlers)
-        finally:
-            filament_logger.removeHandler(sentinel)
-            filament_logger.setLevel(original_filament_level)
+    def test_unexpected_programming_errors_are_not_hidden(self) -> None:
+        with (
+            patch(
+                "color_tools.cli_commands.reporting.load_colors",
+                side_effect=RuntimeError("bug"),
+            ),
+            patch("sys.stdout", io.StringIO()),
+            patch("sys.stderr", io.StringIO()),
+            self.assertRaisesRegex(RuntimeError, "bug"),
+        ):
+            show_override_report("test-data")
 
 
 if __name__ == "__main__":

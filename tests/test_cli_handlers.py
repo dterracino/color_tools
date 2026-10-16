@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import io
 import json
+import tempfile
 import unittest
 from argparse import Namespace
 from collections.abc import Iterable
@@ -694,7 +695,7 @@ class TestHandleFilamentCommand(unittest.TestCase):
     def test_mode_override_restores_after_exit(self) -> None:
         from color_tools import config_context, get_config
 
-        def fail_load() -> None:
+        def fail_load(_json_path: object = None) -> None:
             self.assertEqual(get_config().multi_color_mode, "last")
             raise RuntimeError("stop")
 
@@ -707,7 +708,7 @@ class TestHandleFilamentCommand(unittest.TestCase):
                 with self.assertRaisesRegex(RuntimeError, "stop"):
                     from color_tools.cli_commands.handlers.filament import handle_filament_command
                     handle_filament_command(self._make_args(multi_color_mode="last"))
-                load.assert_called_once_with()
+                load.assert_called_once_with(None)
             self.assertIs(get_config(), original)
             self._run_capture(self._make_args(list_makers=True, multi_color_mode="last"))
             self.assertIs(get_config(), original)
@@ -747,10 +748,61 @@ class TestHandleFilamentCommand(unittest.TestCase):
             all_filaments=True,   # Always search all to avoid owned-file side effects
             multi_color_mode='first',
             manage=False,
+            generate_id=False,
             list_owned=False, add_owned=None, remove_owned=None,
         )
         defaults.update(kwargs)
         return Namespace(**defaults)
+
+    def test_generate_id_reports_available_value(self) -> None:
+        """ID generation uses the canonical slug and does not write data."""
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            (data_dir / "filaments.json").write_text("[]", encoding="utf-8")
+            args = self._make_args(
+                generate_id=True,
+                maker=["Bambu Lab"],
+                type=["PLA+"],
+                finish=["Silk"],
+                color="Jade White",
+                all_filaments=False,
+            )
+            code, output = self._run_capture(args, data_dir)
+
+        self.assertEqual(code, 0)
+        self.assertIn("bambu-lab-pla-plus-silk-jade-white", output)
+        self.assertIn("Status: available", output)
+
+    def test_generate_id_reports_override_and_free_alternative(self) -> None:
+        """A generated existing ID is identified as an override target."""
+        args = self._make_args(
+            generate_id=True,
+            maker=["Bambu Lab"],
+            type=["PLA"],
+            finish=None,
+            color="Basic Jade White",
+            all_filaments=False,
+        )
+        code, output = self._run_capture(args)
+        self.assertEqual(code, 0)
+        self.assertIn("Status: overrides existing record", output)
+        self.assertIn("Alternative:", output)
+
+    def test_generate_id_requires_single_identity_values(self) -> None:
+        """Generator mode rejects missing or ambiguous identity fields."""
+        error = io.StringIO()
+        with patch("sys.stderr", error):
+            code, _output = self._run_capture(
+                self._make_args(
+                    generate_id=True,
+                    maker=["One", "Two"],
+                    type=["PLA"],
+                    color="Red",
+                    all_filaments=False,
+                )
+            )
+        self.assertEqual(code, 2)
+        self.assertIn("--maker must contain exactly one value", error.getvalue())
 
     def test_list_makers_exits_0(self) -> None:
         """--list-makers exits 0."""

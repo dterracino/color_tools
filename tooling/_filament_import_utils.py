@@ -6,11 +6,10 @@ from collections.abc import Sequence
 from dataclasses import dataclass, field
 import json
 from pathlib import Path
-import re
 import tempfile
 from typing import cast, Generic, Protocol, TypeVar
 
-from color_tools import parse_hex_colors, rgb_to_hex
+from color_tools import generate_filament_id, parse_hex_colors, rgb_to_hex
 
 
 class _AdditiveCandidate(Protocol):
@@ -80,12 +79,6 @@ def _identity(
     )
 
 
-def _slugify(value: str) -> str:
-    """Convert one ID component to the database's lowercase slug style."""
-    value = value.casefold().replace("+", " plus ")
-    return re.sub(r"[^a-z0-9]+", "-", value).strip("-")
-
-
 def _filament_id(
     maker: str,
     type_name: str,
@@ -93,8 +86,7 @@ def _filament_id(
     color: str,
 ) -> str:
     """Build a stable filament ID from its product identity."""
-    parts = (maker, type_name, finish, color)
-    return "-".join(_slugify(part) for part in parts if part)
+    return generate_filament_id(maker, type_name, finish, color)
 
 
 def _load_database(path: Path) -> list[dict[str, object]]:

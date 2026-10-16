@@ -7,7 +7,8 @@ from pathlib import Path
 from ..utils import get_rgb_from_args
 from ...config import config_context
 from ...filament_filter_criteria import FilamentFilterCriteria
-from ...filament_palette import FilamentPalette
+from ...filament_id import generate_filament_id, next_available_filament_id
+from ...filament_palette import FilamentPalette, load_filaments
 from ...export import export_filaments, list_export_formats
 
 
@@ -30,6 +31,9 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
         1: Filament not found or error
         2: Invalid input
     """
+    if getattr(args, "generate_id", False):
+        _handle_generate_id(args, json_path)
+
     has_exclusions = any(
         value is not None
         for value in (
@@ -82,7 +86,7 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
         return  # run_interactive_manager handles exit
     
     # Load filament palette with maker synonyms and owned filaments
-    filament_palette = FilamentPalette.load_default()
+    filament_palette = FilamentPalette.load_default(json_path)
     
     # Handle --list-owned
     if hasattr(args, 'list_owned') and args.list_owned:
@@ -288,3 +292,72 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
     # If we get here, no valid filament operation was specified
     print("Error: No operation specified. Use --list-makers, --list-types, --list-finishes, --nearest, or filters", file=sys.stderr)
     sys.exit(2)
+
+
+def _one_value(values: list[str] | None, option: str, *, required: bool) -> str | None:
+    """Read exactly one value from an argparse multi-value option."""
+    if not values:
+        if required:
+            raise ValueError(f"--generate-id requires {option}")
+        return None
+    if len(values) != 1:
+        raise ValueError(f"{option} must contain exactly one value with --generate-id")
+    return values[0]
+
+
+def _handle_generate_id(args: Namespace, json_path: "Path | str | None") -> None:
+    """Generate an ID, report collisions, and exit without changing data."""
+    conflicting_operations = any(
+        (
+            args.nearest,
+            args.value is not None,
+            args.hex is not None,
+            args.count,
+            args.limit is not None,
+            args.list_makers,
+            args.list_types,
+            args.list_finishes,
+            args.list_export_formats,
+            args.export is not None,
+            getattr(args, "has_td", False),
+            args.exclude_maker is not None,
+            args.exclude_type is not None,
+            args.exclude_finish is not None,
+            args.exclude_color is not None,
+            getattr(args, "all_filaments", False),
+            getattr(args, "list_owned", False),
+            getattr(args, "add_owned", None) is not None,
+            getattr(args, "remove_owned", None) is not None,
+            getattr(args, "manage", False),
+            getattr(args, "gui", False),
+        )
+    )
+    if conflicting_operations:
+        print("Error: --generate-id cannot be combined with another filament operation", file=sys.stderr)
+        sys.exit(2)
+    try:
+        maker = _one_value(args.maker, "--maker", required=True)
+        type_name = _one_value(args.type, "--type", required=True)
+        finish = _one_value(args.finish, "--finish", required=False)
+        if not args.color:
+            raise ValueError("--generate-id requires --color")
+        if maker is None or type_name is None:
+            raise RuntimeError("required generator values were not returned")
+        generated = generate_filament_id(maker, type_name, finish, args.color)
+        records = load_filaments(json_path)
+    except (OSError, ValueError) as error:
+        print(f"Error: {error}", file=sys.stderr)
+        sys.exit(2)
+
+    existing = next((record for record in records if record.id == generated), None)
+    print(generated)
+    if existing is None:
+        print("Status: available")
+    else:
+        print(f"Status: overrides existing record from {existing.source}")
+        suggestion = next_available_filament_id(
+            generated,
+            (record.id for record in records),
+        )
+        print(f"Alternative: {suggestion}")
+    sys.exit(0)

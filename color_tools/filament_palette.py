@@ -17,10 +17,11 @@ from __future__ import annotations
 
 import json
 import logging
+import math
 from dataclasses import dataclass, field
 from functools import cmp_to_key
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Literal, Optional, Set, Tuple, TypedDict, Union, cast
+from typing import Callable, Dict, List, Literal, Optional, Set, Tuple, Union, cast, overload
 
 from color_tools.constants import ColorConstants
 from color_tools.conversions import rgb_to_lab, rgb_to_hex, lab_to_lch
@@ -29,6 +30,9 @@ from color_tools.distance import delta_e_2000, delta_e_94, delta_e_76, delta_e_c
 from color_tools.config import get_config
 from color_tools._palette_utils import compare_distance_matches, ensure_list
 from color_tools.filament_filter_criteria import FilamentFilterCriteria
+from color_tools.filament_id import validate_filament_id
+from color_tools.filament_load_report import FilamentLoadEvent, FilamentLoadReport
+from color_tools.synonym_load_report import SynonymLoadEvent, SynonymLoadReport
 from color_tools._record_swatches import (
     render_record_swatch as _render_record_swatch,
     save_record_swatch as _save_record_swatch,
@@ -39,24 +43,6 @@ logger: logging.Logger = logging.getLogger(__name__)
 LabColor = tuple[float, float, float]
 DistanceFunction = Callable[[LabColor, LabColor], float]
 _FilamentMatch = tuple["FilamentRecord", float]
-
-
-class _RequiredFilamentData(TypedDict):
-    """Required fields in one filament JSON record."""
-
-    maker: str
-    type: str
-    color: str
-    hex: str
-
-
-class _FilamentData(_RequiredFilamentData, total=False):
-    """Validated shape of one filament record loaded from JSON."""
-
-    id: str
-    finish: str | None
-    td_value: float | None
-    other_names: list[str] | None
 
 
 @dataclass(frozen=True)
@@ -73,11 +59,11 @@ class FilamentRecord:
     
     The `source` field tracks which JSON file this filament came from
     ('filaments.json' for core data, 'user-filaments.json' for user additions).
-    When there are conflicts (e.g., same RGB from multiple sources), user data
-    takes priority.
+    User records replace system records only when their stable IDs match.
+    Different filament records may share an RGB value.
     
     Args:
-        id: Unique identifier for this filament (e.g., "bambu-lab_pla-matte_jet-black")
+        id: Unique identifier for this filament (e.g., "bambu-lab-pla-matte-jet-black")
         maker: Manufacturer name (e.g., "Bambu Lab")
         type: Material type (e.g., "PLA", "PETG", "ABS")
         finish: Surface finish (e.g., "Matte", "Glossy", "Silk"). Optional.
@@ -180,240 +166,310 @@ class FilamentRecord:
         return f"{self.maker} {self.type}{finish_str} - {self.color} ({self.hex})"
 
 
-def _parse_filament_records(
-    data: list[_FilamentData],
-    source_file: str = "JSON data",
-) -> List[FilamentRecord]:
-    """
-    Parse a list of filament data dictionaries into FilamentRecord objects.
-    
-    This is a helper function used by load_filaments() to avoid code duplication
-    and ensure consistent source tracking.
-    
-    Args:
-        data: List of dictionaries containing filament data
-        source_file: Name of the source file for error messages and source tracking.
-                    Should be just the filename (e.g., 'filaments.json', 'user-filaments.json')
-    
-    Returns:
-        List of FilamentRecord objects with source field set to source_file
-    
-    Raises:
-        KeyError: If required keys are missing from the filament data
-        ValueError: If filament data values are invalid
-    """
+_FILAMENT_REQUIRED_FIELDS = frozenset({"id", "maker", "type", "color", "hex"})
+_FILAMENT_OPTIONAL_FIELDS = frozenset({"finish", "td_value", "other_names"})
+
+
+def _required_record_text(record: dict[str, object], field_name: str) -> str:
+    value = record.get(field_name)
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field_name} must be a non-empty string")
+    if value != value.strip():
+        raise ValueError(f"{field_name} must not have surrounding whitespace")
+    return value
+
+
+def _optional_record_text(record: dict[str, object], field_name: str) -> str | None:
+    value = record.get(field_name)
+    if value is None:
+        return None
+    if not isinstance(value, str) or not value.strip():
+        raise ValueError(f"{field_name} must be null or a non-empty string")
+    if value != value.strip():
+        raise ValueError(f"{field_name} must not have surrounding whitespace")
+    return value
+
+
+def _optional_td_value(record: dict[str, object]) -> float | None:
+    value = record.get("td_value")
+    if value is None:
+        return None
+    if isinstance(value, bool) or not isinstance(value, (int, float)):
+        raise ValueError("td_value must be null or a non-negative finite number")
+    result = float(value)
+    if not math.isfinite(result) or result < 0.0:
+        raise ValueError("td_value must be null or a non-negative finite number")
+    return result
+
+
+def _optional_other_names(record: dict[str, object]) -> list[str] | None:
+    value = record.get("other_names")
+    if value is None:
+        return None
+    if not isinstance(value, list):
+        raise ValueError("other_names must be null or an array of non-empty strings")
+    names: list[str] = []
+    seen: set[str] = set()
+    for name in cast(list[object], value):
+        if not isinstance(name, str) or not name.strip() or name != name.strip():
+            raise ValueError("other_names must contain non-empty strings without surrounding whitespace")
+        key = name.casefold()
+        if key in seen:
+            raise ValueError(f"other_names contains duplicate value {name!r}")
+        seen.add(key)
+        names.append(name)
+    return names
+
+
+def _parse_filament_records(data: list[object], source_file: str) -> List[FilamentRecord]:
+    """Validate JSON objects and build filament records with unique IDs."""
     records: List[FilamentRecord] = []
-    
-    # Extract just the filename from path for source tracking
-    source_filename = Path(source_file).name if source_file != "JSON data" else "unknown.json"
-    
-    for i, f in enumerate(data):
+    source_filename = Path(source_file).name
+    seen_ids: set[str] = set()
+    allowed_fields = _FILAMENT_REQUIRED_FIELDS | _FILAMENT_OPTIONAL_FIELDS
+    for index, value in enumerate(data):
         try:
-            if "hex2" in f:
+            if not isinstance(value, dict):
+                raise ValueError("record must be an object")
+            record = cast(dict[str, object], value)
+            if "hex2" in record:
                 raise ValueError("hex2 was removed; put all components in hex")
-            records.append(FilamentRecord(
-                id=f.get("id", ""),  # User files may not have IDs
-                maker=f["maker"],
-                type=f["type"],
-                finish=f.get("finish"),
-                color=f["color"],
-                hex=f["hex"],
-                td_value=f.get("td_value"),
-                other_names=f.get("other_names"),
+            missing = _FILAMENT_REQUIRED_FIELDS - record.keys()
+            if missing:
+                raise ValueError(f"missing required field(s): {', '.join(sorted(missing))}")
+            unknown = record.keys() - allowed_fields
+            if unknown:
+                raise ValueError(f"unknown field(s): {', '.join(sorted(unknown))}")
+            record_id = validate_filament_id(_required_record_text(record, "id"))
+            if record_id in seen_ids:
+                raise ValueError(f"duplicate id {record_id!r}")
+            seen_ids.add(record_id)
+            parsed = FilamentRecord(
+                id=record_id,
+                maker=_required_record_text(record, "maker"),
+                type=_required_record_text(record, "type"),
+                finish=_optional_record_text(record, "finish"),
+                color=_required_record_text(record, "color"),
+                hex=_required_record_text(record, "hex"),
+                td_value=_optional_td_value(record),
+                other_names=_optional_other_names(record),
                 source=source_filename,
-            ))
-        except KeyError as e:
+            )
+        except (TypeError, ValueError) as error:
             raise ValueError(
-                f"Missing required key {e} in filament at index {i} in {source_file}"
-            ) from e
-        except (TypeError, ValueError) as e:
-            raise ValueError(
-                f"Invalid filament data at index {i} in {source_file}: {e}"
-            ) from e
-    
+                f"Invalid filament data at index {index} in {source_file}: {error}"
+            ) from error
+        records.append(parsed)
     return records
 
 
-def load_filaments(json_path: Path | str | None = None) -> List[FilamentRecord]:
-    """
-    Load filament database from JSON files (core + user additions).
-    
-    Loads filaments from both the core filaments.json file and optional 
-    user/user-filaments.json file in the data directory. Core filaments are loaded 
-    first, followed by user filaments.
-    
-    Args:
-        json_path: Path to directory containing JSON files, or path to specific
-                   filaments JSON file. If None, looks for filaments.json in 
-                   the package's data/ directory.
-    
-    Returns:
-        List of FilamentRecord objects (core filaments + user filaments)
+def _merge_user_filaments(
+    system_records: list[FilamentRecord],
+    user_records: list[FilamentRecord],
+) -> tuple[list[FilamentRecord], tuple[FilamentLoadEvent, ...]]:
+    merged = list(system_records)
+    indices = {record.id: index for index, record in enumerate(merged)}
+    events: list[FilamentLoadEvent] = []
+    for record in user_records:
+        replacement_index = indices.get(record.id)
+        if replacement_index is None:
+            indices[record.id] = len(merged)
+            merged.append(record)
+            events.append(FilamentLoadEvent("added", record))
+        else:
+            replaced = merged[replacement_index]
+            merged[replacement_index] = record
+            events.append(FilamentLoadEvent("overridden", record, replaced))
+    return merged, tuple(events)
+
+
+@overload
+def load_filaments(
+    json_path: Path | str | None = None,
+    *,
+    include_report: Literal[False] = False,
+) -> List[FilamentRecord]: ...
+
+
+@overload
+def load_filaments(
+    json_path: Path | str | None = None,
+    *,
+    include_report: Literal[True],
+) -> tuple[List[FilamentRecord], FilamentLoadReport]: ...
+
+
+def load_filaments(
+    json_path: Path | str | None = None,
+    *,
+    include_report: bool = False,
+) -> List[FilamentRecord] | tuple[List[FilamentRecord], FilamentLoadReport]:
+    """Load and merge filaments, optionally returning structured changes.
+
+    A user record with an existing ID replaces that complete system record in
+    place. A new ID appends in user-file order. Duplicate colors and product
+    descriptions are allowed; IDs alone define record identity.
     """
     if json_path is None:
-        # Default: look in package's data/ directory
         data_dir = Path(__file__).parent / "data"
-        json_path = data_dir / ColorConstants.FILAMENTS_JSON_FILENAME
+        database_path = data_dir / ColorConstants.FILAMENTS_JSON_FILENAME
     else:
-        json_path = Path(json_path)
-        # If it's a directory, append the filename
-        if json_path.is_dir():
-            data_dir = json_path
-            json_path = json_path / ColorConstants.FILAMENTS_JSON_FILENAME
+        database_path = Path(json_path)
+        if database_path.is_dir():
+            data_dir = database_path
+            database_path /= ColorConstants.FILAMENTS_JSON_FILENAME
         else:
-            data_dir = json_path.parent
-    
-    # Load core filaments
-    with open(json_path, "r", encoding="utf-8") as f:
-        data = json.load(f)
-    
-    # Data should be an array of filament objects at the root level
+            data_dir = database_path.parent
+
+    with database_path.open("r", encoding="utf-8") as file:
+        data = cast(object, json.load(file))
     if not isinstance(data, list):
-        raise ValueError(f"Expected array of filaments at root level in {json_path}")
-    
-    # Parse core filament records using helper function
-    records = _parse_filament_records(
-        cast(list[_FilamentData], data),
-        str(json_path),
-    )
-    
-    # Load optional user filaments from same directory
-    user_json_path = data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME
-    if user_json_path.exists():
-        with open(user_json_path, "r", encoding="utf-8") as f:
-            user_data = json.load(f)
-        
+        raise ValueError(f"Expected array of filaments at root level in {database_path}")
+    system_records = _parse_filament_records(cast(list[object], data), str(database_path))
+    records = system_records
+    user_records: list[FilamentRecord] = []
+    events: tuple[FilamentLoadEvent, ...] = ()
+
+    user_path = data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME
+    if user_path.exists():
+        with user_path.open("r", encoding="utf-8") as file:
+            user_data = cast(object, json.load(file))
         if not isinstance(user_data, list):
-            raise ValueError(f"Expected array of filaments at root level in {user_json_path}")
-        
-        # Parse user filament records using helper function
-        user_records = _parse_filament_records(
-            cast(list[_FilamentData], user_data),
-            str(user_json_path),
-        )
-        
-        # Detect and log overrides before merging
-        if user_records:
-            # For filaments, we consider a conflict when maker+type+color+hex all match
-            core_sigs: dict[tuple[str, str, str, str], FilamentRecord] = {}
-            for r in records:
-                sig = (r.maker, r.type, r.color, r.hex)
-                core_sigs[sig] = r
-            
-            exact_overrides: list[tuple[str, str, str]] = []
-            rgb_overrides: list[tuple[str, str, str]] = []
-            core_rgbs = {r.rgb: r for r in records}
-            
-            for user_record in user_records:
-                # Check for exact filament match (same maker+type+color+hex)
-                user_sig = (user_record.maker, user_record.type, user_record.color, user_record.hex)
-                if user_sig in core_sigs:
-                    core_record = core_sigs[user_sig]
-                    exact_overrides.append((
-                        f"{user_record.maker} {user_record.type} {user_record.color}",
-                        core_record.source,
-                        user_record.source
-                    ))
-                
-                # Check for RGB conflicts (different filaments with same RGB)
-                elif user_record.rgb in core_rgbs:
-                    core_record = core_rgbs[user_record.rgb]
-                    rgb_overrides.append((
-                        f"{user_record.maker} {user_record.type} {user_record.color} {user_record.rgb}",
-                        f"{core_record.maker} {core_record.type} {core_record.color} ({core_record.source})",
-                        user_record.source
-                    ))
-            
-            # Log override information
-            if exact_overrides:
-                logger.info(f"User filaments override {len(exact_overrides)} core filaments exactly: {exact_overrides}")
-            if rgb_overrides:
-                logger.info(f"User filaments override {len(rgb_overrides)} core filaments by RGB: {rgb_overrides}")
-        
-        records.extend(user_records)
-    
-    logger.debug("Loaded %d filaments from %s", len(records), json_path)
+            raise ValueError(f"Expected array of filaments at root level in {user_path}")
+        user_records = _parse_filament_records(cast(list[object], user_data), str(user_path))
+        records, events = _merge_user_filaments(system_records, user_records)
+
+    report = FilamentLoadReport(
+        system_filaments_loaded=len(system_records),
+        user_filaments_loaded=len(user_records),
+        total_filaments_available=len(records),
+        events=events,
+    )
+    logger.debug("Loaded %d filaments from %s", len(records), database_path)
+    if include_report:
+        return records, report
     return records
 
 
-def load_maker_synonyms(json_path: Path | str | None = None) -> Dict[str, List[str]]:
-    """
-    Load maker synonyms from JSON files (core + user additions).
-    
-    Loads synonyms from both the core maker_synonyms.json file and optional
-    user/user-synonyms.json file in the data directory. Synonyms are merged, with
-    user additions extending or replacing core synonyms per maker.
-    
-    Args:
-        json_path: Path to directory containing JSON files, or path to specific
-                   maker_synonyms JSON file. If None, looks for maker_synonyms.json 
-                   in the package's data/ directory.
-    
-    Returns:
-        Dictionary mapping canonical maker names to lists of synonyms
-    """
-    if json_path is None:
-        # Default: look in package's data/ directory
-        data_dir = Path(__file__).parent / "data"
-        json_path = data_dir / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
-    else:
-        json_path = Path(json_path)
-        # If it's a directory, append the filename
-        if json_path.is_dir():
-            data_dir = json_path
-            json_path = json_path / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+def _parse_synonyms(data: object, source_file: str) -> dict[str, list[str]]:
+    """Validate a maker-synonym JSON object."""
+    if not isinstance(data, dict):
+        raise ValueError(f"Expected object of maker synonyms at root level in {source_file}")
+    result: dict[str, list[str]] = {}
+    for maker_value, synonyms_value in cast(dict[object, object], data).items():
+        if not isinstance(maker_value, str) or not maker_value.strip() or maker_value != maker_value.strip():
+            raise ValueError(f"Invalid maker name {maker_value!r} in {source_file}")
+        if not isinstance(synonyms_value, list):
+            raise ValueError(f"Synonyms for {maker_value!r} in {source_file} must be an array")
+        parsed: list[str] = []
+        seen: set[str] = set()
+        for synonym in cast(list[object], synonyms_value):
+            if not isinstance(synonym, str) or not synonym.strip() or synonym != synonym.strip():
+                raise ValueError(
+                    f"Synonyms for {maker_value!r} in {source_file} must be non-empty strings without surrounding whitespace"
+                )
+            key = synonym.casefold()
+            if key in seen:
+                raise ValueError(f"Duplicate synonym {synonym!r} for {maker_value!r} in {source_file}")
+            seen.add(key)
+            parsed.append(synonym)
+        result[maker_value] = parsed
+    return result
+
+
+def _merge_user_synonyms(
+    system_synonyms: dict[str, list[str]],
+    user_synonyms: dict[str, list[str]],
+) -> tuple[dict[str, list[str]], tuple[SynonymLoadEvent, ...]]:
+    merged = {maker: list(values) for maker, values in system_synonyms.items()}
+    events: list[SynonymLoadEvent] = []
+    for maker, user_values in user_synonyms.items():
+        previous = merged.get(maker)
+        if previous is None:
+            merged[maker] = list(user_values)
+            events.append(SynonymLoadEvent("added", maker, tuple(user_values), effective_synonyms=tuple(user_values)))
+            continue
+        existing = set(previous)
+        provided = set(user_values)
+        if existing == provided:
+            action: Literal["unchanged", "replaced", "extended"] = "unchanged"
+            effective = list(previous)
+        elif existing.isdisjoint(provided):
+            action = "replaced"
+            effective = list(user_values)
+            merged[maker] = effective
         else:
-            data_dir = json_path.parent
-    
-    # Load core synonyms
+            action = "extended"
+            effective = list(previous)
+            effective.extend(value for value in user_values if value not in existing)
+            merged[maker] = effective
+        events.append(
+            SynonymLoadEvent(
+                action,
+                maker,
+                tuple(user_values),
+                tuple(previous),
+                tuple(effective),
+            )
+        )
+    return merged, tuple(events)
+
+
+@overload
+def load_maker_synonyms(
+    json_path: Path | str | None = None,
+    *,
+    include_report: Literal[False] = False,
+) -> Dict[str, List[str]]: ...
+
+
+@overload
+def load_maker_synonyms(
+    json_path: Path | str | None = None,
+    *,
+    include_report: Literal[True],
+) -> tuple[Dict[str, List[str]], SynonymLoadReport]: ...
+
+
+def load_maker_synonyms(
+    json_path: Path | str | None = None,
+    *,
+    include_report: bool = False,
+) -> Dict[str, List[str]] | tuple[Dict[str, List[str]], SynonymLoadReport]:
+    """Load and merge validated maker synonyms with structured reporting."""
+    if json_path is None:
+        data_dir = Path(__file__).parent / "data"
+        database_path = data_dir / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+    else:
+        database_path = Path(json_path)
+        if database_path.is_dir():
+            data_dir = database_path
+            database_path /= ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
+        else:
+            data_dir = database_path.parent
+
     try:
-        with open(json_path, "r", encoding="utf-8") as f:
-            synonyms = cast(dict[str, list[str]], json.load(f))
+        with database_path.open("r", encoding="utf-8") as file:
+            system_synonyms = _parse_synonyms(json.load(file), str(database_path))
     except FileNotFoundError:
-        synonyms = {}
-    
-    # Load optional user synonyms from same directory and merge
-    user_json_path = data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME
-    if user_json_path.exists():
-        with open(user_json_path, "r", encoding="utf-8") as f:
-            user_synonyms = cast(dict[str, list[str]], json.load(f))
-        
-        # Log synonym overrides before merging
-        overridden_makers: list[tuple[str, list[str], list[str]]] = []
-        extended_makers: list[tuple[str, int, int]] = []
-        
-        # Merge user synonyms into core synonyms
-        for maker, user_syn_list in user_synonyms.items():
-            if maker in synonyms:
-                # Check if user completely replaces or extends existing synonyms
-                existing = set(synonyms[maker])
-                new_synonyms = set(user_syn_list)
-                
-                if existing == new_synonyms:
-                    # Same synonyms - no conflict
-                    continue
-                elif existing.isdisjoint(new_synonyms):
-                    # Completely different - user replaces core synonyms
-                    overridden_makers.append((maker, synonyms[maker], user_syn_list))
-                    synonyms[maker] = user_syn_list
-                else:
-                    # Some overlap - extend existing synonym list (avoid duplicates)
-                    original_count = len(synonyms[maker])
-                    for syn in user_syn_list:
-                        if syn not in existing:
-                            synonyms[maker].append(syn)
-                    if len(synonyms[maker]) > original_count:
-                        extended_makers.append((maker, original_count, len(synonyms[maker])))
-            else:
-                # Add new maker with their synonyms
-                synonyms[maker] = user_syn_list
-        
-        # Log override information
-        if overridden_makers:
-            logger.info(f"User synonyms override {len(overridden_makers)} core makers: {[(m, f'core: {c}', f'user: {u}') for m, c, u in overridden_makers]}")
-        if extended_makers:
-            logger.info(f"User synonyms extend {len(extended_makers)} core makers: {[(m, f'{old}->{new} synonyms') for m, old, new in extended_makers]}")
-    
+        system_synonyms = {}
+    synonyms = system_synonyms
+    user_synonyms: dict[str, list[str]] = {}
+    events: tuple[SynonymLoadEvent, ...] = ()
+    user_path = data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME
+    if user_path.exists():
+        with user_path.open("r", encoding="utf-8") as file:
+            user_synonyms = _parse_synonyms(json.load(file), str(user_path))
+        synonyms, events = _merge_user_synonyms(system_synonyms, user_synonyms)
+
+    report = SynonymLoadReport(
+        system_makers_loaded=len(system_synonyms),
+        user_makers_loaded=len(user_synonyms),
+        total_makers_available=len(synonyms),
+        events=events,
+    )
+    if include_report:
+        return synonyms, report
     return synonyms
 
 
@@ -742,7 +798,7 @@ class FilamentPalette:
         return results
 
     @classmethod
-    def load_default(cls) -> 'FilamentPalette':
+    def load_default(cls, json_path: Path | str | None = None) -> 'FilamentPalette':
         """
         Load the default filament palette from the package data.
         
@@ -751,9 +807,17 @@ class FilamentPalette:
         
         Auto-detects owned filaments: If owned-filaments.json exists and contains IDs,
         owned filtering will be the default behavior in filter/nearest methods.
+
+        Args:
+            json_path: Optional custom data directory containing the system and
+                user JSON files.
         """
-        owned = load_owned_filaments()
-        return cls(load_filaments(), load_maker_synonyms(), owned)
+        owned = load_owned_filaments(json_path)
+        return cls(
+            load_filaments(json_path),
+            load_maker_synonyms(json_path),
+            owned,
+        )
 
     def find_by_maker(self, maker: Union[str, List[str]]) -> List[FilamentRecord]:
         """
@@ -1095,84 +1159,6 @@ class FilamentPalette:
     def finishes(self) -> List[str]:
         """Get sorted list of all finishes."""
         return sorted(self._by_finish.keys())
-
-    def get_override_info(self) -> Dict[str, Dict[str, Any]]:
-        """
-        Get information about user overrides in this filament palette.
-        
-        Returns:
-            Dictionary with override information structure:
-            
-            .. code-block:: python
-            
-                {
-                    "filaments": {
-                        "rgb": {"(r,g,b)": {"core": [sources], "user": [sources]}}
-                    },
-                    "synonyms": {
-                        "maker_name": {
-                            "type": "replaced|extended",
-                            "old": [core_synonyms],
-                            "new": [user_synonyms]
-                        }
-                    }
-                }
-        """
-        overrides: Dict[str, Dict[str, Any]] = {
-            "filaments": {"rgb": {}},
-            "synonyms": {}
-        }
-        
-        # Check for filament RGB overrides
-        rgb_groups: Dict[Tuple[int, int, int], List[FilamentRecord]] = {}
-        for record in self.records:
-            if record.rgb not in rgb_groups:
-                rgb_groups[record.rgb] = []
-            rgb_groups[record.rgb].append(record)
-        
-        for rgb, records in rgb_groups.items():
-            core_records = [r for r in records if not r.source.startswith('user-')]
-            user_records = [r for r in records if r.source.startswith('user-')]
-            if core_records and user_records:
-                overrides["filaments"]["rgb"][str(rgb)] = {
-                    "core": [r.source for r in core_records],
-                    "user": [r.source for r in user_records]
-                }
-        
-        # Check for synonym overrides
-        if self.maker_synonyms:
-            # We need to reconstruct what the core synonyms were vs user synonyms
-            # This is complex since synonyms are already merged, but we can infer from source patterns
-            # For testing purposes, we'll create a basic detection
-            
-            # Load core synonyms to compare
-            try:
-                import json
-                core_file = Path(__file__).parent / "data" / "maker_synonyms.json"
-                core_synonyms: dict[str, list[str]] = {}
-                if core_file.exists():
-                    with open(core_file, 'r') as f:
-                        core_synonyms = cast(
-                            dict[str, list[str]],
-                            json.load(f),
-                        )
-                
-                # Compare current synonyms with core synonyms
-                for maker, current_synonyms in self.maker_synonyms.items():
-                    if maker in core_synonyms:
-                        core_syns = core_synonyms[maker]
-                        if set(current_synonyms) != set(core_syns):
-                            overrides["synonyms"][maker] = {
-                                "type": "replaced",
-                                "old": core_syns,
-                                "new": current_synonyms
-                            }
-                    # If maker not in core synonyms, it's an addition (not override)
-            except:
-                # If we can't load core synonyms, skip synonym override detection
-                pass
-        
-        return overrides
 
     def get_filament_by_id(self, filament_id: str) -> Optional[FilamentRecord]:
         """

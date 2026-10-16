@@ -118,7 +118,7 @@ Mapping of canonical maker names to common synonyms/abbreviations:
 You can extend the core databases with optional files under `data/user/`:
 
 - **user-colors.json** - Add or replace colors using only `name` and `hex`
-- **user-filaments.json** - Add custom filaments (same format as filaments.json)
+- **user-filaments.json** - Add filaments or replace complete records by ID
 - **user-synonyms.json** - Add or extend maker synonyms (same format as maker_synonyms.json)
 - **owned-filaments.json** - Track which filaments you own (v6.0.0+)
 
@@ -132,6 +132,9 @@ color-tools --generate-user-hashes
 
 # Verify user-file integrity
 color-tools --verify-user-data
+
+# Validate the schemas and merge behavior of all three user data files
+color-tools --validate-user-files
 
 # Verify everything (core + user data)
 color-tools --verify-all
@@ -173,6 +176,19 @@ If no `.sha256` file exists, user files work without verification - giving you f
   }
 ]
 ```
+
+Every filament requires a stable lowercase, hyphenated `id`. Generate the
+canonical ID from its maker, type, optional finish, and color name:
+
+```bash
+color-tools filament --generate-id --maker "My Local Shop" --type PLA \
+  --finish Basic --color Red
+```
+
+The command reports whether the ID is available or would replace an existing
+record, and suggests the first available `-2`, `-3`, and so on suffix when it
+would collide. Hex and TD values are deliberately excluded from the ID so they
+can be corrected without breaking owned-filament references.
 
 **Example user-synonyms.json:**
 
@@ -283,6 +299,13 @@ calculates RGB, HSL, LAB, and LCH.
 - **New colors**: Unique user names append in user-file order
 - **Nearest-color ties**: Exact distance ties prefer `user-*` sources, then
   preserve merged-list order
+- **Filament ID conflicts**: A user filament with an existing ID replaces the
+  complete record at the same list position
+- **New filament IDs**: New records append in user-file order; duplicate RGB
+  values and product descriptions are allowed because ID defines identity
+- **Duplicate user filament IDs**: Rejected within a user file
+- **Maker synonyms**: Equal lists are unchanged, disjoint lists replace, and
+  overlapping lists extend without duplicates
 - **Source tracking**: Every record tracks its source file (colors.json, user-colors.json, cga4.json, etc.)
 
 #### **Override Detection:**
@@ -312,6 +335,8 @@ Color Changes:
 
 The report also includes current record totals and active source files. Those
 counts depend on the installed release and which optional user files are active.
+It receives structured events from the same loaders used by the library; it
+does not infer changes from logging output.
 
 #### **Source Information in Output:**
 

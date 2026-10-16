@@ -148,7 +148,10 @@ Color & Filament Data
 
    color_tools.palette
    color_tools.color_load_report
+   color_tools.filament_id
+   color_tools.filament_load_report
    color_tools.filament_palette
+   color_tools.synonym_load_report
    color_tools.filament_filter_criteria
    color_tools.filament_collections
    color_tools.naming

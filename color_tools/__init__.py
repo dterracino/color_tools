@@ -174,6 +174,13 @@ from .palette import (
     load_palette,
 )
 from .color_load_report import ColorLoadEvent, ColorLoadReport
+from .filament_load_report import FilamentLoadEvent, FilamentLoadReport
+from .synonym_load_report import SynonymLoadEvent, SynonymLoadReport
+from .filament_id import (
+    generate_filament_id,
+    next_available_filament_id,
+    validate_filament_id,
+)
 
 from .filament_palette import (
     # Filament palette class
@@ -382,6 +389,13 @@ __all__ = [
     "ColorLoadEvent",
     "ColorLoadReport",
     "FilamentRecord",
+    "FilamentLoadEvent",
+    "FilamentLoadReport",
+    "SynonymLoadEvent",
+    "SynonymLoadReport",
+    "generate_filament_id",
+    "next_available_filament_id",
+    "validate_filament_id",
     "load_colors",
     "load_filaments",
     "load_maker_synonyms",

@@ -9,9 +9,13 @@ This module validates the entire filament database to ensure:
 """
 
 from __future__ import annotations
-import re
 import unittest
 from collections import Counter
+from color_tools import (
+    generate_filament_id,
+    next_available_filament_id,
+    validate_filament_id,
+)
 from color_tools.filament_palette import FilamentRecord, load_filaments
 
 
@@ -43,16 +47,29 @@ class TestFilamentDatabaseIntegrity(unittest.TestCase):
         
         self.assertEqual(len(duplicates), 0, 
             f"Found {len(duplicates)} duplicate IDs: {dict(list(duplicates.items())[:5])}")
+
+    def test_all_ids_match_canonical_generation(self) -> None:
+        """Regenerate every stored ID with deterministic collision suffixes."""
+        existing_ids: set[str] = set()
+        for filament in self.filaments:
+            base_id = generate_filament_id(
+                filament.maker,
+                filament.type,
+                filament.finish,
+                filament.color,
+            )
+            generated_id = next_available_filament_id(base_id, existing_ids)
+            with self.subTest(filament_id=filament.id):
+                self.assertEqual(filament.id, generated_id)
+            existing_ids.add(generated_id)
     
     def test_id_format_is_valid_slug(self):
         """Test that all IDs follow valid slug format (lowercase, hyphens, no spaces)."""
-        # Valid slug: lowercase letters, numbers, hyphens only
-        # Should NOT contain: spaces, uppercase, special chars (except hyphen)
-        slug_pattern = re.compile(r'^[a-z0-9]+(-[a-z0-9]+)*$')
-        
         invalid_ids: list[dict[str, str]] = []
         for filament in self.filaments:
-            if not slug_pattern.match(filament.id):
+            try:
+                validate_filament_id(filament.id)
+            except ValueError:
                 invalid_ids.append({
                     'id': filament.id,
                     'maker': filament.maker,

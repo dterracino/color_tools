@@ -30,6 +30,9 @@ if str(parent_dir) not in sys.path:
 
 from color_tools.conversions import parse_hex_colors, rgb_to_hex
 
+# IMPORTANT: This legacy script has its own non-canonical ID generator.
+# Update it to use color_tools.generate_filament_id before running it again.
+
 @dataclass
 class NewFilament:
     """Filament from import data."""

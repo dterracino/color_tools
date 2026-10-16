@@ -9,29 +9,10 @@ Finish is omitted if null. Collisions are handled with -2, -3 suffixes.
 """
 
 import json
-import re
 from pathlib import Path
 from collections import defaultdict
 
-
-def slugify(text: str) -> str:
-    """
-    Convert text to URL-friendly slug.
-    
-    Args:
-        text: Input text to slugify
-    
-    Returns:
-        Lowercase slug with hyphens
-    """
-    # Convert to lowercase
-    text = text.lower()
-    # Replace spaces and special chars with hyphens
-    text = re.sub(r'[^\w\s-]', '', text)
-    text = re.sub(r'[-\s]+', '-', text)
-    # Remove leading/trailing hyphens
-    text = text.strip('-')
-    return text
+from color_tools import generate_filament_id
 
 
 def generate_slug(filament: dict, include_finish: bool = True) -> str:
@@ -45,19 +26,13 @@ def generate_slug(filament: dict, include_finish: bool = True) -> str:
     Returns:
         Slug string
     """
-    parts = [
-        slugify(filament['maker']),
-        slugify(filament['type']),
-    ]
-    
-    # Add finish if it exists and we want to include it
-    if include_finish and filament.get('finish'):
-        parts.append(slugify(filament['finish']))
-    
-    # Add color
-    parts.append(slugify(filament['color']))
-    
-    return '-'.join(parts)
+    finish = filament.get('finish') if include_finish else None
+    return generate_filament_id(
+        filament['maker'],
+        filament['type'],
+        finish,
+        filament['color'],
+    )
 
 
 def generate_all_slugs(filaments: list) -> list[dict]:
