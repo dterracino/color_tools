@@ -169,11 +169,12 @@ class TestImporterRegistryContracts(unittest.TestCase):
         self.directory = Path(self.temporary_directory.name)
         self.path = self.directory / "palette.test"
         self.path.write_text("content", encoding="utf-8")
-        self.registry_patch = patch.object(registry, "_IMPORTERS", {})
-        self.registry_patch.start()
+        empty_registry: dict[str, type[PaletteImporter]] = {}
+        registry_patch = patch.object(registry, "_IMPORTERS", empty_registry)
+        registry_patch.start()
+        self.addCleanup(registry_patch.stop)
 
     def tearDown(self) -> None:
-        self.registry_patch.stop()
         self.temporary_directory.cleanup()
 
     def test_duplicate_registration_is_rejected(self) -> None:
