@@ -6,6 +6,7 @@ from functools import lru_cache
 from typing import Annotated, Any, Literal
 
 from mcp.server.mcpserver import MCPServer
+from mcp.server.mcpserver.exceptions import ToolError
 from pydantic import Field
 
 from color_tools import __version__
@@ -65,6 +66,21 @@ from .models import (
     NamedColorMatch,
     NamedColorSearchResult,
 )
+
+
+__all__ = [
+    "analyze_color",
+    "compare_colors",
+    "convert_color",
+    "find_filaments",
+    "find_named_colors",
+    "get_filament_catalog",
+    "main",
+    "map_to_srgb_gamut",
+    "mcp",
+    "transform_color_vision",
+    "validate_color_name",
+]
 
 
 RGBChannel = Annotated[int, Field(ge=0, le=255)]
@@ -280,6 +296,30 @@ def convert_color(
     clamp_rgb: bool = True,
 ) -> ConversionResult:
     """Convert scalar components between RGB, XYZ, LAB, LCH, HSL, CMY, and CMYK using D65 sRGB."""
+    try:
+        return _convert_color_result(
+            source_space,
+            target_space,
+            component_1,
+            component_2,
+            component_3,
+            component_4,
+            clamp_rgb,
+        )
+    except ValueError as exc:
+        raise ToolError(str(exc)) from exc
+
+
+def _convert_color_result(
+    source_space: ColorSpace,
+    target_space: ColorSpace,
+    component_1: float,
+    component_2: float,
+    component_3: float,
+    component_4: float | None,
+    clamp_rgb: bool,
+) -> ConversionResult:
+    """Perform a validated conversion independently of MCP error transport."""
     value = _components(component_1, component_2, component_3, component_4)
     lab = _lab_from_space(value, source_space)
     gamut_status = is_in_srgb_gamut(lab) if source_space in {"xyz", "lab", "lch"} else None

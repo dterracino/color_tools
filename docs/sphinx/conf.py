@@ -103,9 +103,12 @@ coverage_ignore_modules = [
     r"^_(?!color_utils$)",
     r"^(?:color_tools\.)?api$",  # Reserved for the future REST API.
     r"^(?:detection|dominant|palette_extractor)$",  # Disabled image work.
+    # Desktop implementation details are documented through the CLI guides,
+    # not as a supported Python API. Excluding them also keeps Sphinx free of
+    # native Qt runtime requirements.
+    r"^(?:color_tools\.)?(?:filament_export_dialog|filament_manager_gui)$",
 ]
 coverage_ignore_classes = [
-    r"^FilamentManagerWindow$",
     r"^InteractiveFilamentManager$",
 ]
 coverage_show_missing_items = True

@@ -264,16 +264,6 @@ Interactive Terminal Features *(requires* ``[interactive]`` *extra)*
    color_tools.interactive_manager
    color_tools.interactive_wizard
 
-Desktop Filament Manager *(requires* ``[gui]`` *extra)*
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. autosummary::
-   :toctree: api
-   :template: module.rst
-
-   color_tools.filament_manager_gui
-   color_tools.filament_export_dialog
-
 Model Context Protocol *(requires* ``[mcp]`` *extra)*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 

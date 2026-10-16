@@ -10,6 +10,7 @@ from unittest.mock import patch
 
 from mcp.client import Client
 from mcp.client.stdio import StdioServerParameters, stdio_client
+from mcp.server.mcpserver.exceptions import ToolError
 
 from color_tools.config import config_context
 from color_tools.conversions import rgb_to_xyz
@@ -163,9 +164,9 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
 
     def test_convert_color_rejects_invalid_cmy_percentages(self) -> None:
         """MCP conversion should share the strict CMY/CMYK input contract."""
-        with self.assertRaisesRegex(ValueError, "CMY component 1"):
+        with self.assertRaisesRegex(ToolError, "CMY component 1"):
             convert_color("cmy", "rgb", -0.1, 0.0, 0.0)
-        with self.assertRaisesRegex(ValueError, "CMYK component 4"):
+        with self.assertRaisesRegex(ToolError, "CMYK component 4"):
             convert_color("cmyk", "rgb", 0.0, 0.0, 0.0, 100.1)
 
     def test_convert_color_rejects_wrong_component_count_for_every_space(
@@ -175,7 +176,7 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
         for source in ("rgb", "xyz", "lab", "lch", "hsl", "cmy"):
             with self.subTest(source=source):
                 with self.assertRaisesRegex(
-                    ValueError,
+                    ToolError,
                     f"{source.upper()} requires 3 components",
                 ):
                     convert_color(
@@ -187,12 +188,12 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
                         0.0,
                     )
 
-        with self.assertRaisesRegex(ValueError, "CMYK requires 4 components"):
+        with self.assertRaisesRegex(ToolError, "CMYK requires 4 components"):
             convert_color("cmyk", "rgb", 0.0, 0.0, 0.0)
 
     def test_convert_color_rejects_fractional_rgb_components(self) -> None:
         """RGB input remains integer-only even though MCP numbers are floats."""
-        with self.assertRaisesRegex(ValueError, "RGB components must be integers"):
+        with self.assertRaisesRegex(ToolError, "RGB components must be integers"):
             convert_color("rgb", "lab", 12.5, 34.0, 56.0)
 
     def test_convert_color_exercises_every_source_space(self) -> None:
@@ -240,9 +241,9 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
 
     def test_same_space_conversion_still_validates_input(self) -> None:
         """The identity shortcut must not bypass source validation."""
-        with self.assertRaisesRegex(ValueError, "RGB components must be integers"):
+        with self.assertRaisesRegex(ToolError, "RGB components must be integers"):
             convert_color("rgb", "rgb", 1.5, 2.0, 3.0)
-        with self.assertRaisesRegex(ValueError, "CMY component 1"):
+        with self.assertRaisesRegex(ToolError, "CMY component 1"):
             convert_color("cmy", "cmy", 101.0, 0.0, 0.0)
 
     def test_clamp_option_reaches_rgb_producing_converters(self) -> None:
@@ -281,7 +282,7 @@ class TestMCPServer(unittest.IsolatedAsyncioTestCase):
     ) -> None:
         """Non-RGB derived targets cannot consume unclamped out-of-gamut RGB."""
         with self.assertRaisesRegex(
-            ValueError,
+            ToolError,
             "Out-of-gamut source requires clamp_rgb=true",
         ):
             convert_color(
