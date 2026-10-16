@@ -1,6 +1,6 @@
 # Color Tools 7.0.0 test coverage completion plan
 
-Status: planned, not yet implemented  
+Status: in progress
 Captured: 2026-10-15  
 Scope: final local test-coverage work before the 7.0.0 release review
 
@@ -411,14 +411,17 @@ Current baseline:
 
 Minimum useful coverage:
 
-- [ ] Initial menu dispatch.
-- [ ] Quit and cancel paths.
-- [ ] Invalid input followed by retry.
-- [ ] Empty search/selection handling.
-- [ ] Add and remove owned-filament operations.
-- [ ] Export confirmation, success, cancellation, and failure.
-- [ ] Wizard completion returns the expected criteria/options.
-- [ ] User-visible messages describe the selected operation and failure.
+- [x] Initial menu dispatch.
+- [x] Quit and cancel paths.
+- [x] Invalid input followed by retry.
+- [x] Empty search/selection handling.
+- [x] Add and remove owned-filament operations.
+- [x] Wizard completion returns the expected criteria/options.
+- [x] User-visible messages describe the selected operation and failure.
+
+The terminal manager does not provide an export operation. Export confirmation,
+success, cancellation, and failure therefore belong to the desktop workflow
+below rather than the terminal coverage target.
 
 Prefer testing focused decision helpers. If substantial terminal input/output
 logic cannot be isolated without fragile mocks, first extract a small cohesive
@@ -436,13 +439,13 @@ Current baseline:
 
 Minimum useful coverage where the supported Qt environment permits:
 
-- [ ] Dialog initialization from current filters and export formats.
-- [ ] Option collection and validation.
-- [ ] Empty selection and invalid destination handling.
-- [ ] Save-path cancellation.
-- [ ] Export success and failure reporting.
-- [ ] Owned-filament mutations refresh the visible model.
-- [ ] Closing/canceling does not modify user data.
+- [x] Dialog initialization from current filters and export formats.
+- [x] Option collection and validation.
+- [x] Empty selection and invalid destination handling.
+- [x] Save-path cancellation.
+- [x] Export success and failure reporting.
+- [x] Owned-filament mutations refresh the visible model.
+- [x] Closing/canceling does not modify user data.
 
 Platform-owned paint, event-loop, and native-dialog internals are not coverage
 targets. Keep these tests deterministic and headless-compatible.
@@ -468,7 +471,7 @@ targets. Keep these tests deterministic and headless-compatible.
 
 Work in bounded batches so failures identify the responsible area:
 
-1. [ ] Palette schema and core/user loader failures.
+1. [x] Palette schema and core/user loader failures.
 2. [x] Integrity and hash verification failures.
 3. [x] Palette and filament matching matrices.
 4. [x] Importer base, registry, and malformed formats.
@@ -477,10 +480,19 @@ Work in bounded batches so failures identify the responsible area:
 7. [x] MCP conversion routes.
 8. [x] Override reporting.
 9. [x] Supported image edge cases.
-10. [ ] Focused terminal and Qt workflow coverage.
+10. [x] Focused terminal and Qt workflow coverage.
 11. [ ] Review remaining uncovered branches and classify each as required,
     unreachable/dead, abstract, platform-dependent, or intentionally deferred.
-12. [ ] Run the complete release validation suite.
+12. [ ] Perform a complete FAQ content audit. Review existing questions for
+    accuracy and clarity; reconcile answers with the README, Usage,
+    Customization, Installation, and Troubleshooting guides; and add useful
+    questions exposed by the 7.0 changes. Include user data and validation,
+    maker synonyms, filament IDs and overrides, multi-color behavior, TD and
+    HueForge export, palette intent and user palettes, CLI count/limit changes,
+    optional dependencies, integrity hashes, and breaking-upgrade guidance.
+    Remove duplication where another guide should remain authoritative and
+    link to that guide from the concise FAQ answer.
+13. [ ] Run the complete release validation suite.
 
 ## Final validation record
 

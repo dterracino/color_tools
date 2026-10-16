@@ -257,6 +257,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 
+- **Desktop ownership save rollback** — retain the previously loaded ownership
+  state when writing `owned-filaments.json` fails, while leaving the attempted
+  edits pending so the user can retry or revert them.
 - **Image conversion boundary errors** — reject unsupported output formats with
   the documented `ValueError`, default suffixless explicit output paths to PNG,
   and preserve the actionable `pillow-heif` dependency error for HEIC/HEIF

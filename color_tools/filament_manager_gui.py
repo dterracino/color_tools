@@ -358,10 +358,12 @@ class FilamentManagerWindow(_QMainWindow):
         self.save_action.setEnabled(changed)
 
     def _save_changes(self) -> None:
+        previous_owned_ids = self.filament_palette.owned_filaments.copy()
         try:
             self.filament_palette.owned_filaments = self.owned_ids.copy()
             self.filament_palette.save_owned(self.save_path)
         except OSError as error:
+            self.filament_palette.owned_filaments = previous_owned_ids
             QMessageBox.critical(
                 self,
                 "Could not save owned filaments",
