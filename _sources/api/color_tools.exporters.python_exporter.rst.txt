@@ -1,0 +1,9 @@
+﻿color\_tools.exporters.python\_exporter
+=======================================
+
+.. currentmodule:: color_tools.exporters
+
+.. automodule:: color_tools.exporters.python_exporter
+   :members:
+   :undoc-members:
+   :show-inheritance:

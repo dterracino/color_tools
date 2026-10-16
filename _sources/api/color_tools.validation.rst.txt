@@ -1,0 +1,9 @@
+﻿color\_tools.validation
+=======================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.validation
+   :members:
+   :undoc-members:
+   :show-inheritance:

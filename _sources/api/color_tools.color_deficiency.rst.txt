@@ -1,0 +1,9 @@
+﻿color\_tools.color\_deficiency
+==============================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.color_deficiency
+   :members:
+   :undoc-members:
+   :show-inheritance:

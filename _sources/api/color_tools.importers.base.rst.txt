@@ -1,0 +1,9 @@
+﻿color\_tools.importers.base
+===========================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.base
+   :members:
+   :undoc-members:
+   :show-inheritance:
