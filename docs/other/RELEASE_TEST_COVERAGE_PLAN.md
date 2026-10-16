@@ -103,8 +103,9 @@ Targets: `color_tools/palette.py`, `color_tools/filament_palette.py`
 - [x] Reject owned-filament lists containing non-string IDs.
 - [ ] Cover an exact user-filament override.
 - [ ] Cover a different filament with the same effective RGB.
-- [ ] Cover user-color overrides by name and by RGB, including the associated
-  log records.
+- [x] Cover sequential user-color replacement by normalized name, unique
+  additions, cumulative RGB collision rejection, strict authored fields, and
+  structured load events without log-message capture.
 - [x] Confirm input files remain unchanged after both successful and failed
   loads.
 

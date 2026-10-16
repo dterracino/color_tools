@@ -12,8 +12,9 @@ For filament management, see color_tools.filament_palette module.
 The Palette class is like a database with multiple indexes - you can
 search by name, RGB, HSL, etc. and get instant results!
 
-User files (user/user-colors.json) always override core data when there
-are conflicts. Override information is logged for transparency.
+User colors contain authored names and hex values. They replace system colors
+by normalized name, append otherwise, and are reported through structured load
+events.
 
 Example:
     >>> from color_tools import Palette
@@ -39,7 +40,7 @@ from __future__ import annotations
 import math
 from dataclasses import dataclass
 from functools import cmp_to_key
-from typing import Dict, List, Literal, Optional, Tuple, TypedDict, cast
+from typing import Dict, List, Literal, Optional, Tuple, TypedDict, cast, overload
 import json
 import logging
 from pathlib import Path
@@ -51,6 +52,7 @@ from color_tools.distance import euclidean, hsl_euclidean, hue_diff_deg, delta_e
 from color_tools._palette_utils import compare_distance_matches, get_palette_files, rounded_key, should_prefer_source
 from color_tools._palette_document import parse_indexed_palette_document
 from color_tools._color_utils import parse_hex, validate_rgb
+from color_tools.color_load_report import ColorLoadEvent, ColorLoadReport
 from color_tools._record_swatches import (
     render_record_swatch as _render_record_swatch,
     save_record_swatch as _save_record_swatch,
@@ -62,6 +64,12 @@ _get_palette_files = get_palette_files
 
 # Set up logger for override tracking
 logger: logging.Logger = logging.getLogger(__name__)
+
+
+def _normalize_color_name(name: str) -> str:
+    """Normalize a color name for matching and uniqueness checks."""
+    return name.strip().casefold()
+
 
 def _lch_euclidean(
     lch1: tuple[float, float, float],
@@ -298,20 +306,159 @@ def _parse_color_records(
 
 
 
-def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
+def _parse_user_color_records(
+    data: list[object],
+    source_file: str,
+) -> List[ColorRecord]:
+    """Build user-authored records from exactly their name and hex fields."""
+    records: List[ColorRecord] = []
+    expected_fields = {"name", "hex"}
+
+    for index, item in enumerate(data):
+        if not isinstance(item, dict):
+            raise ValueError(
+                f"Invalid color data at index {index} in {source_file}: "
+                "expected an object"
+            )
+
+        fields = cast(dict[object, object], item)
+        if not all(isinstance(key, str) for key in fields):
+            raise ValueError(
+                f"Invalid color data at index {index} in {source_file}: "
+                "field names must be strings"
+            )
+
+        actual_fields = cast(set[str], set(fields))
+        unexpected_fields = actual_fields - expected_fields
+        if unexpected_fields:
+            formatted = ", ".join(sorted(unexpected_fields))
+            raise ValueError(
+                f"Invalid color data at index {index} in {source_file}: "
+                f"unexpected field(s): {formatted}; user colors accept only "
+                "'name' and 'hex' because derived values are calculated"
+            )
+
+        name = fields.get("name")
+        hex_code = fields.get("hex")
+        if not isinstance(name, str) or not name.strip():
+            raise ValueError(
+                f"Missing or invalid 'name' in color at index {index} in {source_file}"
+            )
+        if not isinstance(hex_code, str):
+            raise ValueError(
+                f"Missing or invalid 'hex' in color at index {index} in {source_file}"
+            )
+
+        try:
+            records.append(
+                ColorRecord.from_hex(
+                    hex_code,
+                    name=name.strip(),
+                    source=Path(source_file).name,
+                )
+            )
+        except ValueError as error:
+            raise ValueError(
+                f"Invalid color data at index {index} in {source_file}: {error}"
+            ) from error
+
+    return records
+
+
+def _merge_user_color_records(
+    system_records: List[ColorRecord],
+    user_records: List[ColorRecord],
+) -> tuple[List[ColorRecord], tuple[ColorLoadEvent, ...]]:
+    """Merge user colors sequentially by name while preserving RGB uniqueness."""
+    merged = list(system_records)
+    events: list[ColorLoadEvent] = []
+    seen_user_names: set[str] = set()
+
+    for index, user_record in enumerate(user_records):
+        name_key = _normalize_color_name(user_record.name)
+        if name_key in seen_user_names:
+            raise ValueError(
+                f"Duplicate user color name '{user_record.name}' at index {index} "
+                f"in {user_record.source}"
+            )
+        seen_user_names.add(name_key)
+
+        replacement_index = next(
+            (
+                record_index
+                for record_index, record in enumerate(merged)
+                if _normalize_color_name(record.name) == name_key
+            ),
+            None,
+        )
+        conflicting_record = next(
+            (
+                record
+                for record_index, record in enumerate(merged)
+                if record.rgb == user_record.rgb
+                and record_index != replacement_index
+            ),
+            None,
+        )
+        if conflicting_record is not None:
+            raise ValueError(
+                f"User color '{user_record.name}' ({user_record.hex}) in "
+                f"{user_record.source} conflicts with existing color "
+                f"'{conflicting_record.name}' ({conflicting_record.hex}) from "
+                f"{conflicting_record.source}"
+            )
+
+        if replacement_index is None:
+            merged.append(user_record)
+            events.append(ColorLoadEvent("added", user_record))
+        else:
+            replaced_record = merged[replacement_index]
+            merged[replacement_index] = user_record
+            events.append(
+                ColorLoadEvent("overridden", user_record, replaced_record)
+            )
+
+    return merged, tuple(events)
+
+
+@overload
+def load_colors(
+    json_path: Path | str | None = None,
+    *,
+    include_report: Literal[False] = False,
+) -> List[ColorRecord]: ...
+
+
+@overload
+def load_colors(
+    json_path: Path | str | None = None,
+    *,
+    include_report: Literal[True],
+) -> tuple[List[ColorRecord], ColorLoadReport]: ...
+
+
+def load_colors(
+    json_path: Path | str | None = None,
+    *,
+    include_report: bool = False,
+) -> List[ColorRecord] | tuple[List[ColorRecord], ColorLoadReport]:
     """
-    Load CSS color database from JSON files (core + user additions).
+    Load and merge the color database, optionally returning structured changes.
     
     Loads colors from both the core colors.json file and optional user/user-colors.json
-    file in the data directory. Core colors are loaded first, followed by user colors.
+    file in the data directory. User colors replace records by normalized name
+    or append in file order. Effective RGB values must remain unique.
     
     Args:
         json_path: Path to directory containing JSON files, or path to specific
                    colors JSON file. If None, looks for colors.json in the 
                    package's data/ directory.
+        include_report: When true, return the records together with a typed
+                        summary of user additions and name replacements.
     
     Returns:
-        List of ColorRecord objects (core colors + user colors)
+        The merged records, or ``(records, report)`` when ``include_report`` is
+        true.
     """
     if json_path is None:
         # Default: look in package's data/ directory
@@ -340,6 +487,10 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         str(json_path),
     )
     
+    system_count = len(records)
+    user_records: List[ColorRecord] = []
+    events: tuple[ColorLoadEvent, ...] = ()
+
     # Load optional user colors from same directory
     user_json_path = data_dir / ColorConstants.USER_COLORS_JSON_FILENAME
     if user_json_path.exists():
@@ -349,83 +500,21 @@ def load_colors(json_path: Path | str | None = None) -> List[ColorRecord]:
         if not isinstance(user_data, list):
             raise ValueError(f"Expected array of colors at root level in {user_json_path}")
         
-        # Parse user color records using helper function
-        user_records = _parse_color_records(
-            cast(list[_ColorRecordData], user_data),
+        user_records = _parse_user_color_records(
+            cast(list[object], user_data),
             str(user_json_path),
         )
-        
-        # Detect and log overrides before merging
-        if user_records:
-            core_names = {r.name.lower(): r for r in records}
-            core_rgbs = {r.rgb: r for r in records}
-            
-            name_overrides: list[tuple[str, str, str]] = []
-            rgb_overrides: list[tuple[str, str, str]] = []
-            
-            for user_record in user_records:
-                # Check for name conflicts
-                if user_record.name.lower() in core_names:
-                    core_record = core_names[user_record.name.lower()]
-                    name_overrides.append((user_record.name, core_record.source, user_record.source))
-                
-                # Check for RGB conflicts (different records with same RGB)
-                if user_record.rgb in core_rgbs:
-                    core_record = core_rgbs[user_record.rgb]
-                    if core_record.name.lower() != user_record.name.lower():  # Different names, same RGB
-                        rgb_overrides.append((
-                            f"{user_record.name} {user_record.rgb}",
-                            f"{core_record.name} ({core_record.source})",
-                            user_record.source
-                        ))
-            
-            # Log override information
-            if name_overrides:
-                logger.info(f"User colors override {len(name_overrides)} core colors by name: {name_overrides}")
-            if rgb_overrides:
-                logger.info(f"User colors override {len(rgb_overrides)} core colors by RGB: {rgb_overrides}")
-        
-        records.extend(user_records)
+        records, events = _merge_user_color_records(records, user_records)
     
     logger.debug("Loaded %d CSS colors from %s", len(records), json_path)
-    return records
-
-
-def _parse_user_palette_records(
-    data: list[object],
-    source_file: str,
-) -> List[ColorRecord]:
-    """Build user-palette records from their authoritative name and hex fields."""
-    records: List[ColorRecord] = []
-
-    for index, item in enumerate(data):
-        if not isinstance(item, dict):
-            raise ValueError(
-                f"Invalid color data at index {index} in {source_file}: "
-                "expected an object"
-            )
-
-        fields = cast(dict[object, object], item)
-        name = fields.get("name")
-        hex_code = fields.get("hex")
-        if not isinstance(name, str):
-            raise ValueError(
-                f"Missing or invalid 'name' in color at index {index} in {source_file}"
-            )
-        if not isinstance(hex_code, str):
-            raise ValueError(
-                f"Missing or invalid 'hex' in color at index {index} in {source_file}"
-            )
-
-        try:
-            records.append(
-                ColorRecord.from_hex(hex_code, name=name, source=source_file)
-            )
-        except ValueError as error:
-            raise ValueError(
-                f"Invalid color data at index {index} in {source_file}: {error}"
-            ) from error
-
+    report = ColorLoadReport(
+        system_colors_loaded=system_count,
+        user_colors_loaded=len(user_records),
+        total_colors_available=len(records),
+        events=events,
+    )
+    if include_report:
+        return records, report
     return records
 
 
@@ -560,7 +649,7 @@ def load_palette(name: str, json_path: "Path | str | None" = None) -> 'Palette':
     )
     
     if name.startswith("user-"):
-        records = _parse_user_palette_records(
+        records = _parse_user_color_records(
             colors,
             palette_file.name,
         )
@@ -605,7 +694,7 @@ class Palette:
         
         # Populate indices with override priority
         for record in records:
-            name_key = record.name.lower()
+            name_key = _normalize_color_name(record.name)
             hsl_key = rounded_key(record.hsl)
             lab_key = rounded_key(record.lab)
             lch_key = rounded_key(record.lch)
@@ -739,8 +828,8 @@ class Palette:
         return Path(exported_path)
 
     def find_by_name(self, name: str) -> Optional[ColorRecord]:
-        """Find color by exact name match (case-insensitive)."""
-        return self._by_name.get(name.lower())
+        """Find color by trimmed, case-insensitive name."""
+        return self._by_name.get(_normalize_color_name(name))
 
     def find_by_rgb(self, rgb: Tuple[int, int, int]) -> Optional[ColorRecord]:
         """Find color by exact RGB match."""
@@ -779,76 +868,27 @@ class Palette:
             metric: Distance metric - 'euclidean', 'de76', 'de94', 'de2000', 'cmc'
             cmc_l, cmc_c: Parameters for CMC metric (default 2:1 for acceptability)
         
+        Exact distance ties prefer records from ``user-*`` sources. Remaining
+        ties retain the records' original order. An empty palette returns
+        ``(None, inf)``.
+
         Returns:
             (nearest_color_record, distance) tuple
         """
-        best_rec: Optional[ColorRecord] = None
-        best_d = float("inf")
-
         logger.debug("nearest_color: target=%s space=%s metric=%s", value, space, metric)
-
-        # RGB space - use simple Euclidean distance
-        if space.lower() == "rgb":
-            for r in self.records:
-                d = euclidean(tuple(map(float, value)), tuple(map(float, r.rgb)))
-                if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
-                    best_rec, best_d = r, d
-            logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
-            return best_rec, best_d  # type: ignore
-
-        # HSL space - use circular hue distance
-        if space.lower() == "hsl":
-            for r in self.records:
-                d = hsl_euclidean(value, r.hsl)
-                if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
-                    best_rec, best_d = r, d
-            logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
-            return best_rec, best_d  # type: ignore
-
-        # LCH space - use Euclidean distance with hue wraparound
-        if space.lower() == "lch":
-            for r in self.records:
-                d = _lch_euclidean(value, r.lch)
-                if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
-                    best_rec, best_d = r, d
-            logger.debug("nearest_color result: %s (%.4f)", getattr(best_rec, "name", None), best_d)
-            return best_rec, best_d  # type: ignore
-
-        # LAB space - choose the appropriate Delta E metric
-        metric_l = metric.lower()
-        if metric_l in ("de2000", "ciede2000"):
-            fn = delta_e_2000
-        elif metric_l in ("de94", "cie94"):
-            fn = delta_e_94
-        elif metric_l in ("de76", "cie76", "euclidean"):
-            fn = delta_e_76
-        elif metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
-            # CMC has special handling for l:c ratios
-            fn = None  # Will handle specially below
-        elif metric_l == "hyab":
-            fn = delta_e_hyab
-        else:
-            raise ValueError("Unknown metric. Use 'euclidean'/'de76'/'de94'/'de2000'/'cmc'/'hyab'.")
-
-        for r in self.records:
-            if metric_l in ("cmc", "decmc", "cmc21", "cmc11"):
-                # Allow shorthands
-                l, c = cmc_l, cmc_c
-                if metric_l == "cmc21":
-                    l, c = ColorConstants.CMC_L_DEFAULT, ColorConstants.CMC_C_DEFAULT
-                elif metric_l == "cmc11":
-                    l, c = ColorConstants.CMC_C_DEFAULT, ColorConstants.CMC_C_DEFAULT
-                d = delta_e_cmc(value, r.lab, l=l, c=c)
-            else:
-                d = fn(value, r.lab)  # type: ignore
-            if d < best_d or (d == best_d and best_rec and should_prefer_source(r.source, best_rec.source)):
-                best_rec, best_d = r, d
-
-        logger.debug(
-            "nearest_color: target=%s space=%s metric=%s → %s (%.4f)",
-            value, space, metric, getattr(best_rec, "name", None), best_d,
+        matches = self.nearest_colors(
+            value,
+            space=space,
+            metric=metric,
+            count=1,
+            cmc_l=cmc_l,
+            cmc_c=cmc_c,
         )
-        return best_rec, best_d  # type: ignore
+        if not matches:
+            return cast(ColorRecord, None), float("inf")
+        record, distance = matches[0]
+        logger.debug("nearest_color result: %s (%.4f)", record.name, distance)
+        return record, distance
 
     def nearest_colors(
         self,
@@ -872,6 +912,9 @@ class Palette:
             count: Number of results to return (default: 5, max: 50)
             cmc_l, cmc_c: Parameters for CMC metric (default 2:1 for acceptability)
         
+        Exact distance ties prefer records from ``user-*`` sources. Remaining
+        ties retain the records' original order.
+
         Returns:
             List of (color_record, distance) tuples sorted by distance (closest first)
         """
@@ -936,57 +979,3 @@ class Palette:
         
         results.sort(key=cmp_to_key(compare_distance_matches))
         return results[:count]
-
-    def get_override_info(self) -> Dict[str, Dict[str, Dict[str, Tuple[str, str]]]]:
-        """
-        Get information about user overrides in this palette.
-        
-        Returns:
-            Dictionary with override information structure:
-            
-            .. code-block:: python
-            
-                {
-                    "colors": {
-                        "name": {"color_name": ("core_source", "user_source")},
-                        "rgb": {"(r,g,b)": ("core_source", "user_source")}
-                    }
-                }
-        """
-        overrides: Dict[str, Dict[str, Dict[str, Tuple[str, str]]]] = {
-            "colors": {"name": {}, "rgb": {}}
-        }
-        
-        # Group records by name and RGB to detect overrides
-        name_groups: Dict[str, List[ColorRecord]] = {}
-        rgb_groups: Dict[Tuple[int, int, int], List[ColorRecord]] = {}
-        
-        for record in self.records:
-            name_key = record.name.lower()
-            if name_key not in name_groups:
-                name_groups[name_key] = []
-            name_groups[name_key].append(record)
-            
-            if record.rgb not in rgb_groups:
-                rgb_groups[record.rgb] = []
-            rgb_groups[record.rgb].append(record)
-        
-        # Check for name overrides
-        for name, records in name_groups.items():
-            if len(records) > 1:
-                # Multiple records with same name - find override pattern
-                core_records = [r for r in records if not r.source.startswith('user-')]
-                user_records = [r for r in records if r.source.startswith('user-')]
-                if core_records and user_records:
-                    overrides["colors"]["name"][name] = (core_records[0].source, user_records[0].source)
-        
-        # Check for RGB overrides  
-        for rgb, records in rgb_groups.items():
-            if len(records) > 1:
-                # Multiple records with same RGB - find override pattern
-                core_records = [r for r in records if not r.source.startswith('user-')]
-                user_records = [r for r in records if r.source.startswith('user-')]
-                if core_records and user_records:
-                    overrides["colors"]["rgb"][str(rgb)] = (core_records[0].source, user_records[0].source)
-        
-        return overrides

@@ -13,10 +13,10 @@
 | B1 | **Bug** | `"last"` dual-color mode silently broken | Low | High | Patch fix — no break |
 | B2 | **Bug** | `palette.colors` used in ~8 docstrings but doesn't exist | Low | High | Additive (new property) |
 | O1 | **Orphan** | `EXPORT_FORMATS` imported but unused in `export.py` | Trivial | Low | None |
-| O2 | **Orphan** | `get_override_info()` on both palette classes | Low | Medium | Remove (internal use only) |
+| O2 | **Orphan** | `FilamentPalette.get_override_info()` | Low | Medium | Pending filament override redesign |
 | O3 | **Orphan** | Duplicate block in `determine_base_hue` | Trivial | Low | None |
 | D1 | **DRY** | Metric-resolution logic duplicated 4× | Medium | High | None |
-| D2 | **DRY** | `nearest_color` / `nearest_colors` are near-duplicates | Medium | High | None |
+| D2 | **DRY** | `nearest_color` / `nearest_colors` are near-duplicates | Medium | High | Resolved for colors |
 | D3 | **DRY** | Data-path resolution pattern duplicated 4× | Low | Medium | None |
 | D4 | **DRY** | `hsl_to_rgb` manually re-implements `colorsys.hls_to_rgb` | Low | Medium | None |
 | D5 | **DRY** | Wildcard filter handling duplicated in filament nearest methods | Trivial | Low | None |
@@ -24,7 +24,7 @@
 | S2 | **SoC** | `naming.py` loads `Palette.load_default()` on every call | Low | High | None |
 | S3 | **SoC** | `FilamentRecord.__post_init__` reaches into global config | Medium | Medium | Possible breaking change |
 | S4 | **SoC** | `get_override_info` loads a JSON file inside a class method | Low | Medium | None |
-| S5 | **SoC** | `reporting.py` wires up a `ListHandler` to capture log messages | Low | Medium | None |
+| S5 | **SoC** | Filament/synonym reporting captures log messages | Low | Medium | Pending later override batches |
 | C1 | **Smell** | Bare `except:` in 4 locations | Low | High | None |
 | C2 | **Smell** | `object.__setattr__` on a frozen dataclass | Medium | Medium | None |
 | C3 | **Smell** | `XYZ_SCALE_FACTOR` overloaded to mean `100.0` in non-XYZ code | Low | Medium | None |
@@ -112,24 +112,27 @@ likely a leftover from when `export.py` contained its own format dictionary.
 
 ---
 
-### O2 — `get_override_info()` on both palette classes appears unused
+### O2 — `FilamentPalette.get_override_info()` remains pending review
 
 **Files:** `palette.py` (line 615), `filament_palette.py` (line 876)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** Internal — safe to remove or mark private
 
-Both `Palette.get_override_info()` and `FilamentPalette.get_override_info()` build
-complex diagnostic dictionaries about user-vs-core data conflicts. The information they
-produce is already logged to the `logging` system at load time (in `load_colors()` and
-`load_filaments()`), making these methods largely redundant.
+`Palette.get_override_info()` was removed during the 7.0 user-color merge
+redesign. `load_colors(include_report=True)` now returns authoritative structured
+events while both old and replacement records are available.
 
-Neither method appears to be called from any CLI handler, any exporter, or any test. The
-`FilamentPalette` version also has an embedded `json.load()` call (see **S4**) and a
-bare `except: pass` (see **C1**), making it a maintenance liability.
+`FilamentPalette.get_override_info()` still builds a diagnostic dictionary
+about user-vs-core conflicts and remains part of the pending filament override
+redesign.
+
+The `FilamentPalette` version also has an embedded `json.load()` call (see
+**S4**) and a bare `except: pass` (see **C1**), making it a maintenance
+liability.
 
 **Fix options:**
 
-1. Remove both methods entirely.
-2. Rename to `_get_override_info()` (private) to signal they are diagnostic/testing aids.
+1. Replace it with structured filament-load events, then remove it.
+2. Rename it to `_get_override_info()` if a temporary diagnostic helper remains useful.
 
 ---
 
@@ -202,6 +205,9 @@ then reduce to a single call. See **A1** for details.
 dispatching, same metric resolution, same loop. The only differences are that
 `nearest_color` tracks a single best and `nearest_colors` builds a list. Both methods
 are ~90 lines each.
+
+**Status:** Resolved for `Palette` in 7.0; `nearest_color()` now delegates to
+`nearest_colors(count=1)` while preserving the established empty-palette result.
 
 Same duplication exists between `nearest_filament` / `nearest_filaments` in
 `filament_palette.py`.
@@ -416,10 +422,10 @@ logged at `load_maker_synonyms()` time).
 **File:** `cli_commands/reporting.py` (lines 29–36)  
 **Effort:** Low | **Benefit:** Medium | **API Impact:** None (internal CLI code)
 
-`show_override_report` attaches a temporary `ListHandler` to the `color_tools.palette`
-logger to intercept and collect log messages in order to display them as a report. This
-is using the logging system as an inter-process communication bus rather than its intended
-purpose.
+**Status:** Resolved for colors in 7.0 through
+`load_colors(include_report=True)`.
+The temporary handler remains only for filament and synonym messages until
+their override contracts are redesigned.
 
 The root cause is that `load_colors` and `load_filaments` don't return override information
 directly — they log it. The data is communicated to the CLI via a side channel (the logger).
@@ -694,7 +700,7 @@ pattern is already used by other functions in the codebase.
 **Do next (medium effort, architectural payoff):**
 
 - **D1 + A1** Extract `_resolve_lab_metric()` and simplify all nearest-neighbor methods
-- **D2** Refactor `nearest_color` to delegate to `nearest_colors`
+- **D2** Refactor `nearest_color` to delegate to `nearest_colors` — completed for colors
 - **D3 + A2** Extract `_resolve_data_path()` and DRY the loaders
 - **D4** Replace manual `hsl_to_rgb` with `colorsys.hls_to_rgb`
 - **S2 + A4** Add optional `palette=` to `naming.py` functions; lazy-load
@@ -702,8 +708,8 @@ pattern is already used by other functions in the codebase.
 **Larger, optional (architectural, evaluate ROI):**
 
 - **S3** Decouple `FilamentRecord` from global config
-- **S4 / S5** Improve override diagnostics architecture
-- **O2** Remove or privatize `get_override_info` methods
+- **S4 / S5** Improve override diagnostics architecture — completed for colors
+- **O2** Remove or privatize `get_override_info` methods — completed for colors
 - **C3** Add `PERCENT_SCALE` constant (requires hash regeneration)
 
 ---

@@ -9,6 +9,7 @@ from collections.abc import Callable
 from unittest.mock import patch
 
 from color_tools.cli_commands.reporting import show_override_report
+from color_tools.color_load_report import ColorLoadEvent, ColorLoadReport
 from color_tools.filament_palette import FilamentRecord
 from color_tools.palette import ColorRecord
 
@@ -37,7 +38,9 @@ class TestOverrideReporting(unittest.TestCase):
     def _run_with_loaders(
         self,
         *,
-        color_loader: Callable[[str], list[ColorRecord]],
+        color_loader: Callable[
+            [str], tuple[list[ColorRecord], ColorLoadReport]
+        ],
         filament_loader: Callable[[str], list[FilamentRecord]],
         synonym_loader: Callable[[str], dict[str, list[str]]],
     ) -> tuple[str, str]:
@@ -46,7 +49,7 @@ class TestOverrideReporting(unittest.TestCase):
         with (
             patch(
                 "color_tools.cli_commands.reporting.load_colors",
-                side_effect=color_loader,
+                return_value=color_loader("test-data"),
             ),
             patch(
                 "color_tools.cli_commands.reporting.load_filaments",
@@ -63,11 +66,17 @@ class TestOverrideReporting(unittest.TestCase):
         return stdout.getvalue(), stderr.getvalue()
 
     def test_every_override_message_is_captured_and_labeled(self) -> None:
-        def _load_colors(_path: str) -> list[ColorRecord]:
-            logger = logging.getLogger("color_tools.palette")
-            logger.info("User colors override 1 core colors by name: red")
-            logger.info("User colors override 1 core colors by RGB: crimson")
-            return [_color("red", (255, 0, 0), "user-colors.json")]
+        def _load_colors(
+            _path: str,
+        ) -> tuple[list[ColorRecord], ColorLoadReport]:
+            original = _color("red", (255, 0, 0), "colors.json")
+            replacement = _color("red", (220, 20, 60), "user-colors.json")
+            return [replacement], ColorLoadReport(
+                system_colors_loaded=1,
+                user_colors_loaded=1,
+                total_colors_available=1,
+                events=(ColorLoadEvent("overridden", replacement, original),),
+            )
 
         def _load_filaments(_path: str) -> list[FilamentRecord]:
             logger = logging.getLogger("color_tools.filament_palette")
@@ -88,8 +97,8 @@ class TestOverrideReporting(unittest.TestCase):
         )
 
         self.assertEqual(stderr, "")
-        self.assertIn("Colors: User colors override 1 core colors by name", stdout)
-        self.assertIn("Colors: User colors override 1 core colors by RGB", stdout)
+        self.assertIn("Colors overridden by name: 1", stdout)
+        self.assertIn("Overrode red (#FF0000, colors.json)", stdout)
         self.assertIn(
             "Filaments: User filaments override 1 core filaments exactly",
             stdout,
@@ -103,7 +112,10 @@ class TestOverrideReporting(unittest.TestCase):
 
     def test_report_states_when_no_overrides_are_emitted(self) -> None:
         stdout, stderr = self._run_with_loaders(
-            color_loader=lambda _path: [_color("red", (255, 0, 0), "colors.json")],
+            color_loader=lambda _path: (
+                [_color("red", (255, 0, 0), "colors.json")],
+                ColorLoadReport(1, 0, 1),
+            ),
             filament_loader=lambda _path: [_filament("red", "filaments.json")],
             synonym_loader=lambda _path: {},
         )
@@ -114,11 +126,14 @@ class TestOverrideReporting(unittest.TestCase):
 
     def test_summary_counts_color_and_filament_sources(self) -> None:
         stdout, _stderr = self._run_with_loaders(
-            color_loader=lambda _path: [
-                _color("red", (255, 0, 0), "colors.json"),
-                _color("green", (0, 255, 0), "colors.json"),
-                _color("blue", (0, 0, 255), "user-colors.json"),
-            ],
+            color_loader=lambda _path: (
+                [
+                    _color("red", (255, 0, 0), "colors.json"),
+                    _color("green", (0, 255, 0), "colors.json"),
+                    _color("blue", (0, 0, 255), "user-colors.json"),
+                ],
+                ColorLoadReport(2, 1, 3),
+            ),
             filament_loader=lambda _path: [
                 _filament("first", "filaments.json"),
                 _filament("second", "user-filaments.json"),
@@ -155,17 +170,13 @@ class TestOverrideReporting(unittest.TestCase):
         )
 
     def test_logger_levels_and_handlers_are_restored_after_failure(self) -> None:
-        palette_logger = logging.getLogger("color_tools.palette")
         filament_logger = logging.getLogger("color_tools.filament_palette")
         sentinel = logging.NullHandler()
-        original_palette_level = palette_logger.level
         original_filament_level = filament_logger.level
-        palette_logger.setLevel(logging.WARNING)
         filament_logger.setLevel(logging.ERROR)
         filament_logger.addHandler(sentinel)
 
         try:
-            before_palette_handlers = list(palette_logger.handlers)
             before_filament_handlers = list(filament_logger.handlers)
             with (
                 patch(
@@ -178,13 +189,10 @@ class TestOverrideReporting(unittest.TestCase):
             ):
                 show_override_report("test-data")
 
-            self.assertEqual(palette_logger.level, logging.WARNING)
             self.assertEqual(filament_logger.level, logging.ERROR)
-            self.assertEqual(palette_logger.handlers, before_palette_handlers)
             self.assertEqual(filament_logger.handlers, before_filament_handlers)
         finally:
             filament_logger.removeHandler(sentinel)
-            palette_logger.setLevel(original_palette_level)
             filament_logger.setLevel(original_filament_level)
 
 

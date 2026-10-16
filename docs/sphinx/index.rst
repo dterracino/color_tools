@@ -67,6 +67,7 @@ export configuration, and results. Record and result types are immutable where
 their contracts require it; export metadata and option objects remain mutable.
 
 * **ColorRecord** - CSS colors with precomputed values in all color spaces
+* **ColorLoadEvent / ColorLoadReport** - Structured user-color merge changes and counts
 * **FilamentRecord** - 3D printing filaments retaining source RGB components and an effective color
 * **FilamentFilterCriteria** - Reusable maker, type, finish, color, and TD filters
 * **HarmonyColor / HarmonyResult** - Ideal and displayable LCH harmony results
@@ -146,6 +147,7 @@ Color & Filament Data
    :template: module.rst
 
    color_tools.palette
+   color_tools.color_load_report
    color_tools.filament_palette
    color_tools.filament_filter_criteria
    color_tools.filament_collections

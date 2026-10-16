@@ -132,8 +132,8 @@ class TestUserPalettes(unittest.TestCase):
         self.assertAlmostEqual(record.lch[1], 133.80761485376166)
         self.assertAlmostEqual(record.lch[2], 306.2849380699878)
 
-    def test_user_palette_ignores_supplied_derived_fields(self):
-        """Legacy derived values do not override values calculated from hex."""
+    def test_user_palette_rejects_supplied_derived_fields(self):
+        """User palettes reject cached values instead of ignoring them."""
         palette_path = (
             self.test_data_dir / "user" / "palettes" / "user-test_user.json"
         )
@@ -148,13 +148,8 @@ class TestUserPalettes(unittest.TestCase):
             }])),
             encoding="utf-8",
         )
-        original_contents = palette_path.read_text(encoding="utf-8")
-
-        record = load_palette("user-test_user", self.test_data_dir).records[0]
-        self.assertEqual(record.rgb, (0, 0, 255))
-        self.assertEqual(record.hsl, (240.0, 100.0, 50.0))
-        self.assertAlmostEqual(record.lab[0], 32.29701093285073)
-        self.assertEqual(palette_path.read_text(encoding="utf-8"), original_contents)
+        with self.assertRaisesRegex(ValueError, "accept only 'name' and 'hex'"):
+            load_palette("user-test_user", self.test_data_dir)
 
     def test_user_palette_requires_name_and_hex(self):
         """User palette color entries require name and hex fields."""

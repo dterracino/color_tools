@@ -64,6 +64,16 @@ class TestPaletteDocuments(unittest.TestCase):
         self.assertTrue(colors)
         self.assertTrue(all(set(color) == {"name", "hex"} for color in colors))
 
+    def test_user_color_example_stores_only_authored_fields(self) -> None:
+        """The user color example does not ask users for derived values."""
+        path = self.data_dir / "user" / "user-colors.example.json"
+        colors = cast(
+            list[dict[str, object]],
+            json.loads(path.read_text(encoding="utf-8")),
+        )
+        self.assertTrue(colors)
+        self.assertTrue(all(set(color) == {"name", "hex"} for color in colors))
+
 
 class TestPaletteDocumentValidation(unittest.TestCase):
     """Exercise each externally meaningful schema-validation failure."""

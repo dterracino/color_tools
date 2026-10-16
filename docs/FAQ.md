@@ -227,7 +227,8 @@ python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --make
 
 ### How do I override a core color with my own custom color?
 
-Place your custom colors in `data/user/user-colors.json` using the same format as the core colors.
+Place your custom colors in `data/user/user-colors.json`. Each record contains
+exactly `name` and `hex`; the library calculates all other color spaces.
 
 **Tip:** An example file `user-colors.example.json` is included in `data/user/` - copy/rename it to `user-colors.json` to get started.
 
@@ -235,16 +236,14 @@ Place your custom colors in `data/user/user-colors.json` using the same format a
 [
   {
     "name": "red",
-    "hex": "#DC143C",
-    "rgb": [220, 20, 60],
-    "hsl": [348.0, 83.3, 47.1],
-    "lab": [47.1, 70.8, 33.2],
-    "lch": [47.1, 78.3, 25.1]
+    "hex": "#DC143C"
   }
 ]
 ```
 
-Your custom "red" will override the core red color completely. Both name and RGB lookups will return your version.
+Your custom "red" replaces the core red record by its trimmed,
+case-insensitive name. A new name is appended. A user color is rejected if its
+effective RGB value already belongs to any other current color.
 
 ### How do I add custom 3D printing filaments or override existing ones?
 
@@ -291,20 +290,25 @@ color-tools --check-overrides
 
 This shows:
 
-- Which colors are overridden by name or RGB
+- How many system and user colors loaded
+- Which colors were overridden by name and which were added
 - Which filaments are overridden by RGB
 - Which maker synonyms are replaced
 - Source files for all data
 
 ### What happens when my user file conflicts with core data?
 
-**User data always wins** in conflicts:
+Each user-data type defines its own conflict rules:
 
-- **Name conflicts**: Your color/filament name overrides the core name
-- **RGB conflicts**: Your color/filament appears first in search results
+- **Color name conflicts**: Your color replaces the current record with that name
+- **Color RGB conflicts**: Reusing another color's RGB value is rejected
+- **Exact nearest-color ties**: A `user-*` source sorts first; other ties retain
+  the merged record order
+- **Filament conflicts**: Existing filament behavior is reported separately
 - **Synonym conflicts**: Your synonyms completely replace core synonyms for that maker
 
-All lookups (`find_by_name()`, `find_by_rgb()`, `nearest_color()`) consistently return user data when conflicts exist.
+Color merging therefore produces one deterministic record per normalized name
+and effective RGB value before lookups are built.
 
 ### Can I disable user overrides temporarily?
 

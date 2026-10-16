@@ -103,6 +103,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Deterministic user-color merging and reporting** — simplify
+  `user-colors.json` records to exactly `name` and `hex`, derive all other color
+  spaces on load, replace colors only by normalized name, reject cumulative RGB
+  collisions, and expose typed load events and counts through
+  `load_colors(include_report=True)`. The CLI override report now consumes
+  those structured results instead of scraping color-loader log messages. Scalar
+  nearest-color lookup delegates to the ranked list implementation; exact ties
+  prefer actual `user-*` sources and otherwise retain merged-list order. The
+  obsolete `Palette.get_override_info()` method is removed because a merged
+  palette no longer contains the replaced records needed to reconstruct events.
+
 - **Separated generated integrity hashes** — move protected core-data, system
   palette, matrix, and color-constant digests out of `constants.py` into the
   private generated `_integrity_hashes.py` manifest. The updater now discovers

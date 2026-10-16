@@ -46,22 +46,9 @@ def should_prefer_source(new_source: str, current_source: str) -> bool:
     Returns:
         True if new_source should be preferred over current_source
     """
-    # Core filenames (these are overridden by user files)
-    core_files = {"colors.json", "filaments.json"}
-    
-    new_is_core = new_source in core_files
-    current_is_core = current_source in core_files
-    
-    # If current is core and new is user, prefer new (user override)
-    if current_is_core and not new_is_core:
-        return True
-    
-    # If current is user and new is core, keep current (user wins)
-    if not current_is_core and new_is_core:
-        return False
-    
-    # Both are same type (core or user), don't prefer either
-    return False
+    new_is_user = Path(new_source).name.startswith("user-")
+    current_is_user = Path(current_source).name.startswith("user-")
+    return new_is_user and not current_is_user
 
 
 def compare_distance_matches(

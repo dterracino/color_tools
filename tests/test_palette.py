@@ -1114,8 +1114,8 @@ class TestUserOverrides(unittest.TestCase):
         # Same type (both core) - no preference
         self.assertFalse(should_prefer_source("colors.json", "filaments.json"))
         
-        # Custom palettes should override core
-        self.assertTrue(should_prefer_source("cga4.json", "colors.json"))
+        # Non-user palettes do not receive user-data priority.
+        self.assertFalse(should_prefer_source("cga4.json", "colors.json"))
         self.assertFalse(should_prefer_source("colors.json", "cga4.json"))
 
     def test_multiple_overrides(self):

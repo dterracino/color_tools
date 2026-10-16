@@ -173,6 +173,7 @@ from .palette import (
     load_colors,
     load_palette,
 )
+from .color_load_report import ColorLoadEvent, ColorLoadReport
 
 from .filament_palette import (
     # Filament palette class
@@ -378,6 +379,8 @@ __all__ = [
     "FilamentCollections",
     "FilamentFilterCriteria",
     "ColorRecord",
+    "ColorLoadEvent",
+    "ColorLoadReport",
     "FilamentRecord",
     "load_colors",
     "load_filaments",

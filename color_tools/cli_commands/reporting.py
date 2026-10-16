@@ -19,6 +19,7 @@ from ..palette import (
     load_colors,
     load_palette,
 )
+from ..color_load_report import ColorLoadReport
 from ..filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
 
 
@@ -46,10 +47,7 @@ def show_override_report(json_dir: str | None = None) -> None:
     """
     log_messages: list[str] = []
     handler = _OverrideCaptureHandler(log_messages)
-    loggers = (
-        logging.getLogger("color_tools.palette"),
-        logging.getLogger("color_tools.filament_palette"),
-    )
+    loggers = (logging.getLogger("color_tools.filament_palette"),)
     original_levels = tuple(logger.level for logger in loggers)
     for logger in loggers:
         logger.setLevel(logging.INFO)
@@ -60,28 +58,29 @@ def show_override_report(json_dir: str | None = None) -> None:
     
     try:
         if json_dir is None:
-            palette = Palette.load_default()
+            colors, color_report = load_colors(include_report=True)
+            palette = Palette(colors)
             filament_palette = FilamentPalette.load_default()
         else:
-            colors = load_colors(json_dir)
+            colors, color_report = load_colors(json_dir, include_report=True)
             palette = Palette(colors)
             filaments = load_filaments(json_dir)
             synonyms = load_maker_synonyms(json_dir)
             filament_palette = FilamentPalette(filaments, synonyms)
         
-        # Display captured log messages
+        _print_color_load_report(color_report)
+
+        # Filament and synonym reporting still uses their existing log events.
         if log_messages:
-            print("\nOverride Details:")
+            print("\nFilament and Synonym Override Details:")
             for msg in log_messages:
-                if "User colors override" in msg:
-                    print(f"  Colors: {msg}")
-                elif "User filaments override" in msg:
+                if "User filaments override" in msg:
                     print(f"  Filaments: {msg}")
                 elif "User synonyms override" in msg:
                     print(f"  Synonyms: {msg}")
                 elif "User synonyms extend" in msg:
                     print(f"  Synonyms: {msg}")
-        else:
+        elif color_report.colors_overridden_by_name == 0:
             print("\nNo user overrides detected.")
         
         # Count sources
@@ -116,6 +115,32 @@ def show_override_report(json_dir: str | None = None) -> None:
         for logger, original_level in zip(loggers, original_levels):
             logger.removeHandler(handler)
             logger.setLevel(original_level)
+
+
+def _print_color_load_report(report: ColorLoadReport) -> None:
+    """Print structured color loading counts and user changes."""
+    print("\nColor Loading:")
+    print(f"  System colors loaded: {report.system_colors_loaded}")
+    print(f"  User colors loaded: {report.user_colors_loaded}")
+    print(f"  Colors overridden by name: {report.colors_overridden_by_name}")
+    print(f"  Unique user colors loaded: {report.unique_user_colors_loaded}")
+    print(f"  Total colors available: {report.total_colors_available}")
+
+    if not report.events:
+        return
+
+    print("\nColor Changes:")
+    for event in report.events:
+        if event.action == "added":
+            print(f"  Added {event.record.name} ({event.record.hex})")
+            continue
+        replaced = event.replaced_record
+        if replaced is None:
+            raise RuntimeError("An overridden color event requires a replaced record")
+        print(
+            f"  Overrode {replaced.name} ({replaced.hex}, {replaced.source}) "
+            f"with {event.record.name} ({event.record.hex}, {event.record.source})"
+        )
 
 
 def _user_data_files(data_dir: Path) -> list[tuple[Path, str]]:

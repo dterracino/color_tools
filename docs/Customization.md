@@ -115,9 +115,9 @@ Mapping of canonical maker names to common synonyms/abbreviations:
 
 ## User Data Files (Optional Extensions)
 
-You can extend the core databases with your own custom data by creating optional user files in the same directory as the core data files:
+You can extend the core databases with optional files under `data/user/`:
 
-- **user-colors.json** - Add custom colors (same format as colors.json)
+- **user-colors.json** - Add or replace colors using only `name` and `hex`
 - **user-filaments.json** - Add custom filaments (same format as filaments.json)
 - **user-synonyms.json** - Add or extend maker synonyms (same format as maker_synonyms.json)
 - **owned-filaments.json** - Track which filaments you own (v6.0.0+)
@@ -152,11 +152,7 @@ If no `.sha256` file exists, user files work without verification - giving you f
 [
   {
     "name": "myCustomPurple",
-    "hex": "#9B59B6",
-    "rgb": [155, 89, 182],
-    "hsl": [283.1, 39.0, 53.1],
-    "lab": [48.5, 45.7, -40.2],
-    "lch": [48.5, 60.8, 318.6]
+    "hex": "#9B59B6"
   }
 ]
 ```
@@ -187,7 +183,9 @@ If no `.sha256` file exists, user files work without verification - giving you f
 }
 ```
 
-**Note:** Users are responsible for avoiding duplicate entries between core and user data files.
+**Note:** Color names may intentionally replace existing colors. A color cannot
+reuse the effective RGB value of any other current color; invalid records are
+rejected with the conflicting color and source identified.
 
 ### owned-filaments.json - Filament Ownership Tracking
 
@@ -272,13 +270,19 @@ See [Usage Guide - Filament Command](https://github.com/dterracino/color_tools/b
 
 ### User Override System (v3.8.0+)
 
-User files **automatically override** core data when there are conflicts, ensuring your customizations always take priority:
+User files are merged with core data according to each data type's rules.
+For colors, each user record contains only `name` and `hex`; the library
+calculates RGB, HSL, LAB, and LCH.
 
 #### **Override Behavior:**
 
-- **Name conflicts**: User colors/filaments with the same name override core entries
-- **RGB conflicts**: User colors/filaments with the same RGB values override core entries
-- **Consistent lookups**: All search methods (name, RGB, nearest neighbor) return user overrides consistently
+- **Color name conflicts**: A user color replaces the current color with the
+  same trimmed, case-insensitive name, in the same list position
+- **Color RGB conflicts**: A user color cannot reuse another current color's
+  effective RGB value; this is validated sequentially as records are merged
+- **New colors**: Unique user names append in user-file order
+- **Nearest-color ties**: Exact distance ties prefer `user-*` sources, then
+  preserve merged-list order
 - **Source tracking**: Every record tracks its source file (colors.json, user-colors.json, cga4.json, etc.)
 
 #### **Override Detection:**
@@ -294,9 +298,16 @@ color-tools --check-overrides
 User Override Report
 ==================================================
 
-Override Details:
-  Colors: User colors override 1 core colors by name: [('red', 'colors.json', 'user-colors.json')]
-  Colors: User colors override 1 core colors by RGB: [('my_red (255, 0, 0)', 'red (colors.json)', 'user-colors.json')]
+Color Loading:
+  System colors loaded: 148
+  User colors loaded: 2
+  Colors overridden by name: 1
+  Unique user colors loaded: 1
+  Total colors available: 149
+
+Color Changes:
+  Overrode red (#FF0000, colors.json) with red (#DC143C, user-colors.json)
+  Added brand orange (#FF8533)
 ```
 
 The report also includes current record totals and active source files. Those
@@ -426,9 +437,10 @@ collections rather than system-display simulations.
 Create a versioned palette document in `data/user/palettes/`. User palette
 filenames must begin with `user-`; use the full filename stem when loading the
 palette. The required metadata ID must exactly match that filename stem. Each
-entry in `palette.colors` requires only `name` and `hex`; RGB, HSL, LAB, and LCH
-values are calculated from the hex color when loaded. Supplied derived fields
-are ignored. Files ending in `example.json` are skipped during palette
+entry in `palette.colors` requires exactly `name` and `hex`; RGB, HSL, LAB, and
+LCH values are calculated from the hex color when loaded. Derived or unknown
+fields are rejected so stale cached values cannot be mistaken for authored
+data. Files ending in `example.json` are skipped during palette
 discovery. For example, save this as
 `data/user/palettes/user-mycustom.json`:
 

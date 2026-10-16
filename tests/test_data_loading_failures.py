@@ -133,6 +133,99 @@ class TestDataLoadingFailures(unittest.TestCase):
                     r"Invalid color data at index 0.*colors.json",
                 )
 
+    def test_user_colors_accept_only_name_and_hex(self) -> None:
+        """User colors reject cached derived data and unknown fields."""
+        for field, value in (("rgb", [1, 2, 3]), ("note", "extra")):
+            with self.subTest(field=field), TemporaryDirectory() as directory:
+                data_dir = Path(directory)
+                self._write_json(data_dir / "colors.json", [_valid_color()])
+                user_path = data_dir / "user" / "user-colors.json"
+                self._write_json(
+                    user_path,
+                    [{"name": "Custom", "hex": "#123456", field: value}],
+                )
+                self._assert_unchanged_after_failure(
+                    user_path,
+                    lambda _path: load_colors(data_dir),
+                    rf"unexpected field\(s\): {field}.*only 'name' and 'hex'",
+                )
+
+    def test_user_color_values_are_derived_from_hex(self) -> None:
+        """The loader computes every cached color space from authored hex."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_json(data_dir / "colors.json", [_valid_color()])
+            self._write_json(
+                data_dir / "user" / "user-colors.json",
+                [{"name": " Custom Blue ", "hex": "#0000ff80"}],
+            )
+
+            colors, report = load_colors(data_dir, include_report=True)
+
+            self.assertEqual(len(colors), 2)
+            custom = colors[1]
+            self.assertEqual(custom.name, "Custom Blue")
+            self.assertEqual(custom.hex, "#0000FF")
+            self.assertEqual(custom.rgb, (0, 0, 255))
+            self.assertEqual(report.unique_user_colors_loaded, 1)
+
+    def test_user_color_rgb_conflicts_are_checked_cumulatively(self) -> None:
+        """Each accepted user color participates in the next collision check."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_json(data_dir / "colors.json", [_valid_color()])
+            user_path = data_dir / "user" / "user-colors.json"
+            self._write_json(
+                user_path,
+                [
+                    {"name": "First", "hex": "#123456"},
+                    {"name": "Second", "hex": "#123456FF"},
+                ],
+            )
+
+            self._assert_unchanged_after_failure(
+                user_path,
+                lambda _path: load_colors(data_dir),
+                r"Second.*conflicts with existing color 'First'.*user-colors.json",
+            )
+
+    def test_same_name_can_keep_its_existing_rgb(self) -> None:
+        """A replacement target is excluded from its own RGB collision check."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_json(data_dir / "colors.json", [_valid_color()])
+            self._write_json(
+                data_dir / "user" / "user-colors.json",
+                [{"name": " red ", "hex": "#f00"}],
+            )
+
+            colors, report = load_colors(data_dir, include_report=True)
+
+            self.assertEqual(len(colors), 1)
+            self.assertEqual(colors[0].name, "red")
+            self.assertEqual(colors[0].source, "user-colors.json")
+            self.assertEqual(report.colors_overridden_by_name, 1)
+
+    def test_duplicate_normalized_user_names_are_rejected(self) -> None:
+        """A user file cannot replace its own earlier normalized name."""
+        with TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_json(data_dir / "colors.json", [_valid_color()])
+            user_path = data_dir / "user" / "user-colors.json"
+            self._write_json(
+                user_path,
+                [
+                    {"name": "Custom", "hex": "#123456"},
+                    {"name": " custom ", "hex": "#654321"},
+                ],
+            )
+
+            self._assert_unchanged_after_failure(
+                user_path,
+                lambda _path: load_colors(data_dir),
+                "Duplicate user color name 'custom'",
+            )
+
     def test_filament_missing_each_required_field(self) -> None:
         """Every required filament field produces indexed source context."""
         for field in ("maker", "type", "color", "hex"):

@@ -14,6 +14,7 @@ import logging
 from typing import Callable, TypeVar
 
 from color_tools.palette import (
+    ColorRecord,
     Palette,
     load_colors,
 )
@@ -23,6 +24,11 @@ from color_tools.filament_palette import (
 )
 
 _LoadedData = TypeVar("_LoadedData")
+
+
+def _user_color(name: str, hex_code: str) -> dict[str, str]:
+    """Return one canonical user-authored color record."""
+    return {"name": name, "hex": hex_code}
 
 
 class TestUserOverrideSystem(unittest.TestCase):
@@ -134,16 +140,7 @@ class TestColorOverrides(TestUserOverrideSystem):
     def test_color_name_override(self) -> None:
         """Test that user colors override core colors by name."""
         # User color overrides core red with different RGB
-        user_colors = [
-            {
-                "name": "red",  # Same name as core
-                "hex": "#DC143C",  # Different color (crimson)
-                "rgb": [220, 20, 60],
-                "hsl": [348.0, 83.3, 47.1],
-                "lab": [47.1, 70.8, 33.2],
-                "lch": [47.1, 78.3, 25.1]
-            }
-        ]
+        user_colors = [_user_color("red", "#DC143C")]
         self._create_user_colors(user_colors)
         
         # Load palette with overrides
@@ -158,11 +155,9 @@ class TestColorOverrides(TestUserOverrideSystem):
         self.assertEqual(red_color.hex, "#DC143C")
         self.assertEqual(red_color.rgb, (220, 20, 60))
         
-        # Both RGB values should be accessible since they're different
+        # The replaced system record is removed from the merged list.
         core_red_rgb = palette.find_by_rgb((255, 0, 0))
-        self.assertIsNotNone(core_red_rgb)  # Core RGB still accessible
-        assert core_red_rgb is not None  # Type assertion for Pylance
-        self.assertEqual(core_red_rgb.source, "colors.json")
+        self.assertIsNone(core_red_rgb)
         
         # User RGB should be findable  
         user_red_rgb = palette.find_by_rgb((220, 20, 60))
@@ -171,54 +166,18 @@ class TestColorOverrides(TestUserOverrideSystem):
         self.assertEqual(user_red_rgb.name, "red")
         self.assertEqual(user_red_rgb.source, "user-colors.json")
     
-    def test_color_rgb_override(self) -> None:
-        """Test that user colors override core colors by RGB."""
+    def test_color_rgb_conflict_is_rejected(self) -> None:
+        """A different name cannot reuse an existing effective RGB value."""
         # User color uses same RGB as core blue but different name
-        user_colors = [
-            {
-                "name": "my_blue",  # Different name
-                "hex": "#0000FF",   # Same RGB as core blue
-                "rgb": [0, 0, 255],
-                "hsl": [240.0, 100.0, 50.0], 
-                "lab": [32.30, 79.19, -107.86],
-                "lch": [32.30, 133.81, 306.3]
-            }
-        ]
+        user_colors = [_user_color("my_blue", "#0000FF")]
         self._create_user_colors(user_colors)
         
-        colors = self._load_with_custom_dir(load_colors)
-        palette = Palette(colors)
-        
-        # RGB lookup should return user override (user wins RGB conflicts)
-        blue_rgb = palette.find_by_rgb((0, 0, 255))
-        self.assertIsNotNone(blue_rgb)
-        assert blue_rgb is not None  # Type assertion for Pylance
-        self.assertEqual(blue_rgb.source, "user-colors.json")
-        self.assertEqual(blue_rgb.name, "my_blue")
-        
-        # Both names should still be accessible since no name conflict
-        core_blue = palette.find_by_name("blue")
-        self.assertIsNotNone(core_blue)  # Core name still accessible
-        assert core_blue is not None  # Type assertion for Pylance
-        self.assertEqual(core_blue.source, "colors.json")
-        
-        user_blue = palette.find_by_name("my_blue")
-        self.assertIsNotNone(user_blue)
-        assert user_blue is not None  # Type assertion for Pylance
-        self.assertEqual(user_blue.source, "user-colors.json")
+        with self.assertRaisesRegex(ValueError, "conflicts with existing color 'blue'"):
+            self._load_with_custom_dir(load_colors)
     
     def test_color_addition_no_conflict(self) -> None:
         """Test that user colors can add new colors without conflicts."""
-        user_colors = [
-            {
-                "name": "green",
-                "hex": "#00FF00",
-                "rgb": [0, 255, 0],
-                "hsl": [120.0, 100.0, 50.0],
-                "lab": [87.73, -86.18, 83.18],
-                "lch": [87.73, 119.78, 136.0]
-            }
-        ]
+        user_colors = [_user_color("green", "#00FF00")]
         self._create_user_colors(user_colors)
         
         colors = self._load_with_custom_dir(load_colors)
@@ -244,16 +203,7 @@ class TestColorOverrides(TestUserOverrideSystem):
     def test_color_nearest_color_priority(self) -> None:
         """Test that nearest_color respects user overrides."""
         # User red overrides core red
-        user_colors = [
-            {
-                "name": "red",
-                "hex": "#DC143C", 
-                "rgb": [220, 20, 60],
-                "hsl": [348.0, 83.3, 47.1],
-                "lab": [47.1, 70.8, 33.2], 
-                "lch": [47.1, 78.3, 25.1]
-            }
-        ]
+        user_colors = [_user_color("red", "#DC143C")]
         self._create_user_colors(user_colors)
         
         colors = self._load_with_custom_dir(load_colors)
@@ -486,45 +436,31 @@ class TestOverrideReporting(TestUserOverrideSystem):
     """Test override detection and reporting."""
     
     def test_color_override_detection(self) -> None:
-        """Test detection of color overrides."""
-        # Create overrides
+        """Structured loading reports additions and name replacements."""
         user_colors = [
-            {
-                "name": "red",  # Name override
-                "hex": "#DC143C",
-                "rgb": [220, 20, 60], 
-                "hsl": [348.0, 83.3, 47.1],
-                "lab": [47.1, 70.8, 33.2],
-                "lch": [47.1, 78.3, 25.1]
-            },
-            {
-                "name": "my_blue",  # RGB override
-                "hex": "#0000FF",
-                "rgb": [0, 0, 255],
-                "hsl": [240.0, 100.0, 50.0],
-                "lab": [32.30, 79.19, -107.86], 
-                "lch": [32.30, 133.81, 306.3]
-            }
+            _user_color("red", "#DC143C"),
+            _user_color("green", "#00FF00"),
         ]
         self._create_user_colors(user_colors)
-        
-        colors = self._load_with_custom_dir(load_colors)
-        palette = Palette(colors)
-        
-        # Get override information
-        overrides = palette.get_override_info()
-        
-        # Should detect both overrides
-        self.assertIn("colors", overrides)
-        color_overrides = overrides["colors"]
-        
-        # Check name override
-        name_overrides = color_overrides.get("name", {})
-        self.assertIn("red", name_overrides)
-        
-        # Check RGB override  
-        rgb_overrides = color_overrides.get("rgb", {})
-        self.assertIn("(0, 0, 255)", rgb_overrides)
+
+        colors, report = load_colors(self.data_dir, include_report=True)
+
+        self.assertEqual([record.name for record in colors], ["red", "blue", "green"])
+        self.assertEqual(report.system_colors_loaded, 2)
+        self.assertEqual(report.user_colors_loaded, 2)
+        self.assertEqual(report.colors_overridden_by_name, 1)
+        self.assertEqual(report.unique_user_colors_loaded, 1)
+        self.assertEqual(report.total_colors_available, 3)
+        self.assertEqual([event.action for event in report.events], ["overridden", "added"])
+        self.assertEqual(report.events[0].replaced_record, ColorRecord(
+            name="red",
+            hex="#FF0000",
+            rgb=(255, 0, 0),
+            hsl=(0.0, 100.0, 50.0),
+            lab=(53.24, 80.09, 67.20),
+            lch=(53.24, 104.55, 40.0),
+            source="colors.json",
+        ))
     
     def test_filament_override_detection(self) -> None:
         """Test detection of filament overrides.""" 
@@ -576,17 +512,10 @@ class TestOverrideReporting(TestUserOverrideSystem):
     
     def test_no_overrides_empty_report(self) -> None:
         """Test that no overrides results in empty report."""
-        # No user files - no overrides
-        colors = self._load_with_custom_dir(load_colors)
-        palette = Palette(colors)
-        
-        overrides = palette.get_override_info()
-        
-        # Should be empty or have empty sections
-        self.assertTrue(
-            len(overrides.get("colors", {}).get("name", {})) == 0 and
-            len(overrides.get("colors", {}).get("rgb", {})) == 0
-        )
+        _colors, report = load_colors(self.data_dir, include_report=True)
+        self.assertEqual(report.colors_overridden_by_name, 0)
+        self.assertEqual(report.unique_user_colors_loaded, 0)
+        self.assertEqual(report.events, ())
 
 
 class TestOverrideIntegration(TestUserOverrideSystem):
@@ -595,16 +524,7 @@ class TestOverrideIntegration(TestUserOverrideSystem):
     def test_comprehensive_override_scenario(self) -> None:
         """Test complex scenario with all types of overrides."""
         # User colors override core colors
-        user_colors = [
-            {
-                "name": "red",  # Name override
-                "hex": "#DC143C",
-                "rgb": [220, 20, 60],
-                "hsl": [348.0, 83.3, 47.1],
-                "lab": [47.1, 70.8, 33.2],
-                "lch": [47.1, 78.3, 25.1]
-            }
-        ]
+        user_colors = [_user_color("red", "#DC143C")]
         
         # User filaments override core filaments
         user_filaments = [
@@ -666,9 +586,7 @@ class TestOverrideIntegration(TestUserOverrideSystem):
     def test_override_transparency_and_logging(self) -> None:
         """Test that all overrides are transparent and properly logged."""
         # Create scenario with all override types
-        user_colors = [{"name": "red", "hex": "#DC143C", "rgb": [220, 20, 60], 
-                       "hsl": [348.0, 83.3, 47.1], "lab": [47.1, 70.8, 33.2], 
-                       "lch": [47.1, 78.3, 25.1]}]
+        user_colors = [_user_color("red", "#DC143C")]
         
         user_filaments = [{"maker": "User Maker", "type": "PETG", "finish": "Silk",
                           "color": "User Red", "hex": "#FF0000"}]
@@ -680,24 +598,22 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         self._create_user_synonyms(user_synonyms)
         
         # Load everything
-        colors = self._load_with_custom_dir(load_colors) 
         filaments = self._load_with_custom_dir(load_filaments)
         synonyms = self._load_with_custom_dir(load_maker_synonyms)
         
-        color_palette = Palette(colors)
         filament_palette = FilamentPalette(filaments, synonyms)
         
         # Get comprehensive override reports
-        color_overrides = color_palette.get_override_info()
+        _colors, color_report = load_colors(self.data_dir, include_report=True)
         filament_overrides = filament_palette.get_override_info()
         
         # Verify all overrides are detected
-        self.assertIn("colors", color_overrides)
+        self.assertEqual(color_report.colors_overridden_by_name, 1)
         self.assertIn("filaments", filament_overrides)
         self.assertIn("synonyms", filament_overrides)
         
         # Check specific overrides
-        self.assertIn("red", color_overrides["colors"].get("name", {}))
+        self.assertEqual(color_report.events[0].record.name, "red")
         self.assertIn("(255, 0, 0)", filament_overrides["filaments"].get("rgb", {}))
         self.assertIn("Bambu Lab", filament_overrides["synonyms"])
 
