@@ -146,8 +146,6 @@ def handle_convert_command(args: Namespace) -> None:
                 rgb = cmy_to_rgb(triple)
             elif from_space == "cmyk":
                 cmyk = tuple(val)
-                if len(cmyk) != 4:
-                    raise ValueError("CMYK input requires four components")
                 rgb = cmyk_to_rgb((cmyk[0], cmyk[1], cmyk[2], cmyk[3]))
             else:
                 print(f"Error: Unsupported source space '{from_space}'", file=sys.stderr)

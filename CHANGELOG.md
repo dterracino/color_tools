@@ -29,8 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Unified coverage workflow** — configure pytest, pytest-cov, and branch
   coverage consistently for local commands, CI, and VS Code's Testing coverage
   UI. Development installs now include the required test runner and coverage
-  plugin, while reports remain scoped to supported `color_tools` modules and
-  exclude the explicitly disabled image prototypes.
+  plugin. Reports cover the supported `color_tools` package and both public
+  Vercel badge endpoints while excluding the explicitly disabled image
+  prototypes.
 
 - **HueForge filament export** — added a HueForge filament-library JSON exporter
   with deterministic UUIDv5 identifiers, required TD/nonempty unique ID

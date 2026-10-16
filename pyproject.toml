@@ -131,7 +131,7 @@ testpaths = ["tests"]
 
 [tool.coverage.run]
 branch = true
-source = ["color_tools"]
+source = ["color_tools", "api"]
 omit = [
     "main.py",
     "color_tools/image/detection.py",

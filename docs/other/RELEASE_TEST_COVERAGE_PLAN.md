@@ -452,20 +452,58 @@ targets. Keep these tests deterministic and headless-compatible.
 
 ## Low-value gaps and cleanup decisions
 
-- [ ] Review uncovered abstract method bodies. Exercise the concrete contract
+- [x] Review uncovered abstract method bodies. Exercise the concrete contract
   through minimal test subclasses; do not directly call abstract placeholders
-  solely for coverage.
-- [ ] Remove the redundant CMYK length check in the conversion handler if the
+  solely for coverage. The remaining uncovered `raise NotImplementedError`
+  lines are abstract interface sentinels; concrete importer and exporter
+  delegation is covered.
+- [x] Remove the redundant CMYK length check in the conversion handler if the
   earlier source-space validation makes it impossible to reach.
 - [x] Remove unreachable fallback branches in override reporting after
   confirming they cannot occur.
-- [ ] Decide whether tiny `__main__.py` wrappers need subprocess smoke tests.
-  Their current 0% result is visible but not a significant library risk.
-- [ ] Narrow broad exception handling discovered during coverage work where a
+- [x] Decide whether tiny `__main__.py` wrappers need subprocess smoke tests.
+  They remain intentionally uncovered: each only delegates to an already
+  tested `main()` function, and subprocess coverage would test Python's module
+  launcher rather than additional project behavior.
+- [x] Narrow broad exception handling discovered during coverage work where a
   focused exception contract is possible. Add a regression test for the
-  intended failure, not for silently swallowing arbitrary exceptions.
-- [ ] Do not spend release time covering disabled work-in-progress image
+  intended failure, not for silently swallowing arbitrary exceptions. The
+  remaining broad catches are deliberate application boundaries, per-file
+  continuation behavior, optional third-party fallbacks, or best-effort
+  interactive completion; their observable failure behavior is covered.
+- [x] Do not spend release time covering disabled work-in-progress image
   prototypes that are explicitly excluded from supported coverage.
+
+## Remaining-gap review
+
+The phase 11 review used a fresh branch-coverage run and included the deployed
+root-level `api/` badge endpoints as well as the `color_tools` package.
+
+- The supported source set measured 90% combined statement and branch coverage
+  before the final small additions in this phase. Core matching, loading,
+  conversion, import/export, integrity, MCP, and supported image modules are
+  predominantly in the 90% range.
+- `api/color_of_day.py` had only incidental helper coverage and
+  `api/filament_of_day.py` was absent because coverage previously declared only
+  `color_tools` as a source. Both public badge endpoints are now explicit
+  coverage sources and have complete focused coverage.
+- The dominance diagnostic formatter was a sizeable uncovered supported helper.
+  Its report header, image-level summary, candidate rows, and selected versus
+  unselected values now have behavioral coverage.
+- The terminal manager's remaining uncovered code is primarily formatted-screen
+  construction and individual navigation bindings. Its ownership, filtering,
+  save/revert, cancellation, and exit decisions have focused workflow coverage;
+  fragile terminal-render scripting is intentionally deferred.
+- The desktop dialog's remaining gaps are Qt paint, cursor, syntax-highlighting,
+  and native-widget paths. Export options, validation, success, failure,
+  cancellation, ownership mutation, reload, and close behavior are covered.
+- Lazy optional-dependency import failures and platform-specific formatting
+  paths are covered where they can be simulated deterministically. Environment-
+  owned import and native event-loop behavior is intentionally not exhaustively
+  exercised.
+- Remaining isolated branches in otherwise well-covered modules are defensive
+  fallbacks, format micro-variants, or parser-precluded CLI states. No further
+  release-blocking test gap was identified.
 
 ## Execution sequence
 
@@ -481,7 +519,7 @@ Work in bounded batches so failures identify the responsible area:
 8. [x] Override reporting.
 9. [x] Supported image edge cases.
 10. [x] Focused terminal and Qt workflow coverage.
-11. [ ] Review remaining uncovered branches and classify each as required,
+11. [x] Review remaining uncovered branches and classify each as required,
     unreachable/dead, abstract, platform-dependent, or intentionally deferred.
 12. [ ] Perform a complete FAQ content audit. Review existing questions for
     accuracy and clarity; reconcile answers with the README, Usage,

@@ -225,11 +225,15 @@ class TestDominanceAnalysis(unittest.TestCase):
             dominant_colors,
             dominant_colors_to_palette,
         )
+        from color_tools.image.dominance import format_dominance_diagnostics
 
         cls.DominanceAnalysis = DominanceAnalysis
         cls.analyze_dominant_colors = staticmethod(analyze_dominant_colors)
         cls.dominant_colors = staticmethod(dominant_colors)
         cls.dominant_colors_to_palette = staticmethod(dominant_colors_to_palette)
+        cls.format_dominance_diagnostics = staticmethod(
+            format_dominance_diagnostics
+        )
 
     def test_dominant_colors_on_solid_image_returns_single_exact_color(self) -> None:
         """A solid-color image collapses to one exact dominant color."""
@@ -423,6 +427,27 @@ class TestDominanceAnalysis(unittest.TestCase):
             ),
             [1, 2, 3, 4],
         )
+
+    def test_diagnostics_format_includes_selected_and_unselected_candidates(
+        self,
+    ) -> None:
+        """The tabular diagnostic report preserves image and candidate data."""
+        analysis = self.analyze_dominant_colors(
+            _make_limited_palette_image(),
+            count=2,
+        )
+
+        report = self.format_dominance_diagnostics(analysis)
+        lines = report.splitlines()
+
+        self.assertIn("focal_center=", lines[0])
+        self.assertIn("neutral_pixel_fraction=", lines[1])
+        self.assertTrue(lines[2].startswith("selected\thex\tpopulation\t"))
+        self.assertEqual(len(lines), len(analysis.diagnostics) + 3)
+        selected_fields = [line.split("\t")[0] for line in lines[3:]]
+        self.assertIn("1", selected_fields)
+        self.assertIn("2", selected_fields)
+        self.assertIn("-", selected_fields)
 
     def test_analysis_is_deterministic_for_simple_image(self) -> None:
         """Repeated analysis on the same image yields the same ordered colors."""
