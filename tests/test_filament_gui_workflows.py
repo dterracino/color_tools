@@ -3,12 +3,14 @@
 from __future__ import annotations
 
 import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import MagicMock, patch
 
-os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+if sys.platform != "win32":
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from color_tools.filament_manager_gui import (
     PYSIDE6_AVAILABLE,

@@ -3,13 +3,15 @@ from __future__ import annotations
 
 import json
 import os
+import sys
 import tempfile
 import unittest
 from pathlib import Path
 from unittest.mock import patch
 
 from color_tools.config import config_context
-os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
+if sys.platform != "win32":
+    os.environ.setdefault("QT_QPA_PLATFORM", "offscreen")
 
 from color_tools.filament_palette import FilamentPalette, FilamentRecord
 from color_tools.filament_manager_gui import (
