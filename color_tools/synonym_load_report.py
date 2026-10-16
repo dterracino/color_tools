@@ -6,7 +6,7 @@ from dataclasses import dataclass
 from typing import Literal
 
 
-_SynonymLoadAction = Literal["added", "unchanged", "replaced", "extended"]
+_SynonymLoadAction = Literal["added", "unchanged", "extended"]
 
 
 @dataclass(frozen=True, slots=True)
@@ -43,11 +43,6 @@ class SynonymLoadReport:
         return self._count("unchanged")
 
     @property
-    def makers_replaced(self) -> int:
-        """Return the number of disjoint system synonym lists replaced."""
-        return self._count("replaced")
-
-    @property
     def makers_extended(self) -> int:
-        """Return the number of overlapping system synonym lists extended."""
+        """Return the number of existing maker entries extended by users."""
         return self._count("extended")

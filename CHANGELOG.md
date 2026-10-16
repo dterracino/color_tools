@@ -121,7 +121,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   `filament --generate-id`, structured filament and synonym load reports, and
   the read-only global `--validate-user-files` command. The override report now
   consumes loader events directly; the logging capture and obsolete
-  `FilamentPalette.get_override_info()` reconstruction are removed.
+  `FilamentPalette.get_override_info()` reconstruction are removed. User maker
+  synonyms are additive and case-insensitive, require a maker present in the
+  merged filament database, and reject aliases that are not globally unique or
+  that shadow canonical maker names.
 
 - **Separated generated integrity hashes** — move protected core-data, system
   palette, matrix, and color-constant digests out of `constants.py` into the

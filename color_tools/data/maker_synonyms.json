@@ -2,7 +2,14 @@
   "3D-Fuel": ["3D Fuel", "3DFuel"],
   "Bambu Lab": ["BBL", "Bambu", "BambuLab"],
   "Duramic": ["Duramic 3D", "Duramic3D"],
+  "eSun": ["E-Sun"],
   "Flashforge": ["Flashforge 3D"],
+  "Hatchbox": ["Hatchbox 3D", "Hatchbox3D"],
+  "Matterhacker": ["Matter Hackers", "MatterHackers", "MH", "MH Build"],
+  "Overture": ["Overture 3D", "Overture3D"],
   "Paramount 3D": ["Paramount", "Paramount3D"],
-  "Qidi Tech": ["Qidi", "QidiTech"]
+  "Polymaker": ["Poly Maker"],
+  "Prusament": ["Prusa", "Prusa Research", "PrusaResearch"],
+  "Qidi Tech": ["Qidi", "QidiTech"],
+  "Sunlu": ["Sunlu 3D"]
 }

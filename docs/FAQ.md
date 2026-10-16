@@ -275,22 +275,25 @@ The ID is the override key. Reusing a system filament ID replaces that complete
 record in place; a new ID appends a record. Equal RGB values are allowed and do
 not constitute overrides. Duplicate IDs in one user file are rejected.
 
-### How do I add maker synonyms or change existing ones?
+### How do I add maker synonyms?
 
-Create `data/user/user-synonyms.json` to add or completely replace maker synonyms.
+Create `data/user/user-synonyms.json` to add aliases for makers in the merged
+filament database.
 
 **Tip:** An example file `user-synonyms.example.json` is included in `data/user/` - copy/rename it to `user-synonyms.json` to get started.
 
 ```json
 {
-  "My Company": ["MC", "MyCo"],
-  "Bambu Lab": ["CustomBambu", "CB"]
+  "Bambu Lab": ["Bambu Labs"],
+  "3D Jake": ["3DJake"]
 }
 ```
 
-For an existing maker, a disjoint user list replaces the system list. A list
-with at least one existing synonym extends the system list without duplicates;
-an equal list is unchanged.
+Maker keys and aliases are matched case-insensitively. The maker must exist in
+the system filaments or `user-filaments.json`. User aliases are always additive
+and never replace bundled aliases. Every alias must be globally unique after
+case folding and cannot equal a canonical maker name. Repeating an alias for
+the same maker is an unchanged no-op; assigning it to another maker is rejected.
 
 ### How can I see what user data is overriding core data?
 
@@ -305,7 +308,7 @@ This shows:
 - How many system and user colors loaded
 - Which colors were overridden by name and which were added
 - Which filaments are replaced by ID and which are added
-- Which maker synonym lists are added, replaced, extended, or unchanged
+- Which maker synonym lists are added, extended, or unchanged
 - Source files for all data
 
 ### What happens when my user file conflicts with core data?
@@ -318,7 +321,8 @@ Each user-data type defines its own conflict rules:
   the merged record order
 - **Filament ID conflicts**: Your complete record replaces the record with the
   same ID; RGB and descriptive fields do not define conflicts
-- **Synonym conflicts**: Disjoint lists replace and overlapping lists extend
+- **Synonym conflicts**: Unknown maker keys, aliases assigned to more than one
+  maker, and aliases that shadow canonical maker names are rejected
 
 Color merging therefore produces one deterministic record per normalized name
 and effective RGB value before lookups are built.

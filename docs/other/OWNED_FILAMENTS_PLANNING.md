@@ -34,7 +34,7 @@ From `docs/Customization.md`:
   - Same pattern as user-filaments.json
 
 - **`user-synonyms.json`** - Adds maker name synonyms
-  - Different pattern - extends/overrides synonym mappings
+  - Different pattern - additively extends synonym mappings
 
 ### Filament Record Structure
 

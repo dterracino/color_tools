@@ -137,7 +137,6 @@ def _print_synonym_load_report(report: SynonymLoadReport) -> None:
     print(f"  System makers loaded: {report.system_makers_loaded}")
     print(f"  User makers loaded: {report.user_makers_loaded}")
     print(f"  Makers added: {report.makers_added}")
-    print(f"  Makers replaced: {report.makers_replaced}")
     print(f"  Makers extended: {report.makers_extended}")
     print(f"  Makers unchanged: {report.makers_unchanged}")
     print(f"  Total makers available: {report.total_makers_available}")

@@ -1,8 +1,8 @@
 {
   "owned_filaments": [
-    "bambu-lab_pla-matte_jet-black",
-    "bambu-lab_pla-matte_white",
-    "polymaker_polyterra-pla_charcoal-black",
-    "polymaker_polyterra-pla_army-brown"
+    "bambu-lab-pla-matte-charcoal",
+    "bambu-lab-pla-matte-ivory-white",
+    "polymaker-pla-polylite-black",
+    "panchroma-pla-matte-matte-army-brown"
   ]
 }

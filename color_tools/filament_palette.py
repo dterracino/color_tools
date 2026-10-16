@@ -356,9 +356,17 @@ def _parse_synonyms(data: object, source_file: str) -> dict[str, list[str]]:
     if not isinstance(data, dict):
         raise ValueError(f"Expected object of maker synonyms at root level in {source_file}")
     result: dict[str, list[str]] = {}
+    seen_makers: set[str] = set()
     for maker_value, synonyms_value in cast(dict[object, object], data).items():
         if not isinstance(maker_value, str) or not maker_value.strip() or maker_value != maker_value.strip():
             raise ValueError(f"Invalid maker name {maker_value!r} in {source_file}")
+        maker_key = maker_value.casefold()
+        if maker_key in seen_makers:
+            raise ValueError(
+                f"Duplicate maker name {maker_value!r} in {source_file}; "
+                "maker names are case-insensitive"
+            )
+        seen_makers.add(maker_key)
         if not isinstance(synonyms_value, list):
             raise ValueError(f"Synonyms for {maker_value!r} in {source_file} must be an array")
         parsed: list[str] = []
@@ -380,35 +388,80 @@ def _parse_synonyms(data: object, source_file: str) -> dict[str, list[str]]:
 def _merge_user_synonyms(
     system_synonyms: dict[str, list[str]],
     user_synonyms: dict[str, list[str]],
+    known_makers: list[str],
 ) -> tuple[dict[str, list[str]], tuple[SynonymLoadEvent, ...]]:
-    merged = {maker: list(values) for maker, values in system_synonyms.items()}
+    loaded_makers: dict[str, str] = {}
+    for maker in known_makers:
+        loaded_makers.setdefault(maker.casefold(), maker)
+    canonical_makers = dict(loaded_makers)
+    for maker in system_synonyms:
+        canonical_makers.setdefault(maker.casefold(), maker)
+    merged: dict[str, list[str]] = {}
+    alias_owners: dict[str, str] = {}
+
+    def resolve_user_maker(maker: str) -> str:
+        canonical = loaded_makers.get(maker.casefold())
+        if canonical is None:
+            raise ValueError(
+                f"Unknown maker {maker!r} in {ColorConstants.USER_SYNONYMS_JSON_FILENAME}; "
+                "maker keys must match "
+                "a maker in the merged filament database"
+            )
+        return canonical
+
+    def add_alias(alias: str, canonical: str, source: str) -> bool:
+        alias_key = alias.casefold()
+        canonical_collision = canonical_makers.get(alias_key)
+        if canonical_collision is not None:
+            raise ValueError(
+                f"Synonym {alias!r} for {canonical!r} in {source} conflicts "
+                f"with canonical maker {canonical_collision!r}"
+            )
+        owner = alias_owners.get(alias_key)
+        if owner is not None:
+            if owner != canonical:
+                raise ValueError(
+                    f"Synonym {alias!r} for {canonical!r} in {source} is already "
+                    f"assigned to maker {owner!r}"
+                )
+            return False
+        alias_owners[alias_key] = canonical
+        return True
+
+    for maker, values in system_synonyms.items():
+        canonical = canonical_makers[maker.casefold()]
+        if canonical in merged:
+            raise ValueError(
+                f"Duplicate maker name {maker!r} in "
+                f"{ColorConstants.MAKER_SYNONYMS_JSON_FILENAME}; maker names are case-insensitive"
+            )
+        merged[canonical] = []
+        for value in values:
+            if add_alias(value, canonical, ColorConstants.MAKER_SYNONYMS_JSON_FILENAME):
+                merged[canonical].append(value)
+
     events: list[SynonymLoadEvent] = []
     for maker, user_values in user_synonyms.items():
-        previous = merged.get(maker)
+        canonical = resolve_user_maker(maker)
+        previous = merged.get(canonical)
         if previous is None:
-            merged[maker] = list(user_values)
-            events.append(SynonymLoadEvent("added", maker, tuple(user_values), effective_synonyms=tuple(user_values)))
-            continue
-        existing = set(previous)
-        provided = set(user_values)
-        if existing == provided:
-            action: Literal["unchanged", "replaced", "extended"] = "unchanged"
-            effective = list(previous)
-        elif existing.isdisjoint(provided):
-            action = "replaced"
-            effective = list(user_values)
-            merged[maker] = effective
+            effective: list[str] = []
+            action: Literal["added", "unchanged", "extended"] = "added"
         else:
-            action = "extended"
             effective = list(previous)
-            effective.extend(value for value in user_values if value not in existing)
-            merged[maker] = effective
+            action = "unchanged"
+        for value in user_values:
+            if add_alias(value, canonical, ColorConstants.USER_SYNONYMS_JSON_FILENAME):
+                effective.append(value)
+                if previous is not None:
+                    action = "extended"
+        merged[canonical] = effective
         events.append(
             SynonymLoadEvent(
                 action,
-                maker,
+                canonical,
                 tuple(user_values),
-                tuple(previous),
+                tuple(previous or ()),
                 tuple(effective),
             )
         )
@@ -436,7 +489,12 @@ def load_maker_synonyms(
     *,
     include_report: bool = False,
 ) -> Dict[str, List[str]] | tuple[Dict[str, List[str]], SynonymLoadReport]:
-    """Load and merge validated maker synonyms with structured reporting."""
+    """Load additive, case-insensitive maker synonyms with reporting.
+
+    Maker keys must identify a maker in the merged filament database. Synonyms
+    are globally unique after case folding, cannot duplicate a canonical maker
+    name, and never remove bundled synonyms.
+    """
     if json_path is None:
         data_dir = Path(__file__).parent / "data"
         database_path = data_dir / ColorConstants.MAKER_SYNONYMS_JSON_FILENAME
@@ -460,7 +518,13 @@ def load_maker_synonyms(
     if user_path.exists():
         with user_path.open("r", encoding="utf-8") as file:
             user_synonyms = _parse_synonyms(json.load(file), str(user_path))
-        synonyms, events = _merge_user_synonyms(system_synonyms, user_synonyms)
+    filament_records = load_filaments(data_dir)
+    known_makers = list(dict.fromkeys(record.maker for record in filament_records))
+    synonyms, events = _merge_user_synonyms(
+        system_synonyms,
+        user_synonyms,
+        known_makers,
+    )
 
     report = SynonymLoadReport(
         system_makers_loaded=len(system_synonyms),
@@ -657,6 +721,7 @@ class FilamentPalette:
         self._by_rgb: Dict[Tuple[int, int, int], List[FilamentRecord]] = {}
         self._by_finish: Dict[str, List[FilamentRecord]] = {}
         self._by_id: Dict[str, FilamentRecord] = {}
+        self._canonical_makers: dict[str, str] = {}
         
         # Build indices
         for rec in records:
@@ -664,6 +729,7 @@ class FilamentPalette:
             if rec.maker not in self._by_maker:
                 self._by_maker[rec.maker] = []
             self._by_maker[rec.maker].append(rec)
+            self._canonical_makers.setdefault(rec.maker.strip().casefold(), rec.maker)
             
             # By type
             if rec.type not in self._by_type:
@@ -696,8 +762,8 @@ class FilamentPalette:
         """
         Expand maker names to include synonyms.
         
-        For example, if "Bambu" is provided and "Bambu Lab" has synonyms ["Bambu", "BBL"],
-        this will return {"Bambu Lab", "Bambu", "BBL"}.
+        For example, if "Bambu" is provided and "Bambu Lab" has that synonym,
+        this will return {"Bambu Lab"}.
         
         Args:
             makers: List of maker names or synonyms to expand
@@ -707,19 +773,20 @@ class FilamentPalette:
         """
         expanded: set[str] = set()
         for maker in makers:
-            # Add the original name
-            expanded.add(maker)
             normalized_maker = maker.strip().casefold()
-            
-            # Match canonical names and synonyms case-insensitively.
+            canonical_match = self._canonical_makers.get(normalized_maker)
+            matched = canonical_match is not None
+            if canonical_match is not None:
+                expanded.add(canonical_match)
+
+            # Match synonyms case-insensitively.
             for canonical, synonyms in self.maker_synonyms.items():
                 normalized_synonyms = {synonym.strip().casefold() for synonym in synonyms}
-                if (
-                    normalized_maker == canonical.strip().casefold()
-                    or normalized_maker in normalized_synonyms
-                ):
+                if normalized_maker in normalized_synonyms:
                     expanded.add(canonical)
-                    expanded.update(synonyms)
+                    matched = True
+            if not matched:
+                expanded.add(maker)
         
         return expanded
     

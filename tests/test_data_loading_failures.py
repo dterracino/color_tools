@@ -325,6 +325,7 @@ class TestDataLoadingFailures(unittest.TestCase):
         for values in (["Alias", "alias"], ["Alias", 3]):
             with self.subTest(values=values), TemporaryDirectory() as directory:
                 data_dir = Path(directory)
+                self._write_json(data_dir / "filaments.json", [_valid_filament()])
                 self._write_json(data_dir / "maker_synonyms.json", {"Maker": ["M"]})
                 user_path = data_dir / "user" / "user-synonyms.json"
                 self._write_json(user_path, {"Maker": values})

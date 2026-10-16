@@ -1,6 +1,6 @@
 [
   {
-    "id": "my-custom-pla-red",
+    "id": "my-brand-pla-matte-deep-red",
     "maker": "My Brand",
     "type": "PLA",
     "finish": "Matte",
@@ -10,7 +10,7 @@
     "other_names": ["Crimson", "Dark Red"]
   },
   {
-    "id": "local-supplier-petg-blue",
+    "id": "local-supplier-petg-ocean-blue",
     "maker": "Local Supplier",
     "type": "PETG",
     "finish": null,

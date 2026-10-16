@@ -596,6 +596,9 @@ with SHA-256 hashes:
 
 ```bash
 python -m color_tools --verify-all
+
+# Validate user JSON schemas and merge rules without writing files
+python -m color_tools --validate-user-files
 ```
 
 See [Troubleshooting](https://github.com/dterracino/color_tools/blob/main/docs/Troubleshooting.md#data-integrity-verification) for verification details.

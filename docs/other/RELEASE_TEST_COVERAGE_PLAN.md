@@ -117,14 +117,15 @@ Suggested homes: `tests/test_palette.py`, `tests/test_user_overrides.py`, and
 Target: `color_tools/filament_palette.py`
 
 - [x] Missing core synonym file produces an empty base mapping.
-- [x] Identical user synonyms leave the canonical entry unchanged.
-- [x] Disjoint user synonyms replace the canonical entry and report an
-  override.
-- [x] Partially overlapping synonyms extend the entry without duplicates and
-  report the old/new counts.
-- [x] A previously unknown maker is added.
-- [ ] Canonical names and synonyms match case-insensitively with surrounding
-  whitespace normalized for matching.
+- [x] Existing aliases repeated with different casing leave the canonical
+  entry unchanged.
+- [x] Disjoint user aliases extend the canonical entry without removing system
+  aliases.
+- [x] A maker introduced by `user-filaments.json` can receive aliases.
+- [x] Unknown maker keys are rejected.
+- [x] Aliases are globally unique case-insensitively and cannot shadow a
+  canonical maker name.
+- [x] Canonical names and synonyms match case-insensitively.
 
 Suggested home: `tests/test_synonyms.py`.
 
@@ -364,7 +365,7 @@ Target: `color_tools/cli_commands/reporting.py`
 
 - [x] Display typed color name-replacement and addition events.
 - [x] Display typed filament ID-replacement and addition events.
-- [x] Display typed synonym replacement and extension events.
+- [x] Display typed synonym addition and extension events.
 - [x] Report no overrides when no loader events are returned.
 - [x] Summarize records by source for both colors and filaments.
 - [x] A loader failure prints one focused error and exits with status 1.

@@ -10,7 +10,7 @@ from __future__ import annotations
 CORE_DATA_HASHES: dict[str, str] = {
     "colors.json": "ca33f6055298d37c1ad469656d3ba0f2f15d506bbc6149cd42e696fc5c3a3d00",
     "filaments.json": "22954d5b5df826a0344086b7e55d6827ecdebfd5505c223ba3e9c87410c833d4",
-    "maker_synonyms.json": "73df3893a98fb8439e8cc127eb9cd5ee763027c346ad9f528f8290514f999fe1",
+    "maker_synonyms.json": "f248c08de46a8fc3a9f9edf6636739a3e2e6e47fa1d1d9fa5fedbbfad5c0ee7c",
 }
 
 SYSTEM_PALETTE_HASHES: dict[str, str] = {

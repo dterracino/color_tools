@@ -194,10 +194,17 @@ can be corrected without breaking owned-filament references.
 
 ```json
 {
-  "My Local Shop": ["LocalShop", "MLS"],
-  "Bambu Lab": ["BBL"]
+  "Bambu Lab": ["Bambu Labs"],
+  "3D Jake": ["3DJake"]
 }
 ```
+
+Maker keys are matched case-insensitively and must identify a maker in the
+merged filament database, including makers added through `user-filaments.json`.
+User aliases are additive: bundled aliases are never removed. Each alias must
+be globally unique after case folding and cannot equal any canonical maker
+name. Repeating an alias already assigned to the same maker is an unchanged
+no-op; assigning it to another maker is an error.
 
 **Note:** Color names may intentionally replace existing colors. A color cannot
 reuse the effective RGB value of any other current color; invalid records are
@@ -304,8 +311,9 @@ calculates RGB, HSL, LAB, and LCH.
 - **New filament IDs**: New records append in user-file order; duplicate RGB
   values and product descriptions are allowed because ID defines identity
 - **Duplicate user filament IDs**: Rejected within a user file
-- **Maker synonyms**: Equal lists are unchanged, disjoint lists replace, and
-  overlapping lists extend without duplicates
+- **Maker synonyms**: User aliases only extend the aliases for a known maker.
+  Alias and maker matching is case-insensitive; aliases must be globally unique
+  and cannot shadow a canonical maker name
 - **Source tracking**: Every record tracks its source file (colors.json, user-colors.json, cga4.json, etc.)
 
 #### **Override Detection:**

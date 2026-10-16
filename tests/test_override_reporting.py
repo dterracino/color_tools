@@ -80,7 +80,7 @@ class TestOverrideReporting(unittest.TestCase):
             )),
             synonym_result=({"Maker": ["Alias"]}, SynonymLoadReport(
                 1, 1, 1,
-                (SynonymLoadEvent("replaced", "Maker", ("Alias",), ("Old",), ("Alias",)),),
+                (SynonymLoadEvent("extended", "Maker", ("Alias",), ("Old",), ("Old", "Alias")),),
             )),
         )
 
@@ -90,7 +90,7 @@ class TestOverrideReporting(unittest.TestCase):
         self.assertIn(
             "Overrode red (filaments.json -> user-filaments.json)", stdout,
         )
-        self.assertIn("Replaced Maker: ['Alias']", stdout)
+        self.assertIn("Extended Maker: ['Old', 'Alias']", stdout)
 
     def test_report_states_when_no_overrides_are_emitted(self) -> None:
         stdout, stderr = self._run_with_loaders(

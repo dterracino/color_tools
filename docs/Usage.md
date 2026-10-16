@@ -275,6 +275,11 @@ removes a record only when every active exclusion field matches. Empty exclusion
 exclude nothing. The existing filtering and nearest-search methods remain available with
 their original signatures.
 
+User-defined maker aliases are additive and globally unique after case folding;
+they cannot replace bundled aliases or shadow a canonical maker name. See the
+[Customization Guide](Customization.md#user-data-files-optional-extensions)
+for the `user-synonyms.json` format and validation rules.
+
 For color naming, `generate_color_names()` eagerly returns a list of `(name, match_type)`
 tuples with one CSS palette load. `iter_color_names()` provides the same results lazily and
 does not load the palette until its first input is requested.

@@ -335,19 +335,21 @@ class TestFilamentOverrides(TestUserOverrideSystem):
 
 
 class TestSynonymOverrides(TestUserOverrideSystem):
-    """Test synonym override behavior."""
+    """Test additive maker-synonym behavior."""
     
-    def test_synonym_replacement_override(self) -> None:
-        """Test that user synonyms completely replace core synonyms."""
-        # User completely replaces Bambu Lab synonyms
+    def test_user_synonyms_extend_existing_maker(self) -> None:
+        """User aliases extend rather than replace bundled aliases."""
         user_synonyms = {
-            "Bambu Lab": ["BambuCustom", "BCL"]  # Completely new list
+            "bambu lab": ["BambuCustom", "BCL"]
         }
         self._create_user_synonyms(user_synonyms)
         
         synonyms = self._load_with_custom_dir(load_maker_synonyms)
         filaments = self._load_with_custom_dir(load_filaments)
         palette = FilamentPalette(filaments, synonyms)
+
+        self.assertIn("Bambu Lab", synonyms)
+        self.assertNotIn("bambu lab", synonyms)
         
         # New synonyms should work
         bambu_new = palette.find_by_maker("BambuCustom") 
@@ -356,23 +358,25 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         bcl_result = palette.find_by_maker("BCL")
         self.assertGreater(len(bcl_result), 0)
         
-        # Old synonyms should NOT work (replaced, not extended)
-        bambu_old = palette.find_by_maker("Bambu")  # Core synonym
-        self.assertEqual(len(bambu_old), 0)  # Should be empty
-        
-        bbl_old = palette.find_by_maker("BBL")  # Core synonym
-        self.assertEqual(len(bbl_old), 0)  # Should be empty
+        # Bundled synonyms remain available.
+        self.assertGreater(len(palette.find_by_maker("bambu")), 0)
+        self.assertGreater(len(palette.find_by_maker("bbl")), 0)
         
         # Canonical name should still work
         bambu_canonical = palette.find_by_maker("Bambu Lab")
         self.assertGreater(len(bambu_canonical), 0)
     
-    def test_synonym_addition_no_conflict(self) -> None:
-        """Test that user synonyms can add new makers without conflicts."""
-        # User adds synonyms for new maker
-        user_synonyms = {
-            "New Company": ["NC", "NewCo"]
-        }
+    def test_synonym_addition_for_user_filament_maker(self) -> None:
+        """A maker introduced by user filaments can receive aliases."""
+        self._create_user_filaments([{
+            "id": "new-company-pla-green",
+            "maker": "New Company",
+            "type": "PLA",
+            "finish": None,
+            "color": "Green",
+            "hex": "#00FF00",
+        }])
+        user_synonyms = {"New Company": ["NC", "NewCo"]}
         self._create_user_synonyms(user_synonyms)
         
         synonyms = self._load_with_custom_dir(load_maker_synonyms)
@@ -387,55 +391,47 @@ class TestSynonymOverrides(TestUserOverrideSystem):
         self.assertIn("NC", synonyms["New Company"])
         self.assertIn("NewCo", synonyms["New Company"])
     
-    def test_synonym_extension_vs_replacement_detection(self) -> None:
-        """Test detection of synonym extension vs replacement."""
-        # Test replacement case (conflicting maker)
-        user_synonyms_replace = {
-            "Test Maker": ["NewTM", "TestMakerNew"]  # Replaces ["TM"]
-        }
-        self._create_user_synonyms(user_synonyms_replace)
+    def test_disjoint_user_aliases_are_additive(self) -> None:
+        """A disjoint user list retains all bundled aliases."""
+        self._create_user_synonyms({"Test Maker": ["NewTM", "TestMakerNew"]})
         
         synonyms = self._load_with_custom_dir(load_maker_synonyms)
         
-        # Should be replacement (core "TM" not present)
-        self.assertEqual(synonyms["Test Maker"], ["NewTM", "TestMakerNew"])
-        self.assertNotIn("TM", synonyms["Test Maker"])
+        self.assertEqual(synonyms["Test Maker"], ["TM", "NewTM", "TestMakerNew"])
 
-    def test_synonym_report_covers_unchanged_extended_and_added(self) -> None:
-        """Every supported synonym merge action is explicit and ordered."""
+    def test_synonym_report_covers_unchanged_and_extended(self) -> None:
+        """Existing-maker synonym merge actions are explicit and ordered."""
         self._create_user_synonyms({
-            "Bambu Lab": ["BBL", "Bambu"],
+            "Bambu Lab": ["bbl", "BAMBU"],
             "Test Maker": ["TM", "TestCo"],
-            "New Company": ["NC"],
         })
 
         synonyms, report = load_maker_synonyms(self.data_dir, include_report=True)
 
         self.assertEqual(report.makers_unchanged, 1)
         self.assertEqual(report.makers_extended, 1)
-        self.assertEqual(report.makers_added, 1)
+        self.assertEqual(report.makers_added, 0)
         self.assertEqual(
             [event.action for event in report.events],
-            ["unchanged", "extended", "added"],
+            ["unchanged", "extended"],
         )
         self.assertEqual(synonyms["Test Maker"], ["TM", "TestCo"])
 
     def test_missing_core_synonym_file_starts_with_empty_mapping(self) -> None:
         """A user synonym file can load when no system mapping exists."""
         (self.data_dir / "maker_synonyms.json").unlink()
-        self._create_user_synonyms({"New Company": ["NC"]})
+        self._create_user_synonyms({"Bambu Lab": ["BL"]})
 
         synonyms, report = load_maker_synonyms(self.data_dir, include_report=True)
 
-        self.assertEqual(synonyms, {"New Company": ["NC"]})
+        self.assertEqual(synonyms, {"Bambu Lab": ["BL"]})
         self.assertEqual(report.system_makers_loaded, 0)
         self.assertEqual(report.makers_added, 1)
     
-    def test_synonym_override_detection_report(self) -> None:
-        """Synonym replacements and additions are returned as typed events."""
+    def test_synonym_additive_report(self) -> None:
+        """Synonym extensions are returned as typed events."""
         self._create_user_synonyms({
             "Bambu Lab": ["CustomBambu"],
-            "New Maker": ["NM"],
         })
 
         _synonyms, report = load_maker_synonyms(
@@ -443,12 +439,50 @@ class TestSynonymOverrides(TestUserOverrideSystem):
             include_report=True,
         )
 
-        self.assertEqual(report.makers_replaced, 1)
-        self.assertEqual(report.makers_added, 1)
+        self.assertEqual(report.makers_extended, 1)
+        self.assertEqual(report.makers_added, 0)
         self.assertEqual(
             [(event.maker, event.action) for event in report.events],
-            [("Bambu Lab", "replaced"), ("New Maker", "added")],
+            [("Bambu Lab", "extended")],
         )
+
+    def test_unknown_maker_is_rejected(self) -> None:
+        """User synonym keys must identify a loaded filament maker."""
+        self._create_user_synonyms({"Unknown Maker": ["UM"]})
+
+        with self.assertRaisesRegex(ValueError, "Unknown maker 'Unknown Maker'"):
+            load_maker_synonyms(self.data_dir)
+
+    def test_synonym_must_be_globally_unique(self) -> None:
+        """One normalized alias cannot identify two makers."""
+        self._create_user_synonyms({"Test Maker": ["bambu"]})
+
+        with self.assertRaisesRegex(ValueError, "already assigned to maker 'Bambu Lab'"):
+            load_maker_synonyms(self.data_dir)
+
+    def test_synonym_cannot_match_canonical_maker(self) -> None:
+        """Aliases cannot shadow any loaded canonical maker name."""
+        self._create_user_synonyms({"Test Maker": ["bambu lab"]})
+
+        with self.assertRaisesRegex(ValueError, "conflicts with canonical maker 'Bambu Lab'"):
+            load_maker_synonyms(self.data_dir)
+
+    def test_core_synonyms_must_also_be_globally_unique(self) -> None:
+        """Bundled alias ambiguity is rejected by the same validation path."""
+        with (self.data_dir / "maker_synonyms.json").open("w") as file:
+            json.dump({
+                "Bambu Lab": ["Shared"],
+                "Test Maker": ["shared"],
+            }, file)
+
+        with self.assertRaisesRegex(ValueError, "already assigned to maker 'Bambu Lab'"):
+            load_maker_synonyms(self.data_dir)
+
+    def test_maker_lookup_is_case_insensitive_without_synonyms(self) -> None:
+        """Direct maker lookup ignores case even without an alias entry."""
+        palette = FilamentPalette(self._load_with_custom_dir(load_filaments))
+
+        self.assertEqual(len(palette.find_by_maker("test maker")), 1)
 
 
 class TestOverrideReporting(TestUserOverrideSystem):
@@ -506,22 +540,21 @@ class TestOverrideReporting(TestUserOverrideSystem):
         assert replaced is not None
         self.assertEqual(replaced.id, "bambu-lab-pla-matte-red")
     
-    def test_synonym_override_detection(self) -> None:
-        """Test detection of synonym overrides."""
+    def test_synonym_extension_detection(self) -> None:
+        """Test detection of synonym extensions."""
         user_synonyms = {
-            "Bambu Lab": ["CustomBambu"],  # Replacement
-            "New Maker": ["NM"]           # Addition
+            "Bambu Lab": ["CustomBambu"],
         }
         self._create_user_synonyms(user_synonyms)
         
         _synonyms, report = load_maker_synonyms(self.data_dir, include_report=True)
 
-        self.assertEqual(report.makers_replaced, 1)
-        self.assertEqual(report.makers_added, 1)
+        self.assertEqual(report.makers_extended, 1)
+        self.assertEqual(report.makers_added, 0)
         event = report.events[0]
         self.assertEqual(event.maker, "Bambu Lab")
         self.assertEqual(event.previous_synonyms, ("Bambu", "BBL"))
-        self.assertEqual(event.effective_synonyms, ("CustomBambu",))
+        self.assertEqual(event.effective_synonyms, ("Bambu", "BBL", "CustomBambu"))
     
     def test_no_overrides_empty_report(self) -> None:
         """Test that no overrides results in empty report."""
@@ -551,9 +584,9 @@ class TestOverrideIntegration(TestUserOverrideSystem):
             }
         ]
         
-        # User synonyms replace core synonyms
+        # User synonyms extend core synonyms.
         user_synonyms = {
-            "Bambu Lab": ["CustomBambu", "CB"],  # Replace core synonyms
+            "Bambu Lab": ["CustomBambu", "CB"],
             "Custom Maker": ["CM", "CustomM"]   # New maker synonyms
         }
         
@@ -583,9 +616,9 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         self.assertEqual(user_filament.source, "user-filaments.json")
         self.assertEqual(user_filament.maker, "Custom Maker")
         
-        # Test synonym override - old synonyms shouldn't work
+        # Bundled and user aliases both work.
         bambu_old = filament_palette.find_by_maker("Bambu")
-        self.assertEqual(len(bambu_old), 0)
+        self.assertGreater(len(bambu_old), 0)
         
         # Test synonym override - new synonyms should work
         bambu_new = filament_palette.find_by_maker("CustomBambu")
@@ -606,7 +639,7 @@ class TestOverrideIntegration(TestUserOverrideSystem):
                           "id": "bambu-lab-pla-matte-red",
                           "color": "User Red", "hex": "#FF0000"}]
         
-        user_synonyms = {"Bambu Lab": ["UserBambu"]}
+        user_synonyms = {"User Maker": ["UserMaker"]}
         
         self._create_user_colors(user_colors)
         self._create_user_filaments(user_filaments)
@@ -621,12 +654,12 @@ class TestOverrideIntegration(TestUserOverrideSystem):
         # Verify all overrides are detected
         self.assertEqual(color_report.colors_overridden_by_name, 1)
         self.assertEqual(filament_report.filaments_overridden_by_id, 1)
-        self.assertEqual(synonym_report.makers_replaced, 1)
+        self.assertEqual(synonym_report.makers_added, 1)
         
         # Check specific overrides
         self.assertEqual(color_report.events[0].record.name, "red")
         self.assertEqual(filament_report.events[0].record.id, "bambu-lab-pla-matte-red")
-        self.assertEqual(synonym_report.events[0].maker, "Bambu Lab")
+        self.assertEqual(synonym_report.events[0].maker, "User Maker")
 
 
 if __name__ == '__main__':
