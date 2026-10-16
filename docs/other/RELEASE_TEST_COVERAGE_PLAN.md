@@ -521,7 +521,7 @@ Work in bounded batches so failures identify the responsible area:
 10. [x] Focused terminal and Qt workflow coverage.
 11. [x] Review remaining uncovered branches and classify each as required,
     unreachable/dead, abstract, platform-dependent, or intentionally deferred.
-12. [ ] Perform a complete FAQ content audit. Review existing questions for
+12. [x] Perform a complete FAQ content audit. Review existing questions for
     accuracy and clarity; reconcile answers with the README, Usage,
     Customization, Installation, and Troubleshooting guides; and add useful
     questions exposed by the 7.0 changes. Include user data and validation,

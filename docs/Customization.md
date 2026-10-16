@@ -69,12 +69,12 @@ Array of filament objects with manufacturer info and color data:
 
 **Field Descriptions:**
 
-- **id** (string, required for bundled records): Unique record identifier
+- **id** (string, required): Unique record identifier
   - Example: `"bambu-lab-pla-silk-plus-red"`
   - Bundled IDs are preserved once assigned because ownership tracking and
     deterministic exports use them as identity keys.
-  - User records may omit the field for ordinary searching, but should provide
-    a unique, stable ID when used with ownership tracking or HueForge export.
+  - User records use the same required stable ID for searching, overrides,
+    ownership tracking, and deterministic HueForge export.
   
 - **maker** (string, required): Manufacturer name (canonical form)
   

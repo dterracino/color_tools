@@ -49,6 +49,47 @@ color-tools color --nearest --value 255 128 64 --space rgb
 color-tools filament --nearest --value 255 128 64
 ```
 
+### What should I know before upgrading to version 7.0?
+
+Version 7.0 is a breaking release and requires Python 3.12 or newer. The most
+visible migration points are:
+
+- Nearest-result limits now use `--limit N`; `--count` now prints the number of
+  filaments that match a query.
+- Multi-color filament components belong in the single `hex` field. The old
+  `hex2` field is rejected.
+- User colors contain only `name` and `hex`; derived color spaces are calculated
+  when loaded.
+- User filament records require stable IDs, which also determine overrides.
+- Bundled and user palettes use the versioned `schema_version: 1` document
+  envelope.
+- The old individual configuration accessors and `--dual-color-mode` option
+  have been removed in favor of `ColorConfig` and `--multi-color-mode`.
+
+See the [7.0 changelog](../CHANGELOG.md#700---2026-10-14),
+[Customization guide](Customization.md), and [Installation guide](Installation.md)
+for the complete details. Python 3.10 and 3.11 users should remain on a release
+older than 7.0.
+
+### Which optional extra should I install?
+
+The base package has no third-party runtime dependencies. Install only the
+features you need:
+
+| Extra | Adds |
+| --- | --- |
+| `[fuzzy]` | Faster enhanced fuzzy color-name matching |
+| `[image]` | Image analysis, conversion, quantization, SVG/HEIF support, and ASE export |
+| `[interactive]` | Terminal filament manager and guided wizard |
+| `[gui]` | PySide6 desktop filament manager |
+| `[logging]` | Rich colorized logging |
+| `[mcp]` | MCP server support |
+| `[all]` | All user-facing optional features |
+
+For example, use `pip install "color-match-tools[image]"`. See
+[Installation](Installation.md#install-from-pypi-recommended) for dependency
+details and development extras.
+
 ---
 
 ## Color Spaces
@@ -95,6 +136,22 @@ LCH is ideal for user interfaces because hue can be adjusted independently, maki
 | Hue-based adjustments | LCH |
 | Printing workflows | LAB |
 
+### Does `--space` affect hex input?
+
+No. `--hex` is always interpreted as RGB and is a shortcut for supplying RGB
+channels. On the `color` command, `--space` describes only `--value`; if it is
+omitted, `--value` defaults to LAB. On the `convert` command, numeric `--value`
+input requires an explicit `--from` space.
+
+```bash
+# These are RGB input
+color-tools color --nearest --hex "#323232"
+color-tools color --nearest --value 50 50 50 --space rgb
+
+# This is LAB input because color --value defaults to LAB
+color-tools color --nearest --value 50 50 50
+```
+
 ### What is gamut and why does it matter?
 
 **Gamut** is the range of colors a device can display or reproduce. LAB can represent colors that are outside the sRGB gamut (what most monitors can show). Use `--check-gamut` to verify if a color can be displayed:
@@ -126,7 +183,11 @@ If you need strict CSS compliance, use **aqua** and **fuchsia** instead.
 
 ### What is Delta E?
 
-**Delta E** (ΔE) is a measure of color difference. A Delta E of 1.0 is considered the "just noticeable difference" - the smallest color difference the average human eye can perceive.
+**Delta E** (ΔE) is a measure of color difference. Smaller values mean more
+similar colors. Values near 1 are often used as a rough just-noticeable
+difference, but perception depends on the colors, viewing conditions, observer,
+and Delta E formula, so the ranges below are practical guidance rather than
+hard boundaries.
 
 | Delta E | Perception |
 | --------- | ------------ |
@@ -134,7 +195,7 @@ If you need strict CSS compliance, use **aqua** and **fuchsia** instead.
 | 1-2 | Perceptible through close observation |
 | 2-10 | Perceptible at a glance |
 | 11-49 | Colors are more similar than opposite |
-| 100 | Colors are exact opposite |
+| 50+ | Very different colors |
 
 ### Which Delta E formula should I use?
 
@@ -174,15 +235,19 @@ The database contains **1,545 filaments** from major manufacturers including Bam
 # List all manufacturers
 python -m color_tools filament --list-makers
 
-# Find filaments from a specific maker
-python -m color_tools filament --maker "Bambu Lab"
+# Find filaments from a specific maker in the complete database
+python -m color_tools filament --maker "Bambu Lab" --all-filaments
 
 # Count filaments from a specific maker without listing them
 python -m color_tools filament --maker "Bambu Lab" --all-filaments --count
 
 # Use synonyms (Bambu = Bambu Lab)
-python -m color_tools filament --maker "Bambu" --type "PLA"
+python -m color_tools filament --maker "Bambu" --type "PLA" --all-filaments
 ```
+
+If you have an `owned-filaments.json` file, filament queries default to that
+inventory. Add `--all-filaments` when you intend to browse or count the complete
+database.
 
 ### What are maker synonyms?
 
@@ -209,16 +274,75 @@ All components remain available through `FilamentRecord.rgb_components`.
 The mean is a practical color-selection model, not a prediction of physical
 pigment mixing.
 
+### What is TD, and why is it useful for HueForge?
+
+TD means **transmission distance**: the approximate thickness, in millimeters,
+at which a filament attenuates transmitted light. HueForge uses it to model how
+stacked filament layers contribute color, so an RGB or hex value alone is not
+enough for a HueForge filament-library record.
+
+Color Tools includes TD values when they are available. Values may originate
+from manufacturers, community data, or direct measurements; the database does
+not track provenance or claim that all values were measured by one method.
+Treat TD as a useful starting point and calibrate important prints for your own
+material, printer, and process.
+
+### How do I export filaments for HueForge?
+
+Use `--has-td` so the query contains only records HueForge can use:
+
+```bash
+color-tools filament --all-filaments --maker "Bambu Lab" --type PLA \
+  --has-td --export hueforge --output bambu-pla-hueforge.json
+```
+
+The HueForge exporter is strict: if any selected filament lacks TD, it rejects
+the export instead of silently dropping records. Python callers can set the
+initial `Owned` value with `HueForgeExportOptions`; generated UUIDs are stable
+and derive from Color Tools filament IDs. See
+[Usage: Exporting Filaments](Usage.md#filament-command) for the full workflow.
+
+### Why does a filament search show only filaments I own?
+
+The presence of `data/user/owned-filaments.json` makes owned inventory the
+default search scope. Use `--all-filaments` for shopping or complete-database
+queries:
+
+```bash
+color-tools filament --nearest --hex "#336699" --limit 5 --all-filaments
+```
+
+In Python, pass `owned=False`. See
+[Customization: owned-filaments.json](Customization.md#owned-filamentsjson---filament-ownership-tracking).
+
+### What is the difference between `--count` and `--limit`?
+
+`--count` produces one integer: the number of filaments that would match the
+query. `--limit N` caps how many nearest matches are returned. They no longer
+mean the same thing in version 7.0.
+
+```bash
+# Count all matching Bambu Lab PLA records
+color-tools filament --maker "Bambu Lab" --type PLA --all-filaments --count
+
+# Return the five nearest matching records
+color-tools filament --nearest --hex "#336699" --all-filaments --limit 5
+```
+
+The color command also uses `--limit N` for multiple nearest-color results; it
+does not provide the filament query-count operation.
+
 ### How do I find alternatives for unavailable filaments?
 
 Use `--limit` to find multiple matches:
 
 ```bash
 # Find top 5 alternatives to a color
-python -m color_tools filament --nearest --value 180 100 200 --limit 5
+python -m color_tools filament --nearest --value 180 100 200 --limit 5 --all-filaments
 
 # Find alternatives only in PLA
-python -m color_tools filament --nearest --value 180 100 200 --type "PLA" --maker "*" --limit 5
+python -m color_tools filament --nearest --value 180 100 200 --type "PLA" \
+  --maker "*" --limit 5 --all-filaments
 ```
 
 ---
@@ -273,7 +397,9 @@ color-tools filament --generate-id --maker "My Company" --type PLA \
 
 The ID is the override key. Reusing a system filament ID replaces that complete
 record in place; a new ID appends a record. Equal RGB values are allowed and do
-not constitute overrides. Duplicate IDs in one user file are rejected.
+not constitute overrides. Duplicate IDs in one user file are rejected. The
+generator reports whether an ID would override an existing record and suggests
+the first available numeric suffix when you want a distinct record instead.
 
 ### How do I add maker synonyms?
 
@@ -329,13 +455,14 @@ and effective RGB value before lookups are built.
 
 ### Can I disable user overrides temporarily?
 
-Yes, several options:
+Yes. Rename or move the active file outside its exact expected path—for example,
+rename `user-colors.json` to `user-colors.json.bak`. You can do this in File
+Explorer or with your shell. Renaming the whole `data/user` directory disables
+all user data, including owned filaments and user palettes.
 
-1. **Rename the user directory**: `mv data/user data/user-disabled`
-2. **Rename specific files**: `mv data/user/user-colors.json data/user/user-colors.json.bak`
-3. **Move files elsewhere**: Keep backups outside the data directory
-
-The library only loads files in the exact expected locations, so renaming effectively disables them.
+For repeatable isolated runs, use the global `--json DIR` option with a separate
+data-directory layout instead of repeatedly renaming files. See
+[Customization: Custom Data Directory](Customization.md#custom-data-directory).
 
 ### How do I verify my user data files haven't been corrupted?
 
@@ -362,6 +489,24 @@ color-tools --validate-user-files
 Hash files (`.sha256`) are created alongside user data files and active
 `user-*.json` palettes, then checked during verification. Copyable
 `*.example.json` files are excluded.
+
+### What is the difference between validation and hash verification?
+
+They answer different questions:
+
+- `--validate-user-files` parses `user-colors.json`, `user-filaments.json`, and
+  `user-synonyms.json` using the same schema and merge rules as normal loading.
+  It detects invalid fields, IDs, values, overrides, and synonym conflicts.
+- `--verify-user-data` compares active user files and user palettes with their
+  optional `.sha256` sidecars. It detects changes since the hash was generated,
+  but does not replace schema validation.
+- `--verify-all` verifies protected core data and system palettes, then verifies
+  user files that have sidecars.
+
+A user file without a sidecar is still usable: no hash comparison occurs, and
+the missing sidecar is not an integrity failure. Run validation after editing
+content and regenerate its sidecar only after you approve the change. See
+[Troubleshooting: Data Integrity Verification](Troubleshooting.md#data-integrity-verification).
 
 ---
 
@@ -461,10 +606,16 @@ Yes! Create custom palettes in `data/user/palettes/` with `user-` prefix:
 `metadata.id` must exactly match the filename stem. For the example above, the
 filename is `user-mycustom.json` and the ID is `user-mycustom`.
 
+Only `metadata.id` and `metadata.name` are required. `description` and
+`release_year` are optional. The `schema_version`, `metadata`, `palette.type`,
+and `palette.colors` envelope is required so user and bundled palettes follow
+the same validated format.
+
 Each entry in `palette.colors` needs only `name` and `hex`. RGB, HSL, LAB, and
 LCH values are calculated from hex when loaded, so they should not be added to
-the file. Files ending in `example.json` are ignored by palette discovery; copy
-or rename the example and update its metadata ID before using it.
+the file; unknown fields are rejected. Files ending in `example.json` are
+ignored by palette discovery; copy or rename the example and update its
+metadata ID before using it.
 
 **Features:**
 

@@ -250,8 +250,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   Metadata IDs must exactly match filename stems; legacy root arrays and
   unsupported palette variants are rejected with focused errors. User color
   records still require only `name` and `hex`; RGB,
-  HSL, LAB, and LCH are calculated from hex at load time, and extra derived
-  fields are ignored. Files ending in `example.json` remain excluded from
+  HSL, LAB, and LCH are calculated from hex at load time, and extra fields are
+  rejected. Files ending in `example.json` remain excluded from
   discovery. Package the user data, palettes, examples, and integrity sidecars
   explicitly in wheels. This intentionally replaces the previously
   undocumented user-palette format and is a breaking change.
