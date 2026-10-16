@@ -66,7 +66,7 @@ visible migration points are:
 - The old individual configuration accessors and `--dual-color-mode` option
   have been removed in favor of `ColorConfig` and `--multi-color-mode`.
 
-See the [7.0 changelog](../CHANGELOG.md#700---2026-10-14),
+See the [7.0 changelog](../CHANGELOG.md#700---2026-10-16),
 [Customization guide](Customization.md), and [Installation guide](Installation.md)
 for the complete details. Python 3.10 and 3.11 users should remain on a release
 older than 7.0.

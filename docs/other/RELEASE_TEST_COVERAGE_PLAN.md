@@ -1,6 +1,6 @@
 # Color Tools 7.0.0 test coverage completion plan
 
-Status: in progress
+Status: complete; awaiting the user-owned release process
 Captured: 2026-10-15  
 Scope: final local test-coverage work before the 7.0.0 release review
 
@@ -41,20 +41,20 @@ a raw coverage database.
 
 ## Completion rules
 
-- [ ] Test observable behavior through public entry points where practical.
-- [ ] Use small deterministic fixtures instead of the complete bundled data set
+- [x] Test observable behavior through public entry points where practical.
+- [x] Use small deterministic fixtures instead of the complete bundled data set
   when exercising individual branches.
-- [ ] Assert returned values, output, error type, and relevant error text; do
+- [x] Assert returned values, output, error type, and relevant error text; do
   not use execution-only tests where a stronger assertion is available.
-- [ ] Do not calculate expected conversion values with the helper under test.
-- [ ] Keep parameterized/subtest matrices readable and identify the failed case.
-- [ ] If a branch is genuinely unreachable, remove or simplify it when safe.
-- [ ] Exclude a line from coverage only when it is necessarily abstract,
+- [x] Do not calculate expected conversion values with the helper under test.
+- [x] Keep parameterized/subtest matrices readable and identify the failed case.
+- [x] If a branch is genuinely unreachable, remove or simplify it when safe.
+- [x] Exclude a line from coverage only when it is necessarily abstract,
   interpreter/platform-owned, or otherwise impossible to exercise in supported
   use, and record the reason in the code.
-- [ ] Run focused tests after each area, then the complete suite with branch
+- [x] Run focused tests after each area, then the complete suite with branch
   coverage.
-- [ ] Run strict Pyright and the existing documentation checks after any source
+- [x] Run strict Pyright and the existing documentation checks after any source
   cleanup prompted by the tests.
 
 ## Priority 0: complete before release
@@ -530,20 +530,42 @@ Work in bounded batches so failures identify the responsible area:
     optional dependencies, integrity hashes, and breaking-upgrade guidance.
     Remove duplication where another guide should remain authoritative and
     link to that guide from the concise FAQ answer.
-13. [ ] Run the complete release validation suite.
+13. [x] Run the complete release validation suite.
 
 ## Final validation record
 
-Fill this section in after implementation rather than replacing the baseline
-above.
+Validation was performed locally on 2026-10-16. Build products, coverage data,
+documentation output, and clean virtual environments were written under the
+system temporary directory rather than the repository.
 
-- Focused test results: pending.
-- Full pytest result: pending.
-- Final statement/branch coverage: pending.
-- Strict Pyright: pending.
-- Sphinx coverage and warning-as-error HTML build: pending.
-- `git diff --check`: pending.
-- Remaining uncovered release risks: pending.
-- Deferred platform/optional-feature paths: pending.
+- Focused test results: all phase-specific suites passed during their
+  respective implementation batches.
+- Full pytest result: 1,802 passed, 2 skipped, and 16,424 subtests passed in
+  145.33 seconds.
+- Final statement/branch coverage: 90% combined across `color_tools` and the
+  two root-level badge API modules; both badge API modules are fully covered.
+- Strict Pyright: zero errors and zero warnings for the repository. The base
+  and `[all]` strict installed-wheel consumers also passed with zero errors and
+  zero warnings; installed-package `--verifytypes` reported 100% completeness.
+- Sphinx coverage and warning-as-error HTML build: both fresh builds passed
+  with `-W -E -a`; Sphinx reported 100% documentation coverage and no
+  undocumented objects.
+- Integrity and installed-package smoke tests: constants, matrices, three core
+  data files, 29 registered system palettes, three user data files, and one
+  user palette passed verification from the clean wheel installation. The
+  installed package loaded 141 colors and 1,545 filaments.
+- Distribution validation: the 7.0.0 wheel and source archive built
+  successfully and passed `twine check`. Metadata declares Python 3.12 or
+  newer, all intended extras and console entry points are present, required
+  data plus `py.typed` are packaged, and repository-only development
+  directories are excluded.
+- `git diff --check`: passed.
+- Remaining uncovered release risks: no local release blocker was identified.
+  The hosted Python 3.12, 3.13, and 3.14 CI matrix remains pending until the
+  user pushes the repository.
+- Deferred platform/optional-feature paths: terminal rendering and navigation
+  internals, Qt paint/native-widget/event-loop behavior, optional native
+  integration behavior that cannot be exercised deterministically, trivial
+  `__main__` delegates, and explicitly disabled image prototypes.
 - Commit, push, tag, publish, and release: user-owned; not performed by the
   assistant.

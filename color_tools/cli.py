@@ -60,8 +60,8 @@ Examples:
   # Find color by name
   {prog_name} color --name "coral"
 
-    # Generate a styled color harmony
-    {prog_name} harmony --type triadic --hex "#E0006B" --mood calm --tone dark
+  # Generate a styled color harmony
+  {prog_name} harmony --type triadic --hex "#E0006B" --mood calm --tone dark
   
   # Generate descriptive name for an RGB color
   {prog_name} name --value 255 128 64
