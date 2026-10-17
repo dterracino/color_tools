@@ -105,6 +105,25 @@ python tooling/import_iemai_filaments.py --apply
 **Safe to re-run:** Yes. A successful apply is atomic and a subsequent run
 reports all 187 candidates as unchanged.
 
+### `import_polyterra_filaments.py`
+
+**Purpose:** Import only the PolyTerra product family from the Polymaker color
+and TD spreadsheet export. PolyTerra is represented as a `Polymaker` finish;
+the source's PLA and PLA+ material types and color names are preserved.
+
+The importer collapses duplicate SKU rows, merges TD values when one duplicate
+omits an otherwise matching value, supports ordered multi-color hex values, and
+explicitly excludes source rows that have no hex value. The default mode is a
+read-only dry run. Writing requires `--apply`:
+
+```bash
+python tooling/import_polyterra_filaments.py
+python tooling/import_polyterra_filaments.py --apply
+```
+
+**Safe to re-run:** Yes. An apply is atomic, existing records are not changed
+automatically, and source hex or TD conflicts block the write.
+
 ### `extract_overture_pdf.py`
 
 **Purpose:** Reconstruct the Overture PDF's two-column product tables from

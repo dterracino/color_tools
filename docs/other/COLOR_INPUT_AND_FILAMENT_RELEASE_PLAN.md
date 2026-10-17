@@ -537,7 +537,7 @@ test suite.
   environment without Pillow or NumPy.
 - [x] Exercise real bundled compounds and independently audit every database
   component/result. Database-wide runtime regression coverage now loads all
-  1,545 records under every supported multi-color mode, validates derived
+  1,609 records under every supported multi-color mode, validates derived
   RGB/LAB/effective-hex results, round-trips public palette indexes, and
   decodes solid, block, and gradient swatches for every filament. Retain the
   mutation checks specified in Workstream 4.
@@ -826,8 +826,9 @@ importer added 293 records and corrected
 seven existing hex values while preserving their IDs, TD values, and unrelated
 metadata. Eleven existing Overture records absent from the PDF were retained.
 The immediate idempotence rerun reported all 300 reviewed candidates unchanged,
-with no additions, corrections, or conflicts. The bundled database now contains
-1,545 filaments.
+with no additions, corrections, or conflicts. At that Overture-import milestone,
+the bundled database contained 1,545 filaments; the current post-release catalog
+contains 1,609 after the PolyTerra import.
 Treat Overture product-line names that identify distinct materials, including
 `Super PLA+`, as filament types rather than finishes.
 

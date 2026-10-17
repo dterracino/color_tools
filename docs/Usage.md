@@ -710,6 +710,9 @@ inspection:
 # Print automatic decisions and copyable choices for every ambiguity.
 color-tools filament import hueforge hueforge-library.json
 
+# Hide matched and automatically-new records; print only ambiguities.
+color-tools filament import hueforge hueforge-library.json --problems-only
+
 # Supply decisions non-interactively and update only user-filaments.json.
 color-tools filament import hueforge hueforge-library.json \
   --resolve 12=use:bambu-lab-pla-matte-white \
@@ -728,7 +731,9 @@ Use `INDEX=skip` to omit a source record. `--interactive` only collects
 reconciliation choices and does not authorize writes by itself. If both apply
 flags are present, the catalog operation completes before ownership is planned.
 An ownership-only apply succeeds only when every selected final ID already
-exists in the effective catalog.
+exists in the effective catalog. `--problems-only` affects console detail only:
+the summary still covers every imported record, and reconciliation and apply
+behavior are unchanged.
 
 The filament CLI can filter and export in one operation. This command searches
 the complete database, selects Bambu Lab PLA filaments with TD values, and
@@ -1194,7 +1199,7 @@ conversion searches.
 
 ````text
 ╭─── Filament Library Manager ─────────────────────────────────────────────────╮
-│ 1,545 total | 42 owned* | Showing 1,545 filaments                            │
+│ 1,609 total | 42 owned* | Showing 1,609 filaments                            │
 ├──────────────────────────────────────────────────────────────────────────────┤
 │ > [✓] Bambu Lab - PLA Matte - Jet Black                                      │
 │   [ ] Bambu Lab - PLA Matte - White                                          │

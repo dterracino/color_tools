@@ -35,6 +35,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   such as `Yellow`/`Sunflower Yellow` from scoring as identical, suppress fuzzy
   noise when structured matches exist, and bound ambiguity lists to the five
   strongest relevant candidates.
+- **Concise HueForge import review** — add `--problems-only` to suppress
+  matched and automatically-new record details while retaining the full
+  reconciliation summary and every ambiguous record and resolution choice.
+- **PolyTerra filament data** — add 64 Polymaker PolyTerra PLA and PLA+
+  records, including available TD values and ordered multi-color definitions,
+  from the manufacturer spreadsheet.
 
 ### Changed
 

@@ -132,6 +132,7 @@ class TestFilamentImportCliWorkflow(_WorkflowFixture):
             "input_path": self.input_path,
             "resolve": None,
             "import_interactive": False,
+            "problems_only": False,
             "apply_catalog": False,
             "apply_owned": False,
         }
@@ -148,6 +149,19 @@ class TestFilamentImportCliWorkflow(_WorkflowFixture):
         self.assertIn("Catalog dry run only", output.getvalue())
         self.assertFalse((self.data_dir / "user" / "user-filaments.json").exists())
         self.assertFalse((self.data_dir / "user" / "owned-filaments.json").exists())
+
+    def test_problems_only_hides_records_that_need_no_resolution(self) -> None:
+        output = io.StringIO()
+
+        with patch("sys.stdout", output):
+            handle_filament_import_command(
+                self._args(problems_only=True),
+                self.data_dir,
+            )
+
+        text = output.getvalue()
+        self.assertIn("Reconciliation: 0 matched, 1 new, 0 ambiguous", text)
+        self.assertNotIn("[0] new:custom-pla-ocean", text)
 
     def test_catalog_then_ownership_apply_in_one_invocation(self) -> None:
         output = io.StringIO()
@@ -189,6 +203,34 @@ class TestFilamentImportCliWorkflow(_WorkflowFixture):
         self.assertIn("--resolve 0=use:a-id", output.getvalue())
         self.assertIn("--resolve 0=use:b-id", output.getvalue())
         self.assertIn("No files were changed", output.getvalue())
+
+    def test_problems_only_keeps_ambiguous_records_and_choices(self) -> None:
+        records = [
+            _system_record("a-id", maker="Same", color="Red"),
+            _system_record("b-id", maker="Same", color="Red"),
+        ]
+        (self.data_dir / "filaments.json").write_text(
+            json.dumps(records),
+            encoding="utf-8",
+        )
+        self.input_path.write_text(
+            json.dumps(
+                {"Filaments": [_hueforge_record(brand="Same Basic", name="Red")]}
+            ),
+            encoding="utf-8",
+        )
+        output = io.StringIO()
+
+        with patch("sys.stdout", output):
+            handle_filament_import_command(
+                self._args(problems_only=True),
+                self.data_dir,
+            )
+
+        text = output.getvalue()
+        self.assertIn("[0] ambiguous", text)
+        self.assertIn("--resolve 0=use:a-id", text)
+        self.assertIn("--resolve 0=use:b-id", text)
 
     def test_owned_apply_without_required_catalog_record_is_rejected(self) -> None:
         error = io.StringIO()

@@ -227,7 +227,7 @@ RGB distance (`euclidean`) doesn't account for how humans perceive color. Two co
 
 ### How many filaments are in the database?
 
-The database contains **1,545 filaments** from major manufacturers including Bambu Lab, IEMAI, Overture, Polymaker, Sunlu, Paramount 3D, and more.
+The database contains **1,609 filaments** from major manufacturers including Bambu Lab, IEMAI, Overture, Polymaker, Sunlu, Paramount 3D, and more.
 
 ### How do I find filaments from a specific manufacturer?
 

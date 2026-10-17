@@ -583,6 +583,11 @@ Examples:
         help="Resolve ambiguous matches with the prompt-toolkit TUI",
     )
     filament_import_parser.add_argument(
+        "--problems-only",
+        action="store_true",
+        help="Print only ambiguous records that require a resolution",
+    )
+    filament_import_parser.add_argument(
         "--apply-catalog",
         action="store_true",
         help="Apply the reviewed additions to user-filaments.json",

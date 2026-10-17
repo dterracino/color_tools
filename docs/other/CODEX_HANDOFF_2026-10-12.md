@@ -231,7 +231,8 @@ See the release plan and changelog for the current contracts and validation.
   The Overture import added 293 records, corrected seven hex values while
   preserving stable IDs and TD values, retained 11 records absent from the PDF,
   and omitted 44 no-hex rows. Its idempotence rerun reported all 300 reviewed
-  rows unchanged. The bundled database now contains 1,545 records. Follow
+  rows unchanged. At that release milestone, the bundled database contained
+  1,545 records; the current post-release catalog contains 1,609. Follow
   Workstream 5: dry runs,
   stable IDs/owned references,
   deterministic idempotent updates, and no unapproved deletions. TD values may
@@ -240,7 +241,7 @@ See the release plan and changelog for the current contracts and validation.
   community-sourced, or hand-measured; the library does not track provenance or
   make certification claims. No provenance field or separate IEMAI provenance
   approval is required.
-- A database-wide runtime regression audit now covers all 1,545 records under
+- A database-wide runtime regression audit now covers all 1,609 records under
   `first`, `last`, and `srgb_mean`; normalized identity uniqueness; derived
   RGB/LAB/effective-hex values; public ID/maker/type/finish/color/RGB indexes;
   and structurally validated solid, block, and gradient PNG swatches for every

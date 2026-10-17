@@ -19,7 +19,7 @@ from color_tools import (
 )
 
 
-_EXPECTED_FILAMENT_COUNT = 1_545
+_EXPECTED_FILAMENT_COUNT = 1_609
 _PNG_SIGNATURE = b"\x89PNG\r\n\x1a\n"
 _SwatchMode: TypeAlias = Literal["solid", "blocks", "gradient"]
 _MULTI_COLOR_MODES: tuple[MultiColorMode, ...] = ("first", "last", "srgb_mean")

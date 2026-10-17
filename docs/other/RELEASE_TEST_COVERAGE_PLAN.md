@@ -553,7 +553,8 @@ system temporary directory rather than the repository.
 - Integrity and installed-package smoke tests: constants, matrices, three core
   data files, 29 registered system palettes, three user data files, and one
   user palette passed verification from the clean wheel installation. The
-  installed package loaded 141 colors and 1,545 filaments.
+  released 7.0.0 package loaded 141 colors and 1,545 filaments. The current
+  post-release source catalog contains 1,609 filaments.
 - Distribution validation: the 7.0.0 wheel and source archive built
   successfully and passed `twine check`. Metadata declares Python 3.12 or
   newer, all intended extras and console entry points are present, required

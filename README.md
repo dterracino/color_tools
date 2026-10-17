@@ -39,7 +39,7 @@ A comprehensive Python library for color science operations, color space convers
 - **Perceptual Color Distance**: Delta E formulas (CIE76, CIE94, CIEDE2000, CMC, HyAB)
 - **Color Databases**:
   - Complete CSS color names with hex/RGB/HSL/LAB/LCH values
-  - Extensive 3D printing filament database (1,545 filaments) with manufacturer info
+  - Extensive 3D printing filament database (1,609 filaments) with manufacturer info
   - Unique semantic IDs for all filaments (e.g., "bambu-lab-pla-silk-red")
   - Alternative name support for regional variations and rebranding
   - Maker synonym support for flexible filament searches
@@ -394,7 +394,7 @@ See [FAQ](https://github.com/dterracino/color_tools/blob/main/docs/FAQ.md) for d
 The library includes extensive color databases:
 
 - **CSS Colors**: 147 named colors with full color space representations
-- **3D Printing Filaments**: 1,545 filaments from major manufacturers
+- **3D Printing Filaments**: 1,609 filaments from major manufacturers
 - **Retro Palettes**: 29 built-in palettes including Amstrad CPC, BBC Micro,
   CGA, EGA, VGA, Game Boy, Commodore 64, Intellivision, PICO-8, TIC-80,
   VIC-20, ZX Spectrum, and more

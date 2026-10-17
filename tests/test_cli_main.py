@@ -129,7 +129,7 @@ class TestCliMain(unittest.TestCase):
         args = build_parser().parse_args([
             'filament', 'import', 'hueforge', 'library.json',
             '--interactive', '--resolve', '3=new', '--apply-catalog',
-            '--apply-owned',
+            '--apply-owned', '--problems-only',
         ])
 
         self.assertEqual(args.filament_action, 'import')
@@ -140,6 +140,7 @@ class TestCliMain(unittest.TestCase):
         self.assertEqual(args.resolve, ['3=new'])
         self.assertTrue(args.apply_catalog)
         self.assertTrue(args.apply_owned)
+        self.assertTrue(args.problems_only)
 
     def test_filament_gui_dispatches_to_desktop_manager(self):
         """filament --gui dispatches to the optional desktop manager."""

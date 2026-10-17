@@ -89,8 +89,12 @@ def _entry_label(entry: FilamentReconciliationEntry) -> str:
     )
 
 
-def _print_plan(plan: FilamentReconciliationPlan) -> None:
-    """Print a complete, copyable reconciliation dry run."""
+def _print_plan(
+    plan: FilamentReconciliationPlan,
+    *,
+    problems_only: bool = False,
+) -> None:
+    """Print a copyable reconciliation report, optionally limited to problems."""
     print(f"Imported {len(plan.entries)} filament record(s)")
     print(
         "Reconciliation: "
@@ -103,6 +107,8 @@ def _print_plan(plan: FilamentReconciliationPlan) -> None:
         print("Note: install color-match-tools[fuzzy] for enhanced fuzzy matching.")
 
     for entry in plan.entries:
+        if problems_only and entry.status != "ambiguous":
+            continue
         if entry.status == "matched":
             decision = f"use:{entry.automatic_filament_id}"
         elif entry.status == "new":
@@ -182,12 +188,13 @@ def handle_filament_import_command(
     apply_catalog = cast(bool, args.apply_catalog)
     apply_owned = cast(bool, args.apply_owned)
     interactive = cast(bool, args.import_interactive)
+    problems_only = cast(bool, args.problems_only)
 
     try:
         workflow = _create_workflow(format_name, data_dir)
         plan = workflow.prepare(input_path)
         resolutions = _parse_resolutions(cast(list[str] | None, args.resolve))
-        _print_plan(plan)
+        _print_plan(plan, problems_only=problems_only)
 
         if interactive:
             collected = collect_filament_resolutions(plan, resolutions)
