@@ -1,1 +1,1 @@
-color-match-tools==7.1.0
+color-match-tools==7.1.1

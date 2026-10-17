@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.1.1] - 2026-10-17
+
+### Fixed
+
+- **Prompt-toolkit CI typing** — validate the reconciliation dialog's runtime
+  cancellation result without a redundant cast, satisfying current strict
+  Pyright while preserving `Escape` and Cancel behavior.
+
 ## [7.1.0] - 2026-10-17
 
 ### Added

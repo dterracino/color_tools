@@ -3,8 +3,6 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from typing import cast
-
 from color_tools._interactive_utils import check_prompt_toolkit, show_install_message
 from color_tools.reconcilers.filament_reconciliation_models import (
     FilamentReconciliationEntry,
@@ -50,6 +48,13 @@ def _resolution_choices(
     return choices
 
 
+def _dialog_selection(value: object) -> str | None:
+    """Validate a dialog result, including the runtime cancellation value."""
+    if value is None or isinstance(value, str):
+        return value
+    raise TypeError(f"Unexpected filament dialog result: {value!r}")
+
+
 def _ask_resolution(entry: FilamentReconciliationEntry) -> FilamentResolution | None:
     """Show a prompt-toolkit radio-list dialog for one resolution."""
     from prompt_toolkit.key_binding import (
@@ -90,10 +95,7 @@ def _ask_resolution(entry: FilamentReconciliationEntry) -> FilamentResolution | 
             dialog.key_bindings = merge_key_bindings(
                 [dialog.key_bindings, cancel_bindings]
             )
-        selection = cast(
-            str | None,
-            dialog.run(),
-        )
+        selection = _dialog_selection(dialog.run())
     except (EOFError, KeyboardInterrupt):
         return None
 
