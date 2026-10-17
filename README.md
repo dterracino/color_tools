@@ -578,6 +578,15 @@ if plan.can_apply:
 See [Customization](docs/Customization.md#importing-and-updating-user-filaments-from-python)
 for ID conflicts, replacement policy, warnings, and sidecar behavior.
 
+HueForge libraries can be imported without immediately writing user data. The
+importer validates both HueForge library envelopes, preserves `Owned` selections
+as transfer metadata, and skips HueForge's unconfigured `IMAGE` placeholders.
+Run the result through `HueForgeFilamentReconciler` before sending only its new
+records to `UserFilamentsExporter`; exact and confident matches reuse existing
+Color Tools IDs, while ambiguous matches remain caller-controlled. Catalog and
+owned-filament writes are intentionally separate operations. See
+[Customization](docs/Customization.md#importing-and-reconciling-hueforge-filaments).
+
 ### Plugin Architecture
 
 The exporter system uses a plugin architecture - new formats can be added without modifying existing code:

@@ -631,6 +631,34 @@ or colors match; the plan warns about equal maker/type/finish/color identities
 for review. Successful apply atomically writes the minimal source schema and
 refreshes `user-filaments.json.sha256`.
 
+HueForge import is a separate parse-and-reconcile workflow because HueForge
+allows free-form Brand, Type, and Name values. Parsing never writes files:
+
+```python
+from color_tools import FilamentPalette, HueForgeFilamentReconciler
+from color_tools.importers import import_filaments
+
+source = import_filaments("hueforge-library.json", format_name="hueforge")
+palette = FilamentPalette.load_default()
+reconciler = HueForgeFilamentReconciler(
+    palette.records,
+    maker_synonyms=palette.maker_synonyms,
+)
+plan = reconciler.plan(source)
+
+for entry in plan.entries:
+    print(entry.source_index, entry.status, entry.candidates)
+```
+
+The plan recognizes finish words placed in HueForge Brand, Type, or Name
+fields and ranks candidates deterministically. Install the `[fuzzy]` extra for
+RapidFuzz scoring; a dependency-free fallback remains available. Ambiguous
+entries require `UseExisting(id)`, `ImportNew()`, or `Skip()` before resolution.
+The resolved `data.filaments` contains only new records, ready for a separate
+`UserFilamentsExporter` plan. Resolved owned IDs remain in
+`data.metadata.owned_filament_ids` for the later, independent ownership step.
+No operation in this workflow changes the bundled database.
+
 The filament CLI can filter and export in one operation. This command searches
 the complete database, selects Bambu Lab PLA filaments with TD values, and
 writes a HueForge library:
@@ -697,6 +725,7 @@ for the authoritative class and function inventory.
 | **HueForgeExportOptions** | `exporters.hueforge_exporter` | Initial HueForge owned state | `owned` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hueforge_exporter.html#color_tools.exporters.hueforge_exporter.HueForgeExportOptions) |
 | **UserColorExportPlan / UserColorExportResult** | `exporters.user_color_export_models` | Reviewed user-color merge and explicit apply result | `changes`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_color_export_models.html) |
 | **UserFilamentExportPlan / UserFilamentExportResult** | `exporters.user_filament_export_models` | Reviewed ID-based user-filament merge and explicit apply result | `changes`, `warnings`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_filament_export_models.html) |
+| **FilamentReconciliationPlan / FilamentReconciliationResult** | `reconcilers` | Immutable external-catalog review plan and caller-resolved new records/ID mappings | `entries`, `catalog`, `data`, `mappings` | [API](https://dterracino.github.io/color_tools/api/color_tools.reconcilers.html) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
 | **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
 

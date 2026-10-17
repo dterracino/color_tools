@@ -215,11 +215,25 @@ Import System
    color_tools.importers.registry
    color_tools.importers.gpl_importer
    color_tools.importers.hex_importer
+   color_tools.importers.hueforge_importer
    color_tools.importers.jascpal_importer
    color_tools.importers.riffpal_importer
    color_tools.importers.user_colors_importer
    color_tools.importers.user_filaments_importer
    color_tools.user_color_data
+
+Filament Reconciliation
+~~~~~~~~~~~~~~~~~~~~~~~
+
+.. autosummary::
+   :toctree: api
+   :template: module.rst
+
+   color_tools.reconcilers
+   color_tools.reconcilers.filament_reconciliation_models
+   color_tools.reconcilers.resolutions
+   color_tools.reconcilers.filament_reconciler
+   color_tools.reconcilers.hueforge_filament_reconciler
 
 Image Processing *(requires* ``[image]`` *extra)*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~

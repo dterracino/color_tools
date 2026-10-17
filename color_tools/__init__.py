@@ -265,7 +265,21 @@ from .exporters.user_filament_export_models import (
     UserFilamentExportPlan,
     UserFilamentExportResult,
 )
-from .importers import UserColorsImporter, UserFilamentsImporter
+from .importers import HueForgeImporter, UserColorsImporter, UserFilamentsImporter
+from .reconcilers import (
+    FilamentMatchCandidate,
+    FilamentReconciler,
+    FilamentReconciliationEntry,
+    FilamentReconciliationPlan,
+    FilamentReconciliationPolicy,
+    FilamentReconciliationResult,
+    FilamentResolutionMapping,
+    FilamentResolution,
+    HueForgeFilamentReconciler,
+    ImportNew,
+    Skip,
+    UseExisting,
+)
 
 # ============================================================================
 # Color Validation (Fuzzy Name Matching + Delta E)
@@ -452,6 +466,19 @@ __all__ = [
     "UserColorExportResult",
     "UserFilamentsExporter",
     "UserFilamentsImporter",
+    "HueForgeImporter",
+    "FilamentMatchCandidate",
+    "FilamentReconciler",
+    "FilamentReconciliationEntry",
+    "FilamentReconciliationPlan",
+    "FilamentReconciliationPolicy",
+    "FilamentReconciliationResult",
+    "FilamentResolutionMapping",
+    "FilamentResolution",
+    "HueForgeFilamentReconciler",
+    "ImportNew",
+    "Skip",
+    "UseExisting",
     "UserFilamentConflictPolicy",
     "UserFilamentExportAction",
     "UserFilamentExportChange",

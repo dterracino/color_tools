@@ -507,6 +507,11 @@ Suggested order after the framework contracts are approved:
    updates. **Implemented for the Python API; catalog writes do not modify
    ownership.**
 4. HueForge filament catalog importer and the existing HueForge exporter.
+   **Implemented for the Python API:** both known HueForge envelopes parse to
+   `FilamentExportData`; a reusable reconciliation plan ranks existing records,
+   requires caller choices for ambiguity, generates collision-safe IDs for new
+   records, and remaps ownership to final IDs. Persistence remains an explicit
+   later exporter operation.
 5. Independent owned-filament import/export, followed by a HueForge ownership
    adapter that resolves against the current catalog without changing it.
 6. AutoForge filament import if its documented format contains enough identity
@@ -543,11 +548,13 @@ Tools ID.
 
 ## Decisions required before implementation
 
-1. Define canonical external-filament reconciliation keys. Color Tools user
-   files use their stable IDs as the sole replacement key; external formats
-   without Color Tools IDs still require their own reviewed matching rules.
-2. Define deterministic ID generation and collision handling for new user
-   filaments.
+1. Extend the implemented format-neutral reconciliation contract to additional
+   external formats only after their real schemas and matching problems are
+   reviewed. HueForge currently uses normalized maker/type/finish/color layouts,
+   maker synonyms, optional fuzzy similarity, and hex/TD supporting evidence.
+2. Deterministic ID generation and collision handling are implemented in the
+   base reconciler: every plan reserves canonical IDs against the catalog and
+   earlier plan entries, using `-2`, `-3`, and later suffixes.
 3. Extend the implemented planning/result pattern to ownership exporters while
    preserving existing path-returning export APIs.
 4. Specify external-format reconciliation policy. User-filament persistence

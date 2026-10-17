@@ -60,6 +60,7 @@ from color_tools.importers.registry import (
 # Import concrete importers to trigger @register_importer registration.
 from color_tools.importers.gpl_importer import GPLImporter
 from color_tools.importers.hex_importer import HexImporter
+from color_tools.importers.hueforge_importer import HueForgeImporter
 from color_tools.importers.jascpal_importer import JascPalImporter
 from color_tools.importers.riffpal_importer import RiffPalImporter
 from color_tools.importers.user_colors_importer import UserColorsImporter
@@ -86,6 +87,7 @@ __all__ = [
     "list_filament_import_formats",
     "GPLImporter",
     "HexImporter",
+    "HueForgeImporter",
     "JascPalImporter",
     "RiffPalImporter",
     "UserColorsImporter",

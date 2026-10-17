@@ -8,6 +8,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- **HueForge filament import and reconciliation** — parse both HueForge
+  filament-library envelopes, validate required filament data, retain ownership
+  as collection metadata, and skip unconfigured `IMAGE` placeholders. Add a
+  format-neutral reconciliation plan/result contract with caller-controlled
+  `UseExisting`, `ImportNew`, and `Skip` resolutions, deterministic generated
+  IDs, ownership remapping, optional RapidFuzz scoring, and finish-aware
+  HueForge matching across free-form Brand, Type, and Name fields. Catalog and
+  owned-filament persistence remain separate operations.
+
 ### In Progress
 
 - **Image type detection and palette extraction** — added disabled work-in-progress modules for

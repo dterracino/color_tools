@@ -228,6 +228,62 @@ destination changed after planning, atomically replaces `user-filaments.json`,
 and refreshes its SHA-256 sidecar. It does not modify `owned-filaments.json`;
 catalog and ownership updates remain independent operations.
 
+#### Importing and reconciling HueForge filaments
+
+HueForge filament libraries and personal-library exports use the registered
+`hueforge` importer. Parsing validates required fields, TD values, booleans,
+UUID syntax, colors, and personal-library metadata. Secondary-color fields and
+tags are deliberately ignored because HueForge does not provide enough
+semantics to map them safely. Entries with an empty Brand and `Type: "IMAGE"`
+are unconfigured HueForge placeholders; they are skipped and their source
+indexes are reported in collection metadata.
+
+Reconciliation is explicit and read-only:
+
+```python
+from color_tools import (
+    FilamentPalette,
+    HueForgeFilamentReconciler,
+    ImportNew,
+    Skip,
+    UseExisting,
+    UserFilamentsExporter,
+)
+from color_tools.importers import import_filaments
+
+source = import_filaments("personal_library.json", format_name="hueforge")
+palette = FilamentPalette.load_default()
+reconciler = HueForgeFilamentReconciler(
+    palette.records,
+    maker_synonyms=palette.maker_synonyms,
+)
+plan = reconciler.plan(source)
+
+choices = {
+    2: UseExisting("bambu-lab-pla-matte-ivory-white"),
+    5: ImportNew(),
+    8: Skip(),
+}
+resolved = reconciler.resolve(plan, choices)
+
+user_exporter = UserFilamentsExporter()
+user_plan = user_exporter.plan(resolved.data)
+# Review user_plan, then call user_exporter.apply(user_plan) explicitly.
+```
+
+Unique exact, normalized, synonym, and sufficiently separated fuzzy matches
+default to the existing catalog ID. A genuinely new record defaults to the
+canonical generated ID reserved in its plan; collisions use `-2`, `-3`, and so
+on. Ambiguous entries have no default and must be resolved by the caller.
+`UseExisting()` validates its ID against the planned catalog, while
+`ImportNew()` never accepts a caller-provided ID. This keeps ID validation and
+same-plan collision handling centralized.
+
+The result's filament list contains only records that need to be added to
+`user-filaments.json`. Its `owned_filament_ids` uses final existing or generated
+IDs, but applying those IDs to `owned-filaments.json` remains a separate future
+operation. An external `Owned: false` value never removes local ownership.
+
 **Example user-synonyms.json:**
 
 ```json
