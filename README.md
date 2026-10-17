@@ -540,6 +540,26 @@ and `export_filament_data()`, remain available as facades. New integrations shou
 exporter registry when they need capability metadata, collection metadata, optional dependency
 checks, or typed options.
 
+Color Tools user-color files have a safe Python round trip. The registered
+`user_colors` importer reads the minimal `name`/`hex` schema into
+`PaletteExportData`. `UserColorsExporter.plan()` performs a read-only merge;
+`apply()` must be called explicitly to atomically update `user-colors.json` and
+refresh its SHA-256 sidecar:
+
+```python
+from color_tools import UserColorsExporter
+from color_tools.importers import import_palette
+
+data = import_palette("incoming-user-colors.json", format_name="user_colors")
+exporter = UserColorsExporter()
+plan = exporter.plan(data)
+if plan.can_apply:
+    exporter.apply(plan)
+```
+
+See [Customization](docs/Customization.md#importing-and-updating-user-colors-from-python)
+for conflict policies and validation behavior.
+
 ### Plugin Architecture
 
 The exporter system uses a plugin architecture - new formats can be added without modifying existing code:

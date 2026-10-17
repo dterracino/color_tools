@@ -72,6 +72,14 @@ from color_tools.exporters.glsl_exporter import (
     GLSLExporter,
     GLSLExportOptions,
 )
+from color_tools.exporters.user_colors_exporter import UserColorsExporter
+from color_tools.exporters.user_color_export_models import (
+    UserColorConflictPolicy,
+    UserColorExportAction,
+    UserColorExportChange,
+    UserColorExportPlan,
+    UserColorExportResult,
+)
 
 
 # Legacy EXPORT_FORMATS compatibility.
@@ -119,4 +127,10 @@ __all__ = [
     "get_exporter",
     "list_export_formats",
     "register_exporter",
+    "UserColorsExporter",
+    "UserColorConflictPolicy",
+    "UserColorExportAction",
+    "UserColorExportChange",
+    "UserColorExportPlan",
+    "UserColorExportResult",
 ]

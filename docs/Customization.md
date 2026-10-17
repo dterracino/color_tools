@@ -210,6 +210,41 @@ no-op; assigning it to another maker is an error.
 reuse the effective RGB value of any other current color; invalid records are
 rejected with the conflicting color and source identified.
 
+### Importing and updating user colors from Python
+
+The `user_colors` importer reads the same minimal `name`/`hex` schema and
+returns `PaletteExportData`. All RGB, HSL, LAB, and LCH values are calculated by
+Color Tools rather than trusted from the file.
+
+`UserColorsExporter` is state-aware: `plan()` only inspects the proposed merge
+and does not write anything. Review its typed changes, then call `apply()`
+explicitly. Name changes conflict by default; pass `conflict_policy="replace"`
+to intentionally override a system or existing user color by normalized name,
+or `"skip"` to leave conflicts unchanged. Reusing another color's RGB value is
+never allowed because effective color values must remain unique.
+
+```python
+from color_tools import UserColorsExporter
+from color_tools.importers import get_importer
+
+imported = get_importer("user_colors").import_palette("incoming-colors.json")
+exporter = UserColorsExporter()  # package data directory by default
+
+plan = exporter.plan(imported, conflict_policy="replace")
+for change in plan.changes:
+    print(change.action, change.incoming.name, change.message)
+
+if plan.can_apply:
+    result = exporter.apply(plan)
+    print(result.data_written, result.sidecar_written)
+```
+
+Applying validates the complete prospective file, refuses a stale plan if the
+destination changed after planning, atomically replaces `user-colors.json`, and
+refreshes `user-colors.json.sha256`. Supplying `data_dir` to the constructor
+targets another Color Tools data directory, which is useful for applications
+that keep user data outside the installed package.
+
 ### owned-filaments.json - Filament Ownership Tracking
 
 Track which filaments you own for personalized color matching.

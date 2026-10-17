@@ -50,6 +50,7 @@ from color_tools.importers.gpl_importer import GPLImporter
 from color_tools.importers.hex_importer import HexImporter
 from color_tools.importers.jascpal_importer import JascPalImporter
 from color_tools.importers.riffpal_importer import RiffPalImporter
+from color_tools.importers.user_colors_importer import UserColorsImporter
 
 
 __all__ = [
@@ -68,4 +69,5 @@ __all__ = [
     "HexImporter",
     "JascPalImporter",
     "RiffPalImporter",
+    "UserColorsImporter",
 ]

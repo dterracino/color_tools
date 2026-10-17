@@ -171,6 +171,7 @@ from .palette import (
     
     # Color loading functions
     load_colors,
+    load_system_colors,
     load_palette,
 )
 from .color_load_report import ColorLoadEvent, ColorLoadReport
@@ -248,6 +249,15 @@ from .exporters.palette_export_data import PaletteExportData
 from .exporters.palette_metadata import PaletteMetadata
 from .exporters.filament_export_data import FilamentExportData
 from .exporters.filament_metadata import FilamentMetadata
+from .exporters.user_colors_exporter import UserColorsExporter
+from .exporters.user_color_export_models import (
+    UserColorConflictPolicy,
+    UserColorExportAction,
+    UserColorExportChange,
+    UserColorExportPlan,
+    UserColorExportResult,
+)
+from .importers import UserColorsImporter
 
 # ============================================================================
 # Color Validation (Fuzzy Name Matching + Delta E)
@@ -400,6 +410,7 @@ __all__ = [
     "next_available_filament_id",
     "validate_filament_id",
     "load_colors",
+    "load_system_colors",
     "load_filaments",
     "load_maker_synonyms",
     "load_owned_filaments",
@@ -424,6 +435,13 @@ __all__ = [
     "PaletteMetadata",
     "FilamentExportData",
     "FilamentMetadata",
+    "UserColorsExporter",
+    "UserColorsImporter",
+    "UserColorConflictPolicy",
+    "UserColorExportAction",
+    "UserColorExportChange",
+    "UserColorExportPlan",
+    "UserColorExportResult",
     "list_export_formats",
     "export_filaments_autoforge",
     "export_filaments_csv",

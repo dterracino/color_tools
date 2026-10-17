@@ -310,6 +310,8 @@ does not load the palette until its first input is requested.
 - `export_filament_data()` - Export metadata-bearing filament transfer data;
   exporters that do not use the metadata fall back to their existing filament export
 - `ExportOptionsBase` subclasses - Provide strongly typed configuration for a single export operation
+- `UserColorsExporter` - Plan and explicitly apply validated updates to
+  `user-colors.json`, including its integrity sidecar
 - `generate_filename()` - Generate timestamped filenames
 
 Available format identifiers:
@@ -580,6 +582,29 @@ only the metadata fields it supports, such as name, author, description, columns
 or custom properties.
 Formats that do not support palette metadata safely fall back to raw color export.
 
+Color Tools user-color files also support an import/update round trip. The
+`user_colors` importer returns `PaletteExportData`; the state-aware exporter
+uses a separate `plan()`/`apply()` contract because it merges persistent user
+state rather than serializing a new standalone artifact:
+
+```python
+from color_tools import UserColorsExporter
+from color_tools.importers import import_palette
+
+data = import_palette("incoming-user-colors.json", format_name="user_colors")
+exporter = UserColorsExporter()
+plan = exporter.plan(data)  # dry-run; no files are changed
+
+if plan.can_apply:
+    exporter.apply(plan)    # writes data and refreshes the SHA-256 sidecar
+```
+
+Use `conflict_policy="replace"` to intentionally replace a color by normalized
+name or `"skip"` to retain the current record. A different name may not reuse
+an existing RGB value. The ordinary format-export registry remains for
+stateless output formats; this exporter exposes structured changes and stale-
+plan protection directly.
+
 The filament CLI can filter and export in one operation. This command searches
 the complete database, selects Bambu Lab PLA filaments with TD values, and
 writes a HueForge library:
@@ -644,6 +669,7 @@ for the authoritative class and function inventory.
 | **FilamentExportData** | `exporters.filament_export_data` | Ordered filaments plus collection-level metadata | `filaments`, `metadata` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.filament_export_data.html#color_tools.exporters.filament_export_data.FilamentExportData) |
 | **HexExportOptions** | `exporters.hex_exporter` | Plain-text HEX output casing | `uppercase` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hex_exporter.html#color_tools.exporters.hex_exporter.HexExportOptions) |
 | **HueForgeExportOptions** | `exporters.hueforge_exporter` | Initial HueForge owned state | `owned` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hueforge_exporter.html#color_tools.exporters.hueforge_exporter.HueForgeExportOptions) |
+| **UserColorExportPlan / UserColorExportResult** | `exporters.user_color_export_models` | Reviewed user-color merge and explicit apply result | `changes`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_color_export_models.html) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
 | **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
 

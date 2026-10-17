@@ -2,8 +2,8 @@
 
 ## Status
 
-Post-7.0 work in progress. The initial format-neutral transfer and base-contract
-phase is implemented:
+Post-7.0 work in progress. The initial format-neutral transfer/base-contract
+phase and the user-color round-trip phase are implemented:
 
 - `FilamentMetadata` and `FilamentExportData` carry collection metadata,
   ownership IDs, format properties, and ordered filament records.
@@ -11,10 +11,14 @@ phase is implemented:
   behavior with `PaletteImporter` without requiring palette parsing hooks.
 - Exporters accept `FilamentExportData` through `export_filament_data()` and
   fall back to existing filament export when they do not consume metadata.
+- The registered `user_colors` importer reads the strict `name`/`hex` schema
+  into `PaletteExportData` and recalculates every derived value.
+- `UserColorsExporter` provides read-only planning, explicit conflict policy,
+  structured changes, stale-plan protection, prospective validation, atomic
+  data replacement, and sidecar refresh.
 
-Concrete filament importers, filament-aware registry dispatch, reconciliation,
-and user-data writers remain pending. Compatibility and safety decisions below
-must be resolved before those stateful operations are implemented.
+Concrete filament importers, filament-aware registry dispatch, user-filament
+reconciliation/persistence, and independent ownership transfer remain pending.
 
 ## Motivation
 
@@ -131,7 +135,7 @@ serializing a selected list to an output format. It requires:
 - reconciling imported records against core and user records;
 - detecting conflicts and ambiguous matches;
 - applying an explicit merge policy;
-- reporting planned additions, updates, skips, and ownership changes;
+- reporting operation-specific additions, updates, skips, and conflicts;
 - validating the complete prospective document;
 - writing atomically; and
 - regenerating any integrity sidecar defined for the destination.
@@ -141,7 +145,9 @@ serializing a selected list to an output format. It requires:
 plan should not add an ownership sidecar unless the broader integrity policy is
 changed together with every existing ownership-writing path.
 
-The user-data destinations should be registered exporters:
+The user-data destinations are exporters because they consume the same transfer
+objects, but their stateful contract is intentionally separate from the current
+stateless exporter registry:
 
 - `UserColorsExporter` accepts `PaletteExportData` and targets
   `user-colors.json`.
@@ -154,7 +160,10 @@ These are state-aware exporters rather than simple serialization exporters.
 Internally, they should delegate reconciliation, planning, and atomic
 persistence to focused helpers so the exporter classes do not become
 monolithic. That is an implementation separation, not a separate public
-concept.
+concept. `UserColorsExporter` establishes this direct `plan()`/`apply()`
+pattern. Adding stateful classes to a registry should wait until the registry
+can expose that contract without implying that ordinary path-returning export
+methods are safe or supported.
 
 The workflow remains modular:
 
@@ -168,6 +177,13 @@ exporter.apply(plan)
 A CLI command may orchestrate those steps for convenience without making the
 format importer depend on the user-data exporter.
 
+Catalog persistence and ownership persistence are separate workflows. A
+catalog importer/exporter operation writes `user-filaments.json` only. An
+ownership operation runs independently against the effective catalog and
+writes `owned-filaments.json` only. A source format that contains both kinds of
+data may support both operations, but the catalog import must not implicitly
+change inventory state.
+
 ## Filament transfer model requirements
 
 A plain `list[FilamentRecord]` is sufficient for format-to-format conversion,
@@ -178,8 +194,8 @@ but it cannot fully represent a HueForge import. A HueForge entry also has:
 - no Color Tools `finish` field; and
 - no guaranteed Color Tools filament ID.
 
-The import result therefore needs to retain import-only information until
-catalog reconciliation is complete. Two reasonable shapes are:
+The parser therefore needs to retain import-only information so either the
+catalog or ownership workflow can consume it. Two reasonable shapes are:
 
 1. A filament collection plus separate ownership and external-identity maps.
 2. A list of import entries, each containing a `FilamentRecord` candidate,
@@ -187,8 +203,9 @@ catalog reconciliation is complete. Two reasonable shapes are:
 
 The second shape avoids relying on list indexes and keeps format-specific
 identity associated with the record it describes. `FilamentExportData` can
-expose its ordered `.filaments` list to ordinary exporters while user-data and
-ownership exporters use the complete entries.
+expose its ordered `.filaments` list to ordinary exporters. Any ownership view
+derived from the same source remains optional transfer information; applying
+that view is a separate operation after catalog import.
 
 This metadata must not be added to `FilamentRecord` merely to support import.
 Ownership is user inventory state, and an external UUID is provenance from a
@@ -221,7 +238,7 @@ When retaining the external UUID is necessary, the importer can store a
 record-ID-to-UUID mapping in `FilamentMetadata.properties` rather than adding a
 HueForge-specific field to `FilamentRecord`.
 
-Recommended reconciliation order:
+Recommended catalog reconciliation order:
 
 1. Match an imported entry to a known core or user record using verified,
    normalized identity fields.
@@ -231,8 +248,12 @@ Recommended reconciliation order:
    it before writing.
 4. If multiple records match, report ambiguity and require caller input rather
    than guessing.
-5. Add an ID to `owned-filaments.json` only after it resolves to an existing or
-   newly persisted Color Tools filament.
+
+Catalog reconciliation never updates `owned-filaments.json`. If the caller
+also wants to import ownership from the HueForge file, it runs the independent
+ownership operation afterward. That operation resolves selected filament
+information against the now-current merged catalog and writes only IDs that
+resolve unambiguously.
 
 The exact identity key must be decided and tested. Maker, material type,
 finish, color name, and normalized compound hex are all relevant. RGB alone is
@@ -282,10 +303,11 @@ itself must not silently replace a filament.
 
 ### `owned-filaments.json`
 
-Ownership export is a reconciliation operation over `FilamentExportData`, not
-an intrinsic filament-record field. The ownership-aware exporter should accept
-resolved Color Tools IDs and merge them with the existing `owned_filaments`
-list.
+Ownership import/export is an independent reconciliation operation, not an
+intrinsic filament-record field and not a side effect of catalog import. The
+operation accepts an external owned-filament selection, resolves it against the
+current merged Color Tools catalog, and merges the resulting IDs with the
+existing `owned_filaments` list.
 
 The current runtime contract is also ID-based. A user override retains the
 system filament's ID, so an existing ownership reference follows the effective
@@ -294,18 +316,23 @@ owned by adding its new ID. `--validate-user-files` validates the ownership
 schema and resolves every owned ID against the fully merged system-plus-user
 catalog.
 
-For additive imports, an external `Owned: false` value means only that the
-record is not added to local ownership; it must not remove an existing local
-ownership reference. Removing ownership requires an explicit inventory
-synchronization or replacement operation.
+For additive ownership imports, an external `Owned: false` value means only
+that the record is not selected for the ownership operation; it must not remove
+an existing local ownership reference. Removing ownership requires an explicit
+inventory synchronization or replacement operation.
 
 For external inventory systems, results should be divided into:
 
 - matched and already owned;
 - matched and newly marked owned;
-- newly created user filaments that can now be marked owned;
 - unmatched entries; and
 - ambiguous entries requiring review.
+
+The ownership operation never creates or modifies filament records. When an
+external library contains filaments that are not yet present, run its catalog
+import first and then rerun ownership resolution against the updated catalog.
+This contract lets the same ownership operation support HueForge and future
+filament-management systems without coupling them to user-filament writes.
 
 Unknown external identifiers must not be written directly into
 `owned-filaments.json`, because the current ownership API expects IDs that can
@@ -335,10 +362,12 @@ Suggested explicit merge policies are `add`, `skip`, `update`, and `replace`.
 Their semantics must be defined separately for colors, filaments, and owned
 IDs; one generic policy should not conceal different identity rules.
 
-Because a HueForge import may update both `user-filaments.json` and
-`owned-filaments.json`, the plan must validate both prospective documents
-before either is replaced. The implementation should also define recovery if
-the process is interrupted between the two atomic replacements.
+Each operation validates and atomically replaces only its own destination.
+Catalog import updates `user-filaments.json` and its sidecar. Ownership import
+updates `owned-filaments.json`, which intentionally has no sidecar. Running the
+catalog operation first makes interruption safe: a failure before ownership
+import leaves valid user filaments that are simply not yet marked owned, and
+the independent ownership operation can be rerun.
 
 ## Result and reporting objects
 
@@ -349,7 +378,7 @@ CLI callers. A result should report:
 - source and destination paths;
 - dry-run or applied status;
 - parsed, accepted, added, updated, skipped, and rejected counts;
-- ownership additions and already-owned counts;
+- ownership additions and already-owned counts for ownership operations;
 - conflicts, ambiguities, and warnings;
 - generated or reused Color Tools IDs; and
 - whether each data file and sidecar was written.
@@ -411,10 +440,22 @@ imported = get_filament_importer("hueforge").import_filaments(
 )
 
 exporter = get_exporter("user_filaments")
-plan = exporter.plan_filament_data(
-    imported,
-    import_owned=True,
+plan = exporter.plan_filament_data(imported)
+
+print(plan.summary)
+exporter.apply(plan)
+```
+
+Importing ownership is a separate operation after the catalog contains every
+filament that should be eligible for resolution:
+
+```python
+owned_selection = get_owned_filament_importer("hueforge").import_owned(
+    "hueforge-library.json"
 )
+
+exporter = get_exporter("owned_filaments")
+plan = exporter.plan_owned_filaments(owned_selection)
 
 print(plan.summary)
 exporter.apply(plan)
@@ -431,9 +472,13 @@ orchestrated command. Illustrative commands:
 # Inspect without writing (default).
 color-tools filament --import hueforge --input library.json --to user-filaments
 
-# Apply reviewed catalog additions and ownership changes.
+# Apply reviewed catalog additions only.
 color-tools filament --import hueforge --input library.json \
-    --to user-filaments --import-owned --apply
+    --to user-filaments --apply
+
+# Independently inspect and then apply ownership from the same source.
+color-tools filament --import-owned hueforge --input library.json
+color-tools filament --import-owned hueforge --input library.json --apply
 
 # Convert between external formats without changing user data.
 color-tools filament --import hueforge --input library.json \
@@ -449,12 +494,15 @@ writing.
 Suggested order after the framework contracts are approved:
 
 1. `FilamentMetadata`, `FilamentExportData`, and the symmetric filament
-   importer/exporter base contracts.
-2. Color Tools user-color and user-filament exporters, including sidecar
+   importer/exporter base contracts. **Implemented.**
+2. Color Tools user-color importer/exporter round trips, including sidecar
+   updates. **Implemented for the Python API; CLI orchestration remains a later
+   decision.**
+3. Color Tools user-filament importer/exporter round trips, including sidecar
    updates.
-3. HueForge filament importer with ownership capture and reconciliation.
-4. Owned-filament export and the combined HueForge catalog/inventory workflow.
-5. Color Tools' own JSON import/export round trips.
+4. HueForge filament catalog importer and the existing HueForge exporter.
+5. Independent owned-filament import/export, followed by a HueForge ownership
+   adapter that resolves against the current catalog without changing it.
 6. AutoForge filament import if its documented format contains enough identity
    information.
 7. Research import adapters for other actively used filament-management
@@ -476,7 +524,7 @@ The implementation should include:
 - core, user, ambiguous, and unmatched reconciliation fixtures;
 - merge-policy tests for each destination type;
 - dry-run tests proving no file or sidecar changes;
-- atomic-write and interrupted-multi-file recovery tests;
+- atomic-write and interrupted-operation recovery tests;
 - validation of the complete prospective file before replacement;
 - sidecar regeneration and verification tests;
 - idempotence tests for repeated imports; and
@@ -489,15 +537,17 @@ Tools ID.
 
 ## Decisions required before implementation
 
-1. Define canonical color and filament identity keys for reconciliation.
+1. Define canonical filament identity keys for reconciliation. User-color
+   identity is implemented as normalized name; RGB values remain globally
+   unique in the effective catalog.
 2. Define deterministic ID generation and collision handling for new user
    filaments.
-3. Define the planning and structured-result additions for state-aware
+3. Extend or adapt the planning/result pattern for filament and ownership
    exporters while preserving existing path-returning export APIs.
-4. Specify merge policies and whether updates may replace only user records or
-   may also shadow core records.
-5. Define safe coordination of `user-filaments.json`,
-   `owned-filaments.json`, and any applicable sidecars.
+4. Specify filament merge policies. User-color policies are implemented as
+   `error`, `skip`, and `replace`; replacement may shadow core records by name.
+5. Define the generic owned-filament selection and resolution contract used by
+   independent inventory adapters.
 6. Decide whether the first release exposes Python only or also includes the
    orchestration CLI.
 

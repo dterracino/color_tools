@@ -100,3 +100,8 @@ def ensure_list(value: str | list[str]) -> list[str]:
     if isinstance(value, str):
         return [value]
     return value
+
+
+def normalize_color_name(name: str) -> str:
+    """Normalize a color name for matching and uniqueness checks."""
+    return name.strip().casefold()
