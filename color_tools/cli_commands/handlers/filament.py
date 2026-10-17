@@ -31,6 +31,13 @@ def _handle_filament_command(args: Namespace, json_path: "Path | str | None" = N
         1: Filament not found or error
         2: Invalid input
     """
+    if getattr(args, "filament_action", None) == "import":
+        from .filament_import import handle_filament_import_command
+
+        data_dir = Path(json_path) if json_path is not None else None
+        handle_filament_import_command(args, data_dir)
+        return
+
     if getattr(args, "generate_id", False):
         _handle_generate_id(args, json_path)
 

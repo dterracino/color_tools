@@ -673,6 +673,63 @@ effective catalog. Ownership updates are additive: source entries with
 The operation writes only `owned-filaments.json`, without a sidecar or bundled
 database changes.
 
+`FilamentImportWorkflow` standardizes those stages for any importer and
+reconciler pair while keeping parsing, matching, and persistence separate:
+
+```python
+from color_tools import (
+    FilamentImportWorkflow,
+    FilamentPalette,
+    HueForgeFilamentReconciler,
+    HueForgeImporter,
+)
+
+palette = FilamentPalette.load_default()
+workflow = FilamentImportWorkflow(
+    HueForgeImporter(),
+    HueForgeFilamentReconciler(
+        palette.records,
+        maker_synonyms=palette.maker_synonyms,
+    ),
+)
+reconciliation = workflow.prepare("hueforge-library.json")
+resolved = workflow.resolve(reconciliation, resolutions)
+
+catalog_plan = workflow.plan_catalog(resolved)
+workflow.apply_catalog(catalog_plan)
+
+# Plan this after the catalog apply so newly generated IDs can resolve.
+owned_plan = workflow.plan_ownership(resolved)
+workflow.apply_ownership(owned_plan)
+```
+
+The CLI exposes the same ordered workflow. Its default is always a read-only
+inspection:
+
+```bash
+# Print automatic decisions and copyable choices for every ambiguity.
+color-tools filament import hueforge hueforge-library.json
+
+# Supply decisions non-interactively and update only user-filaments.json.
+color-tools filament import hueforge hueforge-library.json \
+  --resolve 12=use:bambu-lab-pla-matte-white \
+  --resolve 19=new \
+  --apply-catalog
+
+# Resolve ambiguities using the optional prompt-toolkit TUI.
+color-tools filament import hueforge hueforge-library.json --interactive
+
+# Apply the catalog first, then add the source's owned selections.
+color-tools filament import hueforge hueforge-library.json \
+  --interactive --apply-catalog --apply-owned
+```
+
+Use `INDEX=skip` to omit a source record. `--interactive` only collects
+reconciliation choices and does not authorize writes by itself. If both apply
+flags are present, the catalog operation completes before ownership is planned.
+An ownership-only apply succeeds only when every selected final ID already
+exists in the effective catalog.
+
 The filament CLI can filter and export in one operation. This command searches
 the complete database, selects Bambu Lab PLA filaments with TD values, and
 writes a HueForge library:

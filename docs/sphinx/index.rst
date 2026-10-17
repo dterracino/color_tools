@@ -211,7 +211,6 @@ Import System
    :toctree: api
    :template: module.rst
 
-   color_tools.importers
    color_tools.importers.base
    color_tools.importers.filament_importer
    color_tools.importers.registry
@@ -231,11 +230,11 @@ Filament Reconciliation
    :toctree: api
    :template: module.rst
 
-   color_tools.reconcilers
    color_tools.reconcilers.filament_reconciliation_models
    color_tools.reconcilers.resolutions
    color_tools.reconcilers.filament_reconciler
    color_tools.reconcilers.hueforge_filament_reconciler
+   color_tools.filament_import_workflow
 
 Image Processing *(requires* ``[image]`` *extra)*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -269,6 +268,7 @@ Command Line Interface
    color_tools.cli_commands.handlers.cvd
    color_tools.cli_commands.handlers.harmony
    color_tools.cli_commands.handlers.filament
+   color_tools.cli_commands.handlers.filament_import
    color_tools.cli_commands.handlers.image
    color_tools.cli_commands.handlers.name
    color_tools.cli_commands.handlers.validate
@@ -291,6 +291,7 @@ Interactive Terminal Features *(requires* ``[interactive]`` *extra)*
 
    color_tools.interactive_manager
    color_tools.interactive_wizard
+   color_tools.filament_reconciliation_tui
 
 Model Context Protocol *(requires* ``[mcp]`` *extra)*
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -302,6 +303,12 @@ Model Context Protocol *(requires* ``[mcp]`` *extra)*
    color_tools.mcp
    color_tools.mcp.models
    color_tools.mcp.server
+
+.. automodule:: color_tools.importers
+   :no-members:
+
+.. automodule:: color_tools.reconcilers
+   :no-members:
 
 .. automodule:: color_tools
    :no-members:

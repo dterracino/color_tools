@@ -1,0 +1,292 @@
+Red	#ff0000	rgb(255,0,0)	hsl(0,100%,50%)	oklch(62.8% 0.25768 29.23)
+black 5.3:1AA	red
+DarkRed	#8b0000	rgb(139,0,0)	hsl(0,100%,27%)	oklch(39.99% 0.16408 29.23)
+white 10.0:1AAA	red
+Firebrick	#b22222	rgb(178,34,34)	hsl(0,68%,42%)	oklch(49.68% 0.17969 26.81)
+white 6.7:1AA	red
+Crimson	#dc143c	rgb(220,20,60)	hsl(348,83%,47%)	oklch(57.12% 0.22194 20.09)
+white 5.0:1AA	red
+IndianRed	#cd5c5c	rgb(205,92,92)	hsl(0,53%,58%)	oklch(61.54% 0.14415 22.23)
+black 5.3:1AA	red
+LightCoral	#f08080	rgb(240,128,128)	hsl(0,79%,72%)	oklch(72.46% 0.13774 21.03)
+black 8.1:1AAA	red
+Salmon	#fa8072	rgb(250,128,114)	hsl(6,93%,71%)	oklch(73.5% 0.15151 28.06)
+black 8.4:1AAA	red
+DarkSalmon	#e9967a	rgb(233,150,122)	hsl(15,72%,70%)	oklch(75.07% 0.10818 39.39)
+black 9.1:1AAA	red
+orange
+LightSalmon	#ffa07a	rgb(255,160,122)	hsl(17,100%,74%)	oklch(79.38% 0.12483 42.42)
+black 10.6:1AAA	orange
+OrangeRed	#ff4500	rgb(255,69,0)	hsl(16,100%,50%)	oklch(66.02% 0.22936 35.4)
+black 6.1:1AA	orange
+Tomato	#ff6347	rgb(255,99,71)	hsl(9,100%,64%)	oklch(69.62% 0.19552 32.32)
+black 7.1:1AAA	orange
+Coral	#ff7f50	rgb(255,127,80)	hsl(16,100%,66%)	oklch(73.51% 0.16799 40.25)
+black 8.4:1AAA	orange
+DarkOrange	#ff8c00	rgb(255,140,0)	hsl(33,100%,50%)	oklch(75.05% 0.17911 58.28)
+black 9.0:1AAA	orange
+Orange	#ffa500	rgb(255,165,0)	hsl(39,100%,50%)	oklch(79.27% 0.17103 70.67)
+black 10.6:1AAA	orange
+yellow
+Yellow	#ffff00	rgb(255,255,0)	hsl(60,100%,50%)	oklch(96.8% 0.21101 109.77)
+black 19.6:1AAA	yellow
+LightYellow	#ffffe0	rgb(255,255,224)	hsl(60,100%,94%)	oklch(99.2% 0.04024 107.11)
+black 20.6:1AAA	yellow
+LemonChiffon	#fffacd	rgb(255,250,205)	hsl(54,100%,90%)	oklch(97.78% 0.05822 102.16)
+black 19.8:1AAA	yellow
+LightGoldenrodYellow	#fafad2	rgb(250,250,210)	hsl(60,80%,90%)	oklch(97.5% 0.05184 107.32)
+black 19.7:1AAA	yellow
+PapayaWhip	#ffefd5	rgb(255,239,213)	hsl(37,100%,92%)	oklch(95.81% 0.03826 80.03)
+black 18.6:1AAA	yellow
+Moccasin	#ffe4b5	rgb(255,228,181)	hsl(38,100%,85%)	oklch(92.96% 0.06754 81.38)
+black 17.0:1AAA	yellow
+PeachPuff	#ffdab9	rgb(255,218,185)	hsl(28,100%,86%)	oklch(91.13% 0.06 63.7)
+black 16.0:1AAA	yellow
+PaleGoldenrod	#eee8aa	rgb(238,232,170)	hsl(55,67%,80%)	oklch(92.1% 0.07981 103.18)
+black 16.8:1AAA	yellow
+Khaki	#f0e68c	rgb(240,230,140)	hsl(54,77%,75%)	oklch(91.35% 0.11192 102.83)
+black 16.4:1AAA	yellow
+DarkKhaki	#bdb76b	rgb(189,183,107)	hsl(56,38%,58%)	oklch(76.75% 0.09804 104.51)
+black 10.1:1AAA	yellow
+Gold	#ffd700	rgb(255,215,0)	hsl(51,100%,50%)	oklch(88.68% 0.18219 95.33)
+black 15.0:1AAA	yellow
+Goldenrod	#daa520	rgb(218,165,32)	hsl(43,74%,49%)	oklch(75.16% 0.14693 83.99)
+black 9.4:1AAA	yellow
+DarkGoldenrod	#b8860b	rgb(184,134,11)	hsl(43,89%,38%)	oklch(65.21% 0.1322 81.57)
+black 6.5:1AA	yellow
+green
+GreenYellow	#adff2f	rgb(173,255,47)	hsl(84,100%,59%)	oklch(91.3% 0.23346 130.02)
+black 17.1:1AAA	green
+Chartreuse	#7fff00	rgb(127,255,0)	hsl(90,100%,50%)	oklch(89.03% 0.2648 136.01)
+black 16.2:1AAA	green
+LawnGreen	#7cfc00	rgb(124,252,0)	hsl(90,100%,49%)	oklch(88.18% 0.26307 136.17)
+black 15.8:1AAA	green
+Lime	#00ff00	rgb(0,255,0)	hsl(120,100%,50%)	oklch(86.64% 0.29483 142.5)
+black 15.3:1AAA	green
+LimeGreen	#32cd32	rgb(50,205,50)	hsl(120,61%,50%)	oklch(74.19% 0.22865 142.83)
+black 9.9:1AAA	green
+PaleGreen	#98fb98	rgb(152,251,152)	hsl(120,93%,79%)	oklch(90.35% 0.16242 144.09)
+black 16.6:1AAA	green
+LightGreen	#90ee90	rgb(144,238,144)	hsl(120,73%,75%)	oklch(86.8% 0.1558 144.09)
+black 14.8:1AAA	green
+MediumSpringGreen	#00fa9a	rgb(0,250,154)	hsl(157,100%,49%)	oklch(86.68% 0.20674 156.9)
+black 15.1:1AAA	green
+SpringGreen	#00ff7f	rgb(0,255,127)	hsl(150,100%,50%)	oklch(87.49% 0.23526 151.02)
+black 15.6:1AAA	green
+MediumSeaGreen	#3cb371	rgb(60,179,113)	hsl(147,50%,47%)	oklch(68.4% 0.14402 155)
+black 7.9:1AAA	green
+SeaGreen	#2e8b57	rgb(46,139,87)	hsl(146,50%,36%)	oklch(56.85% 0.11871 154.95)
+black 4.9:1AA	green
+ForestGreen	#228b22	rgb(34,139,34)	hsl(120,61%,34%)	oklch(55.78% 0.16878 142.89)
+black 4.8:1AA	green
+Green	#008000	rgb(0,128,0)	hsl(120,100%,25%)	oklch(51.98% 0.17686 142.5)
+white 5.1:1AA	green
+DarkGreen	#006400	rgb(0,100,0)	hsl(120,100%,20%)	oklch(43.6% 0.14837 142.5)
+white 7.4:1AAA	green
+YellowGreen	#9acd32	rgb(154,205,50)	hsl(80,61%,50%)	oklch(78.49% 0.18374 126.64)
+black 11.2:1AAA	green
+OliveDrab	#6b8e23	rgb(107,142,35)	hsl(80,60%,35%)	oklch(59.95% 0.13738 126.32)
+black 5.5:1AA	green
+Olive	#808000	rgb(128,128,0)	hsl(60,100%,25%)	oklch(58.07% 0.12658 109.77)
+black 5.0:1AA	green
+DarkOliveGreen	#556b2f	rgb(85,107,47)	hsl(82,39%,30%)	oklch(49.55% 0.0896 126.19)
+white 5.9:1AA	green
+cyan
+MediumAquamarine	#66cdaa	rgb(102,205,170)	hsl(160,51%,60%)	oklch(77.67% 0.10985 168.82)
+black 10.9:1AAA	cyan
+DarkSeaGreen	#8fbc8f	rgb(143,188,143)	hsl(120,25%,65%)	oklch(75.09% 0.07971 144.73)
+black 9.8:1AAA	cyan
+LightSeaGreen	#20b2aa	rgb(32,178,170)	hsl(177,70%,41%)	oklch(69.12% 0.11421 188.96)
+black 8.0:1AAA	cyan
+DarkCyan	#008b8b	rgb(0,139,139)	hsl(180,100%,27%)	oklch(57.65% 0.09841 194.77)
+black 5.1:1AA	cyan
+Teal	#008080	rgb(0,128,128)	hsl(180,100%,25%)	oklch(54.31% 0.09271 194.77)
+white 4.8:1AA	cyan
+Aqua	#00ffff	rgb(0,255,255)	hsl(180,100%,50%)	oklch(90.54% 0.15455 194.77)
+black 16.7:1AAA	cyan
+Cyan	#00ffff	rgb(0,255,255)	hsl(180,100%,50%)	oklch(90.54% 0.15455 194.77)
+black 16.7:1AAA	cyan
+LightCyan	#e0ffff	rgb(224,255,255)	hsl(180,100%,94%)	oklch(97.79% 0.03203 196.64)
+black 19.9:1AAA	cyan
+PaleTurquoise	#afeeee	rgb(175,238,238)	hsl(180,65%,81%)	oklch(90.69% 0.06323 196.09)
+black 16.3:1AAA	cyan
+Aquamarine	#7fffd4	rgb(127,255,212)	hsl(160,100%,75%)	oklch(91.5% 0.13039 168.99)
+black 17.2:1AAA	cyan
+Turquoise	#40e0d0	rgb(64,224,208)	hsl(174,72%,56%)	oklch(82.23% 0.13074 185.09)
+black 12.8:1AAA	cyan
+MediumTurquoise	#48d1cc	rgb(72,209,204)	hsl(178,60%,55%)	oklch(78.68% 0.11622 191.56)
+black 11.3:1AAA	cyan
+DarkTurquoise	#00ced1	rgb(0,206,209)	hsl(181,100%,41%)	oklch(77.19% 0.13144 196.64)
+black 10.7:1AAA	cyan
+blue
+CadetBlue	#5f9ea0	rgb(95,158,160)	hsl(182,25%,50%)	oklch(65.77% 0.06501 198.3)
+black 6.9:1AA	blue
+SteelBlue	#4682b4	rgb(70,130,180)	hsl(207,44%,49%)	oklch(58.8% 0.09934 245.74)
+black 5.1:1AA	blue
+LightSteelBlue	#b0c4de	rgb(176,196,222)	hsl(214,41%,78%)	oklch(81.36% 0.04281 255.03)
+black 11.8:1AAA	blue
+PowderBlue	#b0e0e6	rgb(176,224,230)	hsl(187,52%,80%)	oklch(87.51% 0.0502 205.73)
+black 14.7:1AAA	blue
+LightBlue	#add8e6	rgb(173,216,230)	hsl(195,53%,79%)	oklch(85.62% 0.04894 219.65)
+black 13.7:1AAA	blue
+SkyBlue	#87ceeb	rgb(135,206,235)	hsl(197,71%,73%)	oklch(81.48% 0.08192 225.75)
+black 12.1:1AAA	blue
+LightSkyBlue	#87cefa	rgb(135,206,250)	hsl(203,92%,75%)	oklch(82.06% 0.09453 236.75)
+black 12.2:1AAA	blue
+DeepSkyBlue	#00bfff	rgb(0,191,255)	hsl(195,100%,50%)	oklch(75.54% 0.15342 231.64)
+black 9.9:1AAA	blue
+DodgerBlue	#1e90ff	rgb(30,144,255)	hsl(210,100%,56%)	oklch(65.2% 0.19012 253.21)
+black 6.5:1AA	blue
+CornflowerBlue	#6495ed	rgb(100,149,237)	hsl(219,79%,66%)	oklch(67.46% 0.14136 261.34)
+black 7.1:1AAA	blue
+MediumSlateBlue	#7b68ee	rgb(123,104,238)	hsl(249,80%,67%)	oklch(60.45% 0.19389 285.5)
+black 5.1:1AA	blue
+RoyalBlue	#4169e1	rgb(65,105,225)	hsl(225,73%,57%)	oklch(55.98% 0.18823 266.4)
+white 4.8:1AA	blue
+Blue	#0000ff	rgb(0,0,255)	hsl(240,100%,50%)	oklch(45.2% 0.31321 264.05)
+white 8.6:1AAA	blue
+MediumBlue	#0000cd	rgb(0,0,205)	hsl(240,100%,40%)	oklch(38.35% 0.26571 264.05)
+white 11.2:1AAA	blue
+DarkBlue	#00008b	rgb(0,0,139)	hsl(240,100%,27%)	oklch(28.78% 0.19944 264.05)
+white 15.3:1AAA	blue
+Navy	#000080	rgb(0,0,128)	hsl(240,100%,25%)	oklch(27.11% 0.18789 264.05)
+white 16.0:1AAA	blue
+MidnightBlue	#191970	rgb(25,25,112)	hsl(240,64%,27%)	oklch(28.81% 0.14363 272.76)
+white 14.8:1AAA	blue
+purple
+Lavender	#e6e6fa	rgb(230,230,250)	hsl(240,67%,94%)	oklch(93.09% 0.02694 285.86)
+black 17.1:1AAA	purple
+Thistle	#d8bfd8	rgb(216,191,216)	hsl(300,24%,80%)	oklch(83.33% 0.04391 325.96)
+black 12.4:1AAA	purple
+Plum	#dda0dd	rgb(221,160,221)	hsl(300,47%,75%)	oklch(78.33% 0.10776 326.54)
+black 10.1:1AAA	purple
+Violet	#ee82ee	rgb(238,130,238)	hsl(300,76%,72%)	oklch(76.19% 0.18612 327.21)
+black 9.1:1AAA	purple
+Orchid	#da70d6	rgb(218,112,214)	hsl(302,59%,65%)	oklch(70.21% 0.18126 328.71)
+black 7.3:1AAA	purple
+MediumOrchid	#ba55d3	rgb(186,85,211)	hsl(288,59%,58%)	oklch(62.56% 0.20244 319.23)
+black 5.3:1AA	purple
+MediumPurple	#9370db	rgb(147,112,219)	hsl(260,60%,65%)	oklch(62.69% 0.15803 296.67)
+black 5.6:1AA	purple
+BlueViolet	#8a2be2	rgb(138,43,226)	hsl(271,76%,53%)	oklch(53.38% 0.25031 301.37)
+white 6.0:1AA	purple
+DarkViolet	#9400d3	rgb(148,0,211)	hsl(282,100%,41%)	oklch(51.49% 0.26067 309.81)
+white 6.6:1AA	purple
+DarkOrchid	#9932cc	rgb(153,50,204)	hsl(280,61%,50%)	oklch(54.11% 0.22724 311.51)
+white 5.7:1AA	purple
+DarkMagenta	#8b008b	rgb(139,0,139)	hsl(300,100%,27%)	oklch(44.68% 0.20535 328.36)
+white 8.5:1AAA	purple
+Purple	#800080	rgb(128,0,128)	hsl(300,100%,25%)	oklch(42.09% 0.19345 328.36)
+white 9.4:1AAA	purple
+RebeccaPurple	#663399	rgb(102,51,153)	hsl(270,50%,40%)	oklch(44.03% 0.1603 303.37)
+white 8.4:1AAA	purple
+Indigo	#4b0082	rgb(75,0,130)	hsl(275,100%,25%)	oklch(33.9% 0.17927 301.68)
+white 13.0:1AAA	purple
+SlateBlue	#6a5acd	rgb(106,90,205)	hsl(248,53%,58%)	oklch(54.36% 0.17123 285.54)
+white 5.3:1AA	purple
+DarkSlateBlue	#483d8b	rgb(72,61,139)	hsl(248,39%,39%)	oklch(41.43% 0.12484 286.04)
+white 9.1:1AAA	purple
+pink
+Pink	#ffc0cb	rgb(255,192,203)	hsl(350,100%,88%)	oklch(86.77% 0.07354 7.09)
+black 13.7:1AAA	pink
+LightPink	#ffb6c1	rgb(255,182,193)	hsl(351,100%,86%)	oklch(84.74% 0.08579 9.09)
+black 12.7:1AAA	pink
+HotPink	#ff69b4	rgb(255,105,180)	hsl(330,100%,71%)	oklch(72.83% 0.19708 351.99)
+black 7.9:1AAA	pink
+DeepPink	#ff1493	rgb(255,20,147)	hsl(328,100%,54%)	oklch(65.49% 0.26134 356.94)
+black 5.8:1AA	pink
+PaleVioletRed	#db7093	rgb(219,112,147)	hsl(340,60%,65%)	oklch(67.79% 0.13822 0.68)
+black 6.8:1AA	pink
+MediumVioletRed	#c71585	rgb(199,21,133)	hsl(322,81%,43%)	oklch(55.34% 0.22165 349.69)
+white 5.4:1AA	pink
+Fuchsia	#ff00ff	rgb(255,0,255)	hsl(300,100%,50%)	oklch(70.17% 0.32249 328.36)
+black 6.7:1AA	pink
+Magenta	#ff00ff	rgb(255,0,255)	hsl(300,100%,50%)	oklch(70.17% 0.32249 328.36)
+black 6.7:1AA	pink
+brown
+Cornsilk	#fff8dc	rgb(255,248,220)	hsl(48,100%,93%)	oklch(97.73% 0.03726 95.44)
+black 19.7:1AAA	brown
+BlanchedAlmond	#ffebcd	rgb(255,235,205)	hsl(36,100%,90%)	oklch(94.84% 0.04493 78.06)
+black 18.0:1AAA	brown
+Bisque	#ffe4c4	rgb(255,228,196)	hsl(33,100%,88%)	oklch(93.29% 0.05145 71.85)
+black 17.1:1AAA	brown
+NavajoWhite	#ffdead	rgb(255,222,173)	hsl(36,100%,84%)	oklch(91.64% 0.07301 77.44)
+black 16.3:1AAA	brown
+Wheat	#f5deb3	rgb(245,222,179)	hsl(39,77%,83%)	oklch(90.88% 0.0615 83.03)
+black 16.0:1AAA	brown
+BurlyWood	#deb887	rgb(222,184,135)	hsl(34,57%,70%)	oklch(80.45% 0.07786 73.42)
+black 11.3:1AAA	brown
+Tan	#d2b48c	rgb(210,180,140)	hsl(34,44%,69%)	oklch(78.62% 0.06382 74.62)
+black 10.6:1AAA	brown
+RosyBrown	#bc8f8f	rgb(188,143,143)	hsl(0,25%,65%)	oklch(69.27% 0.0548 18.57)
+black 7.5:1AAA	brown
+SandyBrown	#f4a460	rgb(244,164,96)	hsl(28,87%,67%)	oklch(78.4% 0.12691 59.71)
+black 10.3:1AAA	brown
+Peru	#cd853f	rgb(205,133,63)	hsl(30,59%,53%)	oklch(67.82% 0.12275 62.18)
+black 7.0:1AAA	brown
+Chocolate	#d2691e	rgb(210,105,30)	hsl(25,75%,47%)	oklch(63.44% 0.15499 50.27)
+black 5.8:1AA	brown
+SaddleBrown	#8b4513	rgb(139,69,19)	hsl(25,76%,31%)	oklch(47.08% 0.11214 50.85)
+white 7.1:1AAA	brown
+Sienna	#a0522d	rgb(160,82,45)	hsl(19,56%,40%)	oklch(52.65% 0.11512 44.6)
+white 5.6:1AA	brown
+Brown	#a52a2a	rgb(165,42,42)	hsl(0,59%,41%)	oklch(48.06% 0.15966 25.56)
+white 7.1:1AAA	brown
+Maroon	#800000	rgb(128,0,0)	hsl(0,100%,25%)	oklch(37.67% 0.15458 29.23)
+white 10.9:1AAA	brown
+white
+White	#ffffff	rgb(255,255,255)	hsl(0,0%,100%)	oklch(100% 0 0)
+black 21.0:1AAA	white
+Snow	#fffafa	rgb(255,250,250)	hsl(0,100%,99%)	oklch(98.89% 0.00534 17.25)
+black 20.3:1AAA	white
+HoneyDew	#f0fff0	rgb(240,255,240)	hsl(120,100%,97%)	oklch(98.48% 0.02521 145.38)
+black 20.3:1AAA	white
+MintCream	#f5fffa	rgb(245,255,250)	hsl(150,100%,98%)	oklch(99.12% 0.01237 164.81)
+black 20.6:1AAA	white
+Azure	#f0ffff	rgb(240,255,255)	hsl(180,100%,97%)	oklch(98.9% 0.01572 196.9)
+black 20.5:1AAA	white
+AliceBlue	#f0f8ff	rgb(240,248,255)	hsl(208,100%,97%)	oklch(97.51% 0.01266 244.25)
+black 19.6:1AAA	white
+GhostWhite	#f8f8ff	rgb(248,248,255)	hsl(240,100%,99%)	oklch(98.11% 0.00927 286.23)
+black 19.9:1AAA	white
+WhiteSmoke	#f5f5f5	rgb(245,245,245)	hsl(0,0%,96%)	oklch(97.02% 0 0)
+black 19.3:1AAA	white
+Seashell	#fff5ee	rgb(255,245,238)	hsl(25,100%,97%)	oklch(97.6% 0.01425 57.59)
+black 19.5:1AAA	white
+Beige	#f5f5dc	rgb(245,245,220)	hsl(60,56%,91%)	oklch(96.36% 0.03278 107)
+black 19.0:1AAA	white
+OldLace	#fdf5e6	rgb(253,245,230)	hsl(39,85%,95%)	oklch(97.23% 0.02156 83.26)
+black 19.4:1AAA	white
+FloralWhite	#fffaf0	rgb(255,250,240)	hsl(40,100%,97%)	oklch(98.62% 0.01422 84.58)
+black 20.2:1AAA	white
+Ivory	#fffff0	rgb(255,255,240)	hsl(60,100%,97%)	oklch(99.6% 0.01962 106.75)
+black 20.8:1AAA	white
+AntiqueWhite	#faebd7	rgb(250,235,215)	hsl(34,78%,91%)	oklch(94.67% 0.03108 75.22)
+black 17.9:1AAA	white
+Linen	#faf0e6	rgb(250,240,230)	hsl(30,67%,94%)	oklch(96.02% 0.01715 67.62)
+black 18.7:1AAA	white
+LavenderBlush	#fff0f5	rgb(255,240,245)	hsl(340,100%,97%)	oklch(96.83% 0.01741 355.1)
+black 19.0:1AAA	white
+MistyRose	#ffe4e1	rgb(255,228,225)	hsl(6,100%,94%)	oklch(94% 0.03008 25.28)
+black 17.4:1AAA	white
+Gainsboro	#dcdcdc	rgb(220,220,220)	hsl(0,0%,86%)	oklch(89.45% 0 0)
+black 15.3:1AAA	white
+LightGray / lightgrey	#d3d3d3	rgb(211,211,211)	hsl(0,0%,83%)	oklch(86.69% 0 0)
+black 14.0:1AAA	white
+Silver	#c0c0c0	rgb(192,192,192)	hsl(0,0%,75%)	oklch(80.78% 0 0)
+black 11.5:1AAA	white
+DarkGray / darkgrey	#a9a9a9	rgb(169,169,169)	hsl(0,0%,66%)	oklch(73.48% 0 0)
+black 8.9:1AAA	white
+Gray / grey	#808080	rgb(128,128,128)	hsl(0,0%,50%)	oklch(59.99% 0 0)
+black 5.3:1AA	white
+DimGray / dimgrey	#696969	rgb(105,105,105)	hsl(0,0%,41%)	oklch(52.08% 0 0)
+white 5.5:1AA	white
+LightSlateGray / lightslategrey	#778899	rgb(119,136,153)	hsl(210,14%,53%)	oklch(61.9% 0.0325 248.35)
+black 5.8:1AA	white
+SlateGray / slategrey	#708090	rgb(112,128,144)	hsl(210,13%,50%)	oklch(59.25% 0.03092 248.35)
+black 5.2:1AA	white
+DarkSlateGray / darkslategrey	#2f4f4f	rgb(47,79,79)	hsl(180,25%,25%)	oklch(40.3% 0.03772 195.76)
+white 8.9:1AAA	white
+black
+Black	#000000	rgb(0,0,0)	hsl(0,0%,0%)	oklch(0% 0 0)
+white 21.0:1AAA	black

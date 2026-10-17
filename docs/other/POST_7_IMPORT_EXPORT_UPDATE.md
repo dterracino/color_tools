@@ -422,7 +422,7 @@ sharing `.json` can still be detected by content.
 The design should not duplicate dependency, metadata, registry, or path
 validation logic between the two importer types.
 
-## Proposed Python workflows
+## Implemented Python workflows
 
 Format conversion without persistence:
 
@@ -437,62 +437,64 @@ get_exporter("autoforge").export_filament_data(
 )
 ```
 
-Importing into user data:
+Reconciled import into user data:
 
 ```python
-imported = get_filament_importer("hueforge").import_filaments(
-    "hueforge-library.json"
+palette = FilamentPalette.load_default()
+workflow = FilamentImportWorkflow(
+    HueForgeImporter(),
+    HueForgeFilamentReconciler(
+        palette.records,
+        maker_synonyms=palette.maker_synonyms,
+    ),
 )
+reconciliation = workflow.prepare("hueforge-library.json")
+resolved = workflow.resolve(reconciliation, resolutions)
 
-exporter = get_exporter("user_filaments")
-plan = exporter.plan_filament_data(imported)
-
-print(plan.summary)
-exporter.apply(plan)
+catalog_plan = workflow.plan_catalog(resolved)
+workflow.apply_catalog(catalog_plan)
 ```
 
 Importing ownership is a separate operation after the catalog contains every
 filament that should be eligible for resolution:
 
 ```python
-owned_selection = get_owned_filament_importer("hueforge").import_owned(
-    "hueforge-library.json"
-)
-
-exporter = get_exporter("owned_filaments")
-plan = exporter.plan_owned_filaments(owned_selection)
-
-print(plan.summary)
-exporter.apply(plan)
+owned_plan = workflow.plan_ownership(resolved)
+workflow.apply_ownership(owned_plan)
 ```
 
-The exact class and method names are illustrative, not approved API.
+The format-neutral workflow accepts any compatible `FilamentImporter` and
+`FilamentReconciler` pair. Importers parse, reconcilers decide identity, and
+the two state-aware exporters remain the only file writers.
 
-## Proposed CLI direction
+## Implemented CLI workflow
 
-The Python design should stay modular, while the CLI can offer a convenient
-orchestrated command. Illustrative commands:
+The CLI orchestrates the same independent stages and remains read-only unless
+an apply flag is present:
 
 ```text
 # Inspect without writing (default).
-color-tools filament --import hueforge --input library.json --to user-filaments
+color-tools filament import hueforge library.json
 
-# Apply reviewed catalog additions only.
-color-tools filament --import hueforge --input library.json \
-    --to user-filaments --apply
+# Apply reviewed catalog additions with explicit decisions.
+color-tools filament import hueforge library.json \
+    --resolve 12=use:bambu-lab-pla-matte-white \
+    --resolve 19=new --apply-catalog
 
-# Independently inspect and then apply ownership from the same source.
-color-tools filament --import-owned hueforge --input library.json
-color-tools filament --import-owned hueforge --input library.json --apply
+# Use prompt-toolkit to resolve ambiguities without writing.
+color-tools filament import hueforge library.json --interactive
 
-# Convert between external formats without changing user data.
-color-tools filament --import hueforge --input library.json \
-    --export autoforge --output library.csv
+# Apply the catalog first, then add owned selections.
+color-tools filament import hueforge library.json \
+    --interactive --apply-catalog --apply-owned
 ```
 
-The final CLI grammar should be designed alongside the Python API. It must make
-dry-run versus apply behavior unmistakable and print the structured plan before
-writing.
+The dry run prints stable source indexes, ranked candidate IDs, matching scores
+and reasons, proposed new IDs, and ready-to-copy `--resolve` arguments. The
+prompt-toolkit UI produces the same `UseExisting`, `ImportNew`, and `Skip`
+mapping as non-interactive arguments. `--interactive` never implies permission
+to write. If both apply flags are used, catalog persistence completes before
+ownership is planned against the updated effective catalog.
 
 ## Initial format priorities
 
@@ -518,8 +520,13 @@ Suggested order after the framework contracts are approved:
    IDs directly or from reconciled `FilamentExportData`, validates them against
    the effective catalog, and plans an additive atomic update. HueForge needs no
    coupled writer: its importer and reconciler already supply the generic final
-   owned-ID selection. CLI orchestration remains a later decision.
-6. Research import adapters for other actively used filament-management
+   owned-ID selection.
+6. Standardized Python and CLI orchestration. **Implemented:**
+   `FilamentImportWorkflow` composes any importer/reconciler pair with the two
+   state-aware exporters. The nested CLI provides copyable resolution options,
+   an optional prompt-toolkit TUI, dry-run-by-default behavior, and separately
+   authorized catalog and ownership application.
+7. Research import adapters for other actively used filament-management
    systems before committing to their schemas.
 
 Support for a third-party format should be based on verified format
@@ -567,8 +574,9 @@ Tools ID.
 5. The generic owned-filament selection contract is implemented through final
    Color Tools IDs in `FilamentMetadata.owned_filament_ids`; format-specific
    ambiguity is resolved before the additive ownership exporter is called.
-6. Decide whether the first release exposes Python only or also includes the
-   orchestration CLI.
+6. Python and CLI orchestration are both implemented. Interactive resolution
+   uses the existing optional `[interactive]` dependency; non-interactive
+   `--resolve` arguments require no additional dependency.
 
 ## Non-goals for the first revision
 

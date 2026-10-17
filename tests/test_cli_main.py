@@ -124,6 +124,23 @@ class TestCliMain(unittest.TestCase):
         args = build_parser().parse_args(['filament', '--gui'])
         self.assertTrue(args.gui)
 
+    def test_filament_import_options_are_scoped_to_nested_command(self):
+        """The import reconciler has independent interactive and apply flags."""
+        args = build_parser().parse_args([
+            'filament', 'import', 'hueforge', 'library.json',
+            '--interactive', '--resolve', '3=new', '--apply-catalog',
+            '--apply-owned',
+        ])
+
+        self.assertEqual(args.filament_action, 'import')
+        self.assertEqual(args.import_format, 'hueforge')
+        self.assertEqual(args.input_path, Path('library.json'))
+        self.assertTrue(args.import_interactive)
+        self.assertFalse(args.manage)
+        self.assertEqual(args.resolve, ['3=new'])
+        self.assertTrue(args.apply_catalog)
+        self.assertTrue(args.apply_owned)
+
     def test_filament_gui_dispatches_to_desktop_manager(self):
         """filament --gui dispatches to the optional desktop manager."""
         with patch(

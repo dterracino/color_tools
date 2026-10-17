@@ -287,6 +287,7 @@ from .reconcilers import (
     Skip,
     UseExisting,
 )
+from .filament_import_workflow import FilamentImportWorkflow
 
 # ============================================================================
 # Color Validation (Fuzzy Name Matching + Delta E)
@@ -482,6 +483,7 @@ __all__ = [
     "FilamentReconciliationResult",
     "FilamentResolutionMapping",
     "FilamentResolution",
+    "FilamentImportWorkflow",
     "HueForgeFilamentReconciler",
     "ImportNew",
     "Skip",

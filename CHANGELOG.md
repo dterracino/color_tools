@@ -24,6 +24,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   and deterministic additive merging. Reconciled HueForge ownership can now be
   applied after catalog import without removing local ownership or creating an
   ownership sidecar.
+- **Standardized filament-import workflow** — add format-neutral orchestration
+  for parsing, reconciliation, user-catalog planning, and additive ownership
+  updates. The new `filament import` CLI is read-only by default, prints
+  copyable `--resolve` decisions for ambiguous matches, supports an optional
+  prompt-toolkit reconciliation TUI, and requires independent
+  `--apply-catalog` and `--apply-owned` authorization before writing.
 
 ### Changed
 

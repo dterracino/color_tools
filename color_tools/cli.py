@@ -542,6 +542,56 @@ Examples:
         action="store_true",
         help="List available export formats and exit"
     )
+
+    filament_actions = filament_parser.add_subparsers(
+        dest="filament_action",
+        help="Additional filament workflows",
+    )
+    filament_import_parser = filament_actions.add_parser(
+        "import",
+        help="Import and reconcile an external filament library",
+        description=(
+            "Inspect and optionally apply an external filament library. "
+            "The default is a read-only dry run."
+        ),
+    )
+    filament_import_parser.add_argument(
+        "import_format",
+        choices=["hueforge"],
+        metavar="FORMAT",
+        help="External filament format",
+    )
+    filament_import_parser.add_argument(
+        "input_path",
+        type=Path,
+        metavar="FILE",
+        help="External filament library file",
+    )
+    filament_import_parser.add_argument(
+        "--resolve",
+        action="append",
+        metavar="DECISION",
+        help=(
+            "Resolve one source index: INDEX=use:ID, INDEX=new, or "
+            "INDEX=skip (repeatable)"
+        ),
+    )
+    filament_import_parser.add_argument(
+        "--interactive",
+        dest="import_interactive",
+        action="store_true",
+        help="Resolve ambiguous matches with the prompt-toolkit TUI",
+    )
+    filament_import_parser.add_argument(
+        "--apply-catalog",
+        action="store_true",
+        help="Apply the reviewed additions to user-filaments.json",
+    )
+    filament_import_parser.add_argument(
+        "--apply-owned",
+        action="store_true",
+        help="Add reconciled owned selections to owned-filaments.json",
+    )
     
     # ==================== CONVERT SUBCOMMAND ====================
     convert_parser = subparsers.add_parser(
