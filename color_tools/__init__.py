@@ -216,6 +216,7 @@ from .naming import (
 from .export import (
     # Export functions
     export_filaments,
+    export_filament_data,
     export_colors,
     export_palette,
     
@@ -245,6 +246,8 @@ from .exporters import (
 )
 from .exporters.palette_export_data import PaletteExportData
 from .exporters.palette_metadata import PaletteMetadata
+from .exporters.filament_export_data import FilamentExportData
+from .exporters.filament_metadata import FilamentMetadata
 
 # ============================================================================
 # Color Validation (Fuzzy Name Matching + Delta E)
@@ -414,10 +417,13 @@ __all__ = [
     
     # Import/Export
     "export_filaments",
+    "export_filament_data",
     "export_colors",
     "export_palette",
     "PaletteExportData",
     "PaletteMetadata",
+    "FilamentExportData",
+    "FilamentMetadata",
     "list_export_formats",
     "export_filaments_autoforge",
     "export_filaments_csv",

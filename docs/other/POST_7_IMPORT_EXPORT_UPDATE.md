@@ -2,12 +2,19 @@
 
 ## Status
 
-Proposed post-7.0 work. This document records the design discussion and is not
-approval to implement it as part of the 7.0.0 release.
+Post-7.0 work in progress. The initial format-neutral transfer and base-contract
+phase is implemented:
 
-The immediate release should retain the current APIs. The work below should be
-designed and implemented after 7.0.0, with compatibility decisions made before
-changing the public importer or exporter base classes.
+- `FilamentMetadata` and `FilamentExportData` carry collection metadata,
+  ownership IDs, format properties, and ordered filament records.
+- `FilamentImporter` shares path, dependency, availability, and detection
+  behavior with `PaletteImporter` without requiring palette parsing hooks.
+- Exporters accept `FilamentExportData` through `export_filament_data()` and
+  fall back to existing filament export when they do not consume metadata.
+
+Concrete filament importers, filament-aware registry dispatch, reconciliation,
+and user-data writers remain pending. Compatibility and safety decisions below
+must be resolved before those stateful operations are implemented.
 
 ## Motivation
 

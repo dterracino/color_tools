@@ -169,6 +169,8 @@ Export System
    color_tools.exporters
    color_tools.exporters.base
    color_tools.exporters.export_options_base
+   color_tools.exporters.filament_export_data
+   color_tools.exporters.filament_metadata
    color_tools.exporters.palette_export_data
    color_tools.exporters.palette_metadata
    color_tools.exporters.registry
@@ -203,6 +205,7 @@ Import System
 
    color_tools.importers
    color_tools.importers.base
+   color_tools.importers.filament_importer
    color_tools.importers.registry
    color_tools.importers.gpl_importer
    color_tools.importers.hex_importer

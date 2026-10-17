@@ -35,6 +35,7 @@ from color_tools.importers.base import (
     MissingImporterDependencyError,
     PaletteImporter,
 )
+from color_tools.importers.filament_importer import FilamentImporter
 from color_tools.importers.registry import (
     detect_importer,
     get_importer,
@@ -54,6 +55,7 @@ from color_tools.importers.riffpal_importer import RiffPalImporter
 __all__ = [
     "ImporterDependency",
     "ImporterMetadata",
+    "FilamentImporter",
     "MissingImporterDependencyError",
     "PaletteImporter",
     "register_importer",

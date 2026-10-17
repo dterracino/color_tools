@@ -109,6 +109,7 @@ coverage_ignore_modules = [
     r"^(?:color_tools\.)?(?:filament_export_dialog|filament_manager_gui)$",
 ]
 coverage_ignore_classes = [
+    r"^ImporterBase$",  # Internal shared implementation, not public API.
     r"^InteractiveFilamentManager$",
 ]
 coverage_show_missing_items = True

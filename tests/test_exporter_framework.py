@@ -18,6 +18,8 @@ from color_tools.exporters.base import (
     PaletteExporter,
 )
 from color_tools.exporters.export_options_base import ExportOptionsBase
+from color_tools.exporters.filament_export_data import FilamentExportData
+from color_tools.exporters.filament_metadata import FilamentMetadata
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.filament_palette import FilamentRecord
 from color_tools.palette import ColorRecord
@@ -84,6 +86,15 @@ class _ContractExporter(PaletteExporter):
         output_path: Path | str | None,
     ) -> str:
         self.calls.append(("filaments", filaments, output_path, None))
+        return str(output_path)
+
+    def _export_filaments_with_options_impl(
+        self,
+        filaments: list[FilamentRecord],
+        output_path: Path | str | None,
+        options: ExportOptionsBase,
+    ) -> str:
+        self.calls.append(("filaments-options", filaments, output_path, options))
         return str(output_path)
 
 
@@ -193,6 +204,20 @@ class TestExporterDispatch(unittest.TestCase):
     def setUp(self) -> None:
         self.colors = [ColorRecord.from_rgb((12, 34, 56), name="Example")]
         self.palette = PaletteExportData(self.colors)
+        self.filaments = [
+            FilamentRecord(
+                id="maker-pla-red",
+                maker="Maker",
+                type="PLA",
+                finish=None,
+                color="Red",
+                hex="#ff0000",
+            )
+        ]
+        self.filament_data = FilamentExportData(
+            self.filaments,
+            FilamentMetadata(name="Owned filaments"),
+        )
 
     def test_unsupported_operations_raise_focused_errors(self) -> None:
         exporter = _ContractExporter(
@@ -206,6 +231,8 @@ class TestExporterDispatch(unittest.TestCase):
             exporter.export_palette(self.palette)
         with self.assertRaisesRegex(NotImplementedError, "filament export"):
             exporter.export_filaments([])
+        with self.assertRaisesRegex(NotImplementedError, "filament export"):
+            exporter.export_filament_data(self.filament_data)
 
     def test_options_are_rejected_when_none_are_accepted(self) -> None:
         exporter = _ContractExporter()
@@ -237,6 +264,33 @@ class TestExporterDispatch(unittest.TestCase):
 
         self.assertEqual(exporter.calls[0][0], "colors-options")
         self.assertIs(exporter.calls[0][1], self.colors)
+        self.assertIs(exporter.calls[0][3], options)
+
+    def test_filament_data_export_falls_back_to_filament_hook(self) -> None:
+        exporter = _ContractExporter(supports_filaments=True)
+        result = exporter.export_filament_data(
+            self.filament_data,
+            "filaments.test",
+        )
+
+        self.assertEqual(result, "filaments.test")
+        self.assertEqual(exporter.calls[0][0], "filaments")
+        self.assertIs(exporter.calls[0][1], self.filaments)
+
+    def test_configurable_filament_data_uses_configurable_fallback(self) -> None:
+        exporter = _ContractExporter(
+            supports_filaments=True,
+            options_type=_ExampleOptions,
+        )
+        options = _ExampleOptions()
+        exporter.export_filament_data(
+            self.filament_data,
+            "filaments.test",
+            options,
+        )
+
+        self.assertEqual(exporter.calls[0][0], "filaments-options")
+        self.assertIs(exporter.calls[0][1], self.filaments)
         self.assertIs(exporter.calls[0][3], options)
 
     def test_declared_color_support_requires_color_hook(self) -> None:

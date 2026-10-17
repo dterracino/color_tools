@@ -37,6 +37,7 @@ from color_tools.exporters import (
 from color_tools.palette import ColorRecord, Palette
 from color_tools.filament_palette import FilamentRecord
 from color_tools.exporters.export_options_base import ExportOptionsBase
+from color_tools.exporters.filament_export_data import FilamentExportData
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
 
@@ -315,6 +316,41 @@ def export_filaments(
     
     # Delegate to exporter
     return exporter.export_filaments(filaments, output_path, options)
+
+
+def export_filament_data(
+    data: FilamentExportData,
+    format_name: str,
+    output_path: Path | str | None = None,
+    *,
+    options: ExportOptionsBase | None = None,
+) -> str:
+    """Export metadata-bearing filament transfer data.
+
+    Formats that do not preserve collection metadata automatically export the
+    ordered filament records through their existing filament implementation.
+
+    Args:
+        data: Filament records and collection-level metadata.
+        format_name: Registered filament export format.
+        output_path: Optional destination path.
+        options: Optional exporter-specific configuration.
+
+    Returns:
+        Path to the exported file as a string.
+    """
+    normalized_format = format_name.lower()
+    try:
+        exporter = get_exporter(normalized_format)
+    except ValueError as exc:
+        raise ValueError(f"Unknown export format: {normalized_format}") from exc
+
+    if not exporter.metadata.supports_filaments:
+        raise ValueError(
+            f"Format '{normalized_format}' does not support filaments"
+        )
+
+    return exporter.export_filament_data(data, output_path, options)
 
 
 def export_colors(

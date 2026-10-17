@@ -76,6 +76,7 @@ from typing import TYPE_CHECKING
 from color_tools.exporters.export_options_base import ExportOptionsBase
 
 if TYPE_CHECKING:
+    from color_tools.exporters.filament_export_data import FilamentExportData
     from color_tools.exporters.palette_export_data import PaletteExportData
     from color_tools.filament_palette import FilamentRecord
     from color_tools.palette import ColorRecord
@@ -529,6 +530,42 @@ class PaletteExporter(ABC):
             output_path,
         )
 
+    def export_filament_data(
+        self,
+        data: FilamentExportData,
+        output_path: Path | str | None = None,
+        options: ExportOptionsBase | None = None,
+    ) -> str:
+        """Export filaments together with collection-level metadata.
+
+        Exporters without a metadata-aware implementation automatically fall
+        back to ordinary filament export and ignore collection metadata.
+
+        Args:
+            data: Ordered filaments and collection-level metadata.
+            output_path: Optional destination path.
+            options: Optional exporter-specific configuration.
+
+        Returns:
+            Path to the exported file as a string.
+        """
+        if not self.metadata.supports_filaments:
+            raise NotImplementedError(
+                f"{self.metadata.name} exporter does not support filament export"
+            )
+
+        self._ensure_dependencies()
+        self._validate_options(options)
+
+        if options is not None:
+            return self._export_filament_data_with_options_impl(
+                data,
+                output_path,
+                options,
+            )
+
+        return self._export_filament_data_impl(data, output_path)
+
     def _export_colors_impl(
         self,
         colors: list[ColorRecord],
@@ -627,6 +664,27 @@ class PaletteExporter(ABC):
         raise NotImplementedError(
             f"{self.metadata.name} exporter accepts export options "
             "but does not implement _export_filaments_with_options_impl()"
+        )
+
+    def _export_filament_data_impl(
+        self,
+        data: FilamentExportData,
+        output_path: Path | str | None,
+    ) -> str:
+        """Export transfer data, falling back to ordinary filament export."""
+        return self._export_filaments_impl(data.filaments, output_path)
+
+    def _export_filament_data_with_options_impl(
+        self,
+        data: FilamentExportData,
+        output_path: Path | str | None,
+        options: ExportOptionsBase,
+    ) -> str:
+        """Export configurable transfer data using the filament fallback."""
+        return self._export_filaments_with_options_impl(
+            data.filaments,
+            output_path,
+            options,
         )
 
     def _validate_options(

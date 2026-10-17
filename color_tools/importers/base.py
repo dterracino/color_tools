@@ -1,28 +1,4 @@
-"""
-Base classes, metadata, dependency handling, and shared color construction for
-palette importers.
-
-Palette importers convert external palette formats into the library's existing
-internal palette representation:
-
-    PaletteExportData
-        ├── colors: list[ColorRecord]
-        └── metadata: PaletteMetadata
-
-Importers do not introduce a separate imported-palette model. This allows an
-imported palette to be passed directly to any palette exporter.
-
-Color-space conversion is delegated to color_tools.conversions so importers use
-the same conversion logic as the rest of the library.
-
-Example:
-    >>> importer = SomePaletteImporter()
-    >>> palette = importer.import_palette("palette.gpl")
-    >>> print(palette.metadata.name)
-    My Palette
-    >>> print(palette.colors[0].rgb)
-    (255, 127, 80)
-"""
+"""Base contract and shared color construction for palette importers."""
 
 from __future__ import annotations
 
@@ -31,33 +7,23 @@ from dataclasses import dataclass
 from importlib.util import find_spec
 from pathlib import Path
 
-from color_tools.conversions import (
-    lab_to_lch,
-    rgb_to_hsl,
-    rgb_to_lab,
-    rgb_to_hex,
-)
 from color_tools._color_utils import validate_rgb
+from color_tools.conversions import lab_to_lch, rgb_to_hex, rgb_to_hsl, rgb_to_lab
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.palette import ColorRecord
 
 
+__all__ = [
+    "ImporterDependency",
+    "ImporterMetadata",
+    "MissingImporterDependencyError",
+    "PaletteImporter",
+]
+
+
 @dataclass(frozen=True, slots=True)
 class ImporterDependency:
-    """
-    Optional third-party dependency required by an importer.
-
-    Attributes:
-        package:
-            Distribution/package name used when installing the dependency.
-
-        import_name:
-            Python module name used to test whether the dependency is
-            installed.
-
-        extra:
-            Optional color-tools dependency extra that installs the package.
-    """
+    """Optional third-party dependency required by an importer."""
 
     package: str
     import_name: str
@@ -66,29 +32,7 @@ class ImporterDependency:
 
 @dataclass(frozen=True, slots=True)
 class ImporterMetadata:
-    """
-    Metadata describing a palette importer's capabilities.
-
-    Attributes:
-        name:
-            Machine-readable importer identifier such as ``"gpl"`` or
-            ``"jasc_pal"``.
-
-        description:
-            Human-readable description of the palette format.
-
-        file_extensions:
-            File extensions recognized by the importer, without leading dots.
-
-            Importers use a tuple because a single format may legitimately be
-            associated with more than one extension.
-
-        is_binary:
-            Whether the input format is binary.
-
-        dependencies:
-            Optional third-party dependencies required by the importer.
-    """
+    """Metadata describing an importer's format and requirements."""
 
     name: str
     description: str
@@ -99,44 +43,23 @@ class ImporterMetadata:
     def __post_init__(self) -> None:
         """Validate importer metadata."""
         if not self.name:
-            raise ValueError(
-                "Importer name must not be empty"
-            )
-
+            raise ValueError("Importer name must not be empty")
         if not self.description:
-            raise ValueError(
-                "Importer description must not be empty"
-            )
-
+            raise ValueError("Importer description must not be empty")
         if not self.file_extensions:
-            raise ValueError(
-                "Importer file_extensions must not be empty"
-            )
+            raise ValueError("Importer file_extensions must not be empty")
 
         for extension in self.file_extensions:
             if not extension:
-                raise ValueError(
-                    "Importer file extensions must not be empty"
-                )
-
+                raise ValueError("Importer file extensions must not be empty")
             if extension.startswith("."):
                 raise ValueError(
-                    "Importer file extensions must not include "
-                    "the leading dot"
+                    "Importer file extensions must not include the leading dot"
                 )
 
 
 class MissingImporterDependencyError(RuntimeError):
-    """
-    Raised when an importer requires an unavailable optional dependency.
-
-    Attributes:
-        importer_name:
-            Machine-readable importer name.
-
-        dependencies:
-            Missing dependencies required by the importer.
-    """
+    """Raised when an importer requires unavailable optional dependencies."""
 
     def __init__(
         self,
@@ -145,97 +68,40 @@ class MissingImporterDependencyError(RuntimeError):
     ) -> None:
         self.importer_name = importer_name
         self.dependencies = dependencies
-
-        package_names = ", ".join(
-            dependency.package
-            for dependency in dependencies
-        )
-
-        extras = {
-            dependency.extra
-            for dependency in dependencies
-            if dependency.extra
-        }
-
-        dependency_word = (
-            "dependency"
-            if len(dependencies) == 1
-            else "dependencies"
-        )
-
+        package_names = ", ".join(item.package for item in dependencies)
+        extras = {item.extra for item in dependencies if item.extra}
+        dependency_word = "dependency" if len(dependencies) == 1 else "dependencies"
         message = (
             f"{importer_name} importer requires missing optional "
             f"{dependency_word}: {package_names}."
         )
 
         if len(extras) == 1:
-            extra = next(iter(extras))
-
             message += (
-                f" Install the '{extra}' optional extra to enable "
+                f" Install the '{next(iter(extras))}' optional extra to enable "
                 "this importer."
             )
-
         elif len(extras) > 1:
-            extra_names = ", ".join(
-                sorted(extras)
-            )
-
             message += (
-                " Install the required optional extras to enable "
-                f"this importer: {extra_names}."
+                " Install the required optional extras to enable this importer: "
+                f"{', '.join(sorted(extras))}."
             )
 
         super().__init__(message)
 
 
-class PaletteImporter(ABC):
-    """
-    Base class for all palette importers.
-
-    Concrete importers provide format metadata and implement
-    ``_import_palette_impl()``.
-
-    The base class handles:
-
-        - Input-path validation.
-        - Optional dependency checking.
-        - Extension matching.
-        - Format-detection dispatch.
-        - Shared ColorRecord construction.
-
-    Color-space conversions are performed through color_tools.conversions so
-    imported colors use the same calculations as colors created elsewhere in
-    the library.
-
-    A format with an ambiguous extension should override
-    ``_can_import_impl()`` to inspect the file signature or contents.
-
-    For example, both JASC PAL and RIFF PAL use ``.pal``, so those importers
-    should distinguish themselves by examining their respective headers.
-    """
+class ImporterBase(ABC):
+    """Shared format-neutral importer infrastructure."""
 
     @property
     @abstractmethod
     def metadata(self) -> ImporterMetadata:
-        """
-        Return metadata describing this importer.
-
-        Returns:
-            Importer metadata.
-        """
+        """Return metadata describing this importer."""
         raise NotImplementedError
 
     @property
-    def missing_dependencies(
-        self,
-    ) -> tuple[ImporterDependency, ...]:
-        """
-        Return optional dependencies that are not currently installed.
-
-        Returns:
-            Tuple containing unavailable dependencies.
-        """
+    def missing_dependencies(self) -> tuple[ImporterDependency, ...]:
+        """Return optional dependencies unavailable in this environment."""
         return tuple(
             dependency
             for dependency in self.metadata.dependencies
@@ -244,156 +110,80 @@ class PaletteImporter(ABC):
 
     @property
     def is_available(self) -> bool:
-        """
-        Return whether the importer can run in the current environment.
-
-        Returns:
-            True if all required dependencies are installed.
-        """
+        """Return whether all required dependencies are installed."""
         return not self.missing_dependencies
 
-    def import_palette(
-        self,
-        input_path: Path | str,
-    ) -> PaletteExportData:
-        """
-        Import a palette file.
-
-        Args:
-            input_path:
-                Palette file to read.
-
-        Returns:
-            PaletteExportData containing imported colors and metadata.
-
-        Raises:
-            FileNotFoundError:
-                If the supplied file does not exist.
-
-            IsADirectoryError:
-                If input_path refers to a directory.
-
-            MissingImporterDependencyError:
-                If a required optional dependency is unavailable.
-        """
-        path = Path(
-            input_path
-        )
-
-        if not path.exists():
-            raise FileNotFoundError(
-                f"Palette file does not exist: {path}"
-            )
-
-        if not path.is_file():
-            raise IsADirectoryError(
-                f"Palette input path is not a file: {path}"
-            )
-
-        self._ensure_dependencies()
-
-        return self._import_palette_impl(
-            path
-        )
-
-    def can_import(
-        self,
-        input_path: Path | str,
-    ) -> bool:
-        """
-        Return whether this importer recognizes a palette file.
-
-        Extension matching is performed first. The concrete importer may then
-        inspect the file to distinguish formats that share an extension.
-
-        Args:
-            input_path:
-                Candidate palette file.
-
-        Returns:
-            True if this importer recognizes the file.
-        """
-        path = Path(
-            input_path
-        )
-
-        extension = (
-            path.suffix
-            .removeprefix(".")
-            .lower()
-        )
-
+    def can_import(self, input_path: Path | str) -> bool:
+        """Return whether this importer recognizes the candidate file."""
+        path = Path(input_path)
+        extension = path.suffix.removeprefix(".").lower()
         supported_extensions = {
-            item.lower()
-            for item in self.metadata.file_extensions
+            item.lower() for item in self.metadata.file_extensions
         }
-
         if extension not in supported_extensions:
             return False
-
-        if not path.is_file():
+        if not path.is_file() or not self.is_available:
             return False
+        return self._can_import_impl(path)
 
-        if not self.is_available:
-            return False
-
-        return self._can_import_impl(
-            path
-        )
-
-    def _can_import_impl(
-        self,
-        input_path: Path,
-    ) -> bool:
-        """
-        Perform format-specific detection.
-
-        The default implementation accepts any file whose extension matches
-        ImporterMetadata.file_extensions.
-
-        Formats that share an extension should override this method.
-
-        Args:
-            input_path:
-                Candidate palette file.
-
-        Returns:
-            True if the file appears to use this format.
-        """
+    def _can_import_impl(self, input_path: Path) -> bool:
+        """Perform optional format-specific detection after extension checks."""
         return True
 
-    @abstractmethod
-    def _import_palette_impl(
+    def _validated_input_path(
         self,
-        input_path: Path,
-    ) -> PaletteExportData:
-        """
-        Implement format-specific palette parsing.
-
-        Args:
-            input_path:
-                Validated palette file.
-
-        Returns:
-            Imported palette.
-        """
-        raise NotImplementedError
+        input_path: Path | str,
+        *,
+        data_label: str,
+    ) -> Path:
+        """Return a validated file path using data-specific diagnostics."""
+        path = Path(input_path)
+        if not path.exists():
+            raise FileNotFoundError(f"{data_label} file does not exist: {path}")
+        if not path.is_file():
+            raise IsADirectoryError(f"{data_label} input path is not a file: {path}")
+        return path
 
     def _ensure_dependencies(self) -> None:
-        """
-        Ensure that every required optional dependency is installed.
-
-        Raises:
-            MissingImporterDependencyError:
-                If one or more dependencies are unavailable.
-        """
+        """Raise when one or more required dependencies are unavailable."""
         missing = self.missing_dependencies
-
         if missing:
             raise MissingImporterDependencyError(
                 importer_name=self.metadata.name,
                 dependencies=missing,
             )
+
+
+class PaletteImporter(ImporterBase):
+    """Base class for importers that produce palette transfer data.
+
+    Concrete importers provide format metadata and implement
+    :meth:`_import_palette_impl`. Shared infrastructure validates paths,
+    checks optional dependencies, and performs extension/content detection.
+    """
+
+    def import_palette(self, input_path: Path | str) -> PaletteExportData:
+        """Import a validated palette file.
+
+        Args:
+            input_path: Palette file to read.
+
+        Returns:
+            Imported colors and palette metadata.
+
+        Raises:
+            FileNotFoundError: If the supplied file does not exist.
+            IsADirectoryError: If the supplied path is a directory.
+            MissingImporterDependencyError: If a dependency is unavailable.
+        """
+        path = self._validated_input_path(input_path, data_label="Palette")
+        self._ensure_dependencies()
+        return self._import_palette_impl(path)
+
+    @abstractmethod
+    def _import_palette_impl(self, input_path: Path) -> PaletteExportData:
+        """Implement format-specific palette parsing."""
+        raise NotImplementedError
 
     @classmethod
     def _make_color_record(
@@ -403,72 +193,20 @@ class PaletteImporter(ABC):
         name: str = "",
         source: str = "imported",
     ) -> ColorRecord:
-        """
-        Construct a complete ColorRecord from an RGB value.
-
-        ColorRecord stores its supported color-space values directly, so this
-        helper uses color_tools.conversions to calculate HSL, Lab, and LCh from
-        imported RGB data.
-
-        Args:
-            rgb:
-                RGB tuple with integer values from 0 through 255.
-
-            name:
-                Optional color name.
-
-            source:
-                Source identifier stored in ColorRecord.
-
-        Returns:
-            Fully populated immutable ColorRecord.
-
-        Raises:
-            ValueError:
-                If the RGB value is invalid.
-        """
-        cls._validate_rgb(
-            rgb
-        )
-
-        hex_value = rgb_to_hex(rgb)
-
-        hsl = rgb_to_hsl(
-            rgb
-        )
-
-        lab = rgb_to_lab(
-            rgb
-        )
-
-        lch = lab_to_lch(
-            lab
-        )
-
+        """Construct a complete color record from canonical RGB input."""
+        cls._validate_rgb(rgb)
+        lab = rgb_to_lab(rgb)
         return ColorRecord(
             name=name.strip(),
-            hex=hex_value,
+            hex=rgb_to_hex(rgb),
             rgb=rgb,
-            hsl=hsl,
+            hsl=rgb_to_hsl(rgb),
             lab=lab,
-            lch=lch,
+            lch=lab_to_lch(lab),
             source=source,
         )
 
     @staticmethod
-    def _validate_rgb(
-        rgb: tuple[object, ...],
-    ) -> None:
-        """
-        Validate an RGB tuple.
-
-        Args:
-            rgb:
-                RGB value to validate.
-
-        Raises:
-            ValueError:
-                If the tuple does not contain exactly three integer channels
-                between 0 and 255.
-        """
+    def _validate_rgb(rgb: tuple[object, ...]) -> None:
+        """Validate three integer RGB channels in the inclusive 0-255 range."""
         validate_rgb(rgb)

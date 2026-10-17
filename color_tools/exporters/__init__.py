@@ -19,6 +19,8 @@ from color_tools.exporters.base import (
     MissingExporterDependencyError,
     PaletteExporter,
 )
+from color_tools.exporters.filament_export_data import FilamentExportData
+from color_tools.exporters.filament_metadata import FilamentMetadata
 from color_tools.exporters.registry import (
     get_export_formats_dict,
     get_exporter,
@@ -87,6 +89,8 @@ __all__ = [
     "CSVExporter",
     "ExporterDependency",
     "ExporterMetadata",
+    "FilamentExportData",
+    "FilamentMetadata",
     "GPLExporter",
     "GLSLExporter",
     "GLSLExportOptions",

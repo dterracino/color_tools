@@ -305,6 +305,10 @@ does not load the palette until its first input is requested.
 - `export_colors()` - Backward-compatible facade for exporting raw color records
 - `export_filaments()` - Backward-compatible facade for exporting filament records
 - `PaletteExportData` and `PaletteMetadata` - Supply palette-level metadata to compatible formats
+- `FilamentExportData` and `FilamentMetadata` - Carry ordered filament records,
+  collection metadata, ownership IDs, and format-specific interchange properties
+- `export_filament_data()` - Export metadata-bearing filament transfer data;
+  exporters that do not use the metadata fall back to their existing filament export
 - `ExportOptionsBase` subclasses - Provide strongly typed configuration for a single export operation
 - `generate_filename()` - Generate timestamped filenames
 
@@ -636,6 +640,8 @@ for the authoritative class and function inventory.
 | **ColorValidationRecord** | `validation` | Color name/hex validation results with fuzzy matching | `is_match`, `name_match`, `name_confidence`, `delta_e`, `message` | [API](https://dterracino.github.io/color_tools/api/color_tools.validation.html#color_tools.validation.ColorValidationRecord) |
 | **PaletteMetadata** | `exporters.palette_metadata` | Descriptive palette-level export metadata | `name`, `author`, `description`, `columns`, `tags`, `properties` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.palette_metadata.html#color_tools.exporters.palette_metadata.PaletteMetadata) |
 | **PaletteExportData** | `exporters.palette_export_data` | Ordered colors plus palette-level metadata | `colors`, `metadata` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.palette_export_data.html#color_tools.exporters.palette_export_data.PaletteExportData) |
+| **FilamentMetadata** | `exporters.filament_metadata` | Collection metadata and non-intrinsic ownership/interchange state | `name`, `author`, `description`, `tags`, `owned_filament_ids`, `properties` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.filament_metadata.html#color_tools.exporters.filament_metadata.FilamentMetadata) |
+| **FilamentExportData** | `exporters.filament_export_data` | Ordered filaments plus collection-level metadata | `filaments`, `metadata` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.filament_export_data.html#color_tools.exporters.filament_export_data.FilamentExportData) |
 | **HexExportOptions** | `exporters.hex_exporter` | Plain-text HEX output casing | `uppercase` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hex_exporter.html#color_tools.exporters.hex_exporter.HexExportOptions) |
 | **HueForgeExportOptions** | `exporters.hueforge_exporter` | Initial HueForge owned state | `owned` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hueforge_exporter.html#color_tools.exporters.hueforge_exporter.HueForgeExportOptions) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |

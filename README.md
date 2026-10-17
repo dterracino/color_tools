@@ -470,7 +470,12 @@ records explicitly in Python before export.
 ### Export Examples
 
 ```python
-from color_tools import Palette, FilamentPalette
+from color_tools import (
+    FilamentExportData,
+    FilamentMetadata,
+    FilamentPalette,
+    Palette,
+)
 from color_tools.exporters import get_exporter, list_export_formats
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.palette_metadata import PaletteMetadata
@@ -508,6 +513,20 @@ filaments = FilamentPalette.load_default()
 bambu_pla = filaments.filter(maker="Bambu Lab", type_name="PLA", owned=False)
 get_exporter("autoforge").export_filaments(bambu_pla, "bambu_pla.csv")
 
+# Metadata-bearing filament data uses the same exporters. Formats that do not
+# preserve collection metadata fall back to ordinary filament export.
+filament_data = FilamentExportData(
+    filaments=bambu_pla,
+    metadata=FilamentMetadata(
+        name="Bambu PLA",
+        tags=("bambu-lab", "pla"),
+    ),
+)
+get_exporter("json").export_filament_data(
+    filament_data,
+    "bambu_pla.json",
+)
+
 # HueForge accepts only records with TD values
 bambu_pla_with_td = [record for record in bambu_pla if record.td_value is not None]
 get_exporter("hueforge").export_filaments(
@@ -516,9 +535,10 @@ get_exporter("hueforge").export_filaments(
 )
 ```
 
-The functions in `color_tools.export`, including `export_colors()` and `export_filaments()`,
-remain available as backward-compatible facades. New integrations should use the exporter registry
-when they need capability metadata, palette metadata, optional dependency checks, or typed options.
+The functions in `color_tools.export`, including `export_colors()`, `export_filaments()`,
+and `export_filament_data()`, remain available as facades. New integrations should use the
+exporter registry when they need capability metadata, collection metadata, optional dependency
+checks, or typed options.
 
 ### Plugin Architecture
 
