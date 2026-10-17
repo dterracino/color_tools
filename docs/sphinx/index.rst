@@ -75,6 +75,7 @@ their contracts require it; export metadata and option objects remain mutable.
 * **PaletteMetadata / PaletteExportData** - Palette-level export metadata and ordered colors
 * **HexExportOptions / HueForgeExportOptions** - Typed per-export behavior
 * **UserColorExportPlan / UserColorExportResult** - Stateful user-color merge planning and apply results
+* **UserFilamentExportPlan / UserFilamentExportResult** - ID-based user-filament merge planning and apply results
 * **ColorCluster** - Image color clusters from k-means analysis *(requires [image] extra)*
 * **ColorChange** - Luminance redistribution results for HueForge *(requires [image] extra)*
 
@@ -198,6 +199,8 @@ Export System
    color_tools.exporters.swatch_image_exporter
    color_tools.exporters.user_color_export_models
    color_tools.exporters.user_colors_exporter
+   color_tools.exporters.user_filament_export_models
+   color_tools.exporters.user_filaments_exporter
 
 Import System
 ~~~~~~~~~~~~~
@@ -215,6 +218,7 @@ Import System
    color_tools.importers.jascpal_importer
    color_tools.importers.riffpal_importer
    color_tools.importers.user_colors_importer
+   color_tools.importers.user_filaments_importer
    color_tools.user_color_data
 
 Image Processing *(requires* ``[image]`` *extra)*

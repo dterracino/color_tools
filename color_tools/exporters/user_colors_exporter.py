@@ -2,15 +2,16 @@
 
 from __future__ import annotations
 
-import hashlib
 import json
-import os
 from pathlib import Path
-import tempfile
 from typing import cast
 
 from color_tools._palette_utils import normalize_color_name
 from color_tools.constants import ColorConstants
+from color_tools.exporters._stateful_user_data import (
+    normalized_file_hash,
+    write_json_with_sidecar,
+)
 from color_tools.exporters.palette_export_data import PaletteExportData
 from color_tools.exporters.user_color_export_models import (
     UserColorConflictPolicy,
@@ -152,7 +153,7 @@ class UserColorsExporter:
             input_count=len(incoming),
             user_records=tuple(prospective_user),
             changes=tuple(changes),
-            expected_destination_hash=self._file_hash(destination),
+            expected_destination_hash=normalized_file_hash(destination),
             destination_existed=destination.exists(),
         )
 
@@ -162,7 +163,7 @@ class UserColorsExporter:
             raise ValueError("Plan destination does not belong to this exporter")
         if not plan.can_apply:
             raise ValueError("Cannot apply a user-color plan with unresolved conflicts")
-        if self._file_hash(plan.destination) != plan.expected_destination_hash:
+        if normalized_file_hash(plan.destination) != plan.expected_destination_hash:
             raise RuntimeError(
                 "user-colors.json changed after planning; create a new plan before applying"
             )
@@ -176,13 +177,7 @@ class UserColorsExporter:
         )
         merge_user_color_records(system_records, prospective)
 
-        payload = json.dumps(document, indent=2, ensure_ascii=False) + "\n"
-        self._atomic_write_text(plan.destination, payload)
-        digest = ColorConstants.generate_user_data_hash(plan.destination)
-        self._atomic_write_text(
-            plan.sidecar,
-            f"{digest}  {plan.destination.name}\n",
-        )
+        write_json_with_sidecar(plan.destination, document)
         return UserColorExportResult(plan, True, True, True)
 
     @staticmethod
@@ -205,33 +200,5 @@ class UserColorsExporter:
         if not isinstance(data, list):
             raise ValueError(f"Expected array of colors at root level in {path}")
         return parse_user_color_records(cast(list[object], data), path)
-
-    @staticmethod
-    def _file_hash(path: Path) -> str | None:
-        """Return a normalized content hash, or None when the file is absent."""
-        if not path.exists():
-            return None
-        content = path.read_bytes().replace(b"\r\n", b"\n")
-        return hashlib.sha256(content).hexdigest()
-
-    @staticmethod
-    def _atomic_write_text(path: Path, content: str) -> None:
-        """Atomically replace a UTF-8 text file from its destination directory."""
-        path.parent.mkdir(parents=True, exist_ok=True)
-        descriptor, temporary_name = tempfile.mkstemp(
-            dir=path.parent,
-            prefix=f".{path.name}.",
-            suffix=".tmp",
-        )
-        temporary_path = Path(temporary_name)
-        try:
-            with os.fdopen(descriptor, "w", encoding="utf-8", newline="\n") as file:
-                file.write(content)
-                file.flush()
-                os.fsync(file.fileno())
-            temporary_path.replace(path)
-        finally:
-            temporary_path.unlink(missing_ok=True)
-
 
 __all__ = ["UserColorsExporter"]

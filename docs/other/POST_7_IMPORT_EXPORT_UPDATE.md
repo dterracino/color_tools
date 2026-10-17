@@ -2,8 +2,8 @@
 
 ## Status
 
-Post-7.0 work in progress. The initial format-neutral transfer/base-contract
-phase and the user-color round-trip phase are implemented:
+Post-7.0 work in progress. The initial format-neutral transfer/base-contract,
+user-color round-trip, and user-filament round-trip phases are implemented:
 
 - `FilamentMetadata` and `FilamentExportData` carry collection metadata,
   ownership IDs, format properties, and ordered filament records.
@@ -16,21 +16,26 @@ phase and the user-color round-trip phase are implemented:
 - `UserColorsExporter` provides read-only planning, explicit conflict policy,
   structured changes, stale-plan protection, prospective validation, atomic
   data replacement, and sidecar refresh.
+- Palette and filament import formats use separate typed registries backed by
+  shared registration, listing, extension, and content-detection logic.
+- The registered `user_filaments` importer reads the strict user schema into
+  `FilamentExportData`; `UserFilamentsExporter` applies the same stateful safety
+  contract using stable IDs as the sole replacement key.
 
-Concrete filament importers, filament-aware registry dispatch, user-filament
-reconciliation/persistence, and independent ownership transfer remain pending.
+External filament-format importers and independent ownership transfer remain
+pending.
 
 ## Motivation
 
-The current import and export systems are not symmetric:
+At the start of this update, the import and export systems were not symmetric:
 
-- Exporters can export raw `ColorRecord` lists, `FilamentRecord` lists, and
+- Exporters could export raw `ColorRecord` lists, `FilamentRecord` lists, and
   metadata-bearing `PaletteExportData` values.
-- Importers only import color palettes. `PaletteImporter.import_palette()`
-  returns `PaletteExportData`.
-- There is no filament-import contract, no `FilamentExportData` equivalent,
+- Importers only imported color palettes. `PaletteImporter.import_palette()`
+  returned `PaletteExportData`.
+- There was no filament-import contract, no `FilamentExportData` equivalent,
   and no HueForge filament importer.
-- Neither framework provides a supported path for merging imported records
+- Neither framework provided a supported path for merging imported records
   into `user-colors.json` or `user-filaments.json`.
 - `owned-filaments.json` is separate inventory state and is not represented by
   `FilamentRecord`.
@@ -499,7 +504,8 @@ Suggested order after the framework contracts are approved:
    updates. **Implemented for the Python API; CLI orchestration remains a later
    decision.**
 3. Color Tools user-filament importer/exporter round trips, including sidecar
-   updates.
+   updates. **Implemented for the Python API; catalog writes do not modify
+   ownership.**
 4. HueForge filament catalog importer and the existing HueForge exporter.
 5. Independent owned-filament import/export, followed by a HueForge ownership
    adapter that resolves against the current catalog without changing it.
@@ -537,15 +543,16 @@ Tools ID.
 
 ## Decisions required before implementation
 
-1. Define canonical filament identity keys for reconciliation. User-color
-   identity is implemented as normalized name; RGB values remain globally
-   unique in the effective catalog.
+1. Define canonical external-filament reconciliation keys. Color Tools user
+   files use their stable IDs as the sole replacement key; external formats
+   without Color Tools IDs still require their own reviewed matching rules.
 2. Define deterministic ID generation and collision handling for new user
    filaments.
-3. Extend or adapt the planning/result pattern for filament and ownership
-   exporters while preserving existing path-returning export APIs.
-4. Specify filament merge policies. User-color policies are implemented as
-   `error`, `skip`, and `replace`; replacement may shadow core records by name.
+3. Extend the implemented planning/result pattern to ownership exporters while
+   preserving existing path-returning export APIs.
+4. Specify external-format reconciliation policy. User-filament persistence
+   now uses `error`, `skip`, and `replace` for same-ID differences; different
+   IDs remain distinct records and descriptive matches produce warnings.
 5. Define the generic owned-filament selection and resolution contract used by
    independent inventory adapters.
 6. Decide whether the first release exposes Python only or also includes the

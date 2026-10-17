@@ -312,6 +312,8 @@ does not load the palette until its first input is requested.
 - `ExportOptionsBase` subclasses - Provide strongly typed configuration for a single export operation
 - `UserColorsExporter` - Plan and explicitly apply validated updates to
   `user-colors.json`, including its integrity sidecar
+- `UserFilamentsExporter` - Plan and explicitly apply ID-based updates to
+  `user-filaments.json`, without changing owned-filament state
 - `generate_filename()` - Generate timestamped filenames
 
 Available format identifiers:
@@ -605,6 +607,30 @@ an existing RGB value. The ordinary format-export registry remains for
 stateless output formats; this exporter exposes structured changes and stale-
 plan protection directly.
 
+The filament side uses the symmetric filament importer registry and transfer
+model. IDs alone determine replacement; catalog import never changes ownership:
+
+```python
+from color_tools import UserFilamentsExporter
+from color_tools.importers import import_filaments
+
+data = import_filaments(
+    "incoming-user-filaments.json",
+    format_name="user_filaments",
+)
+exporter = UserFilamentsExporter()
+plan = exporter.plan(data)  # dry-run
+
+if plan.can_apply:
+    exporter.apply(plan)
+```
+
+Same-ID differences require `conflict_policy="replace"` or may be retained with
+`"skip"`. Different IDs remain distinct even when their product descriptions
+or colors match; the plan warns about equal maker/type/finish/color identities
+for review. Successful apply atomically writes the minimal source schema and
+refreshes `user-filaments.json.sha256`.
+
 The filament CLI can filter and export in one operation. This command searches
 the complete database, selects Bambu Lab PLA filaments with TD values, and
 writes a HueForge library:
@@ -670,6 +696,7 @@ for the authoritative class and function inventory.
 | **HexExportOptions** | `exporters.hex_exporter` | Plain-text HEX output casing | `uppercase` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hex_exporter.html#color_tools.exporters.hex_exporter.HexExportOptions) |
 | **HueForgeExportOptions** | `exporters.hueforge_exporter` | Initial HueForge owned state | `owned` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.hueforge_exporter.html#color_tools.exporters.hueforge_exporter.HueForgeExportOptions) |
 | **UserColorExportPlan / UserColorExportResult** | `exporters.user_color_export_models` | Reviewed user-color merge and explicit apply result | `changes`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_color_export_models.html) |
+| **UserFilamentExportPlan / UserFilamentExportResult** | `exporters.user_filament_export_models` | Reviewed ID-based user-filament merge and explicit apply result | `changes`, `warnings`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_filament_export_models.html) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
 | **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
 

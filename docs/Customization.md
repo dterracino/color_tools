@@ -190,6 +190,44 @@ record, and suggests the first available `-2`, `-3`, and so on suffix when it
 would collide. Hex and TD values are deliberately excluded from the ID so they
 can be corrected without breaking owned-filament references.
 
+#### Importing and updating user filaments from Python
+
+The `user_filaments` importer reads this strict source schema into
+`FilamentExportData`. `UserFilamentsExporter` then plans an ID-based merge into
+`user-filaments.json` without writing by default:
+
+```python
+from color_tools import UserFilamentsExporter
+from color_tools.importers import import_filaments
+
+data = import_filaments(
+    "incoming-user-filaments.json",
+    format_name="user_filaments",
+)
+exporter = UserFilamentsExporter()
+plan = exporter.plan(data)
+
+for change in plan.changes:
+    print(change.action, change.incoming.id, change.message)
+for warning in plan.warnings:
+    print("Warning:", warning)
+
+if plan.can_apply:
+    exporter.apply(plan)
+```
+
+Stable IDs are the only replacement key. The same ID with different fields is
+a conflict unless `conflict_policy="replace"` is selected; `"skip"` retains the
+current record. A different ID is a distinct filament even when maker, type,
+finish, color, or RGB values match. In that descriptive-identity case the plan
+reports a warning but retains both IDs, supporting the documented `-2`, `-3`,
+and later suffix workflow.
+
+Applying validates the complete effective catalog, rejects a stale plan if the
+destination changed after planning, atomically replaces `user-filaments.json`,
+and refreshes its SHA-256 sidecar. It does not modify `owned-filaments.json`;
+catalog and ownership updates remain independent operations.
+
 **Example user-synonyms.json:**
 
 ```json

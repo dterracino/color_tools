@@ -80,6 +80,14 @@ from color_tools.exporters.user_color_export_models import (
     UserColorExportPlan,
     UserColorExportResult,
 )
+from color_tools.exporters.user_filaments_exporter import UserFilamentsExporter
+from color_tools.exporters.user_filament_export_models import (
+    UserFilamentConflictPolicy,
+    UserFilamentExportAction,
+    UserFilamentExportChange,
+    UserFilamentExportPlan,
+    UserFilamentExportResult,
+)
 
 
 # Legacy EXPORT_FORMATS compatibility.
@@ -133,4 +141,10 @@ __all__ = [
     "UserColorExportChange",
     "UserColorExportPlan",
     "UserColorExportResult",
+    "UserFilamentsExporter",
+    "UserFilamentConflictPolicy",
+    "UserFilamentExportAction",
+    "UserFilamentExportChange",
+    "UserFilamentExportPlan",
+    "UserFilamentExportResult",
 ]

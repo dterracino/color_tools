@@ -257,7 +257,15 @@ from .exporters.user_color_export_models import (
     UserColorExportPlan,
     UserColorExportResult,
 )
-from .importers import UserColorsImporter
+from .exporters.user_filaments_exporter import UserFilamentsExporter
+from .exporters.user_filament_export_models import (
+    UserFilamentConflictPolicy,
+    UserFilamentExportAction,
+    UserFilamentExportChange,
+    UserFilamentExportPlan,
+    UserFilamentExportResult,
+)
+from .importers import UserColorsImporter, UserFilamentsImporter
 
 # ============================================================================
 # Color Validation (Fuzzy Name Matching + Delta E)
@@ -442,6 +450,13 @@ __all__ = [
     "UserColorExportChange",
     "UserColorExportPlan",
     "UserColorExportResult",
+    "UserFilamentsExporter",
+    "UserFilamentsImporter",
+    "UserFilamentConflictPolicy",
+    "UserFilamentExportAction",
+    "UserFilamentExportChange",
+    "UserFilamentExportPlan",
+    "UserFilamentExportResult",
     "list_export_formats",
     "export_filaments_autoforge",
     "export_filaments_csv",

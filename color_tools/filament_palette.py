@@ -17,7 +17,6 @@ from __future__ import annotations
 
 import json
 import logging
-import math
 from dataclasses import dataclass, field
 from functools import cmp_to_key
 from pathlib import Path
@@ -36,6 +35,10 @@ from color_tools.synonym_load_report import SynonymLoadEvent, SynonymLoadReport
 from color_tools._record_swatches import (
     render_record_swatch as _render_record_swatch,
     save_record_swatch as _save_record_swatch,
+)
+from color_tools._filament_data import (
+    load_filament_records_file,
+    merge_user_filaments,
 )
 
 logger: logging.Logger = logging.getLogger(__name__)
@@ -166,123 +169,6 @@ class FilamentRecord:
         return f"{self.maker} {self.type}{finish_str} - {self.color} ({self.hex})"
 
 
-_FILAMENT_REQUIRED_FIELDS = frozenset({"id", "maker", "type", "color", "hex"})
-_FILAMENT_OPTIONAL_FIELDS = frozenset({"finish", "td_value", "other_names"})
-
-
-def _required_record_text(record: dict[str, object], field_name: str) -> str:
-    value = record.get(field_name)
-    if not isinstance(value, str) or not value.strip():
-        raise ValueError(f"{field_name} must be a non-empty string")
-    if value != value.strip():
-        raise ValueError(f"{field_name} must not have surrounding whitespace")
-    return value
-
-
-def _optional_record_text(record: dict[str, object], field_name: str) -> str | None:
-    value = record.get(field_name)
-    if value is None:
-        return None
-    if not isinstance(value, str) or not value.strip():
-        raise ValueError(f"{field_name} must be null or a non-empty string")
-    if value != value.strip():
-        raise ValueError(f"{field_name} must not have surrounding whitespace")
-    return value
-
-
-def _optional_td_value(record: dict[str, object]) -> float | None:
-    value = record.get("td_value")
-    if value is None:
-        return None
-    if isinstance(value, bool) or not isinstance(value, (int, float)):
-        raise ValueError("td_value must be null or a non-negative finite number")
-    result = float(value)
-    if not math.isfinite(result) or result < 0.0:
-        raise ValueError("td_value must be null or a non-negative finite number")
-    return result
-
-
-def _optional_other_names(record: dict[str, object]) -> list[str] | None:
-    value = record.get("other_names")
-    if value is None:
-        return None
-    if not isinstance(value, list):
-        raise ValueError("other_names must be null or an array of non-empty strings")
-    names: list[str] = []
-    seen: set[str] = set()
-    for name in cast(list[object], value):
-        if not isinstance(name, str) or not name.strip() or name != name.strip():
-            raise ValueError("other_names must contain non-empty strings without surrounding whitespace")
-        key = name.casefold()
-        if key in seen:
-            raise ValueError(f"other_names contains duplicate value {name!r}")
-        seen.add(key)
-        names.append(name)
-    return names
-
-
-def _parse_filament_records(data: list[object], source_file: str) -> List[FilamentRecord]:
-    """Validate JSON objects and build filament records with unique IDs."""
-    records: List[FilamentRecord] = []
-    source_filename = Path(source_file).name
-    seen_ids: set[str] = set()
-    allowed_fields = _FILAMENT_REQUIRED_FIELDS | _FILAMENT_OPTIONAL_FIELDS
-    for index, value in enumerate(data):
-        try:
-            if not isinstance(value, dict):
-                raise ValueError("record must be an object")
-            record = cast(dict[str, object], value)
-            if "hex2" in record:
-                raise ValueError("hex2 was removed; put all components in hex")
-            missing = _FILAMENT_REQUIRED_FIELDS - record.keys()
-            if missing:
-                raise ValueError(f"missing required field(s): {', '.join(sorted(missing))}")
-            unknown = record.keys() - allowed_fields
-            if unknown:
-                raise ValueError(f"unknown field(s): {', '.join(sorted(unknown))}")
-            record_id = validate_filament_id(_required_record_text(record, "id"))
-            if record_id in seen_ids:
-                raise ValueError(f"duplicate id {record_id!r}")
-            seen_ids.add(record_id)
-            parsed = FilamentRecord(
-                id=record_id,
-                maker=_required_record_text(record, "maker"),
-                type=_required_record_text(record, "type"),
-                finish=_optional_record_text(record, "finish"),
-                color=_required_record_text(record, "color"),
-                hex=_required_record_text(record, "hex"),
-                td_value=_optional_td_value(record),
-                other_names=_optional_other_names(record),
-                source=source_filename,
-            )
-        except (TypeError, ValueError) as error:
-            raise ValueError(
-                f"Invalid filament data at index {index} in {source_file}: {error}"
-            ) from error
-        records.append(parsed)
-    return records
-
-
-def _merge_user_filaments(
-    system_records: list[FilamentRecord],
-    user_records: list[FilamentRecord],
-) -> tuple[list[FilamentRecord], tuple[FilamentLoadEvent, ...]]:
-    merged = list(system_records)
-    indices = {record.id: index for index, record in enumerate(merged)}
-    events: list[FilamentLoadEvent] = []
-    for record in user_records:
-        replacement_index = indices.get(record.id)
-        if replacement_index is None:
-            indices[record.id] = len(merged)
-            merged.append(record)
-            events.append(FilamentLoadEvent("added", record))
-        else:
-            replaced = merged[replacement_index]
-            merged[replacement_index] = record
-            events.append(FilamentLoadEvent("overridden", record, replaced))
-    return merged, tuple(events)
-
-
 @overload
 def load_filaments(
     json_path: Path | str | None = None,
@@ -321,23 +207,15 @@ def load_filaments(
         else:
             data_dir = database_path.parent
 
-    with database_path.open("r", encoding="utf-8") as file:
-        data = cast(object, json.load(file))
-    if not isinstance(data, list):
-        raise ValueError(f"Expected array of filaments at root level in {database_path}")
-    system_records = _parse_filament_records(cast(list[object], data), str(database_path))
+    system_records = load_filament_records_file(database_path)
     records = system_records
     user_records: list[FilamentRecord] = []
     events: tuple[FilamentLoadEvent, ...] = ()
 
     user_path = data_dir / ColorConstants.USER_FILAMENTS_JSON_FILENAME
     if user_path.exists():
-        with user_path.open("r", encoding="utf-8") as file:
-            user_data = cast(object, json.load(file))
-        if not isinstance(user_data, list):
-            raise ValueError(f"Expected array of filaments at root level in {user_path}")
-        user_records = _parse_filament_records(cast(list[object], user_data), str(user_path))
-        records, events = _merge_user_filaments(system_records, user_records)
+        user_records = load_filament_records_file(user_path)
+        records, events = merge_user_filaments(system_records, user_records)
 
     report = FilamentLoadReport(
         system_filaments_loaded=len(system_records),

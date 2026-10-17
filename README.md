@@ -560,6 +560,24 @@ if plan.can_apply:
 See [Customization](docs/Customization.md#importing-and-updating-user-colors-from-python)
 for conflict policies and validation behavior.
 
+`user-filaments.json` has the same safe round trip through the separate
+filament importer registry. Filament IDs alone determine replacements, and
+catalog updates never modify `owned-filaments.json`:
+
+```python
+from color_tools import UserFilamentsExporter
+from color_tools.importers import import_filaments
+
+data = import_filaments("incoming.json", format_name="user_filaments")
+exporter = UserFilamentsExporter()
+plan = exporter.plan(data)
+if plan.can_apply:
+    exporter.apply(plan)
+```
+
+See [Customization](docs/Customization.md#importing-and-updating-user-filaments-from-python)
+for ID conflicts, replacement policy, warnings, and sidecar behavior.
+
 ### Plugin Architecture
 
 The exporter system uses a plugin architecture - new formats can be added without modifying existing code:
