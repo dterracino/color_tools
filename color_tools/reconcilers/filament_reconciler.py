@@ -57,7 +57,8 @@ class FilamentReconciler(ABC):
         reserved_ids = set(self._catalog_by_id)
         owned_ids = set(source.metadata.owned_filament_ids)
         entries: list[FilamentReconciliationEntry] = []
-        for source_index, record in enumerate(source.filaments):
+        for source_index, source_record in enumerate(source.filaments):
+            record = self._normalize_source_record(source_record)
             proposed_base = generate_filament_id(
                 record.maker,
                 record.type,
@@ -101,6 +102,16 @@ class FilamentReconciler(ABC):
             entries=tuple(entries),
             fuzzy_matching_available=self.fuzzy_matching_available,
         )
+
+    def _normalize_source_record(self, record: FilamentRecord) -> FilamentRecord:
+        """Apply format-specific identity rules before planning and matching.
+
+        Subclasses may override this hook to canonicalize source fields such
+        as product brands that represent a catalog maker and finish. The
+        normalized record drives proposed IDs, candidate ranking, and imported
+        records; the original transfer data remains available on the plan.
+        """
+        return record
 
     def resolve(
         self,

@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 
 from color_tools.filament_palette import FilamentRecord
 from color_tools.reconcilers._string_similarity import (
@@ -19,6 +19,15 @@ from color_tools.reconcilers.filament_reconciliation_models import (
 )
 
 
+_PRODUCT_BRAND_IDENTITIES: dict[str, tuple[str, str]] = {
+    normalize_identity_text("PolyLite"): ("Polymaker", "PolyLite"),
+    normalize_identity_text("PolyTerra"): ("Polymaker", "PolyTerra"),
+}
+_TYPE_IDENTITIES: dict[str, tuple[str, str]] = {
+    normalize_identity_text("Silk"): ("PLA", "Silk"),
+}
+
+
 def _signatures(record: FilamentRecord, maker: str) -> tuple[str, ...]:
     """Return identity layouts that account for common finish-field drift."""
     finish = record.finish or ""
@@ -28,6 +37,11 @@ def _signatures(record: FilamentRecord, maker: str) -> tuple[str, ...]:
         f"{maker} {record.type} {record.color} {finish}",
     )
     return tuple(dict.fromkeys(normalize_identity_text(value) for value in values))
+
+
+def _contains_normalized_phrase(value: str, phrase: str) -> bool:
+    """Return whether a normalized identity contains a complete token phrase."""
+    return f" {phrase} " in f" {value} "
 
 
 @dataclass(frozen=True, slots=True)
@@ -67,6 +81,32 @@ class HueForgeFilamentReconciler(FilamentReconciler):
     def fuzzy_matching_available(self) -> bool:
         """Return whether RapidFuzz is installed for enhanced matching."""
         return HAS_RAPIDFUZZ
+
+    def _normalize_source_record(self, record: FilamentRecord) -> FilamentRecord:
+        """Map HueForge product brands and types to canonical identities."""
+        maker = record.maker
+        type_name = record.type
+        finish = record.finish
+
+        product_identity = _PRODUCT_BRAND_IDENTITIES.get(
+            normalize_identity_text(record.maker)
+        )
+        if product_identity is not None:
+            maker, product_finish = product_identity
+            finish = finish or product_finish
+
+        type_identity = _TYPE_IDENTITIES.get(normalize_identity_text(record.type))
+        if type_identity is not None:
+            type_name, finish = type_identity
+
+        if (maker, type_name, finish) == (record.maker, record.type, record.finish):
+            return record
+        return replace(
+            record,
+            maker=maker,
+            type=type_name,
+            finish=finish,
+        )
 
     @staticmethod
     def _build_maker_groups(
@@ -212,12 +252,12 @@ class HueForgeFilamentReconciler(FilamentReconciler):
             and normalize_identity_text(source.type)
             == normalize_identity_text(existing.finish)
         )
-        finish_accounted_for = (
-            existing.finish is None
-            or normalize_identity_text(existing.finish)
-            in normalize_identity_text(
-                f"{source.maker} {source.type} {source.finish or ''} {source.color}"
-            ).split()
+        source_identity = normalize_identity_text(
+            f"{source.maker} {source.type} {source.finish or ''} {source.color}"
+        )
+        finish_accounted_for = existing.finish is None or _contains_normalized_phrase(
+            source_identity,
+            normalize_identity_text(existing.finish),
         )
 
         reasons: list[str] = []

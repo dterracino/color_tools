@@ -113,8 +113,9 @@ the source's PLA and PLA+ material types and color names are preserved.
 
 The importer collapses duplicate SKU rows, merges TD values when one duplicate
 omits an otherwise matching value, supports ordered multi-color hex values, and
-explicitly excludes source rows that have no hex value. The default mode is a
-read-only dry run. Writing requires `--apply`:
+removes the redundant source `Matte` prefix so color names match PolyTerra spool
+labels. It explicitly excludes source rows that have no hex value. The default
+mode is a read-only dry run. Writing requires `--apply`:
 
 ```bash
 python tooling/import_polyterra_filaments.py

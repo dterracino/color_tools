@@ -66,6 +66,13 @@ class _FixedReconciler(FilamentReconciler):
         return self._candidates.get(record.id, ())
 
 
+class _NormalizingReconciler(_FixedReconciler):
+    """Test reconciler demonstrating the base source-normalization hook."""
+
+    def _normalize_source_record(self, record: FilamentRecord) -> FilamentRecord:
+        return replace(record, maker="Canonical Maker", finish="Product Line")
+
+
 class TestFilamentReconcilerBase(unittest.TestCase):
     def setUp(self) -> None:
         self.existing = _record("maker-pla-white", maker="Maker")
@@ -110,6 +117,24 @@ class TestFilamentReconcilerBase(unittest.TestCase):
             [entry.proposed_filament_id for entry in plan.entries],
             ["custom-pla-ocean", "custom-pla-ocean-2"],
         )
+
+    def test_source_normalization_controls_proposed_and_imported_identity(self) -> None:
+        source = _record("source", maker="Product Brand", color="Ocean")
+        reconciler = _NormalizingReconciler([], {})
+
+        plan = reconciler.plan(FilamentExportData([source]))
+        result = reconciler.resolve(plan)
+
+        entry = plan.entries[0]
+        self.assertEqual(entry.provisional_record.maker, "Canonical Maker")
+        self.assertEqual(entry.provisional_record.finish, "Product Line")
+        self.assertEqual(
+            entry.proposed_filament_id,
+            "canonical-maker-pla-product-line-ocean",
+        )
+        self.assertEqual(result.data.filaments[0].maker, "Canonical Maker")
+        self.assertEqual(result.data.filaments[0].finish, "Product Line")
+        self.assertEqual(plan.source.filaments[0], source)
 
     def test_ambiguous_match_requires_explicit_resolution(self) -> None:
         source = _record("source", maker="Maker")
@@ -241,14 +266,17 @@ class TestHueForgeFilamentReconciler(unittest.TestCase):
 
         self.assertEqual(entry.automatic_filament_id, "bambu-lab-pla-matte-white")
 
-    def test_matches_finish_used_as_hueforge_type(self) -> None:
+    def test_silk_type_normalizes_to_pla_silk_finish(self) -> None:
         entry = self._plan(
             _record("source", type_name="Silk")
         ).entries[0]
 
         self.assertEqual(entry.status, "matched")
         self.assertEqual(entry.automatic_filament_id, "bambu-lab-pla-silk-white")
-        self.assertEqual(entry.candidates[0].kind, "normalized")
+        self.assertEqual(entry.provisional_record.type, "PLA")
+        self.assertEqual(entry.provisional_record.finish, "Silk")
+        self.assertEqual(entry.candidates[0].kind, "exact")
+        self.assertEqual(entry.candidates[0].score, 100.0)
 
     def test_maker_synonym_can_produce_automatic_match(self) -> None:
         source = _record("source", maker="BBL", finish="Matte")
@@ -260,6 +288,105 @@ class TestHueForgeFilamentReconciler(unittest.TestCase):
         self.assertEqual(entry.status, "matched")
         self.assertEqual(entry.automatic_filament_id, "bambu-lab-pla-matte-white")
         self.assertEqual(entry.candidates[0].kind, "synonym")
+
+    def test_polyterra_brand_maps_to_polymaker_finish(self) -> None:
+        existing = _record(
+            "polymaker-pla-polyterra-charcoal-black",
+            maker="Polymaker",
+            finish="PolyTerra",
+            color="Charcoal Black",
+            hex_value="#2F2E30",
+        )
+        source = _record(
+            "source",
+            maker="PolyTerra",
+            color="Charcoal Black",
+            hex_value="#2F2E30",
+        )
+
+        entry = HueForgeFilamentReconciler([existing]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.status, "matched")
+        self.assertEqual(entry.automatic_filament_id, existing.id)
+        self.assertEqual(entry.provisional_record.maker, "Polymaker")
+        self.assertEqual(entry.provisional_record.finish, "PolyTerra")
+        self.assertEqual(entry.candidates[0].score, 100.0)
+
+    def test_polylite_brand_maps_to_polymaker_finish(self) -> None:
+        existing = _record(
+            "polymaker-pla-pro-polylite-black",
+            maker="Polymaker",
+            type_name="PLA Pro",
+            finish="PolyLite",
+            color="Black",
+            hex_value="#161619",
+        )
+        source = _record(
+            "source",
+            maker="PolyLite",
+            type_name="PLA Pro",
+            color="Black",
+            hex_value="#161619",
+        )
+
+        entry = HueForgeFilamentReconciler([existing]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.status, "matched")
+        self.assertEqual(entry.automatic_filament_id, existing.id)
+        self.assertEqual(entry.provisional_record.maker, "Polymaker")
+        self.assertEqual(entry.provisional_record.finish, "PolyLite")
+        self.assertEqual(entry.candidates[0].score, 100.0)
+
+    def test_product_brand_mapping_canonicalizes_new_records(self) -> None:
+        source = _record(
+            "source",
+            maker="PolyTerra",
+            color="Unlisted Blue",
+        )
+        reconciler = HueForgeFilamentReconciler([])
+
+        result = reconciler.resolve(reconciler.plan(FilamentExportData([source])))
+
+        imported = result.data.filaments[0]
+        self.assertEqual(imported.id, "polymaker-pla-polyterra-unlisted-blue")
+        self.assertEqual(imported.maker, "Polymaker")
+        self.assertEqual(imported.finish, "PolyTerra")
+
+    def test_silk_type_canonicalizes_new_records(self) -> None:
+        source = _record(
+            "source",
+            maker="Custom",
+            type_name="Silk",
+            color="Unlisted Gold",
+        )
+        reconciler = HueForgeFilamentReconciler([])
+
+        result = reconciler.resolve(reconciler.plan(FilamentExportData([source])))
+
+        imported = result.data.filaments[0]
+        self.assertEqual(imported.id, "custom-pla-silk-unlisted-gold")
+        self.assertEqual(imported.type, "PLA")
+        self.assertEqual(imported.finish, "Silk")
+
+    def test_type_mapping_takes_precedence_over_product_brand_finish(self) -> None:
+        source = _record(
+            "source",
+            maker="PolyLite",
+            type_name="Silk",
+            color="Unlisted Gold",
+        )
+
+        entry = HueForgeFilamentReconciler([]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.provisional_record.maker, "Polymaker")
+        self.assertEqual(entry.provisional_record.type, "PLA")
+        self.assertEqual(entry.provisional_record.finish, "Silk")
 
     def test_candidate_order_is_deterministic_when_scores_tie(self) -> None:
         first = _record("z-id", maker="Other", color="Red", hex_value="#FF0000")

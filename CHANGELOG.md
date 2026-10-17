@@ -38,9 +38,15 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Concise HueForge import review** — add `--problems-only` to suppress
   matched and automatically-new record details while retaining the full
   reconciliation summary and every ambiguous record and resolution choice.
+- **Reconciler source normalization** — add a protected base-class hook for
+  format-specific source identity rules. HueForge now maps the PolyTerra and
+  PolyLite product brands to maker `Polymaker` with the corresponding finish
+  and maps source type `Silk` to type `PLA` with finish `Silk` before matching,
+  ID generation, or importing a new record.
 - **PolyTerra filament data** — add 64 Polymaker PolyTerra PLA and PLA+
   records, including available TD values and ordered multi-color definitions,
-  from the manufacturer spreadsheet.
+  from the manufacturer spreadsheet. PolyTerra color names omit the redundant
+  source `Matte` prefix so they match the names printed on spool labels.
 
 ### Changed
 

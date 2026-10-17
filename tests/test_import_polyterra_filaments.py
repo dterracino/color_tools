@@ -50,6 +50,7 @@ class TestPolyterraFilamentImport(unittest.TestCase):
         self.assertEqual(source.duplicate_rows, 1)
         self.assertEqual(len(source.candidates), 2)
         self.assertEqual(source.candidates[0].skus, ("PA1", "PA2"))
+        self.assertEqual(source.candidates[0].color, "Blue")
         self.assertEqual(source.candidates[0].td_value, 2.0)
         self.assertEqual(source.candidates[1].hex_value, "#112233-#445566")
         self.assertEqual(source.exclusions[0].sku, "PA4")
@@ -79,6 +80,7 @@ class TestPolyterraFilamentImport(unittest.TestCase):
         candidate = importer._parse_rows(
             [_row("PA1", "PolyTerra PLA", "Matte Blue", "#123456", "2")]
         ).candidates[0]
+        self.assertEqual(candidate.record_id, "polymaker-pla-polyterra-blue")
         record = candidate.to_record()
         record["td_value"] = 3.0
 

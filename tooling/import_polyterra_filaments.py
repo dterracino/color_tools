@@ -121,6 +121,12 @@ def _clean_text(value: str) -> str:
     return " ".join(value.split())
 
 
+def _normalize_color(value: str) -> str:
+    """Return the spool-label color without PolyTerra's redundant style prefix."""
+    color = _clean_text(value)
+    return color.removeprefix("Matte ")
+
+
 def _parse_td(value: str, *, sku: str) -> float | None:
     """Parse an optional positive HueForge transmission-distance value."""
     text = value.strip()
@@ -174,7 +180,7 @@ def _parse_rows(rows: Iterable[dict[str, str]]) -> _SourceResult:
             continue
         source_rows += 1
         sku = _clean_text(row.get("SKU", ""))
-        color = _clean_text(row.get("Color Name", ""))
+        color = _normalize_color(row.get("Color Name", ""))
         if not sku or not color:
             raise ValueError(f"CSV row {row_number}: PolyTerra SKU and color are required")
         type_name = _PRODUCT_TYPES.get(product_name)

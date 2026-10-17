@@ -1278,11 +1278,11 @@
     "td_value": 12.0
   },
   {
-    "id": "elegoo-pla-biege",
+    "id": "elegoo-pla-beige",
     "maker": "Elegoo",
     "type": "PLA",
     "finish": null,
-    "color": "Biege",
+    "color": "Beige",
     "hex": "#fde8be",
     "td_value": 8.8
   },
@@ -9012,6 +9012,231 @@
     "td_value": null
   },
   {
+    "id": "polymaker-pla-polyterra-arctic-teal",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Arctic Teal",
+    "hex": "#61BCC3",
+    "td_value": 0.6
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-beige",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Beige",
+    "hex": "#DBBAA5",
+    "td_value": 0.7
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-blue",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Blue",
+    "hex": "#2E4462",
+    "td_value": 0.1
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-brown",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Brown",
+    "hex": "#795A4D",
+    "td_value": 0.1
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-dark-green",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Dark Green",
+    "hex": "#5F6244",
+    "td_value": 0.1
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-light-green",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Light Green",
+    "hex": "#AB8C02",
+    "td_value": 0.8
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-purple",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Purple",
+    "hex": "#36364A",
+    "td_value": 0.2
+  },
+  {
+    "id": "polymaker-pla-polyterra-army-red",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Army Red",
+    "hex": "#BF312E",
+    "td_value": 0.3
+  },
+  {
+    "id": "polymaker-pla-polyterra-ash-grey",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Ash Grey",
+    "hex": "#485155",
+    "td_value": 0.1
+  },
+  {
+    "id": "polymaker-pla-polyterra-camouflage-dark-green-brown",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Camouflage (Dark Green-Brown)",
+    "hex": "#5F6244-#7C594A",
+    "td_value": null
+  },
+  {
+    "id": "polymaker-pla-polyterra-chameleon-teal-yellow",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Chameleon (Teal-Yellow)",
+    "hex": "#61BCC3-#F3C432",
+    "td_value": null
+  },
+  {
+    "id": "polymaker-pla-polyterra-charcoal-black",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Charcoal Black",
+    "hex": "#2F2E30",
+    "td_value": 0.1
+  },
+  {
+    "id": "polymaker-pla-polyterra-cotton-white",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Cotton White",
+    "hex": "#F4EFEB",
+    "td_value": 4.1
+  },
+  {
+    "id": "polymaker-pla-polyterra-earth-brown",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Earth Brown",
+    "hex": "#7C594A",
+    "td_value": 0.2
+  },
+  {
+    "id": "polymaker-pla-polyterra-electric-indigo",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Electric Indigo",
+    "hex": "#6858A9",
+    "td_value": 0.3
+  },
+  {
+    "id": "polymaker-pla-polyterra-flamingo-pink-red",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Flamingo (Pink-Red)",
+    "hex": "#EAADBD-#ED2F2E",
+    "td_value": null
+  },
+  {
+    "id": "polymaker-pla-polyterra-foggy-orange-grey-orange",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Foggy Orange (Grey-Orange)",
+    "hex": "#8A8C94-#F88B17",
+    "td_value": null
+  },
+  {
+    "id": "polymaker-pla-polyterra-foggy-purple-grey-purple",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Foggy Purple (Grey-Purple)",
+    "hex": "#8A8C94-#9572BF",
+    "td_value": null
+  },
+  {
+    "id": "polymaker-pla-polyterra-forest-green",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Forest Green",
+    "hex": "#60AD70",
+    "td_value": 0.3
+  },
+  {
+    "id": "polymaker-pla-polyterra-fossil-grey",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Fossil Grey",
+    "hex": "#8A8C94",
+    "td_value": 0.4
+  },
+  {
+    "id": "polymaker-pla-polyterra-glacier-blue-ice-blue",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Glacier Blue (Ice-Blue)",
+    "hex": "#A4D0DF-#0163A6",
+    "td_value": null
+  },
+  {
+    "id": "polymaker-pla-polyterra-lava-red",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Lava Red",
+    "hex": "#ED2F2E",
+    "td_value": 1.9
+  },
+  {
+    "id": "polymaker-pla-polyterra-lavender-purple",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Lavender Purple",
+    "hex": "#9572BF",
+    "td_value": 0.6
+  },
+  {
+    "id": "polymaker-pla-polyterra-lime-green",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Lime Green",
+    "hex": "#D7D602",
+    "td_value": 2.4
+  },
+  {
+    "id": "polymaker-pla-polyterra-lotus-pink",
+    "maker": "Polymaker",
+    "type": "PLA",
+    "finish": "PolyTerra",
+    "color": "Lotus Pink",
+    "hex": "#DD76C0",
+    "td_value": 2.0
+  },
+  {
     "id": "polymaker-pla-polyterra-marble-brick",
     "maker": "Polymaker",
     "type": "PLA",
@@ -9057,443 +9282,218 @@
     "td_value": 1.9
   },
   {
-    "id": "polymaker-pla-polyterra-matte-arctic-teal",
+    "id": "polymaker-pla-polyterra-mixed-berries-red-dark-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Arctic Teal",
-    "hex": "#61BCC3",
-    "td_value": 0.6
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-beige",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Beige",
-    "hex": "#DBBAA5",
-    "td_value": 0.7
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-blue",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Blue",
-    "hex": "#2E4462",
-    "td_value": 0.1
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-brown",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Brown",
-    "hex": "#795A4D",
-    "td_value": 0.1
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-dark-green",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Dark Green",
-    "hex": "#5F6244",
-    "td_value": 0.1
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-light-green",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Light Green",
-    "hex": "#AB8C02",
-    "td_value": 0.8
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-purple",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Purple",
-    "hex": "#36364A",
-    "td_value": 0.2
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-army-red",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Army Red",
-    "hex": "#BF312E",
-    "td_value": 0.3
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-ash-grey",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Ash Grey",
-    "hex": "#485155",
-    "td_value": 0.1
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-camouflage-dark-green-brown",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Camouflage (Dark Green-Brown)",
-    "hex": "#5F6244-#7C594A",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-chameleon-teal-yellow",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Chameleon (Teal-Yellow)",
-    "hex": "#61BCC3-#F3C432",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-charcoal-black",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Charcoal Black",
-    "hex": "#2F2E30",
-    "td_value": 0.1
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-cotton-white",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Cotton White",
-    "hex": "#F4EFEB",
-    "td_value": 4.1
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-earth-brown",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Earth Brown",
-    "hex": "#7C594A",
-    "td_value": 0.2
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-electric-indigo",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Electric Indigo",
-    "hex": "#6858A9",
-    "td_value": 0.3
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-flamingo-pink-red",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Flamingo (Pink-Red)",
-    "hex": "#EAADBD-#ED2F2E",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-foggy-orange-grey-orange",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Foggy Orange (Grey-Orange)",
-    "hex": "#8A8C94-#F88B17",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-foggy-purple-grey-purple",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Foggy Purple (Grey-Purple)",
-    "hex": "#8A8C94-#9572BF",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-forest-green",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Forest Green",
-    "hex": "#60AD70",
-    "td_value": 0.3
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-fossil-grey",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Fossil Grey",
-    "hex": "#8A8C94",
-    "td_value": 0.4
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-glacier-blue-ice-blue",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Glacier Blue (Ice-Blue)",
-    "hex": "#A4D0DF-#0163A6",
-    "td_value": null
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-lava-red",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Lava Red",
-    "hex": "#ED2F2E",
-    "td_value": 1.9
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-lavender-purple",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Lavender Purple",
-    "hex": "#9572BF",
-    "td_value": 0.6
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-lime-green",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Lime Green",
-    "hex": "#D7D602",
-    "td_value": 2.4
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-lotus-pink",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Lotus Pink",
-    "hex": "#DD76C0",
-    "td_value": 2.0
-  },
-  {
-    "id": "polymaker-pla-polyterra-matte-mixed-berries-red-dark-blue",
-    "maker": "Polymaker",
-    "type": "PLA",
-    "finish": "PolyTerra",
-    "color": "Matte Mixed Berries (Red-Dark Blue)",
+    "color": "Mixed Berries (Red-Dark Blue)",
     "hex": "#ED2F2E-#2E4462",
     "td_value": null
   },
   {
-    "id": "polymaker-pla-polyterra-matte-muted-blue",
+    "id": "polymaker-pla-polyterra-muted-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Muted Blue",
+    "color": "Muted Blue",
     "hex": "#5F778E",
     "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polyterra-matte-muted-green",
+    "id": "polymaker-pla-polyterra-muted-green",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Muted Green",
+    "color": "Muted Green",
     "hex": "#777E71",
     "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polyterra-matte-muted-purple",
+    "id": "polymaker-pla-polyterra-muted-purple",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Muted Purple",
+    "color": "Muted Purple",
     "hex": "#7C5C78",
     "td_value": 0.6
   },
   {
-    "id": "polymaker-pla-polyterra-matte-muted-red",
+    "id": "polymaker-pla-polyterra-muted-red",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Muted Red",
+    "color": "Muted Red",
     "hex": "#D84B2E",
     "td_value": 1.4
   },
   {
-    "id": "polymaker-pla-polyterra-matte-muted-white",
+    "id": "polymaker-pla-polyterra-muted-white",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Muted White",
+    "color": "Muted White",
     "hex": "#BBADA4",
     "td_value": 0.7
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-banana",
+    "id": "polymaker-pla-polyterra-pastel-banana",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Banana",
+    "color": "Pastel Banana",
     "hex": "#F7D475",
     "td_value": 3.6
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-candy",
+    "id": "polymaker-pla-polyterra-pastel-candy",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Candy",
+    "color": "Pastel Candy",
     "hex": "#F0D6D9",
     "td_value": 2.9
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-ice",
+    "id": "polymaker-pla-polyterra-pastel-ice",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Ice",
+    "color": "Pastel Ice",
     "hex": "#A4D0DF",
     "td_value": 0.1
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-mint",
+    "id": "polymaker-pla-polyterra-pastel-mint",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Mint",
+    "color": "Pastel Mint",
     "hex": "#D2DEBB",
     "td_value": 2.9
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-peach",
+    "id": "polymaker-pla-polyterra-pastel-peach",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Peach",
+    "color": "Pastel Peach",
     "hex": "#F6BF8B",
     "td_value": 3.3
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-peanut",
+    "id": "polymaker-pla-polyterra-pastel-peanut",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Peanut",
+    "color": "Pastel Peanut",
     "hex": "#BF9573",
     "td_value": 0.7
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-periwinkle",
+    "id": "polymaker-pla-polyterra-pastel-periwinkle",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Periwinkle",
+    "color": "Pastel Periwinkle",
     "hex": "#ADB4E6",
     "td_value": 1.5
   },
   {
-    "id": "polymaker-pla-polyterra-matte-pastel-watermelon",
+    "id": "polymaker-pla-polyterra-pastel-watermelon",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Pastel Watermelon",
+    "color": "Pastel Watermelon",
     "hex": "#EE474B",
     "td_value": 2.4
   },
   {
-    "id": "polymaker-pla-polyterra-matte-sakura-pink",
+    "id": "polymaker-pla-polyterra-sakura-pink",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Sakura Pink",
+    "color": "Sakura Pink",
     "hex": "#EAADBD",
     "td_value": 2.3
   },
   {
-    "id": "polymaker-pla-polyterra-matte-sapphire-blue",
+    "id": "polymaker-pla-polyterra-sapphire-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Sapphire Blue",
+    "color": "Sapphire Blue",
     "hex": "#0163A6",
     "td_value": 0.5
   },
   {
-    "id": "polymaker-pla-polyterra-matte-savannah-yellow",
+    "id": "polymaker-pla-polyterra-savannah-yellow",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Savannah Yellow",
+    "color": "Savannah Yellow",
     "hex": "#F3C432",
     "td_value": 3.5
   },
   {
-    "id": "polymaker-pla-polyterra-matte-shadow-black-white-black",
+    "id": "polymaker-pla-polyterra-shadow-black-white-black",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Shadow Black (White-Black)",
+    "color": "Shadow Black (White-Black)",
     "hex": "#F4EFEB-#2F2E30",
     "td_value": null
   },
   {
-    "id": "polymaker-pla-polyterra-matte-shadow-orange-orange-black",
+    "id": "polymaker-pla-polyterra-shadow-orange-orange-black",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Shadow Orange (Orange-Black)",
+    "color": "Shadow Orange (Orange-Black)",
     "hex": "#F88B17-#2F2E30",
     "td_value": null
   },
   {
-    "id": "polymaker-pla-polyterra-matte-shadow-red-black-red",
+    "id": "polymaker-pla-polyterra-shadow-red-black-red",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Shadow Red (Black-Red)",
+    "color": "Shadow Red (Black-Red)",
     "hex": "#2F2E30-#ED2F2E",
     "td_value": null
   },
   {
-    "id": "polymaker-pla-polyterra-matte-sky-blue",
+    "id": "polymaker-pla-polyterra-sky-blue",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Sky Blue",
+    "color": "Sky Blue",
     "hex": "#1AC5FC",
     "td_value": 1.3
   },
   {
-    "id": "polymaker-pla-polyterra-matte-sunrise-red-yellow",
+    "id": "polymaker-pla-polyterra-sunrise-red-yellow",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Sunrise (Red-Yellow)",
+    "color": "Sunrise (Red-Yellow)",
     "hex": "#ED2F2E-#F3C432",
     "td_value": null
   },
   {
-    "id": "polymaker-pla-polyterra-matte-sunrise-orange",
+    "id": "polymaker-pla-polyterra-sunrise-orange",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Sunrise Orange",
+    "color": "Sunrise Orange",
     "hex": "#F88B17",
     "td_value": 2.9
   },
   {
-    "id": "polymaker-pla-polyterra-matte-wood-brown",
+    "id": "polymaker-pla-polyterra-wood-brown",
     "maker": "Polymaker",
     "type": "PLA",
     "finish": "PolyTerra",
-    "color": "Matte Wood Brown",
+    "color": "Wood Brown",
     "hex": "#AB7449",
     "td_value": 0.2
   },
