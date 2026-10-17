@@ -66,22 +66,31 @@ class FilamentReconciler(ABC):
             )
             proposed_id = next_available_filament_id(proposed_base, reserved_ids)
             reserved_ids.add(proposed_id)
-            candidates = tuple(
+            candidates = [
                 candidate
                 for candidate in self._rank_candidates(record)
                 if candidate.score >= self._policy.candidate_score
-            )
-            candidates = tuple(
-                sorted(candidates, key=lambda item: (-item.score, item.filament_id))
-            )
-            status, automatic_id = self._classify(candidates)
+            ]
+            candidates.sort(key=lambda item: (-item.score, item.filament_id))
+            if candidates:
+                minimum_score = max(
+                    self._policy.candidate_score,
+                    candidates[0].score - self._policy.candidate_score_window,
+                )
+                candidates = [
+                    candidate
+                    for candidate in candidates
+                    if candidate.score >= minimum_score
+                ][: self._policy.candidate_limit]
+            candidate_tuple = tuple(candidates)
+            status, automatic_id = self._classify(candidate_tuple)
             entries.append(
                 FilamentReconciliationEntry(
                     source_index=source_index,
                     provisional_record=record,
                     owned=record.id in owned_ids,
                     status=status,
-                    candidates=candidates,
+                    candidates=candidate_tuple,
                     automatic_filament_id=automatic_id,
                     proposed_filament_id=proposed_id,
                 )

@@ -8,7 +8,7 @@ import tempfile
 import unittest
 from argparse import Namespace
 from pathlib import Path
-from unittest.mock import patch
+from unittest.mock import MagicMock, patch
 
 from color_tools import FilamentImportWorkflow
 from color_tools.cli_commands.handlers.filament_import import (
@@ -357,12 +357,25 @@ class TestFilamentReconciliationTui(unittest.TestCase):
         )
 
         plan = reconciler.plan(FilamentExportData([source]))
-        with patch("prompt_toolkit.prompt", return_value="2"):
+        dialog = MagicMock()
+        dialog.run.return_value = "use:b-id"
+        with patch(
+            "prompt_toolkit.shortcuts.radiolist_dialog",
+            return_value=dialog,
+        ) as show_dialog:
             resolutions = collect_filament_resolutions(plan)
 
         self.assertIsNotNone(resolutions)
         assert resolutions is not None
         self.assertEqual(resolutions[0], UseExisting("b-id"))
+        values = show_dialog.call_args.kwargs["values"]
+        self.assertEqual(
+            values[-2:],
+            [
+                ("new", "Import new as same-basic-pla-red"),
+                ("skip", "Skip this filament"),
+            ],
+        )
 
     def test_new_skip_and_cancel_choices(self) -> None:
         records = [
@@ -376,11 +389,13 @@ class TestFilamentReconciliationTui(unittest.TestCase):
         )
 
         plan = reconciler.plan(FilamentExportData([self._source_record()]))
-        expected = (("n", ImportNew()), ("s", Skip()), ("q", None))
-        for answer, resolution in expected:
-            with self.subTest(answer=answer), patch(
-                "prompt_toolkit.prompt",
-                return_value=answer,
+        expected = (("new", ImportNew()), ("skip", Skip()), (None, None))
+        for selection, resolution in expected:
+            dialog = MagicMock()
+            dialog.run.return_value = selection
+            with self.subTest(selection=selection), patch(
+                "prompt_toolkit.shortcuts.radiolist_dialog",
+                return_value=dialog,
             ), patch("sys.stdout", io.StringIO()):
                 result = collect_filament_resolutions(plan)
 
@@ -390,7 +405,7 @@ class TestFilamentReconciliationTui(unittest.TestCase):
                 assert result is not None
                 self.assertEqual(result[0], resolution)
 
-    def test_invalid_choice_reprompts_and_eof_cancels(self) -> None:
+    def test_unexpected_choice_raises_and_eof_cancels(self) -> None:
         records = [
             FilamentRecord("a-id", "Same", "PLA", "Basic", "Red", "#ff0000"),
             FilamentRecord("b-id", "Same", "PLA", "Basic", "Red", "#ff0000"),
@@ -402,17 +417,19 @@ class TestFilamentReconciliationTui(unittest.TestCase):
 
         reconciler = HueForgeFilamentReconciler(records)
         plan = reconciler.plan(FilamentExportData([self._source_record()]))
+        invalid_dialog = MagicMock()
+        invalid_dialog.run.return_value = "invalid"
         with patch(
-            "prompt_toolkit.prompt",
-            side_effect=["invalid", "1"],
-        ), patch("sys.stdout", io.StringIO()):
-            resolved = collect_filament_resolutions(plan)
-        assert resolved is not None
-        self.assertEqual(resolved[0], UseExisting("a-id"))
+            "prompt_toolkit.shortcuts.radiolist_dialog",
+            return_value=invalid_dialog,
+        ), patch("sys.stdout", io.StringIO()), self.assertRaises(RuntimeError):
+            collect_filament_resolutions(plan)
 
+        cancelled_dialog = MagicMock()
+        cancelled_dialog.run.side_effect = EOFError
         with patch(
-            "prompt_toolkit.prompt",
-            side_effect=EOFError,
+            "prompt_toolkit.shortcuts.radiolist_dialog",
+            return_value=cancelled_dialog,
         ), patch("sys.stdout", io.StringIO()):
             cancelled = collect_filament_resolutions(plan)
         self.assertIsNone(cancelled)

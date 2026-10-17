@@ -193,16 +193,21 @@ class TestFilamentReconcilerBase(unittest.TestCase):
         self.assertEqual(plan.count("skipped"), 1)
 
     def test_policy_and_candidate_scores_are_validated(self) -> None:
-        invalid_policies = (
-            {"candidate_score": -1.0},
-            {"automatic_score": 101.0},
-            {"candidate_score": 90.0, "automatic_score": 80.0},
-            {"automatic_margin": -1.0},
-        )
-        for values in invalid_policies:
-            with self.subTest(values=values):
-                with self.assertRaises(ValueError):
-                    FilamentReconciliationPolicy(**values)
+        with self.assertRaises(ValueError):
+            FilamentReconciliationPolicy(candidate_score=-1.0)
+        with self.assertRaises(ValueError):
+            FilamentReconciliationPolicy(automatic_score=101.0)
+        with self.assertRaises(ValueError):
+            FilamentReconciliationPolicy(
+                candidate_score=90.0,
+                automatic_score=80.0,
+            )
+        with self.assertRaises(ValueError):
+            FilamentReconciliationPolicy(automatic_margin=-1.0)
+        with self.assertRaisesRegex(ValueError, "candidate_limit"):
+            FilamentReconciliationPolicy(candidate_limit=0)
+        with self.assertRaises(ValueError):
+            FilamentReconciliationPolicy(candidate_score_window=-1.0)
         with self.assertRaisesRegex(ValueError, "candidate score"):
             FilamentMatchCandidate("id", 101.0, "fuzzy")
 
@@ -236,14 +241,14 @@ class TestHueForgeFilamentReconciler(unittest.TestCase):
 
         self.assertEqual(entry.automatic_filament_id, "bambu-lab-pla-matte-white")
 
-    def test_fuzzy_fallback_matches_finish_used_as_hueforge_type(self) -> None:
+    def test_matches_finish_used_as_hueforge_type(self) -> None:
         entry = self._plan(
             _record("source", type_name="Silk")
         ).entries[0]
 
         self.assertEqual(entry.status, "matched")
         self.assertEqual(entry.automatic_filament_id, "bambu-lab-pla-silk-white")
-        self.assertEqual(entry.candidates[0].kind, "fuzzy")
+        self.assertEqual(entry.candidates[0].kind, "normalized")
 
     def test_maker_synonym_can_produce_automatic_match(self) -> None:
         source = _record("source", maker="BBL", finish="Matte")
@@ -270,6 +275,88 @@ class TestHueForgeFilamentReconciler(unittest.TestCase):
             [candidate.filament_id for candidate in entry.candidates[:2]],
             ["a-id", "z-id"],
         )
+
+    def test_exact_match_suppresses_fuzzy_subset_noise(self) -> None:
+        exact = _record(
+            "bambu-lab-pla-basic-yellow",
+            finish="Basic",
+            color="Yellow",
+        )
+        subset = _record(
+            "bambu-lab-pla-basic-sunflower-yellow",
+            finish="Basic",
+            color="Sunflower Yellow",
+        )
+        source = _record(
+            "source",
+            maker="BambuLab Basic",
+            color="Yellow",
+        )
+
+        entry = HueForgeFilamentReconciler(
+            [subset, exact],
+            maker_synonyms={"Bambu Lab": ["BambuLab"]},
+        ).plan(FilamentExportData([source])).entries[0]
+
+        self.assertEqual(entry.status, "matched")
+        self.assertEqual(entry.automatic_filament_id, exact.id)
+        self.assertEqual(
+            [candidate.filament_id for candidate in entry.candidates],
+            [exact.id],
+        )
+
+    def test_missing_finish_uses_hex_to_rank_same_named_products(self) -> None:
+        basic = _record(
+            "bambu-lab-pla-basic-blue",
+            finish="Basic",
+            color="Blue",
+            hex_value="#0000FF",
+        )
+        silk = _record(
+            "bambu-lab-pla-silk-blue",
+            finish="Silk",
+            color="Blue",
+            hex_value="#0088FF",
+        )
+        source = _record(
+            "source",
+            color="Blue",
+            hex_value="#0088FF",
+        )
+
+        entry = HueForgeFilamentReconciler([basic, silk]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.status, "matched")
+        self.assertEqual(entry.automatic_filament_id, silk.id)
+        self.assertEqual(
+            [candidate.filament_id for candidate in entry.candidates],
+            [silk.id, basic.id],
+        )
+
+    def test_candidates_are_limited_to_plausible_maker_and_count(self) -> None:
+        catalog = [
+            _record(f"target-{index}", color=f"White {index}")
+            for index in range(10)
+        ]
+        catalog.append(_record("other", maker="Other", color="White"))
+        policy = FilamentReconciliationPolicy(
+            candidate_score=0.0,
+            candidate_limit=3,
+            candidate_score_window=100.0,
+        )
+
+        entry = HueForgeFilamentReconciler(
+            catalog,
+            policy=policy,
+        ).plan(FilamentExportData([_record("source")])).entries[0]
+
+        self.assertLessEqual(len(entry.candidates), 3)
+        self.assertNotIn("other", {candidate.filament_id for candidate in entry.candidates})
+
+    def test_generic_color_token_is_not_a_perfect_fuzzy_match(self) -> None:
+        self.assertLess(similarity("Yellow", "Sunflower Yellow"), 100.0)
 
     def test_standard_library_fallback_remains_available_without_rapidfuzz(self) -> None:
         with patch(

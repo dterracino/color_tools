@@ -27,25 +27,13 @@ def _sequence_ratio(left: str, right: str) -> float:
     return SequenceMatcher(None, left, right).ratio() * 100.0
 
 
-def _fallback_token_set_ratio(left: str, right: str) -> float:
-    """Approximate token-set matching without an optional dependency."""
-    left_tokens = set(left.split())
-    right_tokens = set(right.split())
-    intersection = sorted(left_tokens & right_tokens)
-    left_remainder = sorted(left_tokens - right_tokens)
-    right_remainder = sorted(right_tokens - left_tokens)
-    common = " ".join(intersection)
-    left_combined = " ".join(intersection + left_remainder)
-    right_combined = " ".join(intersection + right_remainder)
-    return max(
-        _sequence_ratio(common, left_combined),
-        _sequence_ratio(common, right_combined),
-        _sequence_ratio(left_combined, right_combined),
-    )
-
-
 def similarity(left: str, right: str) -> float:
-    """Return the strongest deterministic normalized similarity score."""
+    """Return a deterministic normalized whole-value similarity score.
+
+    Token-set scoring is intentionally excluded because it assigns a perfect
+    score when a generic value is merely a subset of a more specific value,
+    such as ``Yellow`` and ``Sunflower Yellow``.
+    """
     normalized_left = normalize_identity_text(left)
     normalized_right = normalize_identity_text(right)
     if normalized_left == normalized_right:
@@ -56,7 +44,6 @@ def similarity(left: str, right: str) -> float:
         scorers: tuple[Callable[[str, str], float], ...] = (
             _rapidfuzz.ratio,
             _rapidfuzz.token_sort_ratio,
-            _rapidfuzz.token_set_ratio,
         )
         return max(float(scorer(normalized_left, normalized_right)) for scorer in scorers)
     compact_left = normalized_left.replace(" ", "")
@@ -67,7 +54,6 @@ def similarity(left: str, right: str) -> float:
         _sequence_ratio(normalized_left, normalized_right),
         _sequence_ratio(compact_left, compact_right),
         _sequence_ratio(sorted_left, sorted_right),
-        _fallback_token_set_ratio(normalized_left, normalized_right),
     )
 
 

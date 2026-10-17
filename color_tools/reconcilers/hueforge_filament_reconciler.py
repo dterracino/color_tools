@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from collections.abc import Mapping, Sequence
+from dataclasses import dataclass
 
 from color_tools.filament_palette import FilamentRecord
 from color_tools.reconcilers._string_similarity import (
@@ -24,10 +25,20 @@ def _signatures(record: FilamentRecord, maker: str) -> tuple[str, ...]:
     values = (
         f"{maker} {record.type} {finish} {record.color}",
         f"{maker} {finish} {record.type} {record.color}",
-        f"{maker} {record.type} {finish} {record.color}",
         f"{maker} {record.type} {record.color} {finish}",
     )
     return tuple(dict.fromkeys(normalize_identity_text(value) for value in values))
+
+
+@dataclass(frozen=True, slots=True)
+class _CatalogIdentity:
+    """Precomputed catalog identity used during one reconciliation run."""
+
+    record: FilamentRecord
+    makers: frozenset[str]
+    signatures: tuple[str, ...]
+    normalized_type: str
+    normalized_color: str
 
 
 class HueForgeFilamentReconciler(FilamentReconciler):
@@ -48,6 +59,9 @@ class HueForgeFilamentReconciler(FilamentReconciler):
     ) -> None:
         super().__init__(catalog, policy=policy)
         self._maker_groups = self._build_maker_groups(maker_synonyms or {})
+        self._catalog_identities = tuple(
+            self._catalog_identity(record) for record in self._catalog
+        )
 
     @property
     def fuzzy_matching_available(self) -> bool:
@@ -69,42 +83,135 @@ class HueForgeFilamentReconciler(FilamentReconciler):
         return groups
 
     def _maker_forms(self, maker: str) -> frozenset[str]:
-        """Return normalized maker text and all known equivalent aliases."""
+        """Return normalized maker text and equivalent aliases with suffixes."""
         normalized = normalize_identity_text(maker)
-        return self._maker_groups.get(normalized, frozenset({normalized}))
+        exact = self._maker_groups.get(normalized)
+        if exact is not None:
+            return exact
+        matching_aliases = [
+            alias
+            for alias in self._maker_groups
+            if normalized.startswith(f"{alias} ")
+        ]
+        if matching_aliases:
+            alias = max(matching_aliases, key=lambda value: (len(value), value))
+            suffix = normalized[len(alias) + 1 :]
+            return frozenset(
+                f"{value} {suffix}" for value in self._maker_groups[alias]
+            )
+        return frozenset({normalized})
+
+    def _catalog_identity(self, record: FilamentRecord) -> _CatalogIdentity:
+        """Precompute normalized values for one catalog record."""
+        makers = self._maker_forms(record.maker)
+        return _CatalogIdentity(
+            record=record,
+            makers=makers,
+            signatures=tuple(
+                signature
+                for maker in makers
+                for signature in _signatures(record, maker)
+            ),
+            normalized_type=normalize_identity_text(record.type),
+            normalized_color=normalize_identity_text(record.color),
+        )
+
+    @staticmethod
+    def _maker_is_contained(
+        source_makers: frozenset[str],
+        existing_makers: frozenset[str],
+    ) -> bool:
+        """Return whether an existing maker appears in a free-form brand."""
+        return any(
+            set(existing.split()) <= set(source.split())
+            for source in source_makers
+            for existing in existing_makers
+        )
+
+    def _plausible_catalog_identities(
+        self,
+        source_makers: frozenset[str],
+    ) -> tuple[_CatalogIdentity, ...]:
+        """Restrict expensive product matching to plausible source makers."""
+        contained = tuple(
+            identity
+            for identity in self._catalog_identities
+            if self._maker_is_contained(source_makers, identity.makers)
+        )
+        if contained:
+            return contained
+
+        scored_makers: dict[str, float] = {}
+        for identity in self._catalog_identities:
+            maker = normalize_identity_text(identity.record.maker)
+            if maker in scored_makers:
+                continue
+            scored_makers[maker] = max(
+                similarity(source, existing)
+                for source in source_makers
+                for existing in identity.makers
+            )
+        if not scored_makers:
+            return ()
+        best_score = max(scored_makers.values())
+        plausible_makers = {
+            maker
+            for maker, _score in sorted(
+                (
+                    (maker, score)
+                    for maker, score in scored_makers.items()
+                    if score >= 65.0 and score >= best_score - 10.0
+                ),
+                key=lambda item: (-item[1], item[0]),
+            )[:3]
+        }
+        return tuple(
+            identity
+            for identity in self._catalog_identities
+            if normalize_identity_text(identity.record.maker) in plausible_makers
+        )
 
     def _rank_candidates(
         self,
         record: FilamentRecord,
     ) -> Sequence[FilamentMatchCandidate]:
-        """Rank every plausible catalog record by identity and supporting data."""
-        candidates = [self._candidate(record, existing) for existing in self._catalog]
+        """Rank plausible catalog records by identity and supporting data."""
+        source_makers = self._maker_forms(record.maker)
+        source_signatures = tuple(
+            signature
+            for maker in source_makers
+            for signature in _signatures(record, maker)
+        )
+        identities = self._plausible_catalog_identities(source_makers)
+        candidates = [
+            self._candidate(record, source_makers, source_signatures, identity)
+            for identity in identities
+        ]
+        definitive = [candidate for candidate in candidates if candidate.kind != "fuzzy"]
+        if definitive:
+            candidates = definitive
         return sorted(candidates, key=lambda item: (-item.score, item.filament_id))
 
     def _candidate(
         self,
         source: FilamentRecord,
-        existing: FilamentRecord,
+        source_makers: frozenset[str],
+        source_signatures: tuple[str, ...],
+        identity: _CatalogIdentity,
     ) -> FilamentMatchCandidate:
         """Score one imported/catalog pair."""
-        source_makers = self._maker_forms(source.maker)
-        existing_makers = self._maker_forms(existing.maker)
+        existing = identity.record
+        existing_makers = identity.makers
         maker_equivalent = bool(source_makers & existing_makers)
         used_synonym = maker_equivalent and normalize_identity_text(source.maker) != normalize_identity_text(existing.maker)
-
-        source_signatures = tuple(
-            signature
-            for maker in source_makers
-            for signature in _signatures(source, maker)
+        signature_exact = bool(set(source_signatures) & set(identity.signatures))
+        type_exact = normalize_identity_text(source.type) == identity.normalized_type
+        color_exact = normalize_identity_text(source.color) == identity.normalized_color
+        finish_used_as_type = (
+            existing.finish is not None
+            and normalize_identity_text(source.type)
+            == normalize_identity_text(existing.finish)
         )
-        existing_signatures = tuple(
-            signature
-            for maker in existing_makers
-            for signature in _signatures(existing, maker)
-        )
-        signature_exact = bool(set(source_signatures) & set(existing_signatures))
-        type_exact = normalize_identity_text(source.type) == normalize_identity_text(existing.type)
-        color_exact = normalize_identity_text(source.color) == normalize_identity_text(existing.color)
         finish_accounted_for = (
             existing.finish is None
             or normalize_identity_text(existing.finish)
@@ -119,6 +226,14 @@ class HueForgeFilamentReconciler(FilamentReconciler):
             kind = "synonym" if used_synonym else "exact"
             score = 100.0
             reasons.append("structured product identity matches")
+        elif maker_equivalent and color_exact and finish_used_as_type:
+            kind = "synonym" if used_synonym else "normalized"
+            score = 100.0
+            reasons.append("finish is stored in the HueForge type field")
+        elif maker_equivalent and type_exact and color_exact:
+            kind = "synonym" if used_synonym else "normalized"
+            score = 90.0
+            reasons.append("maker, type, and color match; finish is unavailable")
         elif signature_exact:
             kind = "synonym" if used_synonym else "normalized"
             score = 100.0
@@ -135,7 +250,7 @@ class HueForgeFilamentReconciler(FilamentReconciler):
             signature_score = max(
                 similarity(left, right)
                 for left in source_signatures
-                for right in existing_signatures
+                for right in identity.signatures
             )
             score = (
                 signature_score * 0.55
@@ -153,7 +268,7 @@ class HueForgeFilamentReconciler(FilamentReconciler):
             )
 
         if source.rgb_components == existing.rgb_components:
-            score += (100.0 - score) * 0.20
+            score += (100.0 - score) * 0.50
             reasons.append("hex color matches")
         if source.td_value is not None and existing.td_value is not None:
             td_difference = abs(source.td_value - existing.td_value)

@@ -2,7 +2,8 @@
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
+from typing import cast
 
 from color_tools._interactive_utils import check_prompt_toolkit, show_install_message
 from color_tools.reconcilers.filament_reconciliation_models import (
@@ -17,51 +18,77 @@ from color_tools.reconcilers.resolutions import (
 )
 
 
-def _display_entry(entry: FilamentReconciliationEntry) -> None:
-    """Print one ambiguous source record and its ranked candidates."""
+def _entry_description(entry: FilamentReconciliationEntry) -> str:
+    """Return the source-filament details shown in the selection dialog."""
     record = entry.provisional_record
-    print()
-    print(
+    return (
         f"[{entry.source_index}] {record.maker} / {record.type} / "
         f"{record.finish or '-'} / {record.color} / {record.hex}"
     )
+
+
+def _resolution_choices(
+    entry: FilamentReconciliationEntry,
+) -> Sequence[tuple[str, str]]:
+    """Build prompt-toolkit radio-list values for one ambiguous record."""
+    choices: list[tuple[str, str]] = []
     for number, candidate in enumerate(entry.candidates, start=1):
         reasons = "; ".join(candidate.reasons) or candidate.kind
-        print(
-            f"  {number}. {candidate.filament_id} "
-            f"({candidate.score:.1f}: {reasons})"
+        choices.append(
+            (
+                f"use:{candidate.filament_id}",
+                f"{number}. {candidate.filament_id} "
+                f"({candidate.score:.1f}: {reasons})",
+            )
         )
-    print(f"  n. Import new as {entry.proposed_filament_id}")
-    print("  s. Skip")
+    choices.extend(
+        (
+            ("new", f"Import new as {entry.proposed_filament_id}"),
+            ("skip", "Skip this filament"),
+        )
+    )
+    return choices
 
 
 def _ask_resolution(entry: FilamentReconciliationEntry) -> FilamentResolution | None:
-    """Prompt until the user selects one resolution or cancels."""
-    from prompt_toolkit import prompt
-    from prompt_toolkit.completion import WordCompleter
+    """Show a prompt-toolkit radio-list dialog for one resolution."""
+    from prompt_toolkit.shortcuts import radiolist_dialog
+    from prompt_toolkit.styles import Style
 
-    choices = [str(index) for index in range(1, len(entry.candidates) + 1)]
-    completer = WordCompleter([*choices, "n", "new", "s", "skip", "q", "quit"])
-    while True:
-        try:
-            answer = prompt(
-                "  Resolution: ",
-                completer=completer,
-                complete_while_typing=False,
-            ).strip().casefold()
-        except (EOFError, KeyboardInterrupt):
-            return None
-        if answer in {"q", "quit"}:
-            return None
-        if answer in {"n", "new"}:
-            return ImportNew()
-        if answer in {"s", "skip"}:
-            return Skip()
-        if answer.isdigit():
-            candidate_index = int(answer) - 1
-            if 0 <= candidate_index < len(entry.candidates):
-                return UseExisting(entry.candidates[candidate_index].filament_id)
-        print("  Choose a candidate number, n for new, s to skip, or q to cancel.")
+    style = Style.from_dict(
+        {
+            "dialog frame.label": "bold",
+            "dialog.body": "bg:#202020 #f0f0f0",
+            "dialog shadow": "bg:#101010",
+            "button.focused": "bg:#ffffff #000000 bold",
+            "radio-selected": "#00d7ff bold",
+        }
+    )
+    try:
+        selection = cast(
+            str | None,
+            radiolist_dialog(
+                title="Resolve filament import",
+                text=_entry_description(entry),
+                values=_resolution_choices(entry),
+                ok_text="Use selection",
+                cancel_text="Cancel import",
+                style=style,
+            ).run(),
+        )
+    except (EOFError, KeyboardInterrupt):
+        return None
+
+    if selection is None:
+        return None
+    if selection == "new":
+        return ImportNew()
+    if selection == "skip":
+        return Skip()
+    prefix, separator, filament_id = selection.partition(":")
+    if prefix == "use" and separator and filament_id:
+        return UseExisting(filament_id)
+    raise RuntimeError(f"Unexpected filament resolution selection: {selection!r}")
 
 
 def collect_filament_resolutions(
@@ -93,7 +120,6 @@ def collect_filament_resolutions(
 
     print(f"Resolving {len(unresolved)} ambiguous filament match(es).")
     for entry in unresolved:
-        _display_entry(entry)
         resolution = _ask_resolution(entry)
         if resolution is None:
             print("Reconciliation cancelled; no files were changed.")

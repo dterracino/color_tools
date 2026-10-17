@@ -19,9 +19,11 @@ FilamentReconciliationStatus: TypeAlias = Literal[
 class FilamentReconciliationPolicy:
     """Thresholds controlling automatic and candidate fuzzy matches."""
 
-    candidate_score: float = 60.0
+    candidate_score: float = 75.0
     automatic_score: float = 85.0
     automatic_margin: float = 4.0
+    candidate_limit: int = 5
+    candidate_score_window: float = 10.0
 
     def __post_init__(self) -> None:
         """Validate score ranges and ordering."""
@@ -33,6 +35,10 @@ class FilamentReconciliationPolicy:
             raise ValueError("automatic_score must not be below candidate_score")
         if self.automatic_margin < 0.0:
             raise ValueError("automatic_margin must be non-negative")
+        if self.candidate_limit <= 0:
+            raise ValueError("candidate_limit must be positive")
+        if self.candidate_score_window < 0.0:
+            raise ValueError("candidate_score_window must be non-negative")
 
 
 @dataclass(frozen=True, slots=True)

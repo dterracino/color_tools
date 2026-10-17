@@ -28,8 +28,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   for parsing, reconciliation, user-catalog planning, and additive ownership
   updates. The new `filament import` CLI is read-only by default, prints
   copyable `--resolve` decisions for ambiguous matches, supports an optional
-  prompt-toolkit reconciliation TUI, and requires independent
+  prompt-toolkit keyboard-driven reconciliation dialog, and requires independent
   `--apply-catalog` and `--apply-owned` authorization before writing.
+- **Practical HueForge reconciliation** — precompute catalog identities and
+  restrict fuzzy comparison to plausible makers, prevent subset token matches
+  such as `Yellow`/`Sunflower Yellow` from scoring as identical, suppress fuzzy
+  noise when structured matches exist, and bound ambiguity lists to the five
+  strongest relevant candidates.
 
 ### Changed
 
