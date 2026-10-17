@@ -40,6 +40,7 @@ from color_tools._filament_data import (
     load_filament_records_file,
     merge_user_filaments,
 )
+from color_tools._filament_sorting import filament_sort_key
 
 logger: logging.Logger = logging.getLogger(__name__)
 
@@ -192,9 +193,10 @@ def load_filaments(
 ) -> List[FilamentRecord] | tuple[List[FilamentRecord], FilamentLoadReport]:
     """Load and merge filaments, optionally returning structured changes.
 
-    A user record with an existing ID replaces that complete system record in
-    place. A new ID appends in user-file order. Duplicate colors and product
-    descriptions are allowed; IDs alone define record identity.
+    A user record with an existing ID replaces that complete system record.
+    Duplicate colors and product descriptions are allowed; IDs alone define
+    record identity. The effective records are returned in canonical
+    case-insensitive maker, type, finish, color, and ID order.
     """
     if json_path is None:
         data_dir = Path(__file__).parent / "data"
@@ -216,6 +218,8 @@ def load_filaments(
     if user_path.exists():
         user_records = load_filament_records_file(user_path)
         records, events = merge_user_filaments(system_records, user_records)
+
+    records.sort(key=filament_sort_key)
 
     report = FilamentLoadReport(
         system_filaments_loaded=len(system_records),

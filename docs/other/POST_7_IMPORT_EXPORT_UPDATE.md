@@ -519,9 +519,7 @@ Suggested order after the framework contracts are approved:
    the effective catalog, and plans an additive atomic update. HueForge needs no
    coupled writer: its importer and reconciler already supply the generic final
    owned-ID selection. CLI orchestration remains a later decision.
-6. AutoForge filament import if its documented format contains enough identity
-   information.
-7. Research import adapters for other actively used filament-management
+6. Research import adapters for other actively used filament-management
    systems before committing to their schemas.
 
 Support for a third-party format should be based on verified format
@@ -585,4 +583,7 @@ Tools ID.
 - Changing all existing exporters to return structured result objects.
 - Guaranteeing lossless round trips when the source and destination formats do
   not represent the same fields.
+- Adding an AutoForge importer. AutoForge consumes filament data for model
+  generation but does not provide a filament-library source format to import;
+  its existing exporter remains useful as an output destination.
 

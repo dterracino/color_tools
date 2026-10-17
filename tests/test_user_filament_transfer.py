@@ -157,7 +157,8 @@ class TestUserFilamentsExporter(UserFilamentTransferTestCase):
         self.assertEqual(document[0]["hex"], "#123456-#ABCDEF")
         valid, error = ColorConstants.verify_user_data_file(plan.destination)
         self.assertTrue(valid, error)
-        self.assertEqual(load_filaments(self.data_dir)[-1].id, "custom-pla-ocean")
+        loaded_ids = {item.id for item in load_filaments(self.data_dir)}
+        self.assertIn("custom-pla-ocean", loaded_ids)
 
     def test_exact_existing_id_and_fields_are_unchanged(self) -> None:
         plan = self.exporter.plan([self.system_records[0]])
@@ -186,8 +187,11 @@ class TestUserFilamentsExporter(UserFilamentTransferTestCase):
         self.assertEqual(replacing.count("updated"), 1)
         self.exporter.apply(replacing)
         loaded = load_filaments(self.data_dir)
-        self.assertEqual(loaded[0].color, "Crimson")
-        self.assertEqual(loaded[0].source, "user-filaments.json")
+        replaced = next(
+            item for item in loaded if item.id == "maker-pla-basic-red"
+        )
+        self.assertEqual(replaced.color, "Crimson")
+        self.assertEqual(replaced.source, "user-filaments.json")
 
     def test_skip_policy_retains_same_id_record(self) -> None:
         replacement = self._record(

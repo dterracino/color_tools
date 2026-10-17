@@ -179,7 +179,7 @@ class TestInteractiveManagerWorkflows(unittest.TestCase):
             ),
         ]
         self.palette = FilamentPalette(
-            self.records,
+            list(reversed(self.records)),
             owned_filaments={self.records[0].id},
         )
         self.application = MagicMock()

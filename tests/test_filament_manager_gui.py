@@ -50,7 +50,10 @@ class TestFilamentManagerWindow(unittest.TestCase):
                 hex="#FFFFFF",
             ),
         ]
-        self.palette = FilamentPalette(self.records, owned_filaments=set())
+        self.palette = FilamentPalette(
+            list(reversed(self.records)),
+            owned_filaments=set(),
+        )
         self.window = FilamentManagerWindow(self.palette)
 
     def tearDown(self) -> None:

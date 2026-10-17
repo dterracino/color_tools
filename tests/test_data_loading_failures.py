@@ -298,8 +298,8 @@ class TestDataLoadingFailures(unittest.TestCase):
                 "duplicate id 'custom-pla-blue'",
             )
 
-    def test_user_filament_override_preserves_position_and_allows_shared_rgb(self) -> None:
-        """IDs replace records in place while unrelated equal colors remain valid."""
+    def test_user_filament_override_is_sorted_and_allows_shared_rgb(self) -> None:
+        """ID replacements are returned canonically while equal colors remain valid."""
         with TemporaryDirectory() as directory:
             data_dir = Path(directory)
             first = _valid_filament()
@@ -314,8 +314,14 @@ class TestDataLoadingFailures(unittest.TestCase):
 
             records, report = load_filaments(data_dir, include_report=True)
 
-            self.assertEqual([record.id for record in records], ["test-pla-red", "test-pla-blue", "user-pla-blue"])
-            self.assertEqual(records[0].maker, "User")
+            self.assertEqual(
+                [record.id for record in records],
+                ["test-pla-blue", "user-pla-blue", "test-pla-red"],
+            )
+            replacement_record = next(
+                record for record in records if record.id == "test-pla-red"
+            )
+            self.assertEqual(replacement_record.maker, "User")
             self.assertEqual(report.filaments_overridden_by_id, 1)
             self.assertEqual(report.unique_user_filaments_loaded, 1)
             self.assertEqual([record.rgb for record in records], [(0, 0, 255)] * 3)

@@ -25,6 +25,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   applied after catalog import without removing local ownership or creating an
   ownership sidecar.
 
+### Changed
+
+- **Deterministic filament ordering** — sort every merged filament database by
+  maker, type, finish, color, and ID using case-insensitive comparisons. The
+  prompt-toolkit and PySide6 filament managers use the same canonical order,
+  including when callers supply a manually constructed palette.
+
 ### In Progress
 
 - **Image type detection and palette extraction** — added disabled work-in-progress modules for

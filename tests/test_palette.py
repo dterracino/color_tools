@@ -21,6 +21,7 @@ from color_tools.palette import (
 from color_tools.filament_palette import (
     FilamentPalette,
     FilamentRecord,
+    load_filaments,
 )
 from tests.palette_document_fixtures import palette_document
 
@@ -236,6 +237,58 @@ class TestPalette(unittest.TestCase):
 
 class TestFilamentPalette(unittest.TestCase):
     """Test FilamentPalette class for 3D printing filaments."""
+
+    def test_load_filaments_returns_canonical_sorted_order(self):
+        """Merged database records use the shared deterministic display order."""
+        records = [
+            {
+                "id": "beta-pla-matte-red",
+                "maker": "beta",
+                "type": "PLA",
+                "finish": "Matte",
+                "color": "Red",
+                "hex": "#ff0000",
+            },
+            {
+                "id": "alpha-petg-white",
+                "maker": "Alpha",
+                "type": "PETG",
+                "finish": None,
+                "color": "White",
+                "hex": "#ffffff",
+            },
+            {
+                "id": "alpha-pla-silk-blue",
+                "maker": "alpha",
+                "type": "PLA",
+                "finish": "Silk",
+                "color": "Blue",
+                "hex": "#0000ff",
+            },
+            {
+                "id": "alpha-pla-matte-green",
+                "maker": "Alpha",
+                "type": "PLA",
+                "finish": "Matte",
+                "color": "Green",
+                "hex": "#00ff00",
+            },
+        ]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "filaments.json"
+            path.write_text(json.dumps(records), encoding="utf-8")
+
+            loaded = load_filaments(path)
+
+        self.assertEqual(
+            [record.id for record in loaded],
+            [
+                "alpha-petg-white",
+                "alpha-pla-matte-green",
+                "alpha-pla-silk-blue",
+                "beta-pla-matte-red",
+            ],
+        )
     
     def test_load_default(self):
         """Test loading default filament palette."""

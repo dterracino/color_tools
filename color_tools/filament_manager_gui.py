@@ -57,7 +57,11 @@ else:
     else:
         PYSIDE6_AVAILABLE = True
 
-from .filament_palette import FilamentPalette, FilamentRecord
+from .filament_palette import (
+    FilamentPalette,
+    FilamentRecord,
+)
+from ._filament_sorting import filament_sort_key
 
 __all__ = ["PYSIDE6_AVAILABLE", "run_filament_manager_gui"]
 
@@ -122,11 +126,7 @@ class FilamentManagerWindow(_QMainWindow):
         self.original_owned_ids: set[str] = self.owned_ids.copy()
         self.records: list[FilamentRecord] = sorted(
             palette.records,
-            key=lambda record: (
-                record.maker.casefold(),
-                record.type.casefold(),
-                record.color.casefold(),
-            ),
+            key=filament_sort_key,
         )
         self.filters: dict[str, QLineEdit] = {}
         self.table: QTableWidget

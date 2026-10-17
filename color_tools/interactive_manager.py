@@ -41,6 +41,7 @@ else:
         pass  # PROMPT_TOOLKIT_AVAILABLE handles the guard
 
 from ._interactive_utils import PROMPT_TOOLKIT_AVAILABLE, check_prompt_toolkit, show_install_message
+from ._filament_sorting import filament_sort_key
 
 __all__ = [
     'run_interactive_manager',
@@ -110,7 +111,10 @@ class InteractiveFilamentManager:
             palette.owned_filaments.copy() if palette.owned_filaments else set()
         )
         self.original_owned_ids: set[str] = self.owned_ids.copy()
-        self.filtered_filaments: list[FilamentRecord] = list(palette.records)
+        self.filtered_filaments: list[FilamentRecord] = sorted(
+            palette.records,
+            key=filament_sort_key,
+        )
         
         # Filter state
         self.filter_maker = ""
@@ -581,7 +585,7 @@ class InteractiveFilamentManager:
         if self.filter_color:
             filtered = [f for f in filtered if self.filter_color.lower() in f.color.lower()]
         
-        self.filtered_filaments = filtered
+        self.filtered_filaments = sorted(filtered, key=filament_sort_key)
         self.current_index = 0
         self.scroll_offset = 0
     
