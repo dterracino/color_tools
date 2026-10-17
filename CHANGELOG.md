@@ -18,6 +18,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   IDs, ownership remapping, optional RapidFuzz scoring, and finish-aware
   HueForge matching across free-form Brand, Type, and Name fields. Catalog and
   owned-filament persistence remain separate operations.
+- **Additive owned-filament persistence** — add a state-aware
+  `OwnedFilamentsExporter` with read-only planning, explicit atomic apply,
+  effective-catalog validation, unmatched-ID reporting, stale-plan protection,
+  and deterministic additive merging. Reconciled HueForge ownership can now be
+  applied after catalog import without removing local ownership or creating an
+  ownership sidecar.
 
 ### In Progress
 

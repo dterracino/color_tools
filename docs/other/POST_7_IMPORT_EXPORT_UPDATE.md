@@ -514,6 +514,11 @@ Suggested order after the framework contracts are approved:
    later exporter operation.
 5. Independent owned-filament import/export, followed by a HueForge ownership
    adapter that resolves against the current catalog without changing it.
+   **Implemented for the Python API:** `OwnedFilamentsExporter` consumes final
+   IDs directly or from reconciled `FilamentExportData`, validates them against
+   the effective catalog, and plans an additive atomic update. HueForge needs no
+   coupled writer: its importer and reconciler already supply the generic final
+   owned-ID selection. CLI orchestration remains a later decision.
 6. AutoForge filament import if its documented format contains enough identity
    information.
 7. Research import adapters for other actively used filament-management
@@ -555,13 +560,15 @@ Tools ID.
 2. Deterministic ID generation and collision handling are implemented in the
    base reconciler: every plan reserves canonical IDs against the catalog and
    earlier plan entries, using `-2`, `-3`, and later suffixes.
-3. Extend the implemented planning/result pattern to ownership exporters while
-   preserving existing path-returning export APIs.
+3. The planning/result pattern is implemented for additive ownership updates
+   without changing existing path-returning export APIs. Any future removal or
+   full-inventory synchronization mode requires a separate explicit contract.
 4. Specify external-format reconciliation policy. User-filament persistence
    now uses `error`, `skip`, and `replace` for same-ID differences; different
    IDs remain distinct records and descriptive matches produce warnings.
-5. Define the generic owned-filament selection and resolution contract used by
-   independent inventory adapters.
+5. The generic owned-filament selection contract is implemented through final
+   Color Tools IDs in `FilamentMetadata.owned_filament_ids`; format-specific
+   ambiguity is resolved before the additive ownership exporter is called.
 6. Decide whether the first release exposes Python only or also includes the
    orchestration CLI.
 

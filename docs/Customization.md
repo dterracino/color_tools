@@ -245,6 +245,7 @@ from color_tools import (
     FilamentPalette,
     HueForgeFilamentReconciler,
     ImportNew,
+    OwnedFilamentsExporter,
     Skip,
     UseExisting,
     UserFilamentsExporter,
@@ -268,7 +269,13 @@ resolved = reconciler.resolve(plan, choices)
 
 user_exporter = UserFilamentsExporter()
 user_plan = user_exporter.plan(resolved.data)
-# Review user_plan, then call user_exporter.apply(user_plan) explicitly.
+# Review and apply the catalog update first.
+user_exporter.apply(user_plan)
+
+owned_exporter = OwnedFilamentsExporter()
+owned_plan = owned_exporter.plan(resolved.data)
+# Review and apply ownership independently.
+owned_exporter.apply(owned_plan)
 ```
 
 Unique exact, normalized, synonym, and sufficiently separated fuzzy matches
@@ -280,9 +287,18 @@ on. Ambiguous entries have no default and must be resolved by the caller.
 same-plan collision handling centralized.
 
 The result's filament list contains only records that need to be added to
-`user-filaments.json`. Its `owned_filament_ids` uses final existing or generated
-IDs, but applying those IDs to `owned-filaments.json` remains a separate future
-operation. An external `Owned: false` value never removes local ownership.
+`user-filaments.json`; its `owned_filament_ids` contains final existing or
+generated IDs. The ownership exporter validates those IDs against the current
+merged system-plus-user catalog, so newly imported filaments must be persisted
+first. It then merges selected IDs into `owned-filaments.json` atomically.
+Planning is read-only, stale destination or catalog changes are rejected, and
+no ownership sidecar is created.
+
+Ownership import is additive. An external `Owned: false` value produces no
+selection and never removes an existing local ownership reference. Unknown IDs
+are reported as unmatched and prevent application; ambiguities must already
+have been resolved by the reconciler. Callers that already have final Color
+Tools IDs may pass an iterable of IDs directly to `OwnedFilamentsExporter.plan()`.
 
 **Example user-synonyms.json:**
 

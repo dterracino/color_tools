@@ -656,8 +656,22 @@ RapidFuzz scoring; a dependency-free fallback remains available. Ambiguous
 entries require `UseExisting(id)`, `ImportNew()`, or `Skip()` before resolution.
 The resolved `data.filaments` contains only new records, ready for a separate
 `UserFilamentsExporter` plan. Resolved owned IDs remain in
-`data.metadata.owned_filament_ids` for the later, independent ownership step.
-No operation in this workflow changes the bundled database.
+`data.metadata.owned_filament_ids` for the independent ownership step:
+
+```python
+from color_tools import OwnedFilamentsExporter
+
+owned_exporter = OwnedFilamentsExporter()
+owned_plan = owned_exporter.plan(resolved.data)  # read-only
+if owned_plan.can_apply:
+    owned_exporter.apply(owned_plan)
+```
+
+Apply the user-filament catalog plan first so newly generated IDs exist in the
+effective catalog. Ownership updates are additive: source entries with
+`Owned: false` are absent from the selection and never remove local ownership.
+The operation writes only `owned-filaments.json`, without a sidecar or bundled
+database changes.
 
 The filament CLI can filter and export in one operation. This command searches
 the complete database, selects Bambu Lab PLA filaments with TD values, and
@@ -726,6 +740,7 @@ for the authoritative class and function inventory.
 | **UserColorExportPlan / UserColorExportResult** | `exporters.user_color_export_models` | Reviewed user-color merge and explicit apply result | `changes`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_color_export_models.html) |
 | **UserFilamentExportPlan / UserFilamentExportResult** | `exporters.user_filament_export_models` | Reviewed ID-based user-filament merge and explicit apply result | `changes`, `warnings`, `conflicts`, `data_written`, `sidecar_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.user_filament_export_models.html) |
 | **FilamentReconciliationPlan / FilamentReconciliationResult** | `reconcilers` | Immutable external-catalog review plan and caller-resolved new records/ID mappings | `entries`, `catalog`, `data`, `mappings` | [API](https://dterracino.github.io/color_tools/api/color_tools.reconcilers.html) |
+| **OwnedFilamentExportPlan / OwnedFilamentExportResult** | `exporters.owned_filament_export_models` | Additive owned-ID merge planning and explicit apply result | `changes`, `unmatched`, `owned_filament_ids`, `data_written` | [API](https://dterracino.github.io/color_tools/api/color_tools.exporters.owned_filament_export_models.html) |
 | **ColorCluster** | `image` | K-means color cluster from image (requires [image] extra) | `centroid_rgb`, `centroid_lab`, `pixel_count`, `pixel_indices` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorCluster) |
 | **ColorChange** | `image` | Before/after luminance redistribution for HueForge | `original_rgb`, `new_rgb`, `delta_e`, `hueforge_layer` | [API](https://dterracino.github.io/color_tools/api/color_tools.image.html#color_tools.image.ColorChange) |
 

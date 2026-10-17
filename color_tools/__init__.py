@@ -265,6 +265,13 @@ from .exporters.user_filament_export_models import (
     UserFilamentExportPlan,
     UserFilamentExportResult,
 )
+from .exporters.owned_filaments_exporter import OwnedFilamentsExporter
+from .exporters.owned_filament_export_models import (
+    OwnedFilamentExportAction,
+    OwnedFilamentExportChange,
+    OwnedFilamentExportPlan,
+    OwnedFilamentExportResult,
+)
 from .importers import HueForgeImporter, UserColorsImporter, UserFilamentsImporter
 from .reconcilers import (
     FilamentMatchCandidate,
@@ -484,6 +491,11 @@ __all__ = [
     "UserFilamentExportChange",
     "UserFilamentExportPlan",
     "UserFilamentExportResult",
+    "OwnedFilamentsExporter",
+    "OwnedFilamentExportAction",
+    "OwnedFilamentExportChange",
+    "OwnedFilamentExportPlan",
+    "OwnedFilamentExportResult",
     "list_export_formats",
     "export_filaments_autoforge",
     "export_filaments_csv",

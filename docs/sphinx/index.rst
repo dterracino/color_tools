@@ -201,6 +201,8 @@ Export System
    color_tools.exporters.user_colors_exporter
    color_tools.exporters.user_filament_export_models
    color_tools.exporters.user_filaments_exporter
+   color_tools.exporters.owned_filament_export_models
+   color_tools.exporters.owned_filaments_exporter
 
 Import System
 ~~~~~~~~~~~~~

@@ -584,7 +584,9 @@ as transfer metadata, and skips HueForge's unconfigured `IMAGE` placeholders.
 Run the result through `HueForgeFilamentReconciler` before sending only its new
 records to `UserFilamentsExporter`; exact and confident matches reuse existing
 Color Tools IDs, while ambiguous matches remain caller-controlled. Catalog and
-owned-filament writes are intentionally separate operations. See
+owned-filament writes are intentionally separate operations. After the catalog
+update, `OwnedFilamentsExporter` can add the reconciled `Owned: true` selections
+to `owned-filaments.json` without removing existing ownership. See
 [Customization](docs/Customization.md#importing-and-reconciling-hueforge-filaments).
 
 ### Plugin Architecture

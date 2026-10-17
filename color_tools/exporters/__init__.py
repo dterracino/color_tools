@@ -88,6 +88,13 @@ from color_tools.exporters.user_filament_export_models import (
     UserFilamentExportPlan,
     UserFilamentExportResult,
 )
+from color_tools.exporters.owned_filaments_exporter import OwnedFilamentsExporter
+from color_tools.exporters.owned_filament_export_models import (
+    OwnedFilamentExportAction,
+    OwnedFilamentExportChange,
+    OwnedFilamentExportPlan,
+    OwnedFilamentExportResult,
+)
 
 
 # Legacy EXPORT_FORMATS compatibility.
@@ -147,4 +154,9 @@ __all__ = [
     "UserFilamentExportChange",
     "UserFilamentExportPlan",
     "UserFilamentExportResult",
+    "OwnedFilamentsExporter",
+    "OwnedFilamentExportAction",
+    "OwnedFilamentExportChange",
+    "OwnedFilamentExportPlan",
+    "OwnedFilamentExportResult",
 ]
