@@ -22,7 +22,7 @@ Add noise detection capabilities to the image module. Multiple approaches to con
 - Noisy images have many "false edges" from random pixel variations
 - Industry standard for blur/noise detection
 - **Pros**: Industry standard, good accuracy
-- **Cons**: Requires scipy or opencv-python dependency
+- **Cons**: Requires SciPy or the headless OpenCV dependency
 
 ### Approach 3: Local Entropy (Texture Randomness)
 

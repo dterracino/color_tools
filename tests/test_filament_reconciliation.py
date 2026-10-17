@@ -278,6 +278,149 @@ class TestHueForgeFilamentReconciler(unittest.TestCase):
         self.assertEqual(entry.candidates[0].kind, "exact")
         self.assertEqual(entry.candidates[0].score, 100.0)
 
+    def test_additional_hueforge_identity_mappings(self) -> None:
+        cases = (
+            (
+                _record("source", maker="Creality CR-Matte", color="Red"),
+                ("Creality", "PLA", "CR-Matte", "Red"),
+            ),
+            (
+                _record("source", maker="Creality Hyper", color="Blue"),
+                ("Creality", "Hyper PLA", None, "Blue"),
+            ),
+            (
+                _record("source", maker="Creality Ender", color="Black"),
+                ("Creality", "Ender PLA", None, "Black"),
+            ),
+            (
+                _record(
+                    "source",
+                    maker="Sunlu Elite",
+                    type_name="PETG",
+                    color="Black",
+                ),
+                ("Sunlu", "Elite PETG", None, "Black"),
+            ),
+            (
+                _record("source", maker="Elegoo", color="Basic Blue"),
+                ("Elegoo", "PLA", "Basic", "Blue"),
+            ),
+            (
+                _record("source", maker="IEMAI", color="Clear Orange"),
+                ("IEMAI", "PLA", "Clear", "Orange"),
+            ),
+            (
+                _record("source", maker="PolyLite Pro", color="Black"),
+                ("Polymaker", "PLA Pro", "PolyLite", "Black"),
+            ),
+        )
+
+        for source, expected in cases:
+            with self.subTest(source=source):
+                entry = HueForgeFilamentReconciler([]).plan(
+                    FilamentExportData([source])
+                ).entries[0]
+                provisional = entry.provisional_record
+                actual = (
+                    provisional.maker,
+                    provisional.type,
+                    provisional.finish,
+                    provisional.color,
+                )
+                self.assertEqual(actual, expected)
+
+    def test_color_prefix_mapping_preserves_product_finish(self) -> None:
+        source = _record(
+            "source",
+            maker="Creality CR-Matte",
+            color="Basic Blue",
+        )
+
+        entry = HueForgeFilamentReconciler([]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.provisional_record.finish, "CR-Matte")
+        self.assertEqual(entry.provisional_record.color, "Blue")
+
+    def test_mapped_material_type_rejects_cross_type_candidates(self) -> None:
+        pla = _record(
+            "sunlu-pla-basic-black",
+            maker="Sunlu",
+            finish="Basic",
+            color="Black",
+        )
+        source = _record(
+            "source",
+            maker="Sunlu Elite",
+            type_name="PETG",
+            color="Black",
+        )
+
+        entry = HueForgeFilamentReconciler([pla]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.provisional_record.type, "Elite PETG")
+        self.assertEqual(entry.status, "new")
+        self.assertEqual(entry.candidates, ())
+
+    def test_additional_mapping_matches_canonical_catalog_record(self) -> None:
+        existing = _record(
+            "polymaker-pla-pro-polylite-black",
+            maker="Polymaker",
+            type_name="PLA Pro",
+            finish="PolyLite",
+            color="Black",
+        )
+        source = _record("source", maker="PolyLite Pro", color="Black")
+
+        entry = HueForgeFilamentReconciler([existing]).plan(
+            FilamentExportData([source])
+        ).entries[0]
+
+        self.assertEqual(entry.status, "matched")
+        self.assertEqual(entry.automatic_filament_id, existing.id)
+        self.assertEqual(entry.candidates[0].score, 100.0)
+
+    def test_unrecognized_type_can_still_represent_a_finish(self) -> None:
+        entry = self._plan(
+            _record("source", type_name="Matte")
+        ).entries[0]
+
+        self.assertEqual(entry.status, "matched")
+        self.assertEqual(entry.automatic_filament_id, "bambu-lab-pla-matte-white")
+
+    def test_recognized_material_type_rejects_cross_type_candidates(self) -> None:
+        pla = _record(
+            "elegoo-pla-basic-sky-blue",
+            maker="Elegoo",
+            type_name="PLA",
+            finish="Basic",
+            color="Sky Blue",
+            hex_value="#1A3FA4",
+        )
+        petg = _record(
+            "source",
+            maker="Elegoo",
+            type_name="PETG",
+            color="Basic Blue",
+            hex_value="#1A3FA4",
+        )
+        known_petg = _record(
+            "other-petg",
+            maker="Other",
+            type_name="PETG",
+            color="Black",
+        )
+
+        entry = HueForgeFilamentReconciler([pla, known_petg]).plan(
+            FilamentExportData([petg])
+        ).entries[0]
+
+        self.assertEqual(entry.status, "new")
+        self.assertEqual(entry.candidates, ())
+
     def test_maker_synonym_can_produce_automatic_match(self) -> None:
         source = _record("source", maker="BBL", finish="Matte")
         entry = HueForgeFilamentReconciler(

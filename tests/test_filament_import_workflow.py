@@ -387,6 +387,9 @@ class TestFilamentReconciliationTui(unittest.TestCase):
     """Test prompt-toolkit choices independently from persistence."""
 
     def test_candidate_number_returns_use_existing_resolution(self) -> None:
+        from prompt_toolkit.key_binding import KeyBindings
+        from prompt_toolkit.keys import Keys
+
         records = [
             FilamentRecord("a-id", "Same", "PLA", "Basic", "Red", "#ff0000"),
             FilamentRecord("b-id", "Same", "PLA", "Basic", "Red", "#ff0000"),
@@ -400,6 +403,7 @@ class TestFilamentReconciliationTui(unittest.TestCase):
 
         plan = reconciler.plan(FilamentExportData([source]))
         dialog = MagicMock()
+        dialog.key_bindings = KeyBindings()
         dialog.run.return_value = "use:b-id"
         with patch(
             "prompt_toolkit.shortcuts.radiolist_dialog",
@@ -411,6 +415,13 @@ class TestFilamentReconciliationTui(unittest.TestCase):
         assert resolutions is not None
         self.assertEqual(resolutions[0], UseExisting("b-id"))
         values = show_dialog.call_args.kwargs["values"]
+        self.assertEqual(show_dialog.call_args.kwargs["ok_text"], "Use")
+        self.assertEqual(show_dialog.call_args.kwargs["cancel_text"], "Cancel")
+        escape_bindings = dialog.key_bindings.get_bindings_for_keys((Keys.Escape,))
+        self.assertEqual(len(escape_bindings), 1)
+        event = MagicMock()
+        escape_bindings[0].handler(event)
+        event.app.exit.assert_called_once_with(result=None)
         self.assertEqual(
             values[-2:],
             [

@@ -174,6 +174,6 @@ The demo dependencies are separate from the main library and listed in
 | `moderngl` | OpenGL 3.3 resource and draw API |
 | `numpy` | Frame and texture data |
 | `Pillow` | Still-image decoding and screenshots |
-| `opencv-python` | Video decoding |
+| `opencv-contrib-python-headless` | Video decoding without OpenCV GUI dependencies |
 | `color-match-tools` | Palette catalog and loading |
 | `rich` | Naive preprocessing progress and result reporting |

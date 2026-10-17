@@ -52,6 +52,11 @@ def _resolution_choices(
 
 def _ask_resolution(entry: FilamentReconciliationEntry) -> FilamentResolution | None:
     """Show a prompt-toolkit radio-list dialog for one resolution."""
+    from prompt_toolkit.key_binding import (
+        KeyBindings,
+        KeyPressEvent,
+        merge_key_bindings,
+    )
     from prompt_toolkit.shortcuts import radiolist_dialog
     from prompt_toolkit.styles import Style
 
@@ -65,16 +70,29 @@ def _ask_resolution(entry: FilamentReconciliationEntry) -> FilamentResolution | 
         }
     )
     try:
+        dialog = radiolist_dialog(
+            title="Resolve filament import",
+            text=_entry_description(entry),
+            values=_resolution_choices(entry),
+            ok_text="Use",
+            cancel_text="Cancel",
+            style=style,
+        )
+        cancel_bindings = KeyBindings()
+
+        def _cancel(event: KeyPressEvent) -> None:
+            event.app.exit(result=None)
+
+        cancel_bindings.add("escape")(_cancel)
+        if dialog.key_bindings is None:
+            dialog.key_bindings = cancel_bindings
+        else:
+            dialog.key_bindings = merge_key_bindings(
+                [dialog.key_bindings, cancel_bindings]
+            )
         selection = cast(
             str | None,
-            radiolist_dialog(
-                title="Resolve filament import",
-                text=_entry_description(entry),
-                values=_resolution_choices(entry),
-                ok_text="Use selection",
-                cancel_text="Cancel import",
-                style=style,
-            ).run(),
+            dialog.run(),
         )
     except (EOFError, KeyboardInterrupt):
         return None

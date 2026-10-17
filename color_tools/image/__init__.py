@@ -7,7 +7,8 @@ blending. Install the complete feature set with::
 
     pip install color-match-tools[image]
 
-The extra includes Pillow, NumPy, scikit-image, pillow-heif, CairoSVG, OpenCV,
+The extra includes Pillow, NumPy, scikit-image, pillow-heif, CairoSVG, headless
+OpenCV contrib,
 and scikit-learn. Individual operations import only their owning submodule and
 may require only part of that set.
 

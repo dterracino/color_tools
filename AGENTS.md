@@ -22,6 +22,10 @@ All new or modified code should follow these principles:
 * Each code file should not run over 500 lines of code. If a file approaches this limit, consider refactoring it into smaller, more focused modules.
 * When refactoring, attempt to do so in such a way that imports remain the same if possible.
 
+## Tests
+
+**Targeted test runs**: If possible, run only the tests you need rather than the entire suite after a code change. This is important to save tokens and time when running tests.
+
 ## Python Quality Requirements
 
 * Code must produce zero errors and warnings under Pyright in the mode configured in this repository's pyrightconfig.json / pyproject.toml (currently: strict).

@@ -37,7 +37,7 @@ Adds RapidFuzz for better color name validation (validation module has built-in 
 pip install color-match-tools[image]
 ```
 
-Adds Pillow, NumPy, scikit-image, scikit-learn, OpenCV, CairoSVG,
+Adds Pillow, NumPy, scikit-image, scikit-learn, headless OpenCV contrib, CairoSVG,
 pillow-heif, and `swatch` for image conversion and transforms, color analysis,
 palette quantization, HEIC/SVG support, and Adobe ASE export.
 
@@ -124,7 +124,8 @@ The core module uses **only Python standard library** - **zero external dependen
 **Optional dependencies:**
 
 - `[fuzzy]`: rapidfuzz >= 3.0.0 for enhanced fuzzy color name matching (validation module has built-in fallback)
-- `[image]`: Pillow, NumPy, scikit-image, pillow-heif, CairoSVG, OpenCV,
+- `[image]`: Pillow, NumPy, scikit-image, pillow-heif, CairoSVG, headless OpenCV
+  contrib,
   scikit-learn, and `swatch` for image processing and ASE export
 - `[interactive]`: prompt_toolkit >= 3.0.0 for interactive filament library manager
 - `[gui]`: PySide6 >= 6.6.0 for the desktop filament library manager

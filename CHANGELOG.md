@@ -8,6 +8,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.1.0] - 2026-10-17
+
 ### Added
 
 - **HueForge filament import and reconciliation** — parse both HueForge
@@ -41,8 +43,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - **Reconciler source normalization** — add a protected base-class hook for
   format-specific source identity rules. HueForge now maps the PolyTerra and
   PolyLite product brands to maker `Polymaker` with the corresponding finish
-  and maps source type `Silk` to type `PLA` with finish `Silk` before matching,
-  ID generation, or importing a new record.
+  and maps source type `Silk` to type `PLA` with finish `Silk`. Additional
+  rules normalize Creality CR-Matte, Hyper, and Ender products; Sunlu Elite
+  PETG; PolyLite Pro PLA; and leading `Basic` or `Clear` color qualifiers
+  before matching, ID generation, or importing a new record.
 - **PolyTerra filament data** — add 64 Polymaker PolyTerra PLA and PLA+
   records, including available TD values and ordered multi-color definitions,
   from the manufacturer spreadsheet. PolyTerra color names omit the redundant
@@ -50,10 +54,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
+- **Headless OpenCV dependency** — replace `opencv-contrib-python` with
+  `opencv-contrib-python-headless` for image features. Color Tools uses contrib
+  saliency and image-processing APIs but does not use OpenCV's windowing APIs;
+  GUI features continue to use PySide6 independently.
 - **Deterministic filament ordering** — sort every merged filament database by
   maker, type, finish, color, and ID using case-insensitive comparisons. The
   prompt-toolkit and PySide6 filament managers use the same canonical order,
   including when callers supply a manually constructed palette.
+
+### Fixed
+
+- **Filament reconciliation dialog buttons** — use width-safe `Use` and
+  `Cancel` labels so prompt-toolkit does not truncate or crowd the actions at
+  the bottom of the interactive HueForge reconciliation dialog. `Escape` now
+  cancels the complete interactive reconciliation from anywhere in the dialog.
+- **HueForge material compatibility** — exclude candidates whose catalog
+  material type differs from a recognized source material type. Free-form
+  values that are not catalog materials can still participate in finish-field
+  normalization.
 
 ### In Progress
 

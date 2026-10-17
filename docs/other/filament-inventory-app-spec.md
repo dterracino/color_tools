@@ -47,7 +47,7 @@ Follows the existing subpackage pattern in `color_tools/image/` (which already c
 
 - **`color_tools/image/calibration.py`**
   `detect_reference_card()` / `extract_patches()` — pure image processing (uses the
-  already-installed `opencv-contrib-python`). Takes a raw photo + card type (3-patch or
+  already-installed `opencv-contrib-python-headless`). Takes a raw photo + card type (3-patch or
   24-patch), returns a dataclass with sampled-vs-expected patch colors and the sampled
   filament region. No color-matching logic here — image in, structured patch data out.
 
@@ -58,7 +58,7 @@ Follows the existing subpackage pattern in `color_tools/image/` (which already c
 
 - **`color_tools/image/codes.py`**
   QR/barcode detection via OpenCV's built-in `QRCodeDetector` and `barcode.BarcodeDetector`
-  (already covered by the existing `opencv-contrib-python` dependency — no new dependency
+  (already covered by the existing `opencv-contrib-python-headless` dependency — no new dependency
   needed).
 
 - **Composing function** (exact location TBD once we look at `filament_palette.py` directly)

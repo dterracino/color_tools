@@ -20,12 +20,44 @@ from color_tools.reconcilers.filament_reconciliation_models import (
 
 
 _PRODUCT_BRAND_IDENTITIES: dict[str, tuple[str, str]] = {
+    normalize_identity_text("Creality CR-Matte"): ("Creality", "CR-Matte"),
     normalize_identity_text("PolyLite"): ("Polymaker", "PolyLite"),
     normalize_identity_text("PolyTerra"): ("Polymaker", "PolyTerra"),
+}
+_MAKER_TYPE_IDENTITIES: dict[
+    tuple[str, str], tuple[str, str, str | None]
+] = {
+    (
+        normalize_identity_text("Creality Hyper"),
+        normalize_identity_text("PLA"),
+    ): ("Creality", "Hyper PLA", None),
+    (
+        normalize_identity_text("Creality Ender"),
+        normalize_identity_text("PLA"),
+    ): ("Creality", "Ender PLA", None),
+    (
+        normalize_identity_text("Sunlu Elite"),
+        normalize_identity_text("PETG"),
+    ): ("Sunlu", "Elite PETG", None),
+    (
+        normalize_identity_text("PolyLite Pro"),
+        normalize_identity_text("PLA"),
+    ): ("Polymaker", "PLA Pro", "PolyLite"),
 }
 _TYPE_IDENTITIES: dict[str, tuple[str, str]] = {
     normalize_identity_text("Silk"): ("PLA", "Silk"),
 }
+_COLOR_PREFIX_FINISHES: dict[str, str] = {
+    normalize_identity_text("Basic"): "Basic",
+    normalize_identity_text("Clear"): "Clear",
+}
+_MAPPED_MATERIAL_TYPES = frozenset(
+    normalize_identity_text(type_name)
+    for _maker, type_name, _finish in _MAKER_TYPE_IDENTITIES.values()
+) | frozenset(
+    normalize_identity_text(type_name)
+    for type_name, _finish in _TYPE_IDENTITIES.values()
+)
 
 
 def _signatures(record: FilamentRecord, maker: str) -> tuple[str, ...]:
@@ -42,6 +74,17 @@ def _signatures(record: FilamentRecord, maker: str) -> tuple[str, ...]:
 def _contains_normalized_phrase(value: str, phrase: str) -> bool:
     """Return whether a normalized identity contains a complete token phrase."""
     return f" {phrase} " in f" {value} "
+
+
+def _split_color_prefix(color: str) -> tuple[str, str] | None:
+    """Return a mapped finish and color after a recognized leading word."""
+    prefix, separator, remainder = color.strip().partition(" ")
+    if not separator or not remainder.strip():
+        return None
+    finish = _COLOR_PREFIX_FINISHES.get(normalize_identity_text(prefix))
+    if finish is None:
+        return None
+    return finish, " ".join(remainder.split())
 
 
 @dataclass(frozen=True, slots=True)
@@ -76,6 +119,9 @@ class HueForgeFilamentReconciler(FilamentReconciler):
         self._catalog_identities = tuple(
             self._catalog_identity(record) for record in self._catalog
         )
+        self._recognized_material_types = frozenset(
+            identity.normalized_type for identity in self._catalog_identities
+        ) | _MAPPED_MATERIAL_TYPES
 
     @property
     def fuzzy_matching_available(self) -> bool:
@@ -84,28 +130,47 @@ class HueForgeFilamentReconciler(FilamentReconciler):
 
     def _normalize_source_record(self, record: FilamentRecord) -> FilamentRecord:
         """Map HueForge product brands and types to canonical identities."""
-        maker = record.maker
-        type_name = record.type
-        finish = record.finish
-
-        product_identity = _PRODUCT_BRAND_IDENTITIES.get(
-            normalize_identity_text(record.maker)
+        maker, type_name, finish = record.maker, record.type, record.finish
+        maker_type_identity = _MAKER_TYPE_IDENTITIES.get(
+            (
+                normalize_identity_text(record.maker),
+                normalize_identity_text(record.type),
+            )
         )
-        if product_identity is not None:
-            maker, product_finish = product_identity
-            finish = finish or product_finish
+        if maker_type_identity is not None:
+            maker, type_name, mapped_finish = maker_type_identity
+            finish = finish or mapped_finish
+        else:
+            product_identity = _PRODUCT_BRAND_IDENTITIES.get(
+                normalize_identity_text(record.maker)
+            )
+            if product_identity is not None:
+                maker, product_finish = product_identity
+                finish = finish or product_finish
 
         type_identity = _TYPE_IDENTITIES.get(normalize_identity_text(record.type))
         if type_identity is not None:
             type_name, finish = type_identity
 
-        if (maker, type_name, finish) == (record.maker, record.type, record.finish):
+        color = record.color
+        color_identity = _split_color_prefix(color)
+        if color_identity is not None:
+            color_finish, color = color_identity
+            finish = finish or color_finish
+
+        if (maker, type_name, finish, color) == (
+            record.maker,
+            record.type,
+            record.finish,
+            record.color,
+        ):
             return record
         return replace(
             record,
             maker=maker,
             type=type_name,
             finish=finish,
+            color=color,
         )
 
     @staticmethod
@@ -223,6 +288,13 @@ class HueForgeFilamentReconciler(FilamentReconciler):
             for signature in _signatures(record, maker)
         )
         identities = self._plausible_catalog_identities(source_makers)
+        normalized_source_type = normalize_identity_text(record.type)
+        if normalized_source_type in self._recognized_material_types:
+            identities = tuple(
+                identity
+                for identity in identities
+                if identity.normalized_type == normalized_source_type
+            )
         candidates = [
             self._candidate(record, source_makers, source_signatures, identity)
             for identity in identities

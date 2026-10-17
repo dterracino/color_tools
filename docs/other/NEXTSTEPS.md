@@ -61,7 +61,8 @@ Re-evaluate if a real user need emerges.
 
 ## `image/analysis.py` — Canny edge detection utilities (TBD)
 
-- `opencv-python>=4.8.0` would be added as part of a new optional extra (e.g. `[vision]`).
+- `opencv-contrib-python-headless>=4.8.0` is available through the existing
+  `[image]` extra.
   Functions that require it will use conditional imports (`try: import cv2`) consistent with the
   project's existing pattern — the module stays importable without OpenCV, but Canny-based
   functions will raise `ImportError` with a helpful message if it's missing.

@@ -184,7 +184,7 @@ class VideoReader:
     def __init__(self, path: Path) -> None:
         if not HAS_CV2:
             raise RuntimeError(
-                "opencv-python is required for video support.\n"
+                "opencv-contrib-python-headless is required for video support.\n"
                 "Run:  pip install -r requirements.txt"
             )
         self.cap = cv2.VideoCapture(str(path))
