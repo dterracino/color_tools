@@ -556,7 +556,10 @@ def load_owned_filaments(json_path: Path | str | None = None) -> Set[str]:
                    owned-filaments.json in the package's data/ directory.
     
     Returns:
-        Set of owned filament IDs (empty set if file doesn't exist)
+        Set of canonical owned filament IDs (empty set if file doesn't exist).
+
+    Raises:
+        ValueError: If the document shape or any owned filament ID is invalid.
     """
     if json_path is None:
         # Default: look in package's data/ directory
@@ -581,14 +584,33 @@ def load_owned_filaments(json_path: Path | str | None = None) -> Set[str]:
         raise ValueError(f"Expected {{'owned_filaments': [...]}} structure in {json_path}")
     
     data_mapping = cast(dict[str, object], data)
+    unknown_fields = data_mapping.keys() - {"owned_filaments"}
+    if unknown_fields:
+        raise ValueError(
+            f"Unknown field(s) in {json_path}: {', '.join(sorted(unknown_fields))}"
+        )
     owned_ids = data_mapping["owned_filaments"]
     if not isinstance(owned_ids, list):
         raise ValueError(f"Expected 'owned_filaments' to be a list in {json_path}")
     owned_items = cast(list[object], owned_ids)
     if not all(isinstance(item, str) for item in owned_items):
         raise ValueError(f"Expected owned filament IDs to be strings in {json_path}")
-    
-    return set(cast(list[str], owned_items))
+
+    validated_ids: set[str] = set()
+    for index, item in enumerate(cast(list[str], owned_items)):
+        try:
+            filament_id = validate_filament_id(item)
+        except ValueError as error:
+            raise ValueError(
+                f"Invalid owned filament ID at index {index} in {json_path}: {error}"
+            ) from error
+        if filament_id in validated_ids:
+            raise ValueError(
+                f"Duplicate owned filament ID {filament_id!r} in {json_path}"
+            )
+        validated_ids.add(filament_id)
+
+    return validated_ids
 
 
 def save_owned_filaments(owned_ids: Set[str], json_path: Path | str | None = None) -> None:
@@ -612,8 +634,16 @@ def save_owned_filaments(owned_ids: Set[str], json_path: Path | str | None = Non
         if json_path.is_dir():
             json_path = json_path / ColorConstants.OWNED_FILAMENTS_JSON_FILENAME
     
-    # Sort IDs for consistent output
-    sorted_ids = sorted(owned_ids)
+    # Validate and sort IDs for consistent output
+    validated_ids: list[str] = []
+    for filament_id in owned_ids:
+        try:
+            validated_ids.append(validate_filament_id(filament_id))
+        except ValueError as error:
+            raise ValueError(
+                f"Cannot save invalid owned filament ID {filament_id!r}: {error}"
+            ) from error
+    sorted_ids = sorted(validated_ids)
     
     # Create data structure
     data = {"owned_filaments": sorted_ids}

@@ -617,7 +617,7 @@ with SHA-256 hashes:
 ```bash
 python -m color_tools --verify-all
 
-# Validate user JSON schemas and merge rules without writing files
+# Validate user data, including owned filament IDs, without writing files
 python -m color_tools --validate-user-files
 ```
 

@@ -133,7 +133,7 @@ color-tools --generate-user-hashes
 # Verify user-file integrity
 color-tools --verify-user-data
 
-# Validate the schemas and merge behavior of all three user data files
+# Validate all four user data files and their cross-file references
 color-tools --validate-user-files
 
 # Verify everything (core + user data)
@@ -239,6 +239,13 @@ When you create an `owned-filaments.json` file with filament IDs, all filament s
 - **Auto-detect:** If file exists with IDs, `filter()` and `nearest_filament()` methods default to `owned=True`
 - **No file?** No change - all filaments are searched (backward compatible)
 - **Shopping mode:** Pass `owned=False` parameter (API) or `--all-filaments` flag (CLI) to search all filaments
+- **User additions:** A new filament in `user-filaments.json` can be marked owned by listing its ID here
+- **User overrides:** Ownership follows the stable ID, so replacing a system filament by ID automatically keeps its owned status
+- **Validation:** `color-tools --validate-user-files` rejects malformed, duplicate, or unresolved owned IDs after merging system and user filaments
+
+Only IDs belong in this file. Filament product data remains in `filaments.json`
+or `user-filaments.json`; it is not duplicated as inventory state. If a user
+filament's ID changes, update its ownership reference at the same time.
 
 **CLI Commands:**
 

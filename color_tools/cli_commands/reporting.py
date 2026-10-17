@@ -20,7 +20,12 @@ from ..palette import (
 from ..color_load_report import ColorLoadReport
 from ..filament_load_report import FilamentLoadReport
 from ..synonym_load_report import SynonymLoadReport
-from ..filament_palette import FilamentPalette, load_filaments, load_maker_synonyms
+from ..filament_palette import (
+    FilamentPalette,
+    load_filaments,
+    load_maker_synonyms,
+    load_owned_filaments,
+)
 
 
 def show_override_report(json_dir: str | None = None) -> None:
@@ -310,6 +315,10 @@ def validate_user_files(json_dir: str | None = None) -> bool:
             data_dir / ColorConstants.USER_SYNONYMS_JSON_FILENAME,
             lambda: load_maker_synonyms(data_dir, include_report=True),
         ),
+        (
+            data_dir / ColorConstants.OWNED_FILAMENTS_JSON_FILENAME,
+            lambda: _validate_owned_filament_file(data_dir),
+        ),
     )
     valid = True
     found = 0
@@ -332,6 +341,20 @@ def validate_user_files(json_dir: str | None = None) -> bool:
     else:
         print("\n✗ User data validation failed", file=sys.stderr)
     return valid
+
+
+def _validate_owned_filament_file(data_dir: Path) -> None:
+    """Validate owned IDs against the effective merged filament catalog."""
+    records = load_filaments(data_dir)
+    owned_ids = load_owned_filaments(data_dir)
+    known_ids = {record.id for record in records}
+    unknown_ids = sorted(owned_ids - known_ids)
+    if unknown_ids:
+        formatted_ids = ", ".join(repr(filament_id) for filament_id in unknown_ids)
+        raise ValueError(
+            "owned filament ID(s) do not exist in the merged filament catalog: "
+            f"{formatted_ids}"
+        )
 
 
 def handle_verification_flags(args: argparse.Namespace) -> bool:

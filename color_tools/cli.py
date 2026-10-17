@@ -157,7 +157,10 @@ Examples:
     parser.add_argument(
         "--validate-user-files",
         action="store_true",
-        help="Validate user-colors.json, user-filaments.json, and user-synonyms.json, then exit",
+        help=(
+            "Validate user-colors.json, user-filaments.json, user-synonyms.json, "
+            "and owned-filaments.json, then exit"
+        ),
     )
     parser.add_argument(
         "--check-overrides",

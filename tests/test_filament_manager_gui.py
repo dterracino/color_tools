@@ -33,7 +33,7 @@ class TestFilamentManagerWindow(unittest.TestCase):
     def setUp(self) -> None:
         self.records = [
             FilamentRecord(
-                id="maker_pla-matte_basic",
+                id="maker-pla-matte-basic",
                 maker="Maker",
                 type="PLA",
                 finish="Matte",
@@ -42,7 +42,7 @@ class TestFilamentManagerWindow(unittest.TestCase):
                 td_value=0.1,
             ),
             FilamentRecord(
-                id="other_petg_glossy_white",
+                id="other-petg-glossy-white",
                 maker="Other",
                 type="PETG",
                 finish="Glossy",
@@ -202,7 +202,7 @@ class TestFilamentExportTemplates(unittest.TestCase):
 
     def setUp(self) -> None:
         self.record = FilamentRecord(
-            id="maker_pla-matte_basic",
+            id="maker-pla-matte-basic",
             maker="Maker, Incorporated",
             type="PLA",
             finish="Matte",

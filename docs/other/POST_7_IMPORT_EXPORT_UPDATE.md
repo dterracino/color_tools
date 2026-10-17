@@ -287,6 +287,18 @@ an intrinsic filament-record field. The ownership-aware exporter should accept
 resolved Color Tools IDs and merge them with the existing `owned_filaments`
 list.
 
+The current runtime contract is also ID-based. A user override retains the
+system filament's ID, so an existing ownership reference follows the effective
+replacement record automatically. A new record in `user-filaments.json` can be
+owned by adding its new ID. `--validate-user-files` validates the ownership
+schema and resolves every owned ID against the fully merged system-plus-user
+catalog.
+
+For additive imports, an external `Owned: false` value means only that the
+record is not added to local ownership; it must not remove an existing local
+ownership reference. Removing ownership requires an explicit inventory
+synchronization or replacement operation.
+
 For external inventory systems, results should be divided into:
 
 - matched and already owned;

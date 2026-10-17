@@ -179,14 +179,16 @@ color-tools --generate-user-hashes
 # Verify user-file integrity
 color-tools --verify-user-data
 
-# Validate user JSON schemas and merge rules without writing files
+# Validate user schemas, merge rules, and owned filament references
 color-tools --validate-user-files
 ```
 
 If no `.sha256` file exists, user files work without hash verification. Schema
 and merge validation is independent of hashes; `--validate-user-files` checks
-`user-colors.json`, `user-filaments.json`, and `user-synonyms.json` through the
-same loaders used at runtime.
+`user-colors.json`, `user-filaments.json`, `user-synonyms.json`, and
+`owned-filaments.json` through the same loaders used at runtime. Owned IDs are
+resolved after system filaments and user additions or overrides are merged, so
+the command also detects stale or misspelled ownership references.
 
 ---
 

@@ -494,9 +494,11 @@ Hash files (`.sha256`) are created alongside user data files and active
 
 They answer different questions:
 
-- `--validate-user-files` parses `user-colors.json`, `user-filaments.json`, and
-  `user-synonyms.json` using the same schema and merge rules as normal loading.
-  It detects invalid fields, IDs, values, overrides, and synonym conflicts.
+- `--validate-user-files` parses `user-colors.json`, `user-filaments.json`,
+  `user-synonyms.json`, and `owned-filaments.json` using the same schemas and
+  merge rules as normal loading. It detects invalid fields, IDs, values,
+  overrides, synonym conflicts, and owned IDs that do not resolve against the
+  merged system-plus-user filament catalog.
 - `--verify-user-data` compares active user files and user palettes with their
   optional `.sha256` sidecars. It detects changes since the hash was generated,
   but does not replace schema validation.

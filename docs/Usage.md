@@ -1004,9 +1004,11 @@ python -m color_tools filament --nearest --value 255 128 64 --type "PLA" --all-f
 **How It Works:**
 
 1. Create `data/user/owned-filaments.json` with your filament IDs
-2. All `--nearest` searches automatically filter to owned filaments only
-3. Use `--all-filaments` flag when you want to browse the full catalog (shopping mode)
-4. No file? Everything works exactly as before (backward compatible)
+2. IDs may reference bundled filaments, new user filaments, or user overrides
+3. All `--nearest` searches automatically filter to owned filaments only
+4. Use `--all-filaments` flag when you want to browse the full catalog (shopping mode)
+5. Run `color-tools --validate-user-files` to detect malformed or unresolved IDs
+6. No file? Everything works exactly as before (backward compatible)
 
 See [Customization Guide - Owned Filaments](https://github.com/dterracino/color_tools/blob/main/docs/Customization.md#owned-filamentsjson---filament-ownership-tracking) for file format and Python API usage.
 
@@ -1381,7 +1383,7 @@ These arguments work with all commands:
 - `--verify-all`: Verify constants, matrices, core data, system palettes, and hashed user files
 - `--verify-user-data`: Verify user data files and user palettes that have `.sha256` sidecars
 - `--generate-user-hashes`: Generate sidecar hashes for active user data and user palettes, then exit
-- `--validate-user-files`: Validate the schemas and merge behavior of user-colors.json, user-filaments.json, and user-synonyms.json, then exit
+- `--validate-user-files`: Validate user-colors.json, user-filaments.json, user-synonyms.json, and owned-filaments.json, including owned-ID resolution against the merged filament catalog, then exit
 - `--check-overrides`: Show structured color, filament-ID, and maker-synonym changes, then exit
 - `--interactive`, `-i`: Launch the guided CLI wizard (requires the `[interactive]` extra)
 - `--log-file PATH`: Write log output to this file (enables rotating file logging)

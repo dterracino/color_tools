@@ -318,7 +318,7 @@ class TestHandleVerificationFlags(unittest.TestCase):
 
 
 class TestValidateUserFiles(unittest.TestCase):
-    """Tests for semantic validation of all three user data files."""
+    """Tests for semantic validation of all four user data files."""
 
     def _write_core_files(self, data_dir: Path) -> None:
         (data_dir / "colors.json").write_text(
@@ -359,12 +359,18 @@ class TestValidateUserFiles(unittest.TestCase):
             (user_dir / "user-synonyms.json").write_text(
                 json.dumps({"Maker": ["M", "Brand"]}), encoding="utf-8"
             )
+            (user_dir / "owned-filaments.json").write_text(
+                json.dumps({
+                    "owned_filaments": ["maker-pla-red", "maker-pla-blue"]
+                }),
+                encoding="utf-8",
+            )
             output = io.StringIO()
             with patch("sys.stdout", output):
                 result = validate_user_files(str(data_dir))
 
         self.assertTrue(result)
-        self.assertEqual(output.getvalue().count(": valid"), 3)
+        self.assertEqual(output.getvalue().count(": valid"), 4)
 
     def test_accumulates_errors_and_skips_missing_files(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
@@ -380,7 +386,58 @@ class TestValidateUserFiles(unittest.TestCase):
 
         self.assertFalse(result)
         self.assertIn("user-colors.json", error.getvalue())
-        self.assertEqual(output.getvalue().count("Skipped"), 2)
+        self.assertEqual(output.getvalue().count("Skipped"), 3)
+
+    def test_rejects_owned_id_missing_from_merged_catalog(self) -> None:
+        """Owned validation catches stale or misspelled filament IDs."""
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_core_files(data_dir)
+            user_dir = data_dir / "user"
+            user_dir.mkdir()
+            (user_dir / "owned-filaments.json").write_text(
+                json.dumps({"owned_filaments": ["missing-pla-blue"]}),
+                encoding="utf-8",
+            )
+            error = io.StringIO()
+            output = io.StringIO()
+            with patch("sys.stdout", output), patch("sys.stderr", error):
+                result = validate_user_files(str(data_dir))
+
+        self.assertFalse(result)
+        self.assertIn("owned-filaments.json", error.getvalue())
+        self.assertIn("missing-pla-blue", error.getvalue())
+
+    def test_owned_ids_resolve_user_filament_overrides_and_additions(self) -> None:
+        """Both user replacements and additions are valid ownership targets."""
+        with tempfile.TemporaryDirectory() as directory:
+            data_dir = Path(directory)
+            self._write_core_files(data_dir)
+            user_dir = data_dir / "user"
+            user_dir.mkdir()
+            override = {
+                "id": "maker-pla-red", "maker": "Maker", "type": "PLA",
+                "finish": None, "color": "Custom Red", "hex": "#CC0000",
+            }
+            addition = {
+                "id": "maker-pla-blue", "maker": "Maker", "type": "PLA",
+                "finish": None, "color": "Blue", "hex": "#0000FF",
+            }
+            (user_dir / "user-filaments.json").write_text(
+                json.dumps([override, addition]), encoding="utf-8"
+            )
+            (user_dir / "owned-filaments.json").write_text(
+                json.dumps({
+                    "owned_filaments": ["maker-pla-red", "maker-pla-blue"]
+                }),
+                encoding="utf-8",
+            )
+            output = io.StringIO()
+            with patch("sys.stdout", output):
+                result = validate_user_files(str(data_dir))
+
+        self.assertTrue(result)
+        self.assertIn("owned-filaments.json: valid", output.getvalue())
 
 
 class TestGenerateUserHashes(unittest.TestCase):

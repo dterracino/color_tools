@@ -8,6 +8,7 @@ from pathlib import Path
 from color_tools.filament_palette import (
     FilamentPalette,
     FilamentRecord,
+    load_filaments,
     load_owned_filaments,
     save_owned_filaments,
 )
@@ -31,8 +32,8 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
             # Create test file
             data = {
                 "owned_filaments": [
-                    "bambu-lab_pla-matte_jet-black",
-                    "polymaker_polyterra-pla_charcoal-black"
+                    "bambu-lab-pla-matte-jet-black",
+                    "polymaker-polyterra-pla-charcoal-black"
                 ]
             }
             with open(path, 'w') as f:
@@ -40,8 +41,8 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
             
             result = load_owned_filaments(path)
             self.assertEqual(result, {
-                "bambu-lab_pla-matte_jet-black",
-                "polymaker_polyterra-pla_charcoal-black"
+                "bambu-lab-pla-matte-jet-black",
+                "polymaker-polyterra-pla-charcoal-black"
             })
     
     def test_load_owned_filaments_empty_list(self):
@@ -90,7 +91,7 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
             path = Path(tmpdir) / "owned-filaments.json"
             
             # Wrong type - string instead of list
-            data = {"owned_filaments": "bambu-lab_pla-matte_jet-black"}
+            data = {"owned_filaments": "bambu-lab-pla-matte-jet-black"}
             with open(path, 'w') as f:
                 json.dump(data, f)
             
@@ -108,6 +109,36 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
             )
 
             with self.assertRaisesRegex(ValueError, "IDs to be strings"):
+                load_owned_filaments(path)
+
+    def test_load_owned_filaments_rejects_invalid_and_duplicate_ids(self):
+        """Owned IDs use the canonical filament-ID schema and remain unique."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "owned-filaments.json"
+            path.write_text(
+                json.dumps({"owned_filaments": ["Invalid ID"]}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "Invalid owned filament ID at index 0"):
+                load_owned_filaments(path)
+
+            path.write_text(
+                json.dumps({"owned_filaments": ["valid-id", "valid-id"]}),
+                encoding="utf-8",
+            )
+            with self.assertRaisesRegex(ValueError, "Duplicate owned filament ID 'valid-id'"):
+                load_owned_filaments(path)
+
+    def test_load_owned_filaments_rejects_unknown_fields(self):
+        """The ownership document has one authoritative top-level field."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "owned-filaments.json"
+            path.write_text(
+                json.dumps({"owned_filaments": [], "notes": "unsupported"}),
+                encoding="utf-8",
+            )
+
+            with self.assertRaisesRegex(ValueError, "Unknown field.*notes"):
                 load_owned_filaments(path)
     
     def test_save_owned_filaments(self):
@@ -139,6 +170,16 @@ class TestOwnedFilamentsLoading(unittest.TestCase):
             
             self.assertEqual(data, {"owned_filaments": []})
 
+    def test_save_owned_filaments_rejects_invalid_ids(self):
+        """Saving cannot create an ownership file the loader would reject."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            path = Path(tmpdir) / "owned-filaments.json"
+
+            with self.assertRaisesRegex(ValueError, "Cannot save invalid owned filament ID"):
+                save_owned_filaments({"Invalid ID"}, path)
+
+            self.assertFalse(path.exists())
+
 
 class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
     """Test FilamentPalette owned filaments integration."""
@@ -154,7 +195,7 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
                 hex="#000000",
                 td_value=0.1,
                 source="test",
-                id="bambu-lab_pla-matte_jet-black"
+                id="bambu-lab-pla-matte-jet-black"
             ),
             FilamentRecord(
                 maker="Bambu Lab",
@@ -164,7 +205,7 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
                 hex="#FFFFFF",
                 td_value=0.9,
                 source="test",
-                id="bambu-lab_pla-matte_white"
+                id="bambu-lab-pla-matte-white"
             ),
             FilamentRecord(
                 maker="Polymaker",
@@ -174,7 +215,7 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
                 hex="#1A1A1A",
                 td_value=0.15,
                 source="test",
-                id="polymaker_polyterra-pla_charcoal-black"
+                id="polymaker-polyterra-pla-charcoal-black"
             ),
         ]
     
@@ -185,7 +226,7 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
     
     def test_palette_init_with_owned(self):
         """Test palette initialization with owned filaments."""
-        owned = {"bambu-lab_pla-matte_jet-black", "polymaker_polyterra-pla_charcoal-black"}
+        owned = {"bambu-lab-pla-matte-jet-black", "polymaker-polyterra-pla-charcoal-black"}
         palette = FilamentPalette(self.filaments, owned_filaments=owned)
         self.assertEqual(palette.owned_filaments, owned)
     
@@ -193,10 +234,10 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
         """Test getting filament by ID."""
         palette = FilamentPalette(self.filaments)
         
-        result = palette.get_filament_by_id("bambu-lab_pla-matte_jet-black")
+        result = palette.get_filament_by_id("bambu-lab-pla-matte-jet-black")
         self.assertIsNotNone(result)
         assert result is not None  # Type narrowing for Pyright
-        self.assertEqual(result.id, "bambu-lab_pla-matte_jet-black")
+        self.assertEqual(result.id, "bambu-lab-pla-matte-jet-black")
         self.assertEqual(result.color, "Jet Black")
         
         # Non-existent ID
@@ -211,7 +252,7 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
     
     def test_list_owned_with_filaments(self):
         """Test listing owned filaments."""
-        owned = {"bambu-lab_pla-matte_white", "bambu-lab_pla-matte_jet-black"}
+        owned = {"bambu-lab-pla-matte-white", "bambu-lab-pla-matte-jet-black"}
         palette = FilamentPalette(self.filaments, owned_filaments=owned)
         
         result = palette.list_owned()
@@ -223,13 +264,13 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
     
     def test_list_owned_with_invalid_ids(self):
         """Test listing owned with some invalid IDs."""
-        owned = {"bambu-lab_pla-matte_jet-black", "nonexistent-id"}
+        owned = {"bambu-lab-pla-matte-jet-black", "nonexistent-id"}
         palette = FilamentPalette(self.filaments, owned_filaments=owned)
         
         result = palette.list_owned()
         # Should only include valid IDs
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].id, "bambu-lab_pla-matte_jet-black")
+        self.assertEqual(result[0].id, "bambu-lab-pla-matte-jet-black")
     
     def test_add_owned_valid(self):
         """Test adding owned filament."""
@@ -237,15 +278,15 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
             path = Path(tmpdir) / "owned-filaments.json"
             
             palette = FilamentPalette(self.filaments)
-            palette.add_owned("bambu-lab_pla-matte_jet-black", path)
+            palette.add_owned("bambu-lab-pla-matte-jet-black", path)
             
             # Check in-memory set
-            self.assertIn("bambu-lab_pla-matte_jet-black", palette.owned_filaments)
+            self.assertIn("bambu-lab-pla-matte-jet-black", palette.owned_filaments)
             
             # Check file was created
             self.assertTrue(path.exists())
             loaded = load_owned_filaments(path)
-            self.assertEqual(loaded, {"bambu-lab_pla-matte_jet-black"})
+            self.assertEqual(loaded, {"bambu-lab-pla-matte-jet-black"})
     
     def test_add_owned_invalid_id(self):
         """Test adding non-existent filament ID."""
@@ -260,25 +301,25 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmpdir:
             path = Path(tmpdir) / "owned-filaments.json"
             
-            owned = {"bambu-lab_pla-matte_jet-black", "bambu-lab_pla-matte_white"}
+            owned = {"bambu-lab-pla-matte-jet-black", "bambu-lab-pla-matte-white"}
             palette = FilamentPalette(self.filaments, owned_filaments=owned)
             
-            palette.remove_owned("bambu-lab_pla-matte_jet-black", path)
+            palette.remove_owned("bambu-lab-pla-matte-jet-black", path)
             
             # Check in-memory set
-            self.assertNotIn("bambu-lab_pla-matte_jet-black", palette.owned_filaments)
-            self.assertIn("bambu-lab_pla-matte_white", palette.owned_filaments)
+            self.assertNotIn("bambu-lab-pla-matte-jet-black", palette.owned_filaments)
+            self.assertIn("bambu-lab-pla-matte-white", palette.owned_filaments)
             
             # Check file
             loaded = load_owned_filaments(path)
-            self.assertEqual(loaded, {"bambu-lab_pla-matte_white"})
+            self.assertEqual(loaded, {"bambu-lab-pla-matte-white"})
     
     def test_remove_owned_not_in_list(self):
         """Test removing filament that's not in owned list."""
         palette = FilamentPalette(self.filaments)
         
         with self.assertRaises(ValueError) as ctx:
-            palette.remove_owned("bambu-lab_pla-matte_jet-black")
+            palette.remove_owned("bambu-lab-pla-matte-jet-black")
         self.assertIn("not in owned list", str(ctx.exception))
     
     def test_save_owned(self):
@@ -287,11 +328,55 @@ class TestFilamentPaletteOwnedIntegration(unittest.TestCase):
             path = Path(tmpdir) / "owned-filaments.json"
             
             palette = FilamentPalette(self.filaments)
-            palette.owned_filaments.add("bambu-lab_pla-matte_jet-black")
+            palette.owned_filaments.add("bambu-lab-pla-matte-jet-black")
             palette.save_owned(path)
             
             loaded = load_owned_filaments(path)
-            self.assertEqual(loaded, {"bambu-lab_pla-matte_jet-black"})
+            self.assertEqual(loaded, {"bambu-lab-pla-matte-jet-black"})
+
+    def test_user_override_and_addition_resolve_as_owned(self):
+        """Owned IDs resolve against the effective merged filament catalog."""
+        with tempfile.TemporaryDirectory() as tmpdir:
+            data_dir = Path(tmpdir)
+            user_dir = data_dir / "user"
+            user_dir.mkdir()
+            system_record = {
+                "id": "maker-pla-red",
+                "maker": "Maker",
+                "type": "PLA",
+                "finish": None,
+                "color": "Red",
+                "hex": "#FF0000",
+            }
+            override = {**system_record, "color": "Custom Red", "hex": "#CC0000"}
+            addition = {
+                **system_record,
+                "id": "maker-pla-blue",
+                "color": "Blue",
+                "hex": "#0000FF",
+            }
+            (data_dir / "filaments.json").write_text(
+                json.dumps([system_record]), encoding="utf-8"
+            )
+            (user_dir / "user-filaments.json").write_text(
+                json.dumps([override, addition]), encoding="utf-8"
+            )
+            owned_path = user_dir / "owned-filaments.json"
+            owned_path.write_text(
+                json.dumps({"owned_filaments": ["maker-pla-red", "maker-pla-blue"]}),
+                encoding="utf-8",
+            )
+
+            palette = FilamentPalette(
+                load_filaments(data_dir),
+                owned_filaments=load_owned_filaments(data_dir),
+            )
+
+        owned = {record.id: record for record in palette.list_owned()}
+        self.assertEqual(set(owned), {"maker-pla-red", "maker-pla-blue"})
+        self.assertEqual(owned["maker-pla-red"].color, "Custom Red")
+        self.assertEqual(owned["maker-pla-red"].source, "user-filaments.json")
+        self.assertEqual(owned["maker-pla-blue"].source, "user-filaments.json")
 
 
 class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
@@ -308,7 +393,7 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
                 hex="#000000",
                 td_value=0.1,
                 source="test",
-                id="bambu-lab_pla-matte_jet-black"
+                id="bambu-lab-pla-matte-jet-black"
             ),
             FilamentRecord(
                 maker="Bambu Lab",
@@ -318,7 +403,7 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
                 hex="#FFFFFF",
                 td_value=0.9,
                 source="test",
-                id="bambu-lab_pla-matte_white"
+                id="bambu-lab-pla-matte-white"
             ),
             FilamentRecord(
                 maker="Polymaker",
@@ -328,11 +413,11 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
                 hex="#1A1A1A",
                 td_value=0.15,
                 source="test",
-                id="polymaker_polyterra-pla_charcoal-black"
+                id="polymaker-polyterra-pla-charcoal-black"
             ),
         ]
         
-        self.owned = {"bambu-lab_pla-matte_jet-black", "polymaker_polyterra-pla_charcoal-black"}
+        self.owned = {"bambu-lab-pla-matte-jet-black", "polymaker-polyterra-pla-charcoal-black"}
     
     def test_filter_owned_none_auto_detects_false(self):
         """Test filter with owned=None and no owned filaments (auto-detects False)."""
@@ -376,12 +461,12 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
         # Owned + maker filter
         result = palette.filter(owned=True, maker="Bambu Lab")
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].id, "bambu-lab_pla-matte_jet-black")
+        self.assertEqual(result[0].id, "bambu-lab-pla-matte-jet-black")
         
         # Owned + type filter
         result = palette.filter(owned=True, type_name="PolyTerra PLA")
         self.assertEqual(len(result), 1)
-        self.assertEqual(result[0].id, "polymaker_polyterra-pla_charcoal-black")
+        self.assertEqual(result[0].id, "polymaker-polyterra-pla-charcoal-black")
     
     def test_nearest_filament_owned_auto_detect(self):
         """Test nearest_filament with auto-detect owned filtering."""
@@ -389,7 +474,7 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
         
         # Black color - should find owned Jet Black
         result, _ = palette.nearest_filament((10, 10, 10), owned=None)
-        self.assertEqual(result.id, "bambu-lab_pla-matte_jet-black")
+        self.assertEqual(result.id, "bambu-lab-pla-matte-jet-black")
     
     def test_nearest_filament_owned_false_override(self):
         """Test nearest_filament with owned=False override."""
@@ -397,7 +482,7 @@ class TestFilamentPaletteOwnedFiltering(unittest.TestCase):
         
         # White color - should find White even though not owned
         result, _ = palette.nearest_filament((255, 255, 255), owned=False)
-        self.assertEqual(result.id, "bambu-lab_pla-matte_white")
+        self.assertEqual(result.id, "bambu-lab-pla-matte-white")
     
     def test_nearest_filaments_owned_filtering(self):
         """Test nearest_filaments with owned filtering."""
