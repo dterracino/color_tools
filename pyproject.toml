@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "color-match-tools"
-version = "7.1.1"
+version = "7.1.2"
 description = "Comprehensive color science library for accurate color space conversions, perceptual color distance metrics (Delta E), and color matching with CSS and 3D printing filament databases"
 readme = "README.md"
 requires-python = ">=3.12"
@@ -78,6 +78,7 @@ docs = [
 
 # Development tools
 dev = [
+    "black>=24.0.0",
     "pyright>=1.1.0",
     "build>=1.0.0",
     "twine>=4.0.0",

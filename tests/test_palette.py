@@ -21,6 +21,7 @@ from color_tools.palette import (
 from color_tools.filament_palette import (
     FilamentPalette,
     FilamentRecord,
+    get_canonical_filament_name,
     load_filaments,
 )
 from tests.palette_document_fixtures import palette_document
@@ -136,6 +137,34 @@ class TestFilamentRecord(unittest.TestCase):
         repr_str = repr(filament)
         self.assertIn("FilamentRecord", repr_str)
         self.assertIn("Bambu Lab", repr_str)
+
+
+class TestCanonicalFilamentName(unittest.TestCase):
+    """Test canonical filament display-name formatting."""
+
+    def test_includes_finish_when_present(self):
+        """Include the finish between the type and color."""
+        result = get_canonical_filament_name(
+            maker="Bambu Lab",
+            type_name="PLA",
+            finish="Matte",
+            color="Jet Black",
+            hex_value="#333333",
+        )
+
+        self.assertEqual(result, "Bambu Lab PLA Matte - Jet Black (#333333)")
+
+    def test_omits_finish_when_absent(self):
+        """Do not leave extra spacing when no finish is defined."""
+        result = get_canonical_filament_name(
+            maker="Test Maker",
+            type_name="ABS",
+            finish=None,
+            color="Red",
+            hex_value="#FF0000",
+        )
+
+        self.assertEqual(result, "Test Maker ABS - Red (#FF0000)")
 
 
 class TestPalette(unittest.TestCase):

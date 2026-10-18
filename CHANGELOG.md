@@ -8,6 +8,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [7.1.2] - 2026-10-17
+
+### Added
+
+- **Canonical filament display names** — add and publicly export
+  `get_canonical_filament_name()` for consistently formatting filament records
+  as `Maker Type [Finish] - Color (Hex)`. Applications should use this helper,
+  or `str(record)`, instead of recreating the display format.
+
+### Changed
+
+- **Filament record string formatting** — `FilamentRecord.__str__()` now
+  delegates to `get_canonical_filament_name()`, keeping the public helper and
+  record display output synchronized.
+
 ## [7.1.1] - 2026-10-17
 
 ### Fixed

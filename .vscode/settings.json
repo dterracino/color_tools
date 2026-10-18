@@ -1,5 +1,9 @@
 {
     "python.defaultInterpreterPath": "${workspaceFolder}/.venv",
+    "[python]": {
+        "editor.defaultFormatter": "ms-python.black-formatter",
+        "editor.formatOnSave": true
+    },
     "python.testing.pytestArgs": [
         "tests"
     ],

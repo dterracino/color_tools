@@ -64,7 +64,7 @@ Three Ways to Use:
     3. As installed command: color_tools filament --list-makers (needs pip install)
 """
 
-__version__ = "7.1.1"
+__version__ = "7.1.2"
 
 # ============================================================================
 # Core Conversion Functions (Most Commonly Used)
@@ -189,6 +189,9 @@ from .filament_palette import (
     
     # Filament data class
     FilamentRecord,
+
+    # Filament display names
+    get_canonical_filament_name,
     
     # Filament loading functions
     load_filaments,
@@ -432,6 +435,7 @@ __all__ = [
     "ColorLoadEvent",
     "ColorLoadReport",
     "FilamentRecord",
+    "get_canonical_filament_name",
     "FilamentLoadEvent",
     "FilamentLoadReport",
     "SynonymLoadEvent",
