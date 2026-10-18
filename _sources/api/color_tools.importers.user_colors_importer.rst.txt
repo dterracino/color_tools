@@ -1,0 +1,9 @@
+﻿color\_tools.importers.user\_colors\_importer
+=============================================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.user_colors_importer
+   :members:
+   :undoc-members:
+   :show-inheritance:

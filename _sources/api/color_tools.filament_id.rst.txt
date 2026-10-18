@@ -1,0 +1,9 @@
+﻿color\_tools.filament\_id
+=========================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.filament_id
+   :members:
+   :undoc-members:
+   :show-inheritance:

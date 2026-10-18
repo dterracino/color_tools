@@ -1,0 +1,9 @@
+﻿color\_tools.interactive\_wizard
+================================
+
+.. currentmodule:: color_tools.interactive_wizard
+
+.. automodule:: color_tools.interactive_wizard
+   :members:
+   :undoc-members:
+   :show-inheritance:

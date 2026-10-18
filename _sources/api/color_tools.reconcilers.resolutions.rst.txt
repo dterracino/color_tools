@@ -1,0 +1,9 @@
+﻿color\_tools.reconcilers.resolutions
+====================================
+
+.. currentmodule:: color_tools.reconcilers
+
+.. automodule:: color_tools.reconcilers.resolutions
+   :members:
+   :undoc-members:
+   :show-inheritance:

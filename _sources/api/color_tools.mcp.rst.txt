@@ -1,0 +1,9 @@
+﻿color\_tools.mcp
+================
+
+.. currentmodule:: color_tools.mcp
+
+.. automodule:: color_tools.mcp
+   :members:
+   :undoc-members:
+   :show-inheritance:

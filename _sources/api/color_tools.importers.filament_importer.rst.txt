@@ -1,0 +1,9 @@
+﻿color\_tools.importers.filament\_importer
+=========================================
+
+.. currentmodule:: color_tools.importers
+
+.. automodule:: color_tools.importers.filament_importer
+   :members:
+   :undoc-members:
+   :show-inheritance:

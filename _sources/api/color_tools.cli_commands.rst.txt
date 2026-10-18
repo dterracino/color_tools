@@ -1,0 +1,9 @@
+﻿color\_tools.cli\_commands
+==========================
+
+.. currentmodule:: color_tools
+
+.. automodule:: color_tools.cli_commands
+   :members:
+   :undoc-members:
+   :show-inheritance:
